@@ -1,0 +1,32 @@
+Final local gate run, 2026-09-08
+
+PASS  alpine_obi_2025
+PASS  alpine_obi_2024
+PASS  alpine_ebitda_2025
+PASS  alpine_ebitda_2024
+PASS  alpine_proposed_debt_service
+PASS  alpine_dscr
+PASS  alpine_fccr
+PASS  alpine_global_dscr
+PASS  alpine_uca_cash_flow
+PASS  bristlecone_obi
+PASS  bristlecone_ebitda
+PASS  bristlecone_proposed_debt_service
+PASS  bristlecone_dscr
+PASS  bristlecone_fccr
+PASS  bristlecone_global_dscr
+PASS  bristlecone_uca_cash_flow
+PASS  consumer_c_front_dti
+PASS  consumer_c_back_dti
+PASS  alpine_k1_history_flag
+PASS  bristlecone_k1_history_flag
+
+KILLED mutation: dscr_omits_addback
+KILLED mutation: fccr_omits_lease
+KILLED mutation: global_dscr_double_counts_distribution
+KILLED mutation: uca_omits_working_capital
+KILLED mutation: amortization_simple_interest
+KILLED mutation: dti_swaps_front_back
+KILLED mutation: k1_always_stable
+
+SELFTEST PASS: 18 fixture values and 2 flags pinned correctly, all 7 mutations killed.

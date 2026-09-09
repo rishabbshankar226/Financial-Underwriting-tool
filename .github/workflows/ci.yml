@@ -1,0 +1,33 @@
+name: Spreadline checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend-and-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt
+      - name: Independent gate
+        run: python gate/reference_calculator.py --selftest
+      - name: Backend tests
+        run: cd backend && pytest -q
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install
+        run: cd frontend && npm install
+      - name: Build
+        run: cd frontend && npm run build
