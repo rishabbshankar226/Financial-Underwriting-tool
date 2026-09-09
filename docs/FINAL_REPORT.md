@@ -13,9 +13,11 @@
 
 Phase-5 walkthrough represented in the UI: Alpine Fabrication → fixture selection → spread review → coverage metrics → generated memo; any edited row records the old/new value and required rationale in the audit view.
 
-## 2. Gate result
+## 2. Gate and CI result
 
-`python3 gate/reference_calculator.py --selftest` passed locally on 2026-09-08: **18 fixture values, 2 flags, and all 7 mutations killed**. Backend tests independently match the pinned commercial and consumer outputs.
+The supplied `gate/reference_calculator.py` is committed verbatim. `python3 gate/reference_calculator.py --selftest` passed locally on 2026-09-08: **18 fixture values, 2 flags, and all 7 mutations killed**. Backend tests independently match the pinned commercial and consumer outputs.
+
+GitHub Actions re-ran the independent gate, backend tests, a high-severity npm dependency audit, and the React production build after the final compliance restore; all jobs passed.
 
 Fixture C is exactly 43.00% back-end DTI. The prototype policy sets 43% as a review boundary and 50% as an illustrative decline boundary, so fixture C resolves to **review**. This is explicitly not represented as the legal General QM rule.
 
@@ -33,8 +35,9 @@ Fixture C is exactly 43.00% back-end DTI. The prototype policy sets 43% as a rev
 
 1. **Current full SBA size-standard table:** the official SBA data landing page and current workbook were identified, but the build environment could not retrieve the binary workbook. Rather than guess thresholds, the shipped table contains source metadata and zero production rows; production SBA eligibility fails closed until an official dated table is loaded. Tests use rows explicitly marked synthetic-test-only.
 2. **Full PDF/image OCR fixture suite:** the extraction path is implemented against deterministic synthetic text fixtures. Production-like OCR/image extraction is not claimed. This is the largest Phase-4 scope gap.
-3. **Frontend execution in this build environment:** React/Vite source is complete, but the isolated environment could not fetch npm packages; `npm install` timed out before creating `node_modules`. Backend and Python execution were verified locally. The frontend must be installed in a normal npm-connected environment.
-4. **Independent model validation:** impossible for the model-development session to provide independent validation; the documentation names this gap.
+3. **Independent model validation:** impossible for the model-development session to provide independent validation; the documentation names this gap.
+
+The local sandbox could not fetch npm packages during the original Phase-5 check, but this is no longer an unresolved frontend-validation gap: GitHub Actions subsequently installed the dependencies, passed the high-severity audit step, and completed the React production build successfully.
 
 ## 5. Configuration versus formula constants
 
