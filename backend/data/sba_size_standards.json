@@ -1,0 +1,9 @@
+{
+  "source": "U.S. Small Business Administration, Small Business Size Standards",
+  "source_url": "https://data.sba.gov/dataset/small-business-size-standards",
+  "landing_page_last_checked": "2026-09-08",
+  "published_current_effective_date": "2023-03-17",
+  "status": "SOURCE_METADATA_ONLY",
+  "warning": "The official current workbook was identified but could not be retrieved by the build environment. No NAICS thresholds are guessed or represented as current. Load the official dated table before real evaluation.",
+  "rows": []
+}
