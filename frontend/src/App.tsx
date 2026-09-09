@@ -11,7 +11,7 @@ const seed=[
 
 export default function App(){
  const [rows,setRows]=useState(seed); const [audit,setAudit]=useState<Audit[]>([]); const [tab,setTab]=useState<'spread'|'memo'|'audit'>('spread'); const [fixture,setFixture]=useState('synthetic_1120s.txt');
- const total=useMemo(()=>rows.reduce((s,r)=>s+(Number(r.value.replaceAll(',',''))||0),0),[rows]);
+ const total=useMemo(()=>rows.reduce((s,r)=>s+(Number(r.value.replace(/,/g,''))||0),0),[rows]);
  function edit(i:number){const next=prompt('Override value',rows[i].value); if(next===null||next===rows[i].value)return; const why=prompt('Required rationale'); if(!why)return; const prior=rows[i].value; setRows(v=>v.map((r,j)=>j===i?{...r,value:next,status:'Human override'}:r)); setAudit(v=>[...v,{field:rows[i].line,prior,next,rationale:why}]);}
  return <main>
   <header><div><div className="eyebrow">CREDIT WORKSPACE / SYNTHETIC</div><h1>Alpine Fabrication</h1><p>Commercial · 2025 review · Analyst-assisted</p></div><div className="decision"><span>Illustrative decision</span><strong>APPROVE</strong><small>Coverage comfortably above prototype floors</small></div></header>
