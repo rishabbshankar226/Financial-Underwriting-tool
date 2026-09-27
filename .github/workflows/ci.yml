@@ -15,7 +15,7 @@ jobs:
           python-version: '3.12'
       - name: Install backend dependencies
         run: pip install -r backend/requirements.txt
-      - name: Independent gate
+      - name: Reference calculator self-test
         run: python gate/reference_calculator.py --selftest
       - name: Backend tests
         run: cd backend && pytest -q

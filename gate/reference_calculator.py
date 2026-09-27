@@ -1,48 +1,39 @@
 #!/usr/bin/env python3
-"""Independent reference calculator for the credit-underwriting control prompt.
+"""Independent reference calculator for Spreadline's underwriting math.
 
-This file ships OUTSIDE the tree the built system lives in, and the built
-system must not import it. It exists so a claim like "our DSCR engine is
-correct" can be checked against numbers computed by a second, independent
-implementation, written before the built system existed, from a synthetic
-borrower package that never touches real financial data.
+The application never imports this file. It recomputes the key figures for
+three synthetic borrowers with a separate implementation, so the backend's
+DSCR, FCCR and DTI numbers can be checked against something other than
+themselves. None of the inputs are real financial data.
 
-Three borrower fixtures, five things pinned about each:
+The three borrower fixtures:
 
-  A. Alpine Fabrication, Inc. (1120-S, 100% owner-guarantor) -- a clear
-     approve: DSCR, FCCR and Global DSCR all comfortably above the 1.15x-1.25x
-     range commercial and SBA policy commonly cites. Also carries a UCA-style
-     cash-flow figure well below its EBITDA (working capital is absorbing
-     cash) and a two-year K-1 distribution history that is stable.
-  B. Bristlecone Logistics, LLC (1065, 100% owner-guarantor) -- a clear
-     decline: all three coverage ratios below 1.0x. Only one year of K-1 data
-     is supplied for this fixture on purpose, to exercise the
-     "insufficient-history" flag rather than the "stable" one.
-  C. A standalone consumer applicant, engineered to land at exactly 43%
-     back-end DTI -- the historical Qualified-Mortgage general DTI ceiling --
-     to exercise threshold/boundary handling rather than a clear pass or fail.
-     This fixture pins the DTI numbers only. It does NOT pin an approve or
-     decline decision: see CREDIT_UNDERWRITING_CONTROL_PROMPT.md section 7 for
-     why that is a deliberate, named gap rather than an oversight.
+  A. Alpine Fabrication, Inc. (1120-S, 100% owner-guarantor), a clear
+     approve. DSCR, FCCR and global DSCR are all well above the 1.15x-1.25x
+     range that commercial and SBA policies commonly use. Its UCA-style
+     cash flow is well below EBITDA (working capital is absorbing cash), and
+     its two years of K-1 distributions are stable.
+  B. Bristlecone Logistics, LLC (1065, 100% owner-guarantor), a clear
+     decline, with all three coverage ratios below 1.0x. It has only one
+     year of K-1 data, so it exercises the "insufficient_history" flag.
+  C. A consumer applicant at exactly 43% back-end DTI, the old General QM
+     limit, to test boundary handling. This fixture pins the DTI figures
+     only. Whether 43% leads to approve, review or decline is a policy
+     setting in the application, so no decision is pinned here.
 
-This gate exercises the commercial and consumer verticals. It carries no
-SBA-specific fixture (no NAICS size-standard check, no credit-elsewhere test,
-no SOP-version switch); the control prompt's Phase 2 asks the builder to
-construct that coverage independently, and section 7 says so explicitly
-rather than leaving the gap implicit.
+There is no SBA fixture (no NAICS size-standard check, credit-elsewhere test
+or SOP version switch). The backend tests cover those.
 
-Every number below was computed by running this script, not typed from
-memory. Re-run it before trusting any figure quoted about it elsewhere.
+Every number below comes from running this script. Re-run it before relying
+on a figure quoted elsewhere.
 
     python3 reference_calculator.py            # prints all fixture results
-    python3 reference_calculator.py --selftest # asserts pinned values + kills mutants
+    python3 reference_calculator.py --selftest # checks pinned values and runs the mutation tests
 
-Formula definitions used here are stated explicitly in each function's
-docstring, with the convention they follow. They are defensible, commonly
-used variants, not a claim that a single universal formula exists industry
-wide. A production system must make these definitions a configurable,
-versioned, citable policy setting -- never a silent constant -- per
-CREDIT_UNDERWRITING_CONTROL_PROMPT.md section 2.
+Each function's docstring states its formula and the convention it follows.
+These are common, defensible variants. There is no single industry-wide
+formula, so a production system should make each definition a configurable,
+versioned policy setting instead of a hard-coded constant.
 """
 
 from __future__ import annotations
@@ -171,7 +162,7 @@ def ebitda(year: dict) -> float:
     interest, depreciation, amortization and any Section 179 election added
     back. Section 179 is added back alongside depreciation because it is the
     same non-cash capital-cost election accelerated into one year, the
-    standard tax-return-spreading add-back (see control prompt section 2)."""
+    standard add-back when spreading tax returns."""
     obi = ordinary_business_income(year)
     return (
         obi
@@ -213,7 +204,7 @@ def uca_cash_flow(year: dict, working_capital: dict) -> float:
 def k1_distribution_ratio(year: dict) -> float:
     """Ratio of a K-1's cash distribution to that year's ordinary business
     income -- the basis for judging whether a K-1 income claim has a stable,
-    comparable distribution history, per control prompt section 2."""
+    comparable distribution history."""
     obi = ordinary_business_income(year)
     if obi <= 0:
         return float("inf")
@@ -224,10 +215,9 @@ def k1_history_flag(years: list[dict], stability_band: float = 0.15) -> str:
     """Returns 'insufficient_history' when fewer than two years of K-1 data
     are supplied, 'stable' when the distribution-to-income ratio across the
     two most recent years differs by no more than stability_band (an
-    absolute fraction), otherwise 'unstable'. Mirrors control prompt
-    section 2's flag-do-not-silently-pass rule for K-1 income: a built
-    system that always reports 'stable' regardless of history, or that never
-    checks at all, should fail against this fixture set."""
+    absolute fraction), otherwise 'unstable'. K-1 income without enough
+    history is flagged instead of passed, so an implementation that always
+    reports 'stable', or never checks, fails against these fixtures."""
     if len(years) < 2:
         return "insufficient_history"
     ratios = [k1_distribution_ratio(y) for y in years[-2:]]
@@ -243,9 +233,8 @@ def dscr(year: dict, existing_debt: dict, proposed_loan: dict) -> float:
     principal-and-interest debt service of the proposed loan. Interest is
     counted once: it is added back into EBITDA and then charged once, in
     full, in the denominator. Counting interest once, in the denominator, is
-    the piece of RMA/UCA convention this formula borrows (see control prompt
-    section 2); it is not itself a UCA cash-flow figure, and is not an
-    SBA-specific formula. See uca_cash_flow() above for the actual
+    the piece of RMA/UCA convention this formula borrows. It is not itself a
+    UCA cash-flow figure, and is not an SBA-specific formula. See uca_cash_flow() above for the actual
     UCA-style figure."""
     total_debt_service = (
         year["interest_expense"] + existing_debt["cpltd_annual"] + proposed_loan["debt_service"]
@@ -259,8 +248,7 @@ def fccr(year: dict, existing_debt: dict, proposed_loan: dict) -> float:
     capex or cash-tax adjustment is modeled in this simplified fixture; a real
     system must expose those as explicit, separately-sourced line items
     rather than assuming zero, and must cite whichever FCCR definition its
-    credit policy adopts (several coexist industry-wide; see control prompt
-    section 2)."""
+    credit policy adopts (several are in use)."""
     total_debt_service = (
         year["interest_expense"]
         + existing_debt["cpltd_annual"]
@@ -296,7 +284,7 @@ def consumer_dti(applicant: dict) -> tuple[float, float]:
     payment (P&I + tax/insurance escrow) over gross monthly income; back-end
     adds all other monthly debt obligations. Whether 43% back-end is a hard
     ceiling depends on which Reg Z / QM category applies and is a policy
-    parameter, not a constant -- see control prompt section 2."""
+    parameter rather than a constant."""
     housing = applicant["proposed_housing_pi"] + applicant["proposed_housing_tax_ins"]
     front = housing / applicant["gross_monthly_income"]
     back = (housing + applicant["other_monthly_debt"]) / applicant["gross_monthly_income"]
@@ -450,9 +438,8 @@ def run_flag_checks() -> list[FlagCheck]:
 # they claim to test, not just asserting a number against itself. Each
 # mutation reimplements one function with a specific, named defect and
 # asserts the mutated result misses its pinned expected value by more than
-# tolerance. A mutation that still matches means the check above cannot
-# actually catch that defect in a built system, and is not evidence of
-# anything.
+# tolerance. A mutation that still matches means the check above could
+# not catch that defect in the application.
 # --------------------------------------------------------------------------
 
 
