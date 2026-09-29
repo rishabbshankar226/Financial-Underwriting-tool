@@ -3,12 +3,17 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Literal
-from pydantic import BaseModel, Field
+from math import fsum
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 DISCLAIMER = (
     "Prototype demonstration only. This output has not been validated for use in an actual "
     "lending decision. Use synthetic data only; this is not legal or compliance advice."
 )
+
+class FiniteModel(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+
 
 class Vertical(str, Enum):
     commercial = "commercial"
@@ -21,7 +26,7 @@ class SourceKind(str, Enum):
     human_override = "human_override"
     deterministic = "deterministic"
 
-class AuditEvent(BaseModel):
+class AuditEvent(FiniteModel):
     field: str
     prior_value: Any | None = None
     new_value: Any
@@ -30,62 +35,69 @@ class AuditEvent(BaseModel):
     rationale: str
     at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-class FinancialYear(BaseModel):
+class FinancialYear(FiniteModel):
     gross_receipts: float
     cogs: float
     operating_expense_excl_dna_interest_comp: float
     officer_compensation: float
     depreciation: float
     amortization: float
-    interest_expense: float
+    interest_expense: float = Field(ge=0)
     section_179: float = 0
     k1_distribution: float = 0
 
-class ExistingDebt(BaseModel):
-    cpltd_annual: float
-    operating_lease_annual: float = 0
+class ExistingDebt(FiniteModel):
+    cpltd_annual: float = Field(ge=0)
+    operating_lease_annual: float = Field(default=0, ge=0)
 
-class ProposedLoan(BaseModel):
-    amount: float
-    annual_rate: float
-    term_months: int
+class ProposedLoan(FiniteModel):
+    amount: float = Field(ge=0)
+    annual_rate: float = Field(ge=0)
+    term_months: int = Field(gt=0)
 
-class Guarantor(BaseModel):
+class Guarantor(FiniteModel):
     name: str = "Synthetic Guarantor"
     ownership_percentage: float = Field(default=1.0, ge=0, le=1)
     wages: float = 0
     interest_dividend_income: float = 0
-    mortgage_pi_annual: float = 0
-    auto_loan_annual: float = 0
-    credit_card_min_annual: float = 0
+    mortgage_pi_annual: float = Field(default=0, ge=0)
+    auto_loan_annual: float = Field(default=0, ge=0)
+    credit_card_min_annual: float = Field(default=0, ge=0)
 
-class WorkingCapital(BaseModel):
+class WorkingCapital(FiniteModel):
     ar_increase: float = 0
     inventory_increase: float = 0
     ap_increase: float = 0
     cash_taxes_paid: float = 0
 
-class CommercialRequest(BaseModel):
+class CommercialRequest(FiniteModel):
     borrower_name: str
     geography: str
-    years: list[FinancialYear]
+    years: list[FinancialYear] = Field(min_length=1)
     existing_debt: ExistingDebt
     proposed_loan: ProposedLoan
     guarantors: list[Guarantor] = []
     working_capital: WorkingCapital
     overrides: list[AuditEvent] = []
 
-class ConsumerRequest(BaseModel):
+    @model_validator(mode="after")
+    def validate_total_ownership(self):
+        if fsum(g.ownership_percentage for g in self.guarantors) > 1.0 + 1e-9:
+            raise ValueError("Total guarantor ownership cannot exceed 100%")
+        return self
+
+
+class ConsumerRequest(FiniteModel):
     applicant_name: str
     geography: str
-    gross_monthly_income: float
-    proposed_housing_pi: float
-    proposed_housing_tax_ins: float
-    other_monthly_debt: float
+    gross_monthly_income: float = Field(gt=0)
+    proposed_housing_pi: float = Field(ge=0)
+    proposed_housing_tax_ins: float = Field(ge=0)
+    other_monthly_debt: float = Field(ge=0)
     atr_documentation: dict[str, bool] = {}
     synthetic_credit_score: int | None = Field(default=None, ge=300, le=850)
 
-class DecisionFactor(BaseModel):
+class DecisionFactor(FiniteModel):
     name: str
     value: float | str | bool
     weight: float
@@ -93,13 +105,13 @@ class DecisionFactor(BaseModel):
     passed: bool | None = None
     source: str
 
-class ReasonCode(BaseModel):
+class ReasonCode(FiniteModel):
     code: str
     factor: str
     message: str
     value: float | str | bool
 
-class Decision(BaseModel):
+class Decision(FiniteModel):
     vertical: Vertical
     outcome: Literal["approve", "decline", "review"]
     score: float
@@ -107,35 +119,35 @@ class Decision(BaseModel):
     reasons: list[ReasonCode]
     disclaimer: str = DISCLAIMER
 
-class ExtractionField(BaseModel):
+class ExtractionField(FiniteModel):
     name: str
     value: str | float | int | None
     confidence: float = Field(ge=0, le=1)
     confirmed: bool = False
     source_line: str | None = None
 
-class ExtractionResult(BaseModel):
+class ExtractionResult(FiniteModel):
     fields: list[ExtractionField]
     measured_accuracy: float | None = None
     disclaimer: str = DISCLAIMER
 
-class SBASizeRow(BaseModel):
+class SBASizeRow(FiniteModel):
     naics: str
     measure: Literal["receipts_millions", "employees"]
     threshold: float
     source_effective_date: str
     synthetic_test_only: bool = False
 
-class SBACase(BaseModel):
+class SBACase(FiniteModel):
     borrower_name: str
     naics: str
-    annual_receipts_millions: float | None = None
-    employees: int | None = None
-    requested_loan: float
-    owner_liquid_resources: float = 0
-    retirement_allowance: float = 0
-    college_allowance: float = 0
-    medical_allowance: float = 0
+    annual_receipts_millions: float | None = Field(default=None, ge=0)
+    employees: int | None = Field(default=None, ge=0)
+    requested_loan: float = Field(gt=0)
+    owner_liquid_resources: float = Field(default=0, ge=0)
+    retirement_allowance: float = Field(default=0, ge=0)
+    college_allowance: float = Field(default=0, ge=0)
+    medical_allowance: float = Field(default=0, ge=0)
     global_dscr: float
-    transaction_type: str = "expansion"
+    transaction_type: Literal["expansion", "acquisition", "buyout", "esop"] = "expansion"
     sop_version: Literal["8", "8.1"] = "8"

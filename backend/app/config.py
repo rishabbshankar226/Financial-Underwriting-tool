@@ -16,6 +16,7 @@ class PolicyConfig:
     commercial_min_fccr: float = 1.20
     commercial_min_global_dscr: float = 1.25
     # Prototype policy boundaries, not asserted as General-QM legal ceilings.
+    consumer_required_atr_fields: tuple[str, ...] = ("income", "assets", "debts")
     consumer_review_dti: float = 0.43
     consumer_decline_dti: float = 0.50
     extraction_confidence_threshold: float = 0.90
