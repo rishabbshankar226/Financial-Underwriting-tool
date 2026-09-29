@@ -1,5 +1,6 @@
 from __future__ import annotations
 import csv, io, json, re
+from math import isfinite
 from .config import DEFAULT_POLICY
 from .schemas import ExtractionField, ExtractionResult
 
@@ -23,15 +24,29 @@ def extract_synthetic_text(text: str, confirmed_fields: set[str] | None=None) ->
     confidence threshold AND a human confirmed it.
     """
     confirmed_fields=confirmed_fields or set(); fields=[]
-    pattern=re.compile(r"^([A-Z0-9_]+)\s*:\s*\$?([0-9,.]+)\s*$",re.MULTILINE)
+    number = r"(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\.[0-9]+)?"
+    pattern = re.compile(rf"^([A-Z0-9_]+)[ \t]*:[ \t]*(\$?-?{number}|-\$?{number}|\(\$?{number}\))[ \t\r]*$", re.MULTILINE)
     for match in pattern.finditer(text):
-        name,raw=match.groups(); key=name.lower()
-        fields.append(ExtractionField(name=key,value=float(raw.replace(',','')),confidence=.99,confirmed=key in confirmed_fields,source_line=match.group(0)))
+        name, raw = match.groups()
+        key = name.lower()
+        value = float(raw.replace(',', '').replace('$', '').strip('()'))
+        if raw.startswith('('): value = -value
+        if not isfinite(value): continue
+        fields.append(ExtractionField(name=key, value=value, confidence=.99,
+                                      confirmed=key in confirmed_fields, source_line=match.group(0)))
     return ExtractionResult(fields=fields)
 
 
 def confirmed_payload(result: ExtractionResult) -> dict[str,float]:
-    return {f.name:float(f.value) for f in result.fields if f.value is not None and f.confidence>=DEFAULT_POLICY.extraction_confidence_threshold and f.confirmed}
+    payload = {}
+    for field in result.fields:
+        if field.value is None or field.confidence < DEFAULT_POLICY.extraction_confidence_threshold or not field.confirmed:
+            continue
+        value = float(field.value)
+        if not isfinite(value):
+            raise ValueError(f"Confirmed field {field.name} must be finite")
+        payload[field.name] = value
+    return payload
 
 
 def extraction_accuracy(result: ExtractionResult, truth: dict[str,float]) -> float:
