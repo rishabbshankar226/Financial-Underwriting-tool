@@ -19,9 +19,9 @@ function display(factor: Factor): string {
   if (typeof factor.value !== 'number') return String(factor.value);
   return factor.name === 'uca_positive' ? `$${money(factor.value)}` : `${factor.value.toFixed(3)}x`;
 }
-async function calculate(payload: unknown, signal: AbortSignal): Promise<Decision> {
+async function calculate(payload: unknown, signal: AbortSignal, rawJson?: string): Promise<Decision> {
   const response = await fetch(`${apiBase}/commercial/decision`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal,
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: rawJson ?? JSON.stringify(payload), signal,
   });
   const body = await response.json();
   if (!response.ok) {
@@ -42,13 +42,13 @@ export default function App() {
   const year = request.years[request.years.length - 1];
   const audit = request.overrides ?? [];
 
-  async function evaluate(payload: unknown, filename?: string) {
+  async function evaluate(payload: unknown, filename?: string, rawJson?: string) {
     active.current?.abort();
     const controller = new AbortController();
     active.current = controller;
     setDecision(null); setError(''); setBusy(true);
     try {
-      const result = await calculate(payload, controller.signal);
+      const result = await calculate(payload, controller.signal, rawJson);
       if (controller.signal.aborted) return;
       if (filename) { setRequest(payload as Request); setFixture(filename); }
       setDecision(result);
@@ -92,8 +92,9 @@ export default function App() {
     if (!file) return;
     if (file.size > 1_000_000) { setError('Invalid fixture: use a JSON file smaller than 1 MB.'); return; }
     try {
-      const payload: unknown = JSON.parse(await file.text());
-      await evaluate(payload, file.name);
+      const rawJson = await file.text();
+      const payload: unknown = JSON.parse(rawJson);
+      await evaluate(payload, file.name, rawJson);
     } catch {
       setError('Invalid fixture: select a complete commercial request in JSON format.');
     }
@@ -106,7 +107,7 @@ export default function App() {
     {error && <div className="warning" role="alert">{error}</div>}
     {!busy && !decision && <button onClick={() => void evaluate(request)}>Retry current case</button>}
     <nav>{(['spread', 'memo', 'audit'] as const).map(value => <button className={tab === value ? 'active' : ''} onClick={() => setTab(value)} key={value}>{value}</button>)}</nav>
-    {tab === 'spread' && <section className="grid"><div className="panel wide"><div className="panelTitle"><h2>Spread review</h2><span>Select a line item to override · rationale required</span></div><div className="tableScroll"><table><thead><tr><th>Line item</th><th>Latest period</th><th>Source</th><th>Status</th></tr></thead><tbody>{lines.map((line, index) => <tr key={line.key}><td><button className="rowEdit" onClick={() => edit(index)} disabled={busy}>{line.label}</button></td><td className="num">${money(Number(year[line.key]))}</td><td>{fixture === 'alpine.json' ? line.source : 'Imported JSON'}</td><td><span className="pill">{audit.some(event => event.field === line.key) ? 'Human override' : 'Supplied input'}</span></td></tr>)}</tbody></table></div></div><div className="panel"><h2>Coverage</h2>{decision ? decision.factors.filter(factor => factor.name !== 'k1_history').map(factor => <div className="metric" key={factor.name}><span>{labels[factor.name] ?? factor.name}</span><strong>{display(factor)}</strong><small>{factor.name === 'uca_positive' ? 'Must be positive' : `floor ${factor.threshold}x`} · {factor.passed === null ? 'Review required' : factor.passed ? 'Pass' : 'Below policy'}</small></div>) : <p>{busy ? 'Calculating current inputs…' : 'No current results. Check the backend and retry.'}</p>}</div></section>}
+    {tab === 'spread' && <section className="grid"><div className="panel wide"><div className="panelTitle"><h2>Spread review</h2><span>Select a line item to override · rationale required</span></div><div className="tableScroll"><table><thead><tr><th>Line item</th><th>Latest period</th><th>Source</th><th>Status</th></tr></thead><tbody>{lines.map((line, index) => <tr key={line.key}><td><button className="rowEdit" onClick={() => edit(index)} disabled={busy}>{line.label}</button></td><td className="num">${money(Number(year[line.key]))}</td><td>{fixture === 'alpine.json' ? line.source : 'Imported JSON'}</td><td><span className="pill">{audit.some(event => event.field === line.key) ? 'Human override' : 'Supplied input'}</span></td></tr>)}</tbody></table></div></div><div className="panel"><h2>Coverage</h2>{decision ? decision.factors.filter(factor => factor.name !== 'k1_history').map(factor => <div className="metric" key={factor.name}><span>{labels[factor.name] ?? factor.name}</span><strong>{display(factor)}</strong><small>{factor.name === 'uca_positive' ? `Must exceed $${money(Number(factor.threshold))}` : `floor ${factor.threshold}x`} · {factor.passed === null ? 'Review required' : factor.passed ? 'Pass' : 'Below policy'}</small></div>) : <p>{busy ? 'Calculating current inputs…' : 'No current results. Check the backend and retry.'}</p>}</div></section>}
     {tab === 'memo' && <section className="panel memo"><div className="panelTitle"><h2>Credit memo</h2><span>Generated from stored decision factors</span></div>{decision ? <><h3>Recommendation</h3><p>{decision.outcome[0].toUpperCase() + decision.outcome.slice(1)} for prototype demonstration based on the current inputs.</p><h3>Primary factors considered</h3><ul>{decision.factors.map(factor => <li key={factor.name}>{labels[factor.name] ?? factor.name}: {display(factor)} — {factor.passed === null ? 'manual review required' : factor.passed ? 'meets configured policy' : 'does not meet configured policy'}</li>)}</ul>{decision.reasons.length > 0 && <><h3>Recorded reasons</h3><ul>{decision.reasons.map(reason => <li key={reason.code}>{reason.message}</li>)}</ul></>}</> : <p>No current decision is available.</p>}<p className="fine">{disclaimer}</p></section>}
     {tab === 'audit' && <section className="panel memo"><div className="panelTitle"><h2>Audit trail</h2><span>{audit.length} human overrides</span></div>{audit.length === 0 ? <p>No overrides yet.</p> : audit.map((event, index) => <div className="audit" key={index}><strong>{event.field}</strong><span>{String(event.prior_value)} → {String(event.new_value)}</span><small>{event.rationale}</small></div>)}</section>}
   </main>;

@@ -75,11 +75,16 @@ Playwright starts both development servers automatically. Ensure the Python envi
 ## Design notes
 
 - Policy values live in `backend/app/config.py`, so no threshold is buried inside a formula.
+- Policy configuration validates finite values and threshold ordering. Commercial decline floors, the UCA cash-flow floor, and the synthetic consumer credit-score floor are configurable. Default fixture outcomes and arithmetic definitions are unchanged.
+- Decisions carry `policy_version`; factors retain `raw_value`, comparison operators, and commercial coverage decline triggers alongside their rounded display values. Internal reason records include failed and unavailable factors without a four-reason truncation. These records are prototype explanations, not applicant notices.
 - `backend/data/sba_size_standards.json` records where the SBA size standards come from but holds no NAICS rows yet, because the current SBA workbook isn't bundled. A missing row fails closed instead of falling back to a guessed threshold.
 - Every decision and memo carries a prototype disclaimer.
 - Requests reject non-finite values, invalid debt/loan inputs, empty financial histories, and combined ownership above 100%. Overflow returns HTTP 422. Zero debt-service coverage is marked not applicable and cannot satisfy an approval factor.
+- JSON intake rejects duplicate object keys and non-finite numeric tokens, including overflowing exponents. Browser imports send the original JSON text for backend validation. CSV intake requires one complete row with unique, nonblank headers. Duplicate extracted fields must be resolved before any payload is promoted.
+- Audit rationales are trimmed and must be nonblank on the backend as well as in the browser. Override history and actor labels remain a client-held prototype demonstration, not an authenticated persistent audit service.
 - The prototype consumer documentation checklist requires `income`, `assets`, and `debts`; it is configurable and is not a complete legal ATR checklist. The DTI review boundary is recorded as its own decision factor.
 - SBA transaction types are `expansion`, `acquisition`, `buyout`, or `esop`. The caller must select the applicable SOP version; effective-date selection is not automated.
+- SBA cases must supply `sop_version`; there is no default. Size rows require a six-digit NAICS code, a positive threshold, and a calendar effective date (ISO `YYYY-MM-DD` in JSON); employee thresholds must be whole numbers. Duplicate NAICS rows and explicitly synthetic rows are rejected by the official table loader. Synthetic test rows can still be injected directly into library tests and are labeled in results. Date validation does not select or prove current policy applicability.
 - Reason codes come from the factors the decision engine actually evaluated.
 - Extracted fields that nobody has confirmed never reach the calculations.
 

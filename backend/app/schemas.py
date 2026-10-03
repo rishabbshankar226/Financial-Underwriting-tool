@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Any, Literal
 from math import fsum
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 DISCLAIMER = (
     "Prototype demonstration only. This output has not been validated for use in an actual "
@@ -34,6 +34,14 @@ class AuditEvent(FiniteModel):
     actor: str = "system"
     rationale: str
     at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    @field_validator("rationale")
+    @classmethod
+    def validate_rationale(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("A nonblank audit rationale is required")
+        return value
 
 class FinancialYear(FiniteModel):
     gross_receipts: float
@@ -104,6 +112,11 @@ class DecisionFactor(FiniteModel):
     threshold: float | str | bool | None = None
     passed: bool | None = None
     source: str
+    # Preserve the comparison value separately from rounded presentation.
+    raw_value: float | str | bool | None = None
+    comparison_operator: Literal[">=", ">", "<", "=="] | None = None
+    decline_threshold: float | None = None
+    decline_triggered: bool | None = None
 
 class ReasonCode(FiniteModel):
     code: str
@@ -117,6 +130,7 @@ class Decision(FiniteModel):
     score: float
     factors: list[DecisionFactor]
     reasons: list[ReasonCode]
+    policy_version: str
     disclaimer: str = DISCLAIMER
 
 class ExtractionField(FiniteModel):
@@ -132,15 +146,21 @@ class ExtractionResult(FiniteModel):
     disclaimer: str = DISCLAIMER
 
 class SBASizeRow(FiniteModel):
-    naics: str
+    naics: str = Field(pattern=r"^[0-9]{6}$")
     measure: Literal["receipts_millions", "employees"]
-    threshold: float
-    source_effective_date: str
+    threshold: float = Field(gt=0)
+    source_effective_date: date
     synthetic_test_only: bool = False
+
+    @model_validator(mode="after")
+    def validate_employee_threshold(self):
+        if self.measure == "employees" and not self.threshold.is_integer():
+            raise ValueError("Employee size threshold must be a whole number")
+        return self
 
 class SBACase(FiniteModel):
     borrower_name: str
-    naics: str
+    naics: str = Field(pattern=r"^[0-9]{6}$")
     annual_receipts_millions: float | None = Field(default=None, ge=0)
     employees: int | None = Field(default=None, ge=0)
     requested_loan: float = Field(gt=0)
@@ -150,4 +170,4 @@ class SBACase(FiniteModel):
     medical_allowance: float = Field(default=0, ge=0)
     global_dscr: float
     transaction_type: Literal["expansion", "acquisition", "buyout", "esop"] = "expansion"
-    sop_version: Literal["8", "8.1"] = "8"
+    sop_version: Literal["8", "8.1"]

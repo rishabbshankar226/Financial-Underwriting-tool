@@ -31,9 +31,11 @@ Production monitoring would need input drift/missingness; override rates and rea
 
 ## Explainability / adverse action
 
-Regulation B §1002.9 requires specific reasons tied to factors actually considered. The decision engine stores factor name, value, weight, threshold, pass/fail state, and source. `ReasonCode` is generated only from failed stored factors; no disconnected static denial list is used.
+Regulation B §1002.9 requires specific reasons tied to factors actually considered. The decision engine stores factor name, value, weight, threshold, pass/fail state, and source. `ReasonCode` is generated from failed or unavailable stored factors; unavailable values carry manual-review explanations, and no disconnected static denial list is used.
 
 Current source: https://www.consumerfinance.gov/rules-policy/regulations/1002/9/
+
+The October 3 correctness update records raw comparison values, policy versions, and commercial decline triggers. Internal reason records now include unavailable factors with manual-review explanations and retain all failed factors. They are prototype explanation records, not legally validated applicant notices. Override rationales are checked server-side, but history and actor identity remain client-held demonstration data.
 
 If a synthetic credit-file input participates in a consumer decision, documentation flags that a real system using consumer-report information may trigger parallel FCRA notice obligations. Spreadline performs no bureau pull.
 

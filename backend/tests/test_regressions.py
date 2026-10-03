@@ -111,7 +111,7 @@ def test_partial_atr_checklist_is_not_complete():
 def test_invalid_sba_inputs_rejected_before_evaluation(field, value):
     from app.schemas import SBACase
     from pydantic import ValidationError
-    payload = dict(borrower_name='Synthetic', naics='999999', requested_loan=100000, global_dscr=1.2)
+    payload = dict(borrower_name='Synthetic', naics='999999', requested_loan=100000, global_dscr=1.2, sop_version='8')
     payload[field] = value
     with pytest.raises(ValidationError):
         SBACase(**payload)

@@ -4,7 +4,7 @@ from app.sba import evaluate_sba
 
 
 def test_sba_hand_constructed_case_with_synthetic_injected_row():
-    row = SBASizeRow(naics="999999",measure="receipts_millions",threshold=10,source_effective_date="synthetic-test",synthetic_test_only=True)
+    row = SBASizeRow(naics="999999",measure="receipts_millions",threshold=10,source_effective_date="2025-06-01",synthetic_test_only=True)
     case = SBACase(borrower_name="Synthetic SBA Co",naics="999999",annual_receipts_millions=5,requested_loan=500_000,owner_liquid_resources=120_000,retirement_allowance=50_000,global_dscr=1.31,transaction_type="acquisition",sop_version="8.1")
     out = evaluate_sba(case,[row])
     assert out["size_eligible"] is True
@@ -14,7 +14,7 @@ def test_sba_hand_constructed_case_with_synthetic_injected_row():
 
 
 def test_sba_missing_official_row_fails_closed():
-    case = SBACase(borrower_name="Synthetic SBA Co",naics="123456",annual_receipts_millions=5,requested_loan=100_000,global_dscr=1.4)
+    case = SBACase(borrower_name="Synthetic SBA Co",naics="123456",annual_receipts_millions=5,requested_loan=100_000,global_dscr=1.4,sop_version="8")
     try:
         evaluate_sba(case, [])
         assert False, "expected failure"
