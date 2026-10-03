@@ -59,3 +59,30 @@ test('JSON upload loads data and invalid upload is reported', async ({ page }) =
   await page.locator('input[type=file]').setInputFiles({ name: 'invalid.json', mimeType: 'application/json', buffer: Buffer.from('{}') });
   await expect(page.getByRole('alert')).toContainText('Invalid fixture');
 });
+
+test('UCA card displays the configured cash-flow floor from the API', async ({ page }) => {
+  await page.route('**/commercial/decision', async route => {
+    const response = await route.fetch();
+    const body = await response.json();
+    const factor = body.factors.find((item: { name: string }) => item.name === 'uca_positive');
+    factor.threshold = 400000;
+    factor.passed = false;
+    body.outcome = 'review';
+    await route.fulfill({ response, json: body });
+  });
+  await page.goto('/');
+  await expect(page.locator('.decision strong')).toHaveText('REVIEW');
+  await expect(page.locator('.metric').filter({ hasText: 'UCA cash flow' })).toContainText('Must exceed $400,000');
+});
+
+test('JSON upload preserves duplicate keys for backend rejection', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.decision strong')).toHaveText('APPROVE');
+  const raw = JSON.stringify(alpine).replace('"amount":500000', '"amount":1,"amount":500000');
+  expect((raw.match(/"amount":/g) ?? []).length).toBe(2);
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'duplicate.json', mimeType: 'application/json', buffer: Buffer.from(raw),
+  });
+  await expect(page.getByRole('alert')).toContainText('Duplicate JSON key');
+  await expect(page.locator('.decision strong')).toHaveText('UNAVAILABLE');
+});

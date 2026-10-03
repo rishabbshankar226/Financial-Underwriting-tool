@@ -1,19 +1,49 @@
 from __future__ import annotations
 import csv, io, json, re
 from math import isfinite
-from .config import DEFAULT_POLICY
+from .config import DEFAULT_POLICY, PolicyConfig
 from .schemas import ExtractionField, ExtractionResult
+
+
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict:
+    out = {}
+    for key, value in pairs:
+        if key in out:
+            raise ValueError(f"Duplicate JSON key: {key}")
+        out[key] = value
+    return out
+
+
+def _reject_json_constant(value: str):
+    raise ValueError(f"Non-finite JSON value: {value}")
+
+
+def _finite_json_float(raw: str) -> float:
+    value = float(raw)
+    if not isfinite(value):
+        raise ValueError("Non-finite JSON number exceeds the supported calculation range")
+    return value
 
 
 def parse_structured(payload: str, kind: str) -> dict:
     if kind=="json":
-        out=json.loads(payload)
+        out=json.loads(payload, object_pairs_hook=_unique_json_object,
+                       parse_constant=_reject_json_constant, parse_float=_finite_json_float)
         if not isinstance(out,dict): raise ValueError("JSON root must be an object")
         return out
     if kind=="csv":
-        rows=list(csv.DictReader(io.StringIO(payload)))
-        if len(rows)!=1: raise ValueError("CSV structured path expects exactly one data row")
-        return dict(rows[0])
+        try:
+            rows = [row for row in csv.reader(io.StringIO(payload), strict=True) if row]
+        except csv.Error as exc:
+            raise ValueError("Malformed CSV input") from exc
+        if len(rows) != 2:
+            raise ValueError("CSV structured path expects a header and exactly one data row")
+        headers = [header.strip() for header in rows[0]]
+        if not all(headers) or len(set(headers)) != len(headers):
+            raise ValueError("CSV headers must be nonblank and unique")
+        if len(rows[1]) != len(headers):
+            raise ValueError("CSV data row must match the header column count")
+        return dict(zip(headers, rows[1]))
     raise ValueError("kind must be json or csv")
 
 
@@ -37,10 +67,14 @@ def extract_synthetic_text(text: str, confirmed_fields: set[str] | None=None) ->
     return ExtractionResult(fields=fields)
 
 
-def confirmed_payload(result: ExtractionResult) -> dict[str,float]:
+def confirmed_payload(result: ExtractionResult, policy: PolicyConfig = DEFAULT_POLICY) -> dict[str,float]:
     payload = {}
+    names = set()
     for field in result.fields:
-        if field.value is None or field.confidence < DEFAULT_POLICY.extraction_confidence_threshold or not field.confirmed:
+        if field.name in names:
+            raise ValueError(f"Duplicate extracted field: {field.name}; resolve the source evidence first")
+        names.add(field.name)
+        if field.value is None or field.confidence < policy.extraction_confidence_threshold or not field.confirmed:
             continue
         value = float(field.value)
         if not isfinite(value):
