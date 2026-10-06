@@ -35,6 +35,26 @@ python -m uvicorn app.main:app --reload --port 8000
 
 Health check: `GET http://localhost:8000/health`
 
+## Dated commercial assessment API
+
+`POST /commercial/assessment` accepts explicit annual periods, USD/dollar units,
+and fixed monthly loan assumptions. It returns the historical spread, current
+pro forma coverage, actual calculation operands, decision comparisons, the
+policy snapshot, and a deterministic assessment fingerprint.
+
+With the backend running, try the separate synthetic dated example:
+
+```bash
+curl --fail-with-body http://localhost:8000/commercial/assessment \
+  -H 'Content-Type: application/json' \
+  --data-binary @backend/fixtures/alpine_dated.json
+```
+
+See [the assessment contract](docs/ASSESSMENT_CONTRACT.md) and the live OpenAPI
+documentation at `http://localhost:8000/docs`. The current browser workspace
+uses the legacy `/commercial/decision` interface and undated fixtures; its dated
+workflow is the next implementation phase.
+
 ## Verify the project
 
 From the repository root, create and activate a clean Python 3.12 environment, then install the pinned Python and frontend dependencies and Playwright's Chromium browser. Node 22 is the CI baseline.
