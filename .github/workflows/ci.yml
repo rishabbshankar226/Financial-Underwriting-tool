@@ -14,11 +14,13 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install backend dependencies
-        run: pip install -r backend/requirements.txt
+        run: |
+          python -m pip install -r backend/requirements.txt -c backend/constraints-py312.txt
+          python -m pip check
       - name: Reference calculator self-test
         run: python gate/reference_calculator.py --selftest
       - name: Backend tests
-        run: cd backend && pytest -q
+        run: cd backend && python -m pytest -q
 
   frontend-build:
     runs-on: ubuntu-latest
@@ -38,7 +40,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install backend for browser tests
-        run: pip install -r backend/requirements.txt
+        run: |
+          python -m pip install -r backend/requirements.txt -c backend/constraints-py312.txt
+          python -m pip check
       - name: Install test browser
         run: cd frontend && npx playwright install --with-deps chromium
       - name: Browser regression tests
