@@ -11,7 +11,7 @@ Spreadline is a credit underwriting prototype for commercial, SBA and consumer l
 - SBA checks: the explicitly selected SOP version, a dated NAICS size-standard table, a credit-elsewhere and personal-resources screen, and a configurable global DSCR floor.
 - Decisions and reason codes built from the same stored factors.
 - JSON and CSV intake, plus field extraction from synthetic text documents. A person has to confirm each extracted field before it reaches the calculations.
-- A React workspace for picking a fixture, reviewing the spread, overriding a value (a rationale is required), and reading the memo and audit trail.
+- A React workspace with a complete annual spread, current assumptions, server calculation traces and policy comparisons, rationale-based edits, a memo, and session edit history.
 - A synthetic check that changing only the applicant's geography doesn't change the outcome.
 
 ## Stack
@@ -51,9 +51,9 @@ curl --fail-with-body http://localhost:8000/commercial/assessment \
 ```
 
 See [the assessment contract](docs/ASSESSMENT_CONTRACT.md) and the live OpenAPI
-documentation at `http://localhost:8000/docs`. The current browser workspace
-uses the legacy `/commercial/decision` interface and undated fixtures; its dated
-workflow is the next implementation phase.
+documentation at `http://localhost:8000/docs`. The browser opens the dated Alpine
+example through this API. The explicit legacy demo and undated imports continue
+to use `/commercial/decision`; dates are never inferred.
 
 ## Verify the project
 
@@ -88,7 +88,13 @@ npm run dev
 
 The UI calls the backend at `http://localhost:8000` by default; set `VITE_API_URL` before starting/building Vite to override it. Start the backend before using the workspace. Decisions, coverage, and memos are recalculated after every accepted edit; failed requests clear the previous results.
 
-Import a complete synthetic commercial request as JSON (see `backend/fixtures/alpine.json`, maximum 1 MB). Supply `years` in chronological order, oldest first. The browser imports JSON only; CSV and text extraction remain backend library functions, not browser upload formats. Override history is held in browser memory and is lost on reload.
+Import a synthetic dated request (`backend/fixtures/alpine_dated.json`) or legacy request (`backend/fixtures/alpine.json`), at most 1,000,000 bytes. Raw import bytes are preserved for backend JSON checks. An unknown declared schema version is rejected. The browser imports JSON only; CSV and text extraction remain backend library functions.
+
+The spread shows all supplied financial lines and periods. Select a historical column to inspect its facts; coverage always uses the latest period and current pro forma assumptions. Derived financial rows are read-only. Select an input amount to open a labeled dialog with its unit/period and required rationale. Assumption edits include existing debt, proposed loan, supplied guarantors, and working capital. Rate/ownership fields show percentages and convert to decimal API units once. Dates and case structure are changed through complete JSON import.
+
+A valid edit clears the active result while evaluating a submitted draft. Success installs the accepted input/result together and records one session edit. Failure keeps that draft for retry and records no applied edit. Malformed/oversized imports also clear active recommendations. Older file reads and responses cannot overwrite a newer selection. Session edit history resets on reload or successful case replacement; imported legacy history is separately labeled unverified. Neither is an authenticated persistent audit service.
+
+See [workspace behavior](docs/WORKSPACE.md) for state and interface boundaries.
 
 Browser regression tests (with backend dependencies installed):
 
