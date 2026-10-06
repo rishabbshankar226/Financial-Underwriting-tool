@@ -2,7 +2,7 @@ from __future__ import annotations
 from math import isfinite
 from .consumer import atr_documentation_complete
 from .config import DEFAULT_POLICY, PolicyConfig
-from .core import dscr, fccr, global_dscr, k1_history_flag, consumer_dti, uca_cash_flow
+from .core import CommercialFacts, commercial_facts, consumer_dti
 from .schemas import CommercialRequest, ConsumerRequest, Decision, DecisionFactor, ReasonCode, Vertical
 
 # Regulation B §1002.9 current source checked 2026-09-08:
@@ -37,12 +37,13 @@ def _coverage_factor(name: str, value: float, weight: float, threshold: float, s
 
 
 def decide_commercial(req: CommercialRequest, policy: PolicyConfig = DEFAULT_POLICY) -> Decision:
-    year=req.years[-1]
-    d=dscr(year,req.existing_debt,req.proposed_loan)
-    f=fccr(year,req.existing_debt,req.proposed_loan)
-    g=global_dscr(year,req.existing_debt,req.proposed_loan,req.guarantors)
-    k1=k1_history_flag(req.years,policy.k1_stability_band)
-    uca=uca_cash_flow(year,req.working_capital)
+    return decision_from_commercial_facts(commercial_facts(req, policy.k1_stability_band), policy)
+
+
+def decision_from_commercial_facts(facts: CommercialFacts, policy: PolicyConfig) -> Decision:
+    values = {name: fact.raw_value for name, fact in facts.current.items()}
+    d, f, g = (values[name] if values[name] is not None else float("inf") for name in ("dscr", "fccr", "global_dscr"))
+    k1, uca = values["k1_history"], values["uca_cash_flow"]
     factors=[
       _coverage_factor("dscr", d, .35, policy.commercial_min_dscr, "spread/coverage", policy.commercial_decline_dscr),
       _coverage_factor("fccr", f, .20, policy.commercial_min_fccr, "spread/fixed-charge", policy.commercial_decline_fccr),

@@ -1,0 +1,70 @@
+{
+  "borrower_name": "Alpine Fabrication",
+  "geography": "60601",
+  "years": [
+    {
+      "gross_receipts": 3900000.0,
+      "cogs": 2570000.0,
+      "operating_expense_excl_dna_interest_comp": 607000.0,
+      "officer_compensation": 175000.0,
+      "depreciation": 90000.0,
+      "amortization": 10000.0,
+      "interest_expense": 58000.0,
+      "section_179": 0.0,
+      "k1_distribution": 280000.0,
+      "period_start": "2024-01-01",
+      "period_end": "2024-12-31"
+    },
+    {
+      "gross_receipts": 4200000.0,
+      "cogs": 2750000.0,
+      "operating_expense_excl_dna_interest_comp": 640000.0,
+      "officer_compensation": 180000.0,
+      "depreciation": 95000.0,
+      "amortization": 10000.0,
+      "interest_expense": 62000.0,
+      "section_179": 40000.0,
+      "k1_distribution": 300000.0,
+      "period_start": "2025-01-01",
+      "period_end": "2025-12-31"
+    }
+  ],
+  "existing_debt": {
+    "cpltd_annual": 58000.0,
+    "operating_lease_annual": 24000.0
+  },
+  "proposed_loan": {
+    "amount": 500000.0,
+    "annual_rate": 0.105,
+    "term_months": 120,
+    "rate_type": "fixed",
+    "repayment_type": "fully_amortizing",
+    "payment_frequency": "monthly"
+  },
+  "guarantors": [
+    {
+      "name": "Dana Alpine",
+      "ownership_percentage": 1.0,
+      "wages": 65000.0,
+      "interest_dividend_income": 3000.0,
+      "mortgage_pi_annual": 28800.0,
+      "auto_loan_annual": 7200.0,
+      "credit_card_min_annual": 3600.0
+    }
+  ],
+  "working_capital": {
+    "ar_increase": 140000.0,
+    "inventory_increase": 60000.0,
+    "ap_increase": 50000.0,
+    "cash_taxes_paid": 95000.0,
+    "period_start": "2025-01-01",
+    "period_end": "2025-12-31"
+  },
+  "schema_version": "commercial-assessment-v1",
+  "assessment_as_of": "2026-10-06",
+  "units": {
+    "currency": "USD",
+    "monetary_unit": "dollars",
+    "annual_rate_unit": "decimal_nominal"
+  }
+}
