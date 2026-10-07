@@ -1,8 +1,20 @@
 # Spreadline
 
-Spreadline is a credit underwriting prototype for commercial, SBA and consumer loans, built on synthetic data only. It spreads tax-return figures, computes coverage ratios, checks them against configurable policy, records the factors behind each decision and writes a short credit memo explaining it.
+Spreadline turns synthetic borrower financials into a spread, coverage ratios, a policy assessment, and a credit memo. It covers commercial, SBA, and consumer loan examples. Each decision can be traced back to the inputs, calculations, and policy comparisons that produced it.
 
 > Prototype only. It has not been validated for real lending decisions. Don't enter real PII or financial information. Nothing here is legal or compliance advice.
+
+## Start here
+
+Run the [backend](#run-the-backend) and [frontend](#run-the-frontend), then open the dated Alpine example in the browser. Select a financial period, inspect a coverage calculation, and edit an input with a rationale to see the assessment update.
+
+| To inspect | Read |
+|---|---|
+| Calculation definitions and model limits | [Model documentation](docs/MODEL_DOCUMENTATION.md) |
+| Dated inputs, calculation traces, and response fields | [Assessment contract](docs/ASSESSMENT_CONTRACT.md) |
+| Edits, imports, and session history | [Workspace behavior](docs/WORKSPACE.md) |
+| Local revisions, replay, and backups | [Case storage](docs/CASE_STORAGE.md) |
+| Test workflow and dependency pins | [Verification](docs/VERIFICATION.md) |
 
 ## What it does
 
@@ -76,15 +88,11 @@ npm --prefix frontend ci
 ./scripts/run_all_checks.sh
 ```
 
-The script checks Python dependency consistency, the independent reference calculator, all backend tests, the high/critical frontend dependency audit, the frontend build, and all browser regression tests. It stops at the first failure and leaves the failing command's output visible. Browser verification starts fresh development servers; stop any existing servers on ports 8000 and 5173 before running it.
+The script checks dependencies, the independent reference calculator, backend tests, the frontend dependency audit and build, and browser tests. It stops at the first failure. Stop any existing servers on ports 8000 and 5173 before running it.
 
 For an existing isolated Chromium installation, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to its absolute executable path and omit the browser download step. Keep any libraries required by that installation available. CI always installs Playwright's bundled Chromium.
 
-`gate/reference_calculator.py` is a second implementation of the core formulas, with pinned results for three synthetic borrowers. The application never imports it, and the backend tests compare their results against its numbers.
-
-`backend/requirements.txt` lists direct dependencies; `backend/constraints-py312.txt` pins their complete resolved versions for Python 3.12 on Linux. CI uses the same constraints for both backend and browser tests. The pinned Starlette 1.7.0 TestClient uses `httpx2` 2.13.1, following [Starlette's supported transport](https://starlette.dev/testclient/). This replaces the deprecated plain `httpx` dependency without filtering warnings or changing application code.
-
-The frontend lockfile pins `source-map-js` 1.2.2 within PostCSS's existing `^1.2.1` range to address [GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q). Refresh Python pins in a clean Python 3.12 environment, review each dependency change, and run the complete verification sequence before accepting a new baseline.
+The [verification notes](docs/VERIFICATION.md) explain the reference checks, dependency pins, and baseline update process.
 
 ## Run the frontend
 
