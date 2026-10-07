@@ -4,6 +4,8 @@ A preview applies hypothetical changes to the latest operating period of a saved
 
 This API does not save scenarios or change a case's head revision. There is no scenario browser interface yet. These calculations use the prototype's existing financial definitions and are not a complete forecast; see the [model limits](MODEL_DOCUMENTATION.md).
 
+To retain the final reviewed batch, use the separate [saved comparison contract](SCENARIO_COMPARISONS.md) with this preview's fingerprint and a write-operation UUID.
+
 ## Select the baseline
 
 Enable local [case storage](CASE_STORAGE.md), save a dated commercial case, and read its selected revision. The preview requires that revision's case ID and run ID:

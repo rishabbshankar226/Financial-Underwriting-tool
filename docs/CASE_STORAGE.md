@@ -20,7 +20,8 @@ export SPREADLINE_CASE_DB="$PWD/.spreadline-data/cases.sqlite3"
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
-The first configured case operation initializes schema v1 in a new/empty file.
+The first configured case operation initializes schema v2 in a new/empty file.
+Existing exact schema-v1 stores remain supported without automatic migration.
 Module import does not create a database. Missing configuration returns
 `503 storage_not_configured` from case routes; stateless assessment remains
 available. Keep database files, sidecars and backups in the ignored
@@ -86,7 +87,8 @@ An ETag is one quoted value:
 receipts use the same sorted-key, compact UTF-8 JSON representation. The original
 retry receipt identifies its old revision; fetch the latest case separately.
 The allowed local development origins can read `ETag`, `Idempotency-Replayed`
-and `Retry-After` through CORS.
+and `Retry-After` through CORS. [Saved comparisons](SCENARIO_COMPARISONS.md) also
+return and expose their canonical `Location`.
 
 | Condition | Result |
 |---|---|
@@ -179,8 +181,12 @@ of an active file. Stop the app, select the verified restored file through
 `SPREADLINE_CASE_DB`, restart, and read/replay the original revisions. Idempotency
 keys and original receipts survive the restore.
 
-Schema v1 initialization is transactional. Existing schema metadata, actual DDL
+Schema v2 initialization is transactional. Existing schema metadata, actual DDL
 and `PRAGMA user_version` must match exactly, including immutability triggers.
 Unknown/newer schemas and nonempty version-zero files are refused without
-modification. There is no invented historical migration; a later migration needs
-its own reviewed backup and tests.
+modification. V1 verification retains its original output shape; v2 adds separate
+comparison and comparison-operation counts. Opening a valid v1 file preserves
+its schema and original receipts. The explicit
+[v1-to-v2 copy upgrade](SCENARIO_COMPARISONS.md#schema-compatibility-and-explicit-copy-upgrade)
+preserves the source and requires a fresh destination; selecting that upgraded
+file for application use is a deliberate operational step.

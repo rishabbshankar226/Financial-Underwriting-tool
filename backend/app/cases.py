@@ -21,7 +21,7 @@ from .case_contracts import (
     EventContext, RecordingMetadata, RevisionPage, RevisionSummary,
 )
 from .case_replay import replay_snapshot
-from .case_schema import SCHEMA_IDENTITY, SCHEMA_STATEMENTS, SCHEMA_VERSION, schema_objects
+from .case_schema import SCHEMAS, SCHEMA_IDENTITY, SCHEMA_STATEMENTS, SCHEMA_VERSION, schema_objects
 from .config import DEFAULT_POLICY
 from .ingestion import parse_structured
 
@@ -141,15 +141,17 @@ class CaseStore:
 
     @staticmethod
     def _check_schema(connection):
-        if connection.execute("PRAGMA user_version").fetchone()[0] != SCHEMA_VERSION:
+        version_number = connection.execute("PRAGMA user_version").fetchone()[0]
+        if version_number not in SCHEMAS:
             raise CaseStoreError(503, "storage_schema", "Unsupported case database schema; file was not changed")
         actual = {(row["type"], row["name"]): " ".join(row["sql"].split())
                   for row in connection.execute("SELECT type,name,sql FROM sqlite_master WHERE name NOT GLOB 'sqlite_*'")}
-        if actual != schema_objects():
+        if actual != schema_objects(version_number):
             raise CaseStoreError(503, "storage_schema", "Case schema identity does not match; file was not changed")
         rows = connection.execute("SELECT identity,serialization_version FROM schema_metadata").fetchall()
-        if len(rows) != 1 or tuple(rows[0]) != (SCHEMA_IDENTITY, STORAGE_VERSION):
+        if len(rows) != 1 or tuple(rows[0]) != (SCHEMAS[version_number][1], STORAGE_VERSION):
             raise CaseStoreError(503, "storage_schema", "Case schema metadata does not match; file was not changed")
+        return version_number
 
     @staticmethod
     def _rollback(connection):
@@ -190,7 +192,7 @@ class CaseStore:
             connection.execute("COMMIT")
             connection.execute("BEGIN IMMEDIATE")
             # Another initializer may have committed while this connection waited.
-            if connection.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION:
+            if connection.execute("PRAGMA user_version").fetchone()[0] in SCHEMAS:
                 self._check_schema(connection)
             else:
                 if (connection.execute("PRAGMA user_version").fetchone()[0] != 0
@@ -250,7 +252,12 @@ class CaseStore:
             return self._snapshot(connection, case_id, revision)
 
     @staticmethod
-    def _retry(connection, operation_id, command_hash):
+    def _retry(connection, operation_id, command_hash, *, comparison_write=False):
+        if (not comparison_write and connection.execute("PRAGMA user_version").fetchone()[0] == 2
+                and connection.execute("SELECT 1 FROM scenario_comparison_operations WHERE operation_id=?", (operation_id,)).fetchone()):
+            from .comparison_storage import original_operation
+            original_operation(connection, operation_id)
+            raise CaseStoreError(409, "operation_conflict", "Successful operation ID belongs to a comparison write")
         row = connection.execute("SELECT * FROM successful_operations WHERE operation_id=?", (operation_id,)).fetchone()
         if row is None:
             return None
@@ -259,7 +266,7 @@ class CaseStore:
                 or not isinstance(recorded_command.get("command"), dict)
                 or _hash(recorded_command) != row["command_hash"]):
             raise CaseStoreError(503, "storage_integrity", "Stored operation command failed verification")
-        if row["command_hash"] != command_hash:
+        if comparison_write or row["command_hash"] != command_hash:
             raise CaseStoreError(409, "operation_conflict", "Successful operation ID was reused with a different command")
         snapshot = CaseStore._snapshot(connection, row["case_id"], row["revision"])
         if (row["receipt_json"] != serialize_snapshot(snapshot) or row["etag"] != etag_for(snapshot)
@@ -447,54 +454,88 @@ class CaseStore:
     def replay(self, case_id, revision):
         return replay_snapshot(self.get(case_id, revision), self.assessment_operation)
 
+    def retain_comparison(self, case_id, revision, command, operation_id):
+        from .comparison_storage import retain
+        case_id = require_uuid(case_id)
+        if type(revision) is not int or not 1 <= revision <= 2**63 - 1:
+            raise CaseStoreError(400, "invalid_revision", "Revision must be a supported positive integer")
+        operation_id = require_uuid(operation_id, "Idempotency-Key")
+        with self._db(write=True) as connection:
+            return retain(self, connection, case_id, revision, command, operation_id)
+
+    def get_comparison(self, case_id, comparison_id):
+        from .comparison_storage import get
+        case_id = require_uuid(case_id)
+        comparison_id = require_uuid(comparison_id, "Comparison ID")
+        with self._db() as connection:
+            return get(connection, case_id, comparison_id)
+
+    def list_comparisons(self, case_id, limit=25, after=None):
+        from .comparison_storage import list_page
+        case_id = require_uuid(case_id)
+        self._page_limit(limit)
+        with self._db() as connection:
+            return list_page(self, connection, case_id, limit, after)
+
     def verify(self):
         with self._db() as connection:
-            if (connection.execute("PRAGMA integrity_check").fetchall()[0][0] != "ok"
-                    or connection.execute("PRAGMA foreign_key_check").fetchone() is not None):
-                raise CaseStoreError(503, "storage_integrity", "Database integrity/foreign-key check failed")
-            cases = connection.execute("SELECT * FROM cases").fetchall()
-            revisions = connection.execute("SELECT case_id,revision FROM revisions ORDER BY case_id,revision").fetchall()
-            totals = {table: connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
-                      for table in ("revisions", "runs", "events", "successful_operations")}
-            if len(set(totals.values())) != 1:
-                raise CaseStoreError(503, "storage_integrity", "Each revision must have one run, event, and receipt")
-            for row in revisions:
-                snapshot = self._snapshot(connection, row["case_id"], row["revision"])
-                op = connection.execute("SELECT * FROM successful_operations WHERE case_id=? AND revision=?", tuple(row)).fetchone()
-                if op is None:
-                    raise CaseStoreError(503, "storage_integrity", "Missing successful operation")
-                require_uuid(op["operation_id"], "Stored operation ID")
-                self._retry(connection, op["operation_id"], op["command_hash"])
-                command = _decode(op["command_json"])
-                if snapshot.revision == 1:
-                    valid = (command == {"action": "create", "command":
-                             {"input": snapshot.normalized_input, "rationale": snapshot.event.rationale}}
-                             and snapshot.event.kind == "creation" and snapshot.event.field_path is None
-                             and snapshot.event.before is None and snapshot.event.after is None)
-                else:
-                    parent = self._snapshot(connection, snapshot.case_id, snapshot.parent_revision)
-                    try:
-                        request, event = self._apply_edit(parent, CaseEdit.model_validate_json(_canonical(command["command"])))
-                        expected = {"action": "edit", "case_id": snapshot.case_id, "expected_etag": etag_for(parent), "command": command["command"]}
-                        actual_event = snapshot.event.model_dump(mode="json")
-                        valid = (command == expected and request.model_dump(mode="json") == snapshot.normalized_input
-                                 and all(actual_event[key] == (value.model_dump(mode="json") if isinstance(value, EventContext) else value)
-                                         for key, value in event.items()))
-                    except (ValueError, KeyError, TypeError, CaseStoreError):
-                        valid = False
-                if not valid:
-                    raise CaseStoreError(503, "storage_integrity", "Stored command/event does not explain its revision")
-            for case in cases:
-                head = self._snapshot(connection, case["case_id"])
-                count = connection.execute("SELECT count(*) FROM revisions WHERE case_id=?", (case["case_id"],)).fetchone()[0]
-                first = self._snapshot(connection, case["case_id"], 1)
-                if (count != head.revision or case["head_run_id"] != head.run_id
-                        or case["borrower_name"] != head.normalized_input["borrower_name"]
-                        or case["recorded_at"] != head.recorded_at or case["created_at"] != first.recorded_at):
-                    raise CaseStoreError(503, "storage_integrity", "Case head or revision sequence failed verification")
-            return {"schema_version": SCHEMA_VERSION, "cases": len(cases), **totals}
+            return self._verify(connection)
+
+    def _verify(self, connection):
+        if (connection.execute("PRAGMA integrity_check").fetchall()[0][0] != "ok"
+                or connection.execute("PRAGMA foreign_key_check").fetchone() is not None):
+            raise CaseStoreError(503, "storage_integrity", "Database integrity/foreign-key check failed")
+        cases = connection.execute("SELECT * FROM cases").fetchall()
+        revisions = connection.execute("SELECT case_id,revision FROM revisions ORDER BY case_id,revision").fetchall()
+        totals = {table: connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
+                  for table in ("revisions", "runs", "events", "successful_operations")}
+        if len(set(totals.values())) != 1:
+            raise CaseStoreError(503, "storage_integrity", "Each revision must have one run, event, and receipt")
+        for row in revisions:
+            snapshot = self._snapshot(connection, row["case_id"], row["revision"])
+            op = connection.execute("SELECT * FROM successful_operations WHERE case_id=? AND revision=?", tuple(row)).fetchone()
+            if op is None:
+                raise CaseStoreError(503, "storage_integrity", "Missing successful operation")
+            require_uuid(op["operation_id"], "Stored operation ID")
+            self._retry(connection, op["operation_id"], op["command_hash"])
+            command = _decode(op["command_json"])
+            if snapshot.revision == 1:
+                valid = (command == {"action": "create", "command":
+                         {"input": snapshot.normalized_input, "rationale": snapshot.event.rationale}}
+                         and snapshot.event.kind == "creation" and snapshot.event.field_path is None
+                         and snapshot.event.before is None and snapshot.event.after is None)
+            else:
+                parent = self._snapshot(connection, snapshot.case_id, snapshot.parent_revision)
+                try:
+                    request, event = self._apply_edit(parent, CaseEdit.model_validate_json(_canonical(command["command"])))
+                    expected = {"action": "edit", "case_id": snapshot.case_id, "expected_etag": etag_for(parent), "command": command["command"]}
+                    actual_event = snapshot.event.model_dump(mode="json")
+                    valid = (command == expected and request.model_dump(mode="json") == snapshot.normalized_input
+                             and all(actual_event[key] == (value.model_dump(mode="json") if isinstance(value, EventContext) else value)
+                                     for key, value in event.items()))
+                except (ValueError, KeyError, TypeError, CaseStoreError):
+                    valid = False
+            if not valid:
+                raise CaseStoreError(503, "storage_integrity", "Stored command/event does not explain its revision")
+        for case in cases:
+            head = self._snapshot(connection, case["case_id"])
+            count = connection.execute("SELECT count(*) FROM revisions WHERE case_id=?", (case["case_id"],)).fetchone()[0]
+            first = self._snapshot(connection, case["case_id"], 1)
+            if (count != head.revision or case["head_run_id"] != head.run_id
+                    or case["borrower_name"] != head.normalized_input["borrower_name"]
+                    or case["recorded_at"] != head.recorded_at or case["created_at"] != first.recorded_at):
+                raise CaseStoreError(503, "storage_integrity", "Case head or revision sequence failed verification")
+        version_number = self._check_schema(connection)
+        if version_number == 2:
+            from .comparison_storage import verify
+            totals.update(verify(connection))
+        return {"schema_version": version_number, "cases": len(cases), **totals}
+
 
     def backup(self, destination):
+        return self._backup(destination)
+
+    def _backup(self, destination, *, copy_timeout=None):
         """Copy a committed snapshot into a fresh file, verify it, preserve source."""
         self.verify()
         # O_EXCL must see an existing leaf symlink, including a dangling one.
@@ -508,7 +549,10 @@ class CaseStore:
             source = self._connect("ro")
             target = sqlite3.connect(destination, autocommit=True, timeout=self.timeout)
             deadline = monotonic() + self.timeout
+            copy_deadline = monotonic() + copy_timeout if copy_timeout is not None else None
             def progress(status, remaining, total):
+                if copy_deadline is not None and monotonic() > copy_deadline:
+                    raise CaseStoreError(503, "copy_timeout", "Database copy exceeded its deadline; retry to a fresh destination")
                 if status in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED) and monotonic() > deadline:
                     raise CaseStoreError(503, "storage_busy", "Backup is busy; retry to a fresh destination")
             source.backup(target, pages=128, progress=progress, sleep=0.05)

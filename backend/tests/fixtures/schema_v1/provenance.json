@@ -1,0 +1,52 @@
+{
+  "case_id": "b9c5fb03-8b58-4ca3-86e5-b1cec7d07251",
+  "database_sha256": "b9d02eb57919585e19ebfc994a764c3c026b558179e2431ac2b28fa73c71b94a",
+  "receipts": [
+    {
+      "etag": "\"case-json-v1:b9c5fb03-8b58-4ca3-86e5-b1cec7d07251:1:92d15065883eae93ce23978fa67d94b54f7aa6bb41d86965822bb6097b885549\"",
+      "operation_id": "411df270-1310-42f1-bc0c-d12d5a2ddda1",
+      "receipt_sha256": "4138cee13e217ebf78b3b5119c838f4b6641cf1b36c3f5b513af744df656465a"
+    },
+    {
+      "etag": "\"case-json-v1:b9c5fb03-8b58-4ca3-86e5-b1cec7d07251:2:162e4196c103144627ea16daeda365e85c2fec6986f84f6a7ca3fdf8c0c8848c\"",
+      "operation_id": "52c84d6a-de78-410d-96e9-03e47002b263",
+      "receipt_sha256": "b8f93874022fafed07e1131ca77f0031cfbda55743bac26257bff055a6af0a15"
+    },
+    {
+      "etag": "\"case-json-v1:b9c5fb03-8b58-4ca3-86e5-b1cec7d07251:3:0d5991db7bfda0813be15e3e08b761589e007179aa45cb21cb0fb693373230d4\"",
+      "operation_id": "f88541ed-3289-4d44-ae2f-6879a786a87c",
+      "receipt_sha256": "64e13c8571070a787a2ffd286dd26514ad1cef8a06e92c6d9233e795cacee1c2"
+    }
+  ],
+  "schema_identity": "a3a84cbec2575acebe5f5314769426b1ca58e0d97f2eaaf8df15b1a60c72b20e",
+  "schema_statements": [
+    "CREATE TABLE schema_metadata (\n        singleton INTEGER PRIMARY KEY CHECK(singleton=1),\n        identity TEXT NOT NULL, serialization_version TEXT NOT NULL\n    ) STRICT",
+    "CREATE TABLE cases (\n        case_id TEXT PRIMARY KEY, created_at TEXT NOT NULL,\n        head_revision INTEGER NOT NULL CHECK(head_revision>=1), head_run_id TEXT NOT NULL,\n        borrower_name TEXT NOT NULL, recorded_at TEXT NOT NULL,\n        FOREIGN KEY(case_id,head_revision,head_run_id) REFERENCES revisions(case_id,revision,run_id)\n            DEFERRABLE INITIALLY DEFERRED\n    ) STRICT",
+    "CREATE TABLE revisions (\n        case_id TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision>=1),\n        parent_revision INTEGER, run_id TEXT NOT NULL UNIQUE,\n        recorded_at TEXT NOT NULL, input_json TEXT NOT NULL, input_hash TEXT NOT NULL,\n        PRIMARY KEY(case_id,revision), UNIQUE(case_id,revision,run_id),\n        CHECK((revision=1 AND parent_revision IS NULL) OR\n              (revision>1 AND parent_revision IS NOT NULL AND parent_revision=revision-1)),\n        FOREIGN KEY(case_id) REFERENCES cases(case_id),\n        FOREIGN KEY(case_id,parent_revision) REFERENCES revisions(case_id,revision),\n        FOREIGN KEY(case_id,revision,run_id) REFERENCES runs(case_id,revision,run_id)\n            DEFERRABLE INITIALLY DEFERRED\n    ) STRICT",
+    "CREATE TABLE runs (\n        run_id TEXT PRIMARY KEY, case_id TEXT NOT NULL, revision INTEGER NOT NULL,\n        assessment_json TEXT NOT NULL, recording_json TEXT NOT NULL, payload_hash TEXT NOT NULL,\n        UNIQUE(case_id,revision,run_id), UNIQUE(case_id,revision),\n        FOREIGN KEY(case_id,revision,run_id) REFERENCES revisions(case_id,revision,run_id)\n            DEFERRABLE INITIALLY DEFERRED\n    ) STRICT",
+    "CREATE TABLE events (\n        case_id TEXT NOT NULL, revision INTEGER NOT NULL, run_id TEXT NOT NULL,\n        event_json TEXT NOT NULL, PRIMARY KEY(case_id,revision),\n        FOREIGN KEY(case_id,revision,run_id) REFERENCES revisions(case_id,revision,run_id)\n    ) STRICT",
+    "CREATE TABLE successful_operations (\n        operation_id TEXT PRIMARY KEY, command_json TEXT NOT NULL, command_hash TEXT NOT NULL,\n        case_id TEXT NOT NULL, revision INTEGER NOT NULL, run_id TEXT NOT NULL,\n        status INTEGER NOT NULL CHECK(status=201), etag TEXT NOT NULL, receipt_json TEXT NOT NULL,\n        UNIQUE(case_id,revision),\n        FOREIGN KEY(case_id,revision,run_id) REFERENCES revisions(case_id,revision,run_id)\n    ) STRICT",
+    "CREATE INDEX case_listing ON cases(created_at DESC,case_id DESC)",
+    "CREATE TRIGGER schema_metadata_immutable_update BEFORE UPDATE ON schema_metadata BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER schema_metadata_immutable_delete BEFORE DELETE ON schema_metadata BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER revisions_immutable_update BEFORE UPDATE ON revisions BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER revisions_immutable_delete BEFORE DELETE ON revisions BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER runs_immutable_update BEFORE UPDATE ON runs BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER runs_immutable_delete BEFORE DELETE ON runs BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER events_immutable_update BEFORE UPDATE ON events BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER events_immutable_delete BEFORE DELETE ON events BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER successful_operations_immutable_update BEFORE UPDATE ON successful_operations BEGIN SELECT RAISE(ABORT, 'immutable case history'); END",
+    "CREATE TRIGGER successful_operations_immutable_delete BEFORE DELETE ON successful_operations BEGIN SELECT RAISE(ABORT, 'immutable case history'); END"
+  ],
+  "source_commit": "e1c1635895e0d946e556e0398d78ef9e2b65525c",
+  "source_tree": "4eb3f543e02c5b705913545ac0abf9906633a0e7",
+  "sql_sha256": "6e43468016bda6064a8cfda0c1d6c3f0599242f0657969973f12b99fb9d2df4e",
+  "summary": {
+    "cases": 1,
+    "events": 3,
+    "revisions": 3,
+    "runs": 3,
+    "schema_version": 1,
+    "successful_operations": 3
+  }
+}
