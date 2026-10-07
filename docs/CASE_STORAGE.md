@@ -2,8 +2,9 @@
 
 The backend can persist accepted dated commercial cases in one explicitly
 configured SQLite file. Each accepted numeric edit appends a revision, complete
-assessment, and server-derived event. The browser still uses the session-only
-workspace; save/open/history controls are a later interface stage.
+assessment, and server-derived event. The browser's **Save case**, **Saved cases**,
+and revision history controls use this contract. See [workspace behavior](WORKSPACE.md)
+for original-result reads, conflict review, and exact-write recovery.
 
 Only `commercial-assessment-v1` input is accepted. Legacy, consumer, and SBA
 requests remain stateless. Use synthetic data. The recording actor is the fixed
