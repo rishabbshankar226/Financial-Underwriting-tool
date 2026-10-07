@@ -14,6 +14,7 @@ Run the [backend](#run-the-backend) and [frontend](#run-the-frontend), then open
 | Dated inputs, calculation traces, and response fields | [Assessment contract](docs/ASSESSMENT_CONTRACT.md) |
 | Edits, imports, and session history | [Workspace behavior](docs/WORKSPACE.md) |
 | Local revisions, replay, and backups | [Case storage](docs/CASE_STORAGE.md) |
+| Hypothetical stress calculations against a saved revision | [Stress previews](docs/STRESS_PREVIEWS.md) |
 | Test workflow and dependency pins | [Verification](docs/VERIFICATION.md) |
 
 ## What it does
@@ -25,6 +26,7 @@ Run the [backend](#run-the-backend) and [frontend](#run-the-frontend), then open
 - JSON and CSV intake, plus field extraction from synthetic text documents. A person has to confirm each extracted field before it reaches the calculations.
 - A React workspace with a complete annual spread, current assumptions, server calculation traces and policy comparisons, rationale-based edits, a memo, and session edit history. Dated cases can also be saved, reopened, and reviewed by original revision with durable server-recorded history.
 - Optional local storage for dated commercial cases, immutable accepted revisions/results, server-derived events, concurrent-edit preconditions, original retry receipts, replay, and verified backup/restore.
+- A read-only commercial stress preview API for revenue, cost, operating-expense and proposed-rate changes against a selected saved revision. It returns projected coverage, policy headroom and decision differences while retaining observed history.
 - A synthetic check that changing only the applicant's geography doesn't change the outcome.
 
 ## Stack
