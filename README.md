@@ -8,6 +8,11 @@ Spreadline turns synthetic borrower financials into a spread, coverage ratios, a
 
 Run the [backend](#run-the-backend) and [frontend](#run-the-frontend), then open the dated Alpine example in the browser. Select a financial period, inspect a coverage calculation, and edit an input with a rationale to see the assessment update.
 
+With local case storage enabled, save the dated example and open **Scenarios**.
+Enter explicit shocks and rationales, preview the server's results, and save the
+reviewed batch as a separate comparison. Reopening it reads the original record
+without changing the case's assessment or revision. See [workspace behavior](docs/WORKSPACE.md#scenario-review-and-original-comparisons).
+
 | To inspect | Read |
 |---|---|
 | Calculation definitions and model limits | [Model documentation](docs/MODEL_DOCUMENTATION.md) |
@@ -27,8 +32,8 @@ Run the [backend](#run-the-backend) and [frontend](#run-the-frontend), then open
 - JSON and CSV intake, plus field extraction from synthetic text documents. A person has to confirm each extracted field before it reaches the calculations.
 - A React workspace with a complete annual spread, current assumptions, server calculation traces and policy comparisons, rationale-based edits, a memo, and session edit history. Dated cases can also be saved, reopened, and reviewed by original revision with durable server-recorded history.
 - Optional local storage for dated commercial cases, immutable accepted revisions/results, server-derived events, concurrent-edit preconditions, original retry receipts, replay, and verified backup/restore.
-- A read-only commercial stress preview API for revenue, cost, operating-expense and proposed-rate changes against a selected saved revision. It returns projected coverage, policy headroom and decision differences while retaining observed history.
-- Immutable saved comparison batches through HTTP, exact original retries, bounded summaries and a verified schema-v1-to-v2 copy-upgrade command that preserves its source.
+- A commercial scenario browser and read-only preview API for revenue, cost, operating-expense and proposed-rate changes against an explicit saved revision. It displays server-provided coverage, policy headroom, trace links and decision differences while retaining observed history.
+- Immutable saved comparison batches, original reads, bounded summaries and exact retries through one shared browser write journal. A separate verified schema-v1-to-v2 copy-upgrade command preserves its source; the browser never runs it automatically.
 - A synthetic check that changing only the applicant's geography doesn't change the outcome.
 
 ## Stack

@@ -9,6 +9,7 @@ The default synthetic Alpine case uses the dated assessment API. Explicit legacy
 - **Details:** backend definitions, expressions, actual operands and references, raw results, K-1 comparison periods, guarantor contributions, raw policy comparisons, and the complete policy snapshot. The content fingerprint does not authenticate documents.
 - **Memo:** a narrative from the accepted response's factors and reasons, unavailable while an input is pending/rejected.
 - **History:** unsaved cases show successfully applied session edits with period-aware paths and separately labeled imported overrides. Saved cases show immutable server-recorded revision summaries and the selected original event, including its unit, period/as-of date, guarantor context, rationale, actor and recording time. All demonstration actors remain unverified.
+- **Scenarios:** author and review explicit current shocks against a supported saved dated revision, retain a reviewed batch as a separate original comparison, and reopen case-wide comparison summaries. The selected underwriting result remains unchanged.
 
 ## State contract
 
@@ -25,12 +26,15 @@ The default synthetic Alpine case uses the dated assessment API. Explicit legacy
 | Uncertain saved write | Retain the exact operation for explicit retry; do not accept the proposal locally or invent an event. |
 | Stale saved edit (412) | Preserve the proposal for review against a freshly read latest field. A fresh write needs explicit review and submission. |
 | Older saved read or receipt | An older read cannot replace a newer selection. A late write receipt resolves its tracking and offers a separate link to the acknowledged revision. |
+| Scenario draft edit, add/remove or baseline change | Invalidate the live preview even if the draft returns to equal values; cancel and ignore obsolete responses. |
+| Reviewed comparison save | Reserve the shared write journal and consume the current preview. Verify and display the original comparison separately from the case assessment. |
+| Original comparison open/reload | Read the original record by verified case/comparison IDs; do not recalculate or change the active case revision. |
 
 Selection identifiers are allocated before asynchronous file reads. Raw import text goes unchanged to the chosen endpoint, preserving duplicate-key rejection. The byte limit is inclusive at 1,000,000 bytes. Response guards validate the nested display contract and structural references; they do not recompute financial arithmetic or validate document authenticity.
 
 Legacy defaults/coercions needed to display accepted input are normalized only after backend success. Legacy annual periods remain ordinal, dated-only trace/spread results remain unavailable, and no dates or explicit units are inferred.
 
-Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. This workspace has no authentication, export, or stress engine. Decision scores and policy values remain illustrative prototype settings.
+Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. This workspace has no authentication or export. Decision scores and policy values remain illustrative prototype settings.
 
 ## Save, reopen and revise
 
@@ -44,13 +48,66 @@ Historical revisions and acknowledged receipts whose latest status cannot be con
 
 ## Exact-write recovery and conflicts
 
-Before any case POST, this tab must write and read back one versioned session-storage record containing the serialized command, UUID key and backend identity. Edit records also keep the exact old ETag, base revision and review context. The command is frozen before transmission. Missing storage, quota errors or a failed readback stop the POST and preserve the accepted input/result. Saved reads and unsaved editing remain usable without recovery storage.
+Before any saved-case or comparison POST, this tab must write and read back one versioned session-storage record containing the serialized command, UUID key and backend identity. Edit records also keep the exact old ETag, base revision and review context. Comparison records keep minimal baseline/context identifiers and the reviewed fingerprint in their exact command, without a cached preview. The command is frozen before transmission. Missing storage, quota errors or a failed readback stop the POST and preserve the accepted input/result. Saved reads, read-only previews and unsaved editing remain usable without recovery storage.
 
-There is at most one unresolved saved write per tab. Network/abort errors, unreadable responses, malformed successful receipts, key conflicts (409), and storage failures (503) retain the record. Reload restores the proposal for review but never sends a POST automatically. **Retry exact write** uses the same body, key and ETag; it never invents a new key. A 409 blocks retry and requires reviewing saved cases before any explicit discard. The server's `Retry-After` is shown for a retryable failure; there is no hidden retry loop.
+There is at most one unresolved saved write per tab. Network/abort errors, unreadable responses, malformed successful receipts, uncertain key conflicts (409), and storage failures (503) retain the record. Reload restores the proposal for review but never sends a POST automatically. **Retry exact write** uses the same body and key, with the same ETag for case edits and no `If-Match` for comparisons; it never invents a new key. A case-write 409 or uncertain comparison 409 blocks retry and requires reviewing saved records before any explicit discard. Documented pre-commit comparison 409 codes clear only confirmed matching tracking and require a fresh explicit preview. The server's `Retry-After` is shown for a retryable failure; there is no hidden retry loop.
 
 Definite command rejections (400/404/412/413/422/428) clear matching tracking only after storage confirms removal. A 412 retains the proposal separately, reads the latest original snapshot, and compares the field's server context. **Review proposed edit** opens a prefilled dialog against the latest value; only **Save revision** submits a fresh UUID and latest ETag. Canceling sends no write. A rejected saved selection offers an original stored read, never stateless re-evaluation as a saved-case recovery action.
 
 Invalid, oversized, changed-backend, or unsupported recovery envelopes block new saved writes and show an explicit recovery message. **Review discarding tracking** requires a modal action with a keep option; Escape preserves the record. Discarding or closing the tab can lose an exact retry key without undoing a server commit. Recovery data and actor labels are prototype conveniences, not authentication or evidence of a human identity. Switching to another selection does not imply that an in-flight write was rolled back.
+
+## Scenario review and original comparisons
+
+Select **Scenarios** after saving a dated assessment or opening an explicit
+original revision. Historical revisions are valid baselines; the current head
+and spread-column selection do not replace them. The composer identifies the
+case, revision, run, payload hash, latest operating period, assumption date and
+retained policy. Unsaved dated input requires **Save baseline case** first;
+legacy input cannot be saved or assigned invented dates. An unsupported saved
+baseline exposes summaries and original JSON, with new preview unavailable.
+
+Author 1–10 scenarios with generated unique keys and all four explicit shocks,
+including zero. Name and required rationale limits are 120 and 2,000 Unicode
+code points after Python-compatible whitespace trimming. Percentage controls
+convert −10 to −0.1 once; proposed-rate controls pass fractional basis points
+unchanged. Empty, malformed, nonfinite or below −100% percentages are rejected
+before preview. The backend remains responsible for projected financial
+inputs, feasible resulting rates and arithmetic overflow. Five presets fill
+name and shocks only: revenue −10%, COGS +10%, operating expense +10%, combined
+downside and proposed rate +200 basis points.
+
+**Preview scenarios** sends the ordered normalized command to the selected
+baseline. Any draft edit, including text, row addition/removal or changes back
+to equal values, requires a fresh preview. Obsolete responses cannot install.
+The read-only review displays server baseline/projected values, raw deltas,
+policy headroom, operators and decline floors, factor/outcome/reason changes,
+projected inputs and trace links. Observed K-1 history stays fixed. No projected
+result becomes the case decision, historical spread or memo.
+
+**Save reviewed comparison** consumes the current preview and verifies one
+immutable batch receipt. The saved original displays separately. Opening an
+archive record ends the active preview review; **Start another comparison**
+begins a fresh draft before another save. Opening the original baseline
+revision is always explicit. A late recovered receipt resolves tracking and
+offers its original separately if a newer case or draft is selected.
+
+The archive reads 25 summary rows per page across all baselines of the current
+case, with explicit refresh/load-more/error/empty states and scoped cursor
+checks. Detail GETs never call preview or assessment. Reload uses only an
+optional backend/case/comparison locator, then reads the original afresh.
+Known storage with unsupported financial definitions remains read-only JSON;
+unknown storage or malformed known responses are rejected.
+
+Browser comparison requests retain the 1,000,000-byte command limit. Each
+comparison response is bounded by 16,777,216 actual streamed bytes and finite
+JSON depth 100; existing case guards retain depth 64. The browser limit does
+not cap the backend preview response contract. Only the selected scenario's
+detail is rendered, trace/guarantor rows are created on opening and paged in
+groups of 50, and original JSON text pages are at most 64 KiB UTF-8. All returned
+text renders as text. Source/runtime recording metadata and actor identity
+remain explicitly unverified. The copy-upgrade workflow is operator-driven;
+the browser explains `storage_upgrade_required` without choosing or upgrading
+a database.
 
 ## Read-only replay and metadata
 
@@ -58,4 +115,4 @@ Invalid, oversized, changed-backend, or unsupported recovery envelopes block new
 
 ## Verification
 
-Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the existing dated/legacy workspace plus real saved create/edit/reload, original-history reads, two-context conflicts, lost responses, old retry receipts after head advancement, malformed successful responses, incompatible stored definitions, pagination, storage preflight failure, stale reads, text escaping, keyboard focus and mobile layout. Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. Financial baseline tests and the independent reference gate remain unchanged.
+Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the existing dated/legacy workspace and saved-case workflow, plus scenario authoring, immutable comparison retention/original reads, archive pagination, shared recovery, bounded responses and rendering, delayed responses, unsupported definitions, keyboard focus and mobile layout. See [verification coverage](VERIFICATION.md#browser-scenario-and-shared-recovery-coverage). Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. Financial baseline tests and the independent reference gate remain unchanged.

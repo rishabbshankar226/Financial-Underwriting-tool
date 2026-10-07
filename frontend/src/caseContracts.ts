@@ -110,26 +110,26 @@ export const uuid = (v: unknown): v is string =>
   text(v) && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(v);
 export const revision = (v: unknown): v is number =>
   Number.isSafeInteger(v) && Number(v) >= 1;
-const hash = (v: unknown) => text(v) && /^[0-9a-f]{64}$/.test(v);
+export const hash = (v: unknown) => text(v) && /^[0-9a-f]{64}$/.test(v);
 export const date = (v: unknown): v is string =>
   text(v) &&
   /^\d{4}-\d{2}-\d{2}$/.test(v) &&
   Number.isFinite(Date.parse(v)) &&
   new Date(v).toISOString().slice(0, 10) === v;
-const timestamp = (v: unknown): v is string =>
+export const timestamp = (v: unknown): v is string =>
   text(v) &&
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|\+00:00)$/.test(v) &&
   date(v.slice(0, 10)) &&
   Number.isFinite(Date.parse(v));
-export function finiteJson(value: unknown, depth = 0): void {
-  requireCase(depth < 64, "JSON depth");
+export function finiteJson(value: unknown, depth = 0, maxDepth = 64): void {
+  requireCase(depth < maxDepth, "JSON depth");
   if (value === null || text(value) || typeof value === "boolean") return;
   if (typeof value === "number") {
     requireCase(finite(value), "finite JSON number");
     return;
   }
   requireCase(typeof value === "object", "JSON value");
-  for (const child of Object.values(value as Obj)) finiteJson(child, depth + 1);
+  for (const child of Object.values(value as Obj)) finiteJson(child, depth + 1, maxDepth);
 }
 export function sameJson(a: unknown, b: unknown): boolean {
   if (a === b) return true;
@@ -412,7 +412,18 @@ export function guardSavedCase(
       c.assessment_as_of === assessment.normalized_input.assessment_as_of,
       "event assumptions date",
     );
-  const r = object(s.recording, "recording metadata"),
+  guardRecording(s.recording);
+  return {
+    snapshot: s as CaseSnapshot,
+    etag: etag!,
+    assessment,
+    compatibility: known
+      ? null
+      : `Stored assessment definition: ${a.schema_version} / ${a.calculation_version} / ${a.serialization_version}. Original JSON is available; typed display and editing are unavailable.`,
+  };
+}
+export function guardRecording(value: unknown): Recording {
+  const r = object(value, "recording metadata"),
     packages = object(r.packages, "installed packages");
   requireCase(
     text(r.python_version) &&
@@ -433,14 +444,7 @@ export function guardSavedCase(
           /^[0-9a-f]{40}$/.test(r.source_revision),
     "recorded source",
   );
-  return {
-    snapshot: s as CaseSnapshot,
-    etag: etag!,
-    assessment,
-    compatibility: known
-      ? null
-      : `Stored assessment definition: ${a.schema_version} / ${a.calculation_version} / ${a.serialization_version}. Original JSON is available; typed display and editing are unavailable.`,
-  };
+  return r as Recording;
 }
 function page(value: unknown): Obj {
   const p = object(value, "page");

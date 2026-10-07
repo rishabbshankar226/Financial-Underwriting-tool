@@ -17,6 +17,8 @@ import {
 } from "./caseContracts";
 import type { DatedRequest } from "./contracts";
 import type { EditableField, EditEvent } from "./workspace";
+import { guardPreview, guardScenarioCommand, previewCommand, type ScenarioPreview } from "./scenarioContracts";
+import { hash } from "./caseContracts";
 
 export const RECOVERY_KEY = "spreadline.pending-write.v1";
 export const LOCATOR_KEY = "spreadline.case-selection.v1";
@@ -41,6 +43,35 @@ export type PendingOperation = OperationBase &
       }
   );
 export type Locator = { caseId: string; revision: "latest" | number };
+export type ComparisonOperation = {
+  version: "scenario-comparison-write-v1";
+  kind: "comparison";
+  id: string;
+  apiBase: string;
+  body: string;
+  caseId: string;
+  baselineRevision: number;
+  baselineRunId: string;
+  baselinePayloadHash: string;
+  context: {period_start:string;period_end:string;assessment_as_of:string;policy_version:string;scenario_definition_version:string;calculation_version:string};
+};
+export type PendingWrite = PendingOperation | ComparisonOperation;
+export function guardPendingWrite(value:unknown,base=apiBase):PendingWrite {
+  const v=object(value,"pending write");
+  if(v.version!=="scenario-comparison-write-v1")return guardOperation(value,base);
+  requireCase(v.kind==="comparison"&&uuid(v.id)&&v.apiBase===base&&text(v.body)&&size(v.body)<=MAX_BODY,"comparison recovery envelope");
+  const command=guardScenarioCommand(JSON.parse(v.body));
+  requireCase(command.schema_version==="commercial-scenario-comparison-create-v1"&&JSON.stringify(command)===v.body&&uuid(v.caseId)&&revision(v.baselineRevision)&&v.baselineRunId===command.baseline_run_id&&hash(v.baselinePayloadHash),"comparison recovery identity/command");
+  const c=object(v.context,"comparison recovery context");
+  requireCase(date(c.period_start)&&date(c.period_end)&&date(c.assessment_as_of)&&c.period_start<=c.period_end&&c.period_end<=c.assessment_as_of&&text(c.policy_version)&&text(c.scenario_definition_version)&&text(c.calculation_version),"comparison recovery dates/versions");
+  requireCase(Object.keys(v).length===10&&["version","kind","id","apiBase","body","caseId","baselineRevision","baselineRunId","baselinePayloadHash","context"].every(k=>k in v),"comparison recovery fields");
+  requireCase(Object.keys(c).length===6&&["period_start","period_end","assessment_as_of","policy_version","scenario_definition_version","calculation_version"].every(k=>k in c),"comparison context fields");
+  Object.freeze(c);return Object.freeze(v) as ComparisonOperation;
+}
+export function makeComparison(value:ScenarioPreview):ComparisonOperation {
+  const p=guardPreview(value),command={...previewCommand(p),schema_version:"commercial-scenario-comparison-create-v1",expected_preview_fingerprint:p.fingerprint.value};
+  return guardPendingWrite({version:"scenario-comparison-write-v1",kind:"comparison",id:crypto.randomUUID(),apiBase,body:JSON.stringify(command),caseId:p.baseline.case_id,baselineRevision:p.baseline.revision,baselineRunId:p.baseline.run_id,baselinePayloadHash:p.baseline.payload_hash,context:{...p.selected_period,assessment_as_of:p.assumptions_as_of,policy_version:p.policy_snapshot.version,scenario_definition_version:p.scenario_definition_version,calculation_version:p.calculation_version}}) as ComparisonOperation;
+}
 export function browserStorage(): Storage | null {
   try {
     return window.sessionStorage;
@@ -235,15 +266,15 @@ export function makeEdit(
 }
 export function saveRecovery(
   storage: Storage | null,
-  operation: PendingOperation,
+  operation: PendingWrite,
 ): void {
   try {
     requireCase(storage, "browser recovery storage");
-    const op = guardOperation(operation),
+    const op = guardPendingWrite(operation),
       existing = storage.getItem(RECOVERY_KEY);
     if (existing)
       requireCase(
-        sameJson(guardOperation(JSON.parse(existing)), op),
+        sameJson(guardPendingWrite(JSON.parse(existing)), op),
         "another unresolved operation",
       );
     const serialized = JSON.stringify(op);
@@ -262,7 +293,7 @@ export function saveRecovery(
 export function readRecovery(
   storage: Storage | null,
   base = apiBase,
-): { operation: PendingOperation | null; error: string } {
+): { operation: PendingWrite | null; error: string } {
   try {
     if (!storage)
       return {
@@ -273,7 +304,7 @@ export function readRecovery(
     const raw = storage.getItem(RECOVERY_KEY);
     if (!raw) return { operation: null, error: "" };
     requireCase(size(raw) <= MAX_JOURNAL, "recovery size");
-    return { operation: guardOperation(JSON.parse(raw), base), error: "" };
+    return { operation: guardPendingWrite(JSON.parse(raw), base), error: "" };
   } catch {
     return {
       operation: null,
@@ -287,7 +318,7 @@ export function clearRecovery(storage: Storage | null, id: string): void {
   const raw = storage.getItem(RECOVERY_KEY);
   if (raw)
     requireCase(
-      guardOperation(JSON.parse(raw)).id === id,
+      guardPendingWrite(JSON.parse(raw)).id === id,
       "matching recovery record",
     );
   storage.removeItem(RECOVERY_KEY);
