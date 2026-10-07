@@ -15,6 +15,7 @@ Run the [backend](#run-the-backend) and [frontend](#run-the-frontend), then open
 | Edits, imports, and session history | [Workspace behavior](docs/WORKSPACE.md) |
 | Local revisions, replay, and backups | [Case storage](docs/CASE_STORAGE.md) |
 | Hypothetical stress calculations against a saved revision | [Stress previews](docs/STRESS_PREVIEWS.md) |
+| Immutable reviewed comparisons and copy-only database upgrades | [Saved comparisons](docs/SCENARIO_COMPARISONS.md) |
 | Test workflow and dependency pins | [Verification](docs/VERIFICATION.md) |
 
 ## What it does
@@ -27,6 +28,7 @@ Run the [backend](#run-the-backend) and [frontend](#run-the-frontend), then open
 - A React workspace with a complete annual spread, current assumptions, server calculation traces and policy comparisons, rationale-based edits, a memo, and session edit history. Dated cases can also be saved, reopened, and reviewed by original revision with durable server-recorded history.
 - Optional local storage for dated commercial cases, immutable accepted revisions/results, server-derived events, concurrent-edit preconditions, original retry receipts, replay, and verified backup/restore.
 - A read-only commercial stress preview API for revenue, cost, operating-expense and proposed-rate changes against a selected saved revision. It returns projected coverage, policy headroom and decision differences while retaining observed history.
+- Immutable saved comparison batches through HTTP, exact original retries, bounded summaries and a verified schema-v1-to-v2 copy-upgrade command that preserves its source.
 - A synthetic check that changing only the applicant's geography doesn't change the outcome.
 
 ## Stack

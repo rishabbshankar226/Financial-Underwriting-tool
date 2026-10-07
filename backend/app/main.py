@@ -5,6 +5,7 @@ from .assessment import assess_commercial
 from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest
 from .case_routes import router as case_router, owns_case_json, install_case_openapi
 from .scenario_routes import router as scenario_router, owns_scenario_json, install_scenario_openapi
+from .comparison_routes import router as comparison_router, owns_comparison_json, install_comparison_openapi
 from .cases import CaseStoreError
 from .json_transport import read_contract
 from .schemas import CommercialRequest, ConsumerRequest, Decision, DISCLAIMER, SBACase
@@ -18,7 +19,7 @@ app = FastAPI(title="Spreadline", version="0.1.0", description=DISCLAIMER)
 @app.middleware("http")
 async def validate_raw_json(request: Request, call_next):
     if (request.url.path.rstrip("/") == "/commercial/assessment" or owns_case_json(request.url.path)
-            or owns_scenario_json(request.url.path)):
+            or owns_scenario_json(request.url.path) or owns_comparison_json(request.url.path)):
         # This route owns a bounded stream read, before any JSON buffering.
         return await call_next(request)
     # Validate before framework JSON decoding can discard duplicate object keys.
@@ -33,12 +34,14 @@ async def validate_raw_json(request: Request, call_next):
 
 
 # CORS must wrap validation so a rejected JSON request remains readable by the UI.
-app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],allow_credentials=False,allow_methods=["*"],allow_headers=["*"],expose_headers=["ETag", "Idempotency-Replayed", "Retry-After"])
+app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],allow_credentials=False,allow_methods=["*"],allow_headers=["*"],expose_headers=["ETag", "Idempotency-Replayed", "Retry-After", "Location"])
 
 app.include_router(case_router)
 app.include_router(scenario_router)
+app.include_router(comparison_router)
 install_case_openapi(app)
 install_scenario_openapi(app)
+install_comparison_openapi(app)
 
 
 @app.exception_handler(CaseStoreError)
