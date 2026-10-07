@@ -33,20 +33,22 @@ class Calculation:
 
 class _Facts:
     """Record operands at calculation time; consumers never recompute a trace."""
-    def __init__(self):
+    def __init__(self, *, fact_reference=None, input_reference=None):
         self.rows: dict[str, Calculation] = {}
+        self.fact_reference = fact_reference or (lambda name: name)
+        self.input_reference = input_reference or (lambda path: path)
 
     def input(self, path, value, unit="USD") -> Operand:
-        return Operand("input", path, value, unit)
+        return Operand("input", self.input_reference(path), value, unit)
 
     def fact(self, name) -> Operand:
         row = self.rows[name]
-        return Operand("fact", name, row.raw_value, row.unit)
+        return Operand("fact", row.fact_id, row.raw_value, row.unit)
 
     def add(self, name, definition, expression, operands, value, unit="USD", precision=2, explanation=None):
         if isinstance(value, (float, int)):
             _finite(value)
-        row = Calculation(name, definition, expression, tuple(operands), value, unit, precision,
+        row = Calculation(self.fact_reference(name), definition, expression, tuple(operands), value, unit, precision,
                           "not_applicable" if value is None else "available", explanation)
         self.rows[name] = row
         return value
@@ -210,9 +212,80 @@ def commercial_facts(req: CommercialRequest | CommercialAssessmentRequest, stabi
     for index in sorted(needed):
         _year_income(req.years[index], facts, index, include_ebitda=include_spread or index == latest)
     current_prefix = f"years.{latest}."
+    _current_commercial_facts(req, facts, latest, req.years[latest], req.proposed_loan)
+
+    ratios = {}
+    for index in sorted(needed):
+        if not include_spread and len(selected) < 2:
+            continue
+        obi = facts.rows[f"years.{index}.ordinary_business_income"].raw_value
+        value = _distribution_ratio(obi, req.years[index].k1_distribution)
+        if include_spread and obi > 0:
+            _finite(value)
+        ratios[index] = value
+        facts.add(f"years.{index}.k1_distribution_ratio", "k1-distribution-ratio-v1", "k1_distribution / ordinary_business_income; nonpositive income is not applicable",
+                  [facts.input(f"/years/{index}/k1_distribution", req.years[index].k1_distribution), facts.fact(f"years.{index}.ordinary_business_income")],
+                  value if isfinite(value) else None, "ratio", 4,
+                  "Nonpositive ordinary business income" if obi <= 0 else "Ratio exceeds the finite calculation range" if not isfinite(value) else None)
+    flag, difference = _history_comparison([ratios[i] for i in selected] if len(selected) >= 2 else [], stability_band)
+    if include_spread and difference is not None:
+        _finite(difference)
+    unavailable = ("Fewer than two comparable periods" if len(selected) < 2
+                   else "An unavailable distribution ratio" if difference is None
+                   else "Difference exceeds the finite calculation range" if not isfinite(difference) else None)
+    facts.add("current.k1_ratio_difference", "k1-stability-difference-v1", "abs(previous_ratio - latest_ratio) when two comparable ratios are available",
+              [facts.fact(f"years.{i}.k1_distribution_ratio") for i in selected if i in ratios],
+              difference if difference is not None and isfinite(difference) else None, "ratio", 4, unavailable)
+    history_operands = [facts.fact("current.k1_ratio_difference")]
+    history_operands.append(Operand("policy", "/policy_snapshot/k1_stability_band", stability_band, "ratio"))
+    facts.add("current.k1_history", "k1-history-v1",
+              "fewer than two selected periods: insufficient_history; unavailable ratio: unstable; otherwise abs(previous_ratio - latest_ratio) <= stability_band is stable",
+              history_operands, flag, "category", None)
+
+    current = {name.removeprefix("current."): row for name, row in facts.rows.items() if name.startswith("current.") and not name.startswith("current.guarantors.")}
+    current.update(ordinary_business_income=facts.rows[current_prefix + "ordinary_business_income"], ebitda=facts.rows[current_prefix + "ebitda"])
+    history = tuple({name: facts.rows[f"years.{i}.{name}"] for name in ("ordinary_business_income", "ebitda", "k1_distribution_ratio")}
+                    for i in range(len(req.years))) if include_spread else ()
+    return CommercialFacts(current, history, tuple(facts.rows.values()))
+
+
+def projected_commercial_facts(req, operating, loan, *, retained_trace, assumption_trace) -> CommercialFacts:
+    """Projected current context with retained observed history supplied before decisions."""
+    latest = len(req.years) - 1
+    year_prefix, year_path = f"years.{latest}.", f"/years/{latest}/"
+
+    def fact_reference(name):
+        if name.startswith(year_prefix):
+            return "projection.operating." + name.removeprefix(year_prefix)
+        return "projection." + name
+
+    def input_reference(path):
+        if path.startswith(year_path):
+            return "/projection_inputs/operating/" + path.removeprefix(year_path)
+        if path.startswith("/proposed_loan/"):
+            return "/projection_inputs" + path
+        return "/baseline/assessment/normalized_input" + path
+
+    facts = _Facts(fact_reference=fact_reference, input_reference=input_reference)
+    observed = {row.fact_id: row for row in retained_trace}
+    facts.rows.update(observed)
+    facts.rows.update({row.fact_id: row for row in assumption_trace})
+    _year_income(operating, facts, latest)
+    _current_commercial_facts(req, facts, latest, operating, loan)
+    current = {name.removeprefix("current."): row for name, row in facts.rows.items()
+               if name.startswith("current.") and not name.startswith("current.guarantors.")}
+    current.update(ordinary_business_income=facts.rows[year_prefix + "ordinary_business_income"],
+                   ebitda=facts.rows[year_prefix + "ebitda"],
+                   k1_history=observed["baseline.current.k1_history"],
+                   k1_ratio_difference=observed["baseline.current.k1_ratio_difference"])
+    return CommercialFacts(current, (), tuple(facts.rows.values()))
+
+
+def _current_commercial_facts(req, facts, latest, operating, loan):
+    """One current-facts calculation for observed and projected operating contexts."""
+    current_prefix = f"years.{latest}."
     eb = facts.rows[current_prefix + "ebitda"].raw_value
 
-    loan = req.proposed_loan
     monthly, annual = _loan_payment(loan.amount, loan.annual_rate, loan.term_months)
     loan_operands = [facts.input("/proposed_loan/amount", loan.amount),
                      facts.input("/proposed_loan/annual_rate", loan.annual_rate, "decimal_nominal_annual_rate"),
@@ -222,7 +295,7 @@ def commercial_facts(req: CommercialRequest | CommercialAssessmentRequest, stabi
               loan_operands, monthly, "USD/month")
     facts.add("current.proposed_annual_payment", "annualized-payment-v1", "proposed_monthly_payment * 12",
               [facts.fact("current.proposed_monthly_payment")], annual, "USD/year")
-    interest = req.years[latest].interest_expense
+    interest = operating.interest_expense
     debt = _debt_service(interest, req.existing_debt.cpltd_annual, annual)
     facts.add("current.debt_service", "annual-debt-service-v1", "existing_interest + cpltd_annual + proposed_annual_payment (left to right)",
               [facts.input(f"/years/{latest}/interest_expense", interest),
@@ -271,40 +344,6 @@ def commercial_facts(req: CommercialRequest | CommercialAssessmentRequest, stabi
               [facts.input("/working_capital/" + name, getattr(wc, name)) for name in ("ar_increase", "inventory_increase", "ap_increase")], net)
     facts.add("current.uca_cash_flow", "uca-cash-flow-v1", "ebitda - cash_taxes_paid - net_working_capital_increase (left to right)",
               [facts.fact(current_prefix + "ebitda"), facts.input("/working_capital/cash_taxes_paid", wc.cash_taxes_paid), facts.fact("current.net_working_capital_increase")], cash)
-
-    ratios = {}
-    for index in sorted(needed):
-        if not include_spread and len(selected) < 2:
-            continue
-        obi = facts.rows[f"years.{index}.ordinary_business_income"].raw_value
-        value = _distribution_ratio(obi, req.years[index].k1_distribution)
-        if include_spread and obi > 0:
-            _finite(value)
-        ratios[index] = value
-        facts.add(f"years.{index}.k1_distribution_ratio", "k1-distribution-ratio-v1", "k1_distribution / ordinary_business_income; nonpositive income is not applicable",
-                  [facts.input(f"/years/{index}/k1_distribution", req.years[index].k1_distribution), facts.fact(f"years.{index}.ordinary_business_income")],
-                  value if isfinite(value) else None, "ratio", 4,
-                  "Nonpositive ordinary business income" if obi <= 0 else "Ratio exceeds the finite calculation range" if not isfinite(value) else None)
-    flag, difference = _history_comparison([ratios[i] for i in selected] if len(selected) >= 2 else [], stability_band)
-    if include_spread and difference is not None:
-        _finite(difference)
-    unavailable = ("Fewer than two comparable periods" if len(selected) < 2
-                   else "An unavailable distribution ratio" if difference is None
-                   else "Difference exceeds the finite calculation range" if not isfinite(difference) else None)
-    facts.add("current.k1_ratio_difference", "k1-stability-difference-v1", "abs(previous_ratio - latest_ratio) when two comparable ratios are available",
-              [facts.fact(f"years.{i}.k1_distribution_ratio") for i in selected if i in ratios],
-              difference if difference is not None and isfinite(difference) else None, "ratio", 4, unavailable)
-    history_operands = [facts.fact("current.k1_ratio_difference")]
-    history_operands.append(Operand("policy", "/policy_snapshot/k1_stability_band", stability_band, "ratio"))
-    facts.add("current.k1_history", "k1-history-v1",
-              "fewer than two selected periods: insufficient_history; unavailable ratio: unstable; otherwise abs(previous_ratio - latest_ratio) <= stability_band is stable",
-              history_operands, flag, "category", None)
-
-    current = {name.removeprefix("current."): row for name, row in facts.rows.items() if name.startswith("current.") and not name.startswith("current.guarantors.")}
-    current.update(ordinary_business_income=facts.rows[current_prefix + "ordinary_business_income"], ebitda=facts.rows[current_prefix + "ebitda"])
-    history = tuple({name: facts.rows[f"years.{i}.{name}"] for name in ("ordinary_business_income", "ebitda", "k1_distribution_ratio")}
-                    for i in range(len(req.years))) if include_spread else ()
-    return CommercialFacts(current, history, tuple(facts.rows.values()))
 
 
 def consumer_dti(gross_monthly_income: float, housing_pi: float, housing_tax_ins: float, other_monthly_debt: float) -> tuple[float, float]:
