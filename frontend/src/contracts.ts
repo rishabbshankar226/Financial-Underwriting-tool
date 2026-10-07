@@ -387,7 +387,7 @@ export function guardLegacyInput(value: unknown): LegacyRequest {
     overrides,
   };
 }
-function guardDatedInput(value: unknown): DatedRequest {
+export function guardDatedInput(value: unknown): DatedRequest {
   const p = object(value, "normalized input");
   requireValue(
     p.schema_version === "commercial-assessment-v1" &&

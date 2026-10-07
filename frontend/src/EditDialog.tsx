@@ -1,28 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 import { validateEdit, type EditableField, type EditEvent } from "./workspace";
+import { restoreDialogFocus } from "./CaseDialogs";
+import { rationale as savedRationale } from "./caseContracts";
 export default function EditDialog({
   field,
   onCancel,
   onSubmit,
   restoreFocus,
+  saved = false,
+  proposal,
 }: {
   field: EditableField;
   onCancel: () => void;
   onSubmit: (edit: EditEvent) => void;
   restoreFocus: HTMLElement | null;
+  saved?: boolean;
+  proposal?: EditEvent;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [value, setValue] = useState(
-    String(field.unit === "%" ? field.value * 100 : field.value),
+    String(
+      field.unit === "%"
+        ? (proposal?.next ?? field.value) * 100
+        : (proposal?.next ?? field.value),
+    ),
   );
-  const [rationale, setRationale] = useState("");
+  const [rationale, setRationale] = useState(proposal?.rationale ?? "");
   const [error, setError] = useState("");
   useEffect(() => {
     const element = dialog.current;
     element?.showModal();
     return () => {
       element?.close();
-      restoreFocus?.focus();
+      restoreDialogFocus(restoreFocus);
     };
   }, [restoreFocus]);
   return (
@@ -56,6 +66,7 @@ export default function EditDialog({
           event.preventDefault();
           try {
             const next = validateEdit(field, value, rationale);
+            if (saved) savedRationale(rationale);
             onSubmit({
               path: field.path,
               prior: field.value,
@@ -94,14 +105,16 @@ export default function EditDialog({
         </label>
         {error && <p role="alert">{error}</p>}
         <p className="fine">
-          The edit is applied only after a successful backend evaluation.
+          {saved
+            ? "The edit creates a saved revision only after an accepted server receipt. It uses the server's selected policy; earlier revisions stay unchanged. Rationale: at most 2,000 characters."
+            : "The edit is applied only after a successful backend evaluation."}
         </p>
         <div className="actions">
           <button type="button" onClick={onCancel}>
             Cancel
           </button>
           <button className="primary" type="submit">
-            Evaluate edit
+            {saved ? "Save revision" : "Evaluate edit"}
           </button>
         </div>
       </form>

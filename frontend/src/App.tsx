@@ -1,27 +1,22 @@
-import { useEffect, useReducer, useRef, useState } from "react";
-import alpine from "../../backend/fixtures/alpine.json";
-import datedAlpine from "../../backend/fixtures/alpine_dated.json";
+import { useEffect, useRef, useState } from "react";
 import {
   annualFields,
-  detectMode,
-  guardLegacyInput,
   type Assessment,
-  type DatedRequest,
   type Factor,
   type Period,
-  type Input,
   type Metric,
 } from "./contracts";
-import { evaluate } from "./api";
-import {
-  applyEdit,
-  initialWorkspace,
-  transition,
-  type Draft,
-  type EditableField,
-  type EditEvent,
-} from "./workspace";
+import type { EditableField, EditEvent } from "./workspace";
 import EditDialog from "./EditDialog";
+import { useAnalystWorkspace } from "./useAnalystWorkspace";
+import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
+import {
+  SavedCaseList,
+  SavedContext,
+  SavedHistory,
+  RecordingDetails,
+  RecoveryPanel,
+} from "./SavedCases";
 const disclaimer =
   "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.";
 const labels: Record<string, string> = {
@@ -112,15 +107,18 @@ function TraceDetail({
   ) : null;
 }
 export default function App() {
-  const [state, dispatch] = useReducer(transition, initialWorkspace);
+  const workspace = useAnalystWorkspace();
+  const { state, submit, demo, upload } = workspace;
   const [tab, setTab] = useState<
     "spread" | "assumptions" | "details" | "memo" | "history"
   >("spread");
   const [selectedPeriod, setSelectedPeriod] = useState(1);
   const [editing, setEditing] = useState<EditableField | null>(null);
+  const [proposal, setProposal] = useState<EditEvent | undefined>();
+  const [saving, setSaving] = useState(false),
+    [showCases, setShowCases] = useState(false),
+    [discarding, setDiscarding] = useState(false);
   const opener = useRef<HTMLElement | null>(null);
-  const sequence = useRef(0);
-  const active = useRef<AbortController | null>(null);
   const ready = state.status === "ready",
     accepted = state.accepted,
     input = accepted?.input;
@@ -133,88 +131,21 @@ export default function App() {
         : accepted.result
       : null;
   const index = input ? Math.min(selectedPeriod, input.years.length - 1) : 0;
-  function begin(filename: string, draft: Draft | null): number {
-    const id = ++sequence.current;
-    active.current?.abort();
-    active.current = null;
-    setEditing(null);
-    dispatch({ type: "start", id, filename, draft });
-    return id;
-  }
-  async function submit(draft: Draft, id = begin(draft.filename, draft)) {
-    if (id !== sequence.current) return;
-    dispatch({ type: "start", id, filename: draft.filename, draft });
-    const controller = new AbortController();
-    active.current = controller;
-    try {
-      const result = await evaluate(draft, controller.signal);
-      if (id !== sequence.current || controller.signal.aborted) return;
-      dispatch({ type: "success", id, accepted: result });
-      if (draft.resetHistory) setSelectedPeriod(result.input.years.length - 1);
-    } catch (err) {
-      if (id === sequence.current && !controller.signal.aborted)
-        dispatch({
-          type: "failure",
-          id,
-          error: `Invalid fixture or unavailable backend: ${err instanceof Error ? err.message : String(err)}`,
-        });
-    }
-  }
-  function demo(mode: "dated" | "legacy") {
-    void submit({
-      mode,
-      payload:
-        mode === "dated"
-          ? (datedAlpine as DatedRequest)
-          : guardLegacyInput(alpine),
-      filename: mode === "dated" ? "alpine_dated.json" : "alpine.json",
-      resetHistory: true,
-    });
-  }
   useEffect(() => {
-    demo("dated");
-    return () => {
-      sequence.current++;
-      active.current?.abort();
-    };
-  }, []);
-  async function upload(file: File | undefined) {
-    if (!file) return;
-    const id = begin(file.name, null);
-    try {
-      if (file.size > 1_000_000)
-        throw new Error("Use a JSON file no larger than 1,000,000 bytes.");
-      const rawJson = await file.text();
-      if (id !== sequence.current) return;
-      const payload: unknown = JSON.parse(rawJson);
-      const mode = detectMode(payload);
-      await submit(
-        {
-          mode,
-          payload: payload as Input,
-          filename: file.name,
-          rawJson,
-          resetHistory: true,
-        },
-        id,
-      );
-    } catch (err) {
-      if (id === sequence.current)
-        dispatch({
-          type: "failure",
-          id,
-          error: `Invalid fixture: ${err instanceof Error ? err.message : String(err)}`,
-        });
+    if (state.status === "evaluating") {
+      setEditing(null);
+      setSaving(false);
     }
-  }
-  function edit(editEvent: EditEvent) {
-    if (!ready || !accepted) return;
-    void submit({
-      mode: accepted.mode,
-      payload: applyEdit(accepted.input, editEvent),
-      filename: accepted.filename,
-      edit: editEvent,
-    });
+    if (state.status === "ready" && state.resetPeriod && state.accepted)
+      setSelectedPeriod(state.accepted.input.years.length - 1);
+    if (state.status === "ready" && state.saved?.view.compatibility)
+      setTab("history");
+  }, [state.id, state.status, state.accepted, state.resetPeriod]);
+  function edit(event: EditEvent) {
+    if (!editing) return;
+    workspace.edit(event, editing);
+    setEditing(null);
+    setProposal(undefined);
   }
   function field(
     path: string,
@@ -229,7 +160,7 @@ export default function App() {
     return (
       <button
         className="rowEdit"
-        disabled={!ready}
+        disabled={!workspace.canEdit}
         onClick={(event) => {
           opener.current = event.currentTarget;
           setEditing({
@@ -313,14 +244,28 @@ export default function App() {
       <header>
         <div>
           <div className="eyebrow">SPREADLINE / CREDIT WORKSPACE</div>
-          <h1>{ready ? input?.borrower_name : "Assessment workspace"}</h1>
+          <h1>
+            {ready
+              ? (input?.borrower_name ??
+                (typeof state.saved?.view.snapshot.normalized_input
+                  .borrower_name === "string"
+                  ? state.saved.view.snapshot.normalized_input.borrower_name
+                  : "Saved case"))
+              : "Assessment workspace"}
+          </h1>
           <p>
             {ready
-              ? accepted?.mode === "dated"
-                ? "Dated assessment"
-                : "Legacy · undated input"
+              ? state.saved
+                ? "Saved dated assessment"
+                : accepted?.mode === "dated"
+                  ? "Dated assessment"
+                  : "Legacy · undated input"
               : state.status === "evaluating"
-                ? "Evaluating selected draft"
+                ? state.action === "open"
+                  ? "Opening stored revision"
+                  : state.action === "write"
+                    ? "Waiting for accepted stored receipt"
+                    : "Evaluating selected draft"
                 : "Selected input unavailable"}
           </p>
         </div>
@@ -330,7 +275,11 @@ export default function App() {
             {decision
               ? decision.outcome.toUpperCase()
               : state.status === "evaluating"
-                ? "CALCULATING"
+                ? state.action === "open"
+                  ? "LOADING"
+                  : state.action === "write"
+                    ? "SAVING"
+                    : "CALCULATING"
                 : "UNAVAILABLE"}
           </strong>
           <small>
@@ -345,6 +294,22 @@ export default function App() {
         <div className="actions">
           <button onClick={() => demo("dated")}>Dated Alpine demo</button>
           <button onClick={() => demo("legacy")}>Legacy Alpine demo</button>
+          <button
+            data-focus-fallback
+            aria-expanded={showCases}
+            onClick={() => setShowCases((value) => !value)}
+          >
+            Saved cases
+          </button>
+          <button
+            disabled={!workspace.canSave}
+            onClick={(event) => {
+              opener.current = event.currentTarget;
+              setSaving(true);
+            }}
+          >
+            Save case
+          </button>
         </div>
         <label>
           Import synthetic JSON{" "}
@@ -358,15 +323,61 @@ export default function App() {
           />
         </label>
         <span>{state.filename} · synthetic only</span>
+        {accepted?.mode === "legacy" && (
+          <span>
+            Saving requires a separately imported dated assessment with explicit
+            dates and units.
+          </span>
+        )}
       </div>
+      {showCases && (
+        <SavedCaseList
+          onOpen={(locator) => {
+            setShowCases(false);
+            void workspace.openSaved(locator);
+          }}
+          onClose={() => {
+            setShowCases(false);
+            document
+              .querySelector<HTMLButtonElement>("[data-focus-fallback]")
+              ?.focus();
+          }}
+        />
+      )}
+      <RecoveryPanel
+        workspace={workspace}
+        onDiscard={(element) => {
+          opener.current = element;
+          setDiscarding(true);
+        }}
+        onReview={(element) => {
+          const review = workspace.reviewConflict();
+          if (review) {
+            opener.current = element;
+            setEditing(review.field);
+            setProposal(review.proposal);
+          }
+        }}
+      />
+      {state.saved && (
+        <SavedContext
+          saved={state.saved}
+          active={ready}
+          onOpen={(locator) => void workspace.openSaved(locator)}
+        />
+      )}
       {!ready && (
         <div className="pending" role="status">
           <strong>
             {state.status === "evaluating"
-              ? "Evaluating draft"
+              ? state.action === "open"
+                ? "Loading original stored assessment"
+                : state.action === "write"
+                  ? "Waiting for saved write confirmation"
+                  : "Evaluating draft"
               : "No current result"}
           </strong>
-          {state.draft && (
+          {state.draft && state.action === "evaluate" && (
             <p>
               Submitted draft: {state.draft.filename} · {state.draft.mode} ·{" "}
               {typeof state.draft.payload.borrower_name === "string"
@@ -376,12 +387,14 @@ export default function App() {
                 ` · ${state.draft.edit.path}: ${state.draft.edit.prior} → ${state.draft.edit.next}`}
             </p>
           )}
-          {accepted && (
-            <p>
-              Previous accepted case: {accepted.input.borrower_name} ·{" "}
-              {accepted.filename}. Its recommendation is inactive.
-            </p>
-          )}
+          {accepted &&
+            !state.saved &&
+            (state.action === "evaluate" || !workspace.operation) && (
+              <p>
+                Previous accepted case: {accepted.input.borrower_name} ·{" "}
+                {accepted.filename}. Its recommendation is inactive.
+              </p>
+            )}
         </div>
       )}
       {state.error && (
@@ -391,25 +404,46 @@ export default function App() {
       )}
       {state.status === "unavailable" && (
         <div className="actions">
-          {state.draft && (
+          {state.draft && state.action === "evaluate" && (
             <button onClick={() => void submit(state.draft!)}>
               Retry submitted draft
             </button>
           )}
-          {accepted && (
+          {accepted &&
+            !state.saved &&
+            (state.action === "evaluate" || !workspace.operation) && (
+              <button
+                onClick={() =>
+                  void submit({
+                    mode: accepted.mode,
+                    payload: accepted.input,
+                    filename: accepted.filename,
+                  })
+                }
+              >
+                Re-evaluate last accepted case
+              </button>
+            )}
+          {state.saved && (
             <button
               onClick={() =>
-                void submit({
-                  mode: accepted.mode,
-                  payload: accepted.input,
-                  filename: accepted.filename,
+                void workspace.openSaved({
+                  caseId: state.saved!.view.snapshot.case_id,
+                  revision: state.saved!.view.snapshot.revision,
                 })
               }
             >
-              Re-evaluate last accepted case
+              View previous stored revision
             </button>
           )}
         </div>
+      )}
+      {ready && state.saved?.view.compatibility && (
+        <section className="panel compatibility">
+          <h2>Original stored assessment</h2>
+          <p>{state.saved.view.compatibility}</p>
+          <pre>{JSON.stringify(state.saved.view.snapshot, null, 2)}</pre>
+        </section>
       )}
       {assessment && (
         <div className="context">
@@ -447,7 +481,9 @@ export default function App() {
               <h2>Annual financial spread</h2>
               <span>
                 {ready
-                  ? "Select a supplied input to edit · derived rows are read-only"
+                  ? workspace.canEdit
+                    ? "Select a supplied input to edit · derived rows are read-only"
+                    : "Original accepted inputs · editing unavailable for this selection"
                   : "Previous accepted inputs · editing unavailable"}
               </span>
             </div>
@@ -479,7 +515,7 @@ export default function App() {
                             <button
                               className="rowEdit"
                               aria-label={`Edit ${labels[key]} for ${periodLabel(y, i)}`}
-                              disabled={!ready}
+                              disabled={!workspace.canEdit}
                               onClick={(event) => {
                                 opener.current = event.currentTarget;
                                 setEditing({
@@ -620,6 +656,7 @@ export default function App() {
       {tab === "details" && (
         <section className="panel">
           <h2>Calculation and policy details</h2>
+          {ready && state.saved && <RecordingDetails view={state.saved.view} />}
           {assessment ? (
             <>
               <p>
@@ -753,56 +790,87 @@ export default function App() {
           <p className="fine">{disclaimer}</p>
         </section>
       )}
-      {tab === "history" && (
-        <section className="panel memo">
-          <h2>Session edit history</h2>
-          <p>
-            Resets on reload. Actor: demonstration analyst; timestamps are local
-            and unverified.
-          </p>
-          {state.history.length === 0 ? (
-            <p>No applied edits this session.</p>
-          ) : (
-            state.history.map((e, i) => (
-              <div className="audit" key={i}>
-                <strong>{e.path}</strong>
-                <span>
-                  {e.prior} → {e.next}
-                </span>
-                <small>
-                  {e.rationale} · {e.at}
-                </small>
-              </div>
-            ))
-          )}
-          {input && "overrides" in input && !!input.overrides?.length && (
-            <>
-              <h3>Unverified imported history</h3>
-              {input.overrides.map((e, i) => (
-                <div className="audit imported" key={i}>
-                  <strong>{e.field}</strong>
+      {tab === "history" &&
+        (state.saved ? (
+          <SavedHistory
+            saved={state.saved}
+            active={ready}
+            onOpen={(locator) => void workspace.openSaved(locator)}
+          />
+        ) : (
+          <section className="panel memo">
+            <h2>Session edit history</h2>
+            <p>
+              Resets on reload. Actor: demonstration analyst; timestamps are
+              local and unverified.
+            </p>
+            {state.history.length === 0 ? (
+              <p>No applied edits this session.</p>
+            ) : (
+              state.history.map((e, i) => (
+                <div className="audit" key={i}>
+                  <strong>{e.path}</strong>
                   <span>
-                    {String(e.prior_value)} → {String(e.new_value)}
+                    {e.prior} → {e.next}
                   </span>
                   <small>
-                    {e.rationale} · supplied actor {e.actor} · {e.at}
+                    {e.rationale} · {e.at}
                   </small>
                 </div>
-              ))}
-            </>
-          )}
-        </section>
-      )}
+              ))
+            )}
+            {input && "overrides" in input && !!input.overrides?.length && (
+              <>
+                <h3>Unverified imported history</h3>
+                {input.overrides.map((e, i) => (
+                  <div className="audit imported" key={i}>
+                    <strong>{e.field}</strong>
+                    <span>
+                      {String(e.prior_value)} → {String(e.new_value)}
+                    </span>
+                    <small>
+                      {e.rationale} · supplied actor {e.actor} · {e.at}
+                    </small>
+                  </div>
+                ))}
+              </>
+            )}
+          </section>
+        ))}
       {editing && (
         <EditDialog
+          key={`${editing.path}:${state.id}`}
           restoreFocus={opener.current}
           field={editing}
-          onCancel={() => setEditing(null)}
+          saved={!!state.saved}
+          proposal={proposal}
+          onCancel={() => {
+            setEditing(null);
+            setProposal(undefined);
+          }}
           onSubmit={edit}
         />
       )}
+      {saving && accepted?.mode === "dated" && (
+        <SaveCaseDialog
+          input={accepted.input}
+          restoreFocus={opener.current}
+          onSave={workspace.save}
+          onCancel={() => setSaving(false)}
+        />
+      )}
+      {discarding && (
+        <DiscardTrackingDialog
+          restoreFocus={opener.current}
+          onDiscard={workspace.discardTracking}
+          onCancel={() => setDiscarding(false)}
+        />
+      )}
       <footer>
-        Spreadline · Synthetic analyst demonstration · Session-only workspace
+        Spreadline · Synthetic analyst demonstration ·{" "}
+        {state.saved
+          ? "Local saved revisions · unverified demonstration actor"
+          : "Unsaved session workspace"}
       </footer>
     </main>
   );

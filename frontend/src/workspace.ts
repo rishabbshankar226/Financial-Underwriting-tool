@@ -1,4 +1,10 @@
 import type { Accepted, Input, Mode } from "./contracts";
+import type { StoredCase } from "./caseContracts";
+export type StoredSelection = {
+  view: StoredCase;
+  selection: "latest" | "revision" | "receipt";
+  headRevision: number | null;
+};
 export type EditEvent = {
   path: string;
   prior: number;
@@ -22,6 +28,9 @@ export type Workspace = {
   status: "evaluating" | "ready" | "unavailable";
   error: string;
   history: EditEvent[];
+  saved: StoredSelection | null;
+  action: "evaluate" | "open" | "write";
+  resetPeriod: boolean;
 };
 export const initialWorkspace: Workspace = {
   id: 0,
@@ -31,12 +40,54 @@ export const initialWorkspace: Workspace = {
   status: "evaluating",
   error: "",
   history: [],
+  saved: null,
+  action: "evaluate",
+  resetPeriod: true,
 };
 export type Event =
-  | { type: "start"; id: number; draft: Draft | null; filename: string }
+  | {
+      type: "start";
+      id: number;
+      draft: Draft | null;
+      filename: string;
+      action?: Workspace["action"];
+    }
   | { type: "success"; id: number; accepted: Accepted }
-  | { type: "failure"; id: number; error: string };
+  | { type: "failure"; id: number; error: string }
+  | {
+      type: "stored-success";
+      id: number;
+      view: StoredCase;
+      selection: StoredSelection["selection"];
+      resetPeriod?: boolean;
+    }
+  | {
+      type: "head";
+      id: number;
+      caseId: string;
+      revision: number;
+      headRevision: number;
+    };
 export function transition(state: Workspace, event: Event): Workspace {
+  if (event.type === "head") {
+    if (
+      state.id !== event.id ||
+      state.status !== "ready" ||
+      state.saved?.view.snapshot.case_id !== event.caseId ||
+      state.saved.view.snapshot.revision !== event.revision ||
+      event.headRevision < event.revision
+    )
+      return state;
+    return {
+      ...state,
+      saved: {
+        ...state.saved,
+        headRevision: event.headRevision,
+        selection:
+          event.headRevision === event.revision ? "latest" : "revision",
+      },
+    };
+  }
   if (event.type === "start")
     return event.id < state.id
       ? state
@@ -47,10 +98,36 @@ export function transition(state: Workspace, event: Event): Workspace {
           filename: event.filename,
           status: "evaluating",
           error: "",
+          action: event.action ?? "evaluate",
         };
   if (event.id !== state.id || state.status === "ready") return state;
   if (event.type === "failure")
     return { ...state, status: "unavailable", error: event.error };
+  if (event.type === "stored-success") {
+    const { view, selection } = event;
+    return {
+      ...state,
+      draft: null,
+      filename: `Saved case ${view.snapshot.case_id}`,
+      accepted: view.assessment
+        ? {
+            mode: "dated",
+            input: view.assessment.normalized_input,
+            result: view.assessment,
+            filename: `Saved case ${view.snapshot.case_id}`,
+          }
+        : null,
+      saved: {
+        view,
+        selection,
+        headRevision: selection === "latest" ? view.snapshot.revision : null,
+      },
+      history: [],
+      status: "ready",
+      error: "",
+      resetPeriod: event.resetPeriod ?? true,
+    };
+  }
   const history = state.draft?.resetHistory ? [] : state.history;
   return {
     ...state,
@@ -59,6 +136,8 @@ export function transition(state: Workspace, event: Event): Workspace {
     status: "ready",
     error: "",
     history: state.draft?.edit ? [...history, state.draft.edit] : history,
+    saved: null,
+    resetPeriod: !!state.draft?.resetHistory,
   };
 }
 export function applyEdit(input: Input, edit: EditEvent): Input {
