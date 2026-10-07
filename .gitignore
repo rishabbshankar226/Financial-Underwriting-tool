@@ -9,3 +9,7 @@ dist/
 *.tsbuildinfo
 frontend/test-results/
 frontend/playwright-report/
+
+# Local case databases, journals and backups use these documented directories.
+/.spreadline-data/
+/backend/.spreadline-data/

@@ -10,7 +10,7 @@ Current FTC Safeguards Rule resource: https://www.ftc.gov/legal-library/browse/r
 | Encryption at rest | Managed database/object store keys | No production store exists |
 | Access control | API authorization + role model | Placeholder; synthetic-only |
 | MFA | Identity provider before application session | Not implemented |
-| Audit logging | Append-only audit event store/SIEM export | In-memory/schema demonstration only |
+| Audit logging | Append-only audit event store/SIEM export | Optional local dated-case revisions and immutable server-derived demonstration events; fixed unverified actor; browser history remains session-only |
 | Incident response | Alerting + incident runbook + notification workflow | Documentation placeholder |
 | Service-provider oversight | Vendor inventory / contracts / control reviews | Not applicable to prototype |
 

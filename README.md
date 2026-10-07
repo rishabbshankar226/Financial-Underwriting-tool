@@ -12,6 +12,7 @@ Spreadline is a credit underwriting prototype for commercial, SBA and consumer l
 - Decisions and reason codes built from the same stored factors.
 - JSON and CSV intake, plus field extraction from synthetic text documents. A person has to confirm each extracted field before it reaches the calculations.
 - A React workspace with a complete annual spread, current assumptions, server calculation traces and policy comparisons, rationale-based edits, a memo, and session edit history.
+- Optional local storage for dated commercial cases, immutable accepted revisions/results, server-derived events, concurrent-edit preconditions, original retry receipts, replay, and verified backup/restore.
 - A synthetic check that changing only the applicant's geography doesn't change the outcome.
 
 ## Stack
@@ -34,6 +35,13 @@ python -m uvicorn app.main:app --reload --port 8000
 ```
 
 Health check: `GET http://localhost:8000/health`
+
+To enable saved dated cases, from `backend` create `.spreadline-data`, set
+`SPREADLINE_CASE_DB` to an absolute SQLite file path in that directory, and start
+the backend. The case API persists accepted revisions; browser save/open controls
+are a later stage. See [the case storage contract](docs/CASE_STORAGE.md) for
+routes, retry/ETag semantics, and local verify/backup/restore commands. Storage is
+optional; the stateless assessment routes work without it.
 
 ## Dated commercial assessment API
 
@@ -130,7 +138,7 @@ Playwright starts both development servers automatically. Ensure the Python envi
 - The fairness check runs on synthetic data and can't establish disparate impact.
 - Extraction is a deterministic parser for the synthetic text fixtures. There is no OCR.
 - There are no live bureau, bank, tax or market-data connections.
-- The security notes map where each control would sit in production. Apart from an in-memory audit log, the prototype doesn't implement them, and nothing is certified.
+- The security notes map where production controls would sit. Optional local dated-case storage has immutable server-derived events and revision checks, but it has no authentication or verified human actor; browser histories remain session-only demonstrations. Nothing is certified.
 - The decision score is illustrative and uncalibrated. It is not a probability of default.
 - Fixture C sits at exactly 43% back-end DTI. The prototype treats 43% as a review boundary and 50% as an illustrative decline boundary, so fixture C goes to review. The current General QM rule has no fixed DTI cap, so these are policy settings.
 
