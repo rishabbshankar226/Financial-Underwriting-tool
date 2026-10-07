@@ -25,7 +25,7 @@ Selection identifiers are allocated before asynchronous file reads. Raw import t
 
 Legacy defaults/coercions needed to display accepted input are normalized only after backend success. Legacy annual periods remain ordinal, dated-only trace/spread results remain unavailable, and no dates or explicit units are inferred.
 
-History is local React state. Reload clears it. There is no persistence, authentication, export, or stress engine in this slice. Decision scores and policy values remain illustrative prototype settings.
+History is local React state. Reload clears it. The browser does not yet call the optional [saved-case backend](CASE_STORAGE.md); save/open and durable-history controls are a later interface stage. This workspace has no authentication, export, or stress engine. Decision scores and policy values remain illustrative prototype settings.
 
 ## Verification
 

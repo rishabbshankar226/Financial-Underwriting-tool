@@ -1,9 +1,11 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
 from .assessment import assess_commercial
-from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest, MAX_REQUEST_BYTES
+from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest
+from .case_routes import router as case_router, owns_case_json, install_case_openapi
+from .cases import CaseStoreError
+from .json_transport import read_contract
 from .schemas import CommercialRequest, ConsumerRequest, Decision, DISCLAIMER, SBACase
 from .decision import decide_commercial, decide_consumer
 from .sba import load_size_table, evaluate_sba
@@ -14,7 +16,7 @@ app = FastAPI(title="Spreadline", version="0.1.0", description=DISCLAIMER)
 
 @app.middleware("http")
 async def validate_raw_json(request: Request, call_next):
-    if request.url.path.rstrip("/") == "/commercial/assessment":
+    if request.url.path.rstrip("/") == "/commercial/assessment" or owns_case_json(request.url.path):
         # This route owns a bounded stream read, before any JSON buffering.
         return await call_next(request)
     # Validate before framework JSON decoding can discard duplicate object keys.
@@ -29,7 +31,16 @@ async def validate_raw_json(request: Request, call_next):
 
 
 # CORS must wrap validation so a rejected JSON request remains readable by the UI.
-app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],allow_credentials=False,allow_methods=["*"],allow_headers=["*"])
+app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],allow_credentials=False,allow_methods=["*"],allow_headers=["*"],expose_headers=["ETag", "Idempotency-Replayed", "Retry-After"])
+
+app.include_router(case_router)
+install_case_openapi(app)
+
+
+@app.exception_handler(CaseStoreError)
+async def case_store_error(request: Request, exc: CaseStoreError):
+    headers = {"Retry-After": "1"} if exc.code == "storage_busy" else None
+    return JSONResponse(status_code=exc.status, content={"detail": {"code": exc.code, "message": str(exc)}}, headers=headers)
 
 @app.get("/health")
 def health() -> dict:
@@ -43,22 +54,9 @@ def health() -> dict:
     }}}
 })
 async def commercial_assessment(request: Request) -> CommercialAssessment:
-    chunks, size = [], 0
-    async for chunk in request.stream():
-        size += len(chunk)
-        if size > MAX_REQUEST_BYTES:
-            raise HTTPException(status_code=413, detail="Assessment request exceeds 1,000,000 bytes")
-        chunks.append(chunk)
-    body = b"".join(chunks)
+    validated = await read_contract(request, CommercialAssessmentRequest)
     try:
-        parse_structured(body.decode("utf-8"), "json")
-        validated = CommercialAssessmentRequest.model_validate_json(body)
         return assess_commercial(validated)
-    except ValidationError as exc:
-        errors = exc.errors(include_url=False, include_input=False, include_context=False)
-        for error in errors:
-            error["loc"] = ["body", *error["loc"]]
-        raise HTTPException(status_code=422, detail=errors) from exc
     except (ValueError, OverflowError, RecursionError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
