@@ -10,6 +10,8 @@ import type { EditableField, EditEvent } from "./workspace";
 import EditDialog from "./EditDialog";
 import { metricText } from "./metricDisplay";
 import { Scenarios } from "./Scenarios";
+import { Review } from "./Review";
+import { prototypeDisclaimer } from "./prototypeDisclaimer";
 import { useScenarioWorkspace } from "./useScenarioWorkspace";
 import { writeComparisonLocator } from "./scenarioSelection";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
@@ -21,8 +23,7 @@ import {
   RecordingDetails,
   RecoveryPanel,
 } from "./SavedCases";
-const disclaimer =
-  "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.";
+const disclaimer = prototypeDisclaimer;
 const labels: Record<string, string> = {
   gross_receipts: "Gross receipts",
   cogs: "COGS",
@@ -110,7 +111,7 @@ export default function App() {
   const scenarios = useScenarioWorkspace(workspace);
   const { state, submit, demo, upload } = workspace;
   const [tab, setTab] = useState<
-    "spread" | "assumptions" | "details" | "memo" | "history" | "scenarios"
+    "spread" | "assumptions" | "details" | "memo" | "history" | "scenarios" | "review"
   >("spread");
   const [selectedPeriod, setSelectedPeriod] = useState(1);
   const [editing, setEditing] = useState<EditableField | null>(null);
@@ -444,7 +445,7 @@ export default function App() {
           )}
         </div>
       )}
-      {ready && state.saved?.view.compatibility && (
+      {ready && state.saved?.view.compatibility && tab !== "review" && (
         <section className="panel compatibility">
           <h2>Original stored assessment</h2>
           <p>{state.saved.view.compatibility}</p>
@@ -467,7 +468,7 @@ export default function App() {
         </div>
       )}
       <nav aria-label="Workspace views">
-        {(["spread", "assumptions", "details", "memo", "history", "scenarios"] as const).map(
+        {(["spread", "assumptions", "details", "memo", "history", "scenarios", "review"] as const).map(
           (value) => (
             <button
               className={tab === value ? "active" : ""}
@@ -475,13 +476,18 @@ export default function App() {
               onClick={() => setTab(value)}
               key={value}
             >
-              {value === "scenarios" ? "Scenarios" : value}
+              {value === "scenarios" ? "Scenarios" : value === "review" ? "Review" : value}
             </button>
           ),
         )}
       </nav>
       {tab === "scenarios" && <Scenarios model={scenarios}
         onSaveBaseline={(element) => { if (workspace.canSave) { opener.current = element; setSaving(true); } }}
+        onOpenBaseline={(locator) => void workspace.openSaved(locator)}/>}
+      {tab === "review" && <Review view={ready ? state.saved?.view ?? null : null}
+        selection={state.saved?.selection ?? null} headRevision={state.saved?.headRevision ?? null}
+        sourceScope={`${state.id}:${state.status}`} original={scenarios.original}
+        pending={!!(workspace.operation || workspace.recoveryError || workspace.conflict || workspace.inFlight)}
         onOpenBaseline={(locator) => void workspace.openSaved(locator)}/>}
       {tab === "spread" && (
         <section className="grid">
