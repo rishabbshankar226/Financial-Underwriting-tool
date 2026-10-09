@@ -2,14 +2,60 @@
 
 Retain an entire reviewed [stress preview](STRESS_PREVIEWS.md) as one immutable
 comparison. It stays linked to the selected original case/revision/run and its
-retained policy. Read it again after restart or later case edits. The current
-interface is HTTP; browser controls for comparisons are not yet available.
+retained policy. Read it again after restart or later case edits through HTTP
+or the browser's **Scenarios** view. The browser lists original comparison
+summaries across all revisions of the selected case and opens the selected
+original record without recalculation. See [the scenario workflow](WORKSPACE.md#scenario-review-and-original-comparisons).
 
 Use synthetic data. The actor is `prototype-demo-unverified`, matching the local
 case prototype. Retention uses the existing calculation definitions and does
 not change their [financial limits](MODEL_DOCUMENTATION.md).
 
 ## Preview, then retain
+
+In the browser, author 1–10 ordered scenarios with unique generated keys,
+trimmed names, required rationales and all four explicit shocks. Presets fill
+the name and shocks, leaving the rationale to the analyst. Preview first,
+review the selected scenario's server results, and choose **Save reviewed
+comparison**. That action consumes the reviewed preview and reserves the
+shared write slot before POST. An intentional new batch requires a fresh
+draft and explicit preview. Historical baselines do not need the case head's
+ETag and never change the original case revision.
+
+The existing `spreadline.pending-write.v1` tab-local journal retains old
+`case-write-v1` creation/edit records without changing their body, UUID or
+ETag. Comparison records use `scenario-comparison-write-v1`, with the exact
+command, UUID, backend and minimal baseline/context identifiers. No full
+preview is stored there. Any unresolved operation, invalid tracking,
+confirmed-clear failure or saved-edit conflict blocks all new saved writes.
+Original reads and read-only previews remain available.
+
+Reload never submits a write. **Retry exact write** sends the original body,
+UUID and canonical path; comparison retry sends no `If-Match` and does not
+need a live preview. A verified original receipt can contain an unsupported
+financial definition: its known storage envelope and original JSON remain
+readable without a typed projected outcome. Invalid success receipts,
+network/abort errors, 503 errors and unknown/malformed rejections keep the
+original operation. `operation_conflict` requires review and explicit discard
+instead of retry. Known pre-commit comparison 409 codes clear only the matching
+journal after confirmed removal: `preview_changed`, `storage_upgrade_required`,
+`baseline_run_mismatch`, `baseline_unsupported`, `baseline_replay_mismatch` and
+`baseline_replay_unavailable`. A new save then requires fresh explicit review.
+
+The browser verifies HTTP 201, the strong comparison ETag, the exact relative
+Location, the replay header, baseline links, normalized ordered command and
+reviewed fingerprint. It constructs original read paths from verified IDs
+and never follows arbitrary Location URLs. A late acknowledgment resolves
+tracking independently and offers an explicit link while preserving the
+current assessment selection. Closing the writer preserves uncertain tracking.
+
+Original detail rendering shows only the selected scenario, creates trace
+and guarantor pages of at most 50 rows when opened, and pages original JSON
+into at most 64 KiB of UTF-8 text. Comparison list reads request 25 summaries
+per page with scoped cursors and cancellation. The optional comparison hint
+stores only backend/case/comparison IDs; reload always performs a fresh GET.
+No result or ETag is restored from it. Source status and prototype actors
+remain explicitly unverified.
 
 Read the selected saved revision and POST the final scenario command to its
 preview endpoint. Copy the preview's `fingerprint.value` into the retention

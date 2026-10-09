@@ -2,7 +2,20 @@
 
 A preview applies hypothetical changes to the latest operating period of a saved dated commercial assessment. It returns projected current facts under the baseline's retained policy. The original assessment, observed financial periods and K-1 history remain available as baseline evidence.
 
-This API does not save scenarios or change a case's head revision. There is no scenario browser interface yet. These calculations use the prototype's existing financial definitions and are not a complete forecast; see the [model limits](MODEL_DOCUMENTATION.md).
+This API does not save scenarios or change a case's head revision. The browser's **Scenarios** view authors and reviews these previews, then retains a reviewed batch through the separate comparison endpoint. These calculations use the prototype's existing financial definitions and are not a complete forecast; see the [model limits](MODEL_DOCUMENTATION.md).
+
+The browser binds a preview to the selected original revision, the ordered
+normalized command, and the draft's generation. Editing any name, rationale or
+shock, or adding/removing a row, requires a fresh explicit preview, including
+when text is changed back to its earlier value. A delayed preview cannot become
+current after a draft or baseline change. Percentage controls convert display
+percentages once; basis-point controls pass basis points unchanged. The browser
+formats server results and validates references without financial arithmetic.
+
+Browser comparison responses are limited to 16,777,216 actual streamed bytes,
+regardless of `Content-Length`, and finite JSON depth 100. This is a client read
+limit; it does not introduce a response cap in the backend preview API. Existing
+case-response guards retain their depth limit of 64.
 
 To retain the final reviewed batch, use the separate [saved comparison contract](SCENARIO_COMPARISONS.md) with this preview's fingerprint and a write-operation UUID.
 

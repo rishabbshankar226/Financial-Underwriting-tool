@@ -8,6 +8,10 @@ import {
 } from "./contracts";
 import type { EditableField, EditEvent } from "./workspace";
 import EditDialog from "./EditDialog";
+import { metricText } from "./metricDisplay";
+import { Scenarios } from "./Scenarios";
+import { useScenarioWorkspace } from "./useScenarioWorkspace";
+import { writeComparisonLocator } from "./scenarioSelection";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
 import {
@@ -58,11 +62,6 @@ const periodLabel = (year: Partial<Period>, index: number) =>
   year.period_start && year.period_end
     ? `${year.period_start} – ${year.period_end}`
     : `Supplied period ${index + 1}`;
-function metricText(m: Metric): string {
-  if (m.status === "not_applicable") return "Not applicable";
-  if (typeof m.raw_value !== "number") return String(m.raw_value);
-  return `${m.raw_value.toLocaleString("en-US", { minimumFractionDigits: m.display_precision ?? 0, maximumFractionDigits: m.display_precision ?? 0 })} ${m.unit}`;
-}
 function factorText(f: Factor): string {
   const v = f.raw_value;
   if (v === null) return "Not applicable";
@@ -108,9 +107,10 @@ function TraceDetail({
 }
 export default function App() {
   const workspace = useAnalystWorkspace();
+  const scenarios = useScenarioWorkspace(workspace);
   const { state, submit, demo, upload } = workspace;
   const [tab, setTab] = useState<
-    "spread" | "assumptions" | "details" | "memo" | "history"
+    "spread" | "assumptions" | "details" | "memo" | "history" | "scenarios"
   >("spread");
   const [selectedPeriod, setSelectedPeriod] = useState(1);
   const [editing, setEditing] = useState<EditableField | null>(null);
@@ -346,6 +346,12 @@ export default function App() {
       )}
       <RecoveryPanel
         workspace={workspace}
+        onOpenComparison={(view) => {
+          const record = view.record;
+          writeComparisonLocator(record.case_id, record.comparison_id);
+          void workspace.openSaved({ caseId: record.case_id, revision: record.baseline_revision }).then(() => setTab("scenarios"));
+          workspace.dismissComparisonAck();
+        }}
         onDiscard={(element) => {
           opener.current = element;
           setDiscarding(true);
@@ -461,7 +467,7 @@ export default function App() {
         </div>
       )}
       <nav aria-label="Workspace views">
-        {(["spread", "assumptions", "details", "memo", "history"] as const).map(
+        {(["spread", "assumptions", "details", "memo", "history", "scenarios"] as const).map(
           (value) => (
             <button
               className={tab === value ? "active" : ""}
@@ -469,11 +475,14 @@ export default function App() {
               onClick={() => setTab(value)}
               key={value}
             >
-              {value}
+              {value === "scenarios" ? "Scenarios" : value}
             </button>
           ),
         )}
       </nav>
+      {tab === "scenarios" && <Scenarios model={scenarios}
+        onSaveBaseline={(element) => { if (workspace.canSave) { opener.current = element; setSaving(true); } }}
+        onOpenBaseline={(locator) => void workspace.openSaved(locator)}/>}
       {tab === "spread" && (
         <section className="grid">
           <div className="panel wide">

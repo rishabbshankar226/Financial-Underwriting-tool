@@ -453,7 +453,7 @@ export function guardDatedInput(value: unknown): DatedRequest {
   }
   return p as DatedRequest;
 }
-function metric(value: unknown): Metric {
+export function metric(value: unknown): Metric {
   const m = object(value, "metric");
   requireValue(
     str(m.fact_id) &&

@@ -112,6 +112,7 @@ button:hover {
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
+select:focus-visible,
 summary:focus-visible {
   outline: 2px solid #8de0bb;
   outline-offset: 3px;
@@ -436,6 +437,25 @@ footer {
 .compatibility {
   margin: 16px 0;
 }
+.scenariosWorkspace { display: grid; gap: 18px; min-width: 0; }
+.scenariosWorkspace p, .scenariosWorkspace small { font-size: 13px; }
+.scenarioComposer, .originalComparison, .comparisonArchive, .scenarioResult { overflow-wrap: anywhere; }
+.scenarioRow { margin: 20px 0; padding: 16px; border: 1px solid #40515f; border-radius: 10px; min-width: 0; }
+.scenarioRow legend { color: #8de0bb; padding: 0 8px; }
+.scenarioFields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
+.scenarioFields label, .scenarioSelect { display: block; min-width: 0; font-size: 13px; }
+.scenarioFields input, .scenarioFields textarea, .scenarioFields select, .scenarioSelect select { display: block; width: 100%; min-width: 0; margin: 8px 0; padding: 10px; color: #eef1f4; background: #18212a; border: 1px solid #556f82; border-radius: 7px; font: inherit; }
+.scenarioFields small { color: #a5b2bd; line-height: 1.5; }
+.scenarioRationale { grid-column: 1/-1; }
+.scenarioOutcome strong { color: #8de0bb; }
+.scenarioOutcome [data-outcome="review"] { color: #e0d5a1; }
+.scenarioOutcome [data-outcome="decline"] { color: #ffb5a7; }
+.scenarioFact { padding: 8px 0; border-bottom: 1px solid #303b46; }
+.scenarioFact h4 { margin: 10px 0; }
+.scenarioResult td small { display: block; white-space: normal; max-width: 200px; }
+.scenarioResult caption { text-align: left; font-size: 13px; color: #b1bdc7; padding: 12px 0; }
+.scenariosWorkspace [role="alert"] { color: #ffb5a7; }
+.originalComparisonJson pre { max-height: 600px; overflow-y: auto; }
 @media (max-width: 900px) {
   main {
     padding: 20px;
@@ -449,6 +469,7 @@ footer {
   }
 }
 @media (max-width: 600px) {
+  .scenarioFields { grid-template-columns: 1fr; }
   .caseRow > div {
     flex-basis: 100%;
     min-width: 0;

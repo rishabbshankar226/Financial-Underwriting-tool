@@ -38,6 +38,32 @@ The frontend lockfile pins `source-map-js` 1.2.2 within PostCSS's existing `^1.2
 
 Refresh Python pins in a clean Python 3.12 environment, review each dependency change, and run the complete verification sequence before accepting a new baseline.
 
+## Browser scenario and shared-recovery coverage
+
+The browser suite uses an owned synthetic backend and fresh temporary database.
+Scenario checks cover real preview/retention/reload; original baseline identity,
+policy, trace and factor links; percentage/basis-point normalization; Unicode
+text limits; ordered ten-row batches; historical baselines; preserving the case
+head, selected assessment and newer drafts; original JSON compatibility;
+26-record archives and cursor cycles; stale preview/detail responses; keyboard
+focus and 390px/desktop layout; opened trace/guarantor pages and 64 KiB JSON
+pages; actual 16 MiB response boundaries independent of declared lengths; and
+shared pending-write behavior across case and comparison commands.
+
+Fault injection covers commit followed by lost or malformed success, exact
+retry after reload, storage preflight/clear failure, abort-ignoring transport,
+503/Retry-After without automatic retry, known pre-commit 409 codes, and
+operation conflict with explicit discard review. Existing case-write-v1
+recovery records remain part of the regression checks. The happy-path browser
+check records page/console errors and warnings and requires none. Generated
+desktop and mobile screenshots remain under `frontend/test-results`.
+
+These checks validate browser/server contract use and synthetic regression
+behavior. The browser formats and compares response fields; all financial
+arithmetic, policy assessment and stress projection remain in Python. Backend
+definitions, dependency pins, storage schemas and CI configuration are unchanged
+by the scenario browser work.
+
 ## Existing Chromium installations
 
 Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to the browser's absolute executable path to use an existing isolated Chromium installation. Keep its required libraries available and omit the Playwright browser download step. CI installs Playwright's bundled Chromium.

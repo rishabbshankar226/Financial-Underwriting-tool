@@ -8,20 +8,18 @@ import {
   type Input,
 } from "./contracts";
 import { evaluate } from "./api";
-import { caseError, fetchCase, writeCase } from "./caseApi";
+import { caseError, fetchCase } from "./caseApi";
 import { inputField, sameJson, type StoredCase } from "./caseContracts";
 import {
   browserStorage,
-  clearRecovery,
-  discardRecovery,
   makeCreate,
   makeEdit,
   readLocator,
-  readRecovery,
-  saveRecovery,
   writeLocator,
   type Locator,
   type PendingOperation,
+  type ComparisonOperation,
+  makeComparison,
 } from "./caseRecovery";
 import {
   applyEdit,
@@ -32,6 +30,9 @@ import {
   type EditEvent,
   type Workspace,
 } from "./workspace";
+
+import { useSavedWrite, type SavedReceipt } from "./useSavedWrite";
+import type { ScenarioPreview, StoredComparison } from "./scenarioContracts";
 
 type Conflict = {
   operation: Extract<PendingOperation, { kind: "edit" }>;
@@ -45,17 +46,22 @@ export function useAnalystWorkspace() {
   const sequence = useRef(0),
     read = useRef<AbortController | null>(null),
     head = useRef<AbortController | null>(null);
-  const writer = useRef<AbortController | null>(null),
-    conflictRead = useRef<AbortController | null>(null),
+  const conflictRead = useRef<AbortController | null>(null),
     mounted = useRef(false);
-  const [initialRecovery] = useState(() => readRecovery(browserStorage()));
-  const [operation, setOperation] = useState(initialRecovery.operation);
-  const operationRef = useRef(operation);
-  const [recoveryError, setRecoveryError] = useState(initialRecovery.error);
-  const [inFlight, setInFlight] = useState(false);
-  const [writeError, setWriteError] = useState<ReturnType<
-    typeof caseError
-  > | null>(null);
+  const writes = useSavedWrite();
+  const { operation, recoveryError, inFlight, writeError } = writes;
+  const [comparisonAck, setComparisonAck] = useState<{
+    scope: number | null;
+    view: StoredComparison;
+    operationId: string;
+    serial: number;
+  } | null>(null);
+  const [comparisonError, setComparisonError] = useState<{
+    scope: number;
+    message: string;
+    code: string;
+  } | null>(null);
+  const acknowledgment = useRef(0);
   const [notice, setNotice] = useState("");
   const [offer, setOffer] = useState<StoredCase | null>(null);
   const [rejected, setRejected] = useState<PendingOperation | null>(null);
@@ -199,20 +205,6 @@ export function useAnalystWorkspace() {
         );
     }
   }
-  function clearOperation(op: PendingOperation): boolean {
-    try {
-      clearRecovery(browserStorage(), op.id);
-      operationRef.current = null;
-      setOperation(null);
-      setRecoveryError("");
-      return true;
-    } catch {
-      setRecoveryError(
-        "The write response was received, but this tab could not clear its recovery tracking. Retrying the same operation is safe.",
-      );
-      return false;
-    }
-  }
   async function loadConflict(op: Conflict["operation"]) {
     conflictRead.current?.abort();
     const controller = new AbortController();
@@ -247,16 +239,14 @@ export function useAnalystWorkspace() {
     op: PendingOperation,
     id: number,
     resetPeriod: boolean,
+    request: Promise<SavedReceipt>,
   ) {
-    const controller = new AbortController();
-    writer.current = controller;
-    setInFlight(true);
-    setWriteError(null);
     setNotice("");
     try {
-      const receipt = await writeCase(op, controller.signal);
+      const receipt = await request;
+      if (receipt.kind !== "case")
+        throw new Error("Unexpected comparison receipt for case write");
       if (!mounted.current) return;
-      clearOperation(op);
       setRejected(null);
       setNotice(
         `${receipt.replayed ? "Recovered the original" : "Saved"} revision ${receipt.view.snapshot.revision}.`,
@@ -278,9 +268,7 @@ export function useAnalystWorkspace() {
     } catch (error) {
       if (!mounted.current) return;
       const failure = caseError(error);
-      setWriteError(failure);
       if (failure.certain) {
-        clearOperation(op);
         if (failure.status === 412 && op.kind === "edit") {
           setConflict({ operation: op, latest: null, error: "" });
           void loadConflict(op);
@@ -288,24 +276,19 @@ export function useAnalystWorkspace() {
       }
       if (id === sequence.current)
         dispatch({ type: "failure", id, error: failure.message });
-    } finally {
-      if (writer.current === controller) writer.current = null;
-      if (mounted.current) setInFlight(false);
     }
   }
   function startWrite(op: PendingOperation, resetPeriod: boolean) {
     if (
-      writer.current ||
-      operationRef.current ||
+      writes.controller.snapshot().inFlight ||
+      writes.controller.snapshot().operation ||
       recoveryError ||
       conflictRef.current
     )
       throw new Error(
         "Resolve this tab's existing saved write or proposal first.",
       );
-    saveRecovery(browserStorage(), op);
-    operationRef.current = op;
-    setOperation(op);
+    const request = writes.controller.start(op);
     setRejected(null);
     setOffer(null);
     const id = begin(
@@ -313,7 +296,7 @@ export function useAnalystWorkspace() {
       null,
       "write",
     );
-    void execute(op, id, resetPeriod);
+    void execute(op, id, resetPeriod, request);
   }
   function save(reason: string) {
     const s = current.current;
@@ -326,7 +309,7 @@ export function useAnalystWorkspace() {
       s.status === "ready" &&
       !!s.accepted &&
       (!s.saved ||
-        (!operationRef.current &&
+        (!writes.controller.snapshot().operation &&
           !recoveryError &&
           !conflictRef.current &&
           !!s.saved.view.assessment &&
@@ -350,9 +333,13 @@ export function useAnalystWorkspace() {
       });
   }
   function retryWrite() {
-    const op = operationRef.current;
-    if (!op || writer.current || writeError?.status === 409) return;
-    saveRecovery(browserStorage(), op);
+    const op = writes.controller.snapshot().operation;
+    if (!op || inFlight || (writeError?.status === 409 && !writeError.certain)) return;
+    const request = writes.controller.retry();
+    if (op.kind === "comparison") {
+      void executeComparison(op, sequence.current, request);
+      return;
+    }
     const id = begin(
       op.kind === "create"
         ? "Recovering saved case"
@@ -360,21 +347,43 @@ export function useAnalystWorkspace() {
       null,
       "write",
     );
-    void execute(op, id, op.kind === "create");
+    void execute(op, id, op.kind === "create", request);
   }
   function discardTracking() {
-    if (writer.current)
-      throw new Error(
-        "Wait for the current response before discarding tracking.",
-      );
-    discardRecovery(browserStorage());
-    operationRef.current = null;
-    setOperation(null);
-    setRecoveryError("");
-    setWriteError(null);
-    setNotice(
-      "Local recovery tracking discarded. This does not undo a write that might already be saved.",
-    );
+    writes.controller.discard();
+    setNotice("Local recovery tracking discarded. This does not undo a write that might already be saved.");
+  }
+  async function executeComparison(
+    op: ComparisonOperation,
+    scope: number,
+    request: Promise<SavedReceipt>,
+  ) {
+    setComparisonError(null);
+    setNotice("");
+    try {
+      const receipt = await request;
+      if (!mounted.current) return;
+      if (receipt.kind !== "comparison")
+        throw new Error("Unexpected case receipt for comparison save");
+      setComparisonAck({ scope, view: receipt.view, operationId: op.id, serial: ++acknowledgment.current });
+      setNotice(`${receipt.replayed ? "Recovered the original" : "Saved"} comparison ${receipt.view.record.comparison_id}.`);
+    } catch (error) {
+      if (mounted.current) {
+        const failure = caseError(error);
+        setComparisonError({ scope, message: failure.message, code: failure.code });
+      }
+    }
+  }
+  function retainComparison(preview: ScenarioPreview) {
+    const s = current.current, b = preview.baseline;
+    if (s.status !== "ready" || !s.saved || conflictRef.current ||
+        s.saved.view.snapshot.case_id !== b.case_id ||
+        s.saved.view.snapshot.revision !== b.revision ||
+        s.saved.view.snapshot.run_id !== b.run_id ||
+        s.saved.view.snapshot.payload_hash !== b.payload_hash)
+      throw new Error("Review the currently selected original baseline before saving.");
+    const op = makeComparison(preview), request = writes.controller.start(op);
+    void executeComparison(op, sequence.current, request);
   }
   function adoptConflict(latest: StoredCase) {
     const id = begin(`Saved case ${latest.snapshot.case_id}`, null, "open");
@@ -386,7 +395,7 @@ export function useAnalystWorkspace() {
     conflictRead.current?.abort();
     setConflict(null);
     conflictRef.current = null;
-    setWriteError(null);
+    writes.controller.clearError();
   }
   function reviewConflict(): {
     field: EditableField;
@@ -425,8 +434,8 @@ export function useAnalystWorkspace() {
   }
   useEffect(() => {
     mounted.current = true;
-    const pending = operationRef.current;
-    if (pending) {
+    const pending = writes.controller.snapshot().operation;
+    if (pending && pending.kind !== "comparison") {
       const id = begin("Pending saved write", null, "write");
       dispatch({
         type: "failure",
@@ -437,6 +446,8 @@ export function useAnalystWorkspace() {
     } else {
       const locator = readLocator(browserStorage());
       if (locator) void openSaved(locator);
+      else if (pending?.kind === "comparison")
+        void openSaved({ caseId: pending.caseId, revision: pending.baselineRevision });
       else demo("dated");
     }
     return () => {
@@ -444,7 +455,6 @@ export function useAnalystWorkspace() {
       sequence.current++;
       read.current?.abort();
       head.current?.abort();
-      writer.current?.abort();
       conflictRead.current?.abort();
     };
   }, []);
@@ -457,6 +467,9 @@ export function useAnalystWorkspace() {
     edit,
     openSaved,
     operation,
+    comparisonAck,
+    comparisonError,
+    retainComparison,
     inFlight,
     writeError,
     recoveryError,
@@ -481,5 +494,8 @@ export function useAnalystWorkspace() {
     },
     dismissRejected: () => setRejected(null),
     dismissOffer: () => setOffer(null),
+    dismissComparisonAck: () => setComparisonAck(null),
+    clearComparisonError: () => setComparisonError(null),
+    deferComparisonAck: (serial: number) => setComparisonAck(value => value?.serial === serial ? { ...value, scope: null } : value),
   };
 }

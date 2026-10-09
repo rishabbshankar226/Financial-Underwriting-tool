@@ -8,11 +8,12 @@ import {
   type RevisionSummary,
   type StoredCase,
 } from "./caseContracts";
-import type { Locator, PendingOperation } from "./caseRecovery";
+import type { Locator, PendingOperation, PendingWrite } from "./caseRecovery";
 import type { StoredSelection } from "./workspace";
 import type { useAnalystWorkspace } from "./useAnalystWorkspace";
+import type { StoredComparison } from "./scenarioContracts";
 
-function usePages<T>(
+export function usePages<T>(
   key: string,
   loader: (after: string | null, signal: AbortSignal) => Promise<Page<T>>,
   id: (item: T) => string,
@@ -59,7 +60,7 @@ function usePages<T>(
         (page.next_cursor === after || cursors.current.has(page.next_cursor))
       )
         throw new Error(
-          "Saved-case pagination returned a repeated cursor. Refresh the list.",
+          "Saved pagination returned a repeated cursor. Refresh the list.",
         );
       if (page.next_cursor) cursors.current.add(page.next_cursor);
       setState((previous) => {
@@ -390,8 +391,9 @@ export function SavedHistory({
     </section>
   );
 }
-function Proposal({ operation }: { operation: PendingOperation }) {
+function Proposal({ operation }: { operation: PendingWrite }) {
   const command = JSON.parse(operation.body);
+  if(operation.kind === "comparison") return <p>Proposed comparison · Case {operation.caseId} · revision {operation.baselineRevision}<br/>Run {operation.baselineRunId} · as of {operation.context.assessment_as_of}<br/>{command.scenarios.map((s: {name:string;rationale:string}) => `${s.name}: ${s.rationale}`).join("; ")}</p>;
   return operation.kind === "edit" ? (
     <p>
       Proposed {operation.review.label}: {operation.review.value} →{" "}
@@ -412,10 +414,12 @@ export function RecoveryPanel({
   workspace: w,
   onDiscard,
   onReview,
+  onOpenComparison,
 }: {
   workspace: ReturnType<typeof useAnalystWorkspace>;
   onDiscard: (opener: HTMLElement) => void;
   onReview: (opener: HTMLElement) => void;
+  onOpenComparison: (view: StoredComparison) => void;
 }) {
   const [error, setError] = useState("");
   return (
@@ -429,7 +433,7 @@ export function RecoveryPanel({
         <section className="pending" aria-label="Saved write recovery">
           <h2>
             {w.inFlight
-              ? "Saving revision"
+              ? w.operation?.kind === "comparison" ? "Saving comparison" : "Saving revision"
               : w.operation
                 ? "Unconfirmed saved write"
                 : "Saved write recovery unavailable"}
@@ -446,7 +450,7 @@ export function RecoveryPanel({
           <div className="actions">
             {w.operation && (
               <button
-                disabled={w.inFlight || w.writeError?.status === 409}
+                disabled={w.inFlight || (w.writeError?.status === 409 && !w.writeError.certain)}
                 onClick={() => {
                   try {
                     w.retryWrite();
@@ -475,6 +479,9 @@ export function RecoveryPanel({
                 View stored baseline
               </button>
             )}
+            {w.operation?.kind === "comparison" && <button onClick={() => {
+              if (w.operation?.kind === "comparison") void w.openSaved({ caseId: w.operation.caseId, revision: w.operation.baselineRevision });
+            }}>View stored baseline</button>}
             <button
               disabled={w.inFlight}
               onClick={(e) => onDiscard(e.currentTarget)}
@@ -558,6 +565,10 @@ export function RecoveryPanel({
           </div>
         </section>
       )}
+      {w.comparisonAck && (w.comparisonAck.scope !== w.state.id || w.comparisonAck.view.record.case_id !== w.state.saved?.view.snapshot.case_id || w.comparisonAck.view.record.baseline_revision !== w.state.saved?.view.snapshot.revision) && <section className="pending" aria-label="Comparison acknowledged for another selection">
+        <h2>Comparison acknowledged for another selection</h2><p>Original comparison {w.comparisonAck.view.record.comparison_id} · baseline revision {w.comparisonAck.view.record.baseline_revision}. The current selection was preserved.</p>
+        <div className="actions"><button onClick={() => { if (w.comparisonAck) onOpenComparison(w.comparisonAck.view); }}>Open acknowledged comparison</button><button onClick={w.dismissComparisonAck}>Dismiss comparison acknowledgment</button></div>
+      </section>}
     </>
   );
 }
