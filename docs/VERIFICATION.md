@@ -64,6 +64,32 @@ arithmetic, policy assessment and stress projection remain in Python. Backend
 definitions, dependency pins, storage schemas and CI configuration are unchanged
 by the scenario browser work.
 
+## Saved-run review and export coverage
+
+`review-package.spec.ts` crosses the real saved-case/comparison HTTP boundary
+and reconciles complete output records and independently pinned raw Alpine
+facts. It covers ten-scenario order, full baseline/hash/evidence matching,
+unsupported-definition originals, malformed runtime/source values, frozen
+capture, deterministic UTF-16 object keys, safe Unicode/special keys/scalars,
+source depths 64/100, actual inclusive 16 MiB complete-file boundaries,
+wrapper/comparison overhead and cancellation.
+
+`review-workspace.spec.ts` reads actual Chromium download bytes/filenames,
+checks explicit inclusion and historical stability after a later server edit,
+requires explicit mismatched-baseline navigation, preserves a pending journal,
+and prevents export from initial/failed/pending/legacy/unsaved state. It covers
+abort-ignoring late completion across navigation/inclusion changes, repeated
+clicks, object-URL lifetime, worker validation/malformed completion, oversized
+originals without giant Review DOM or truncated output, keyboard use,
+390px/1280px screenshots and a clean happy-path console. Intentional fault
+fixtures do not establish source authenticity or independently verified hashes.
+
+The exporter formats a browser-parsed original; it never calculates a financial
+result, recomputes a hash or invokes backend writes/replay. The complete gate
+retains all prior case/scenario regression checks, backend/reference/mutation
+checks, dependency audit and production build. No backend, dependency, storage
+or CI configuration changes accompany this browser export feature.
+
 ## Existing Chromium installations
 
 Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to the browser's absolute executable path to use an existing isolated Chromium installation. Keep its required libraries available and omit the Playwright browser download step. CI installs Playwright's bundled Chromium.

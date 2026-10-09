@@ -10,6 +10,7 @@ The default synthetic Alpine case uses the dated assessment API. Explicit legacy
 - **Memo:** a narrative from the accepted response's factors and reasons, unavailable while an input is pending/rejected.
 - **History:** unsaved cases show successfully applied session edits with period-aware paths and separately labeled imported overrides. Saved cases show immutable server-recorded revision summaries and the selected original event, including its unit, period/as-of date, guarantor context, rationale, actor and recording time. All demonstration actors remain unverified.
 - **Scenarios:** author and review explicit current shocks against a supported saved dated revision, retain a reviewed batch as a separate original comparison, and reopen case-wide comparison summaries. The selected underwriting result remains unchanged.
+- **Review:** summarize a current ready saved original and download its full parsed JSON evidence, optionally including an explicitly selected matching retained comparison. Display original identity, period, units, backend facts and unverified recording metadata; unsupported financial definitions permit original JSON only. [Review exports](REVIEW_EXPORTS.md) specifies eligibility, linkage, representation and limits.
 
 ## State contract
 
@@ -34,7 +35,7 @@ Selection identifiers are allocated before asynchronous file reads. Raw import t
 
 Legacy defaults/coercions needed to display accepted input are normalized only after backend success. Legacy annual periods remain ordinal, dated-only trace/spread results remain unavailable, and no dates or explicit units are inferred.
 
-Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. This workspace has no authentication or export. Decision scores and policy values remain illustrative prototype settings.
+Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. The saved-run JSON exporter uses guarded originals without recalculation or changes to recovery. This workspace has no authentication, CSV export, downloadable memo or print/PDF workflow. Decision scores and policy values remain illustrative prototype settings.
 
 ## Save, reopen and revise
 

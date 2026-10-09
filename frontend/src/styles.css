@@ -4,6 +4,20 @@
   color: #eef1f4;
   font-synthesis: none;
 }
+.reviewWorkspace { display: grid; gap: 18px; }
+.reviewWorkspace .panel { margin-top: 0; min-width: 0; overflow-wrap: anywhere; }
+.reviewFacts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px 24px; }
+.reviewFacts div { min-width: 0; }
+.reviewFacts dt, .reviewMetrics span { color: #b5bfc9; font-size: 12px; }
+.reviewFacts dd { margin: 5px 0 0; font-size: 13px; }
+.reviewMetrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.reviewMetrics > div { padding: 14px; border: 1px solid #34424e; border-radius: 10px; background: #101419; }
+.reviewMetrics strong, .reviewMetrics small { display: block; margin-top: 6px; }
+.reviewMetrics small { color: #b5bfc9; }
+.reviewInclude { display: flex; align-items: center; gap: 10px; margin-top: 18px; }
+.reviewInclude input { flex: 0 0 auto; width: 18px; height: 18px; }
+.reviewDownload { display: inline-block; color: #8de0bb; margin-bottom: 12px; overflow-wrap: anywhere; }
+.reviewWorkspace button { max-width: 100%; white-space: normal; }
 * {
   box-sizing: border-box;
 }
