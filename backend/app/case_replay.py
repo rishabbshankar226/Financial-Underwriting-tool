@@ -9,6 +9,7 @@ from .case_contracts import ReplayResult
 from .config import PolicyConfig
 from .core import CALCULATION_VERSION
 
+REPLAY_ABSOLUTE_TOLERANCE = 1e-8
 
 def compare_assessments(stored, computed):
     differences = []
@@ -29,7 +30,7 @@ def compare_assessments(stored, computed):
             for index, (a, b) in enumerate(zip(left, right)):
                 compare(a, b, path + f"/{index}", exact)
         elif type(left) in (float, int) and type(right) in (float, int):
-            if not (left == right if exact else isclose(left, right, rel_tol=1e-12, abs_tol=1e-8)):
+            if not (left == right if exact else isclose(left, right, rel_tol=0.0, abs_tol=REPLAY_ABSOLUTE_TOLERANCE)):
                 differences.append(path)
         elif type(left) is not type(right) or left != right:
             differences.append(path)

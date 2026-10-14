@@ -146,7 +146,9 @@ definition remains readable and returns `replay_unavailable`.
 
 Decision, policy, normalized input, fingerprint and policy trace operands match
 exactly, including raw comparisons, threshold/operators, flags, reasons and score.
-Other numeric financial/trace values use `rel_tol=1e-12`, `abs_tol=1e-8`.
+Other numeric financial/trace values use `rel_tol=0`, `abs_tol=1e-8`. The
+absolute tolerance never grows with balance size; a one-cent discrepancy cannot
+be hidden by a large dollar amount.
 Structure, periods, units and references match exactly. Differences return paths
 without altering or replacing the original run.
 

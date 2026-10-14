@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { currentFactKeys, type Metric, type Trace } from "./contracts";
+import { currentFactKeys, type Trace } from "./contracts";
 import { metricText } from "./metricDisplay";
 import { usePages } from "./SavedCases";
 import { fetchComparisons } from "./scenarioApi";

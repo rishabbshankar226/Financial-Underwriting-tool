@@ -81,14 +81,19 @@ def _year_income(year, facts: _Facts, index: int, include_ebitda=True):
 
 
 def _finite(value: float) -> float:
-    if not isfinite(value):
-        raise ValueError("Inputs exceed the supported finite calculation range")
+    try:
+        if isinstance(value, bool) or not isinstance(value, (float, int)) or not isfinite(value):
+            raise ValueError("Inputs exceed the supported finite calculation range")
+    except OverflowError as exc:
+        raise ValueError("Inputs exceed the supported finite calculation range") from exc
     return value
 
 
 def _coverage(numerator: float, denominator: float) -> float:
     _finite(numerator)
     _finite(denominator)
+    if denominator < 0:
+        raise ValueError("Coverage denominator must be nonnegative")
     return float("inf") if denominator == 0 else _finite(numerator / denominator)
 
 
@@ -107,7 +112,11 @@ def amortized_annual_debt_service(principal: float, annual_rate: float, term_mon
 
 
 def _loan_payment(principal: float, annual_rate: float, term_months: int) -> tuple[float, float]:
-    if not all(isfinite(v) for v in (principal, annual_rate, term_months)) or principal < 0 or annual_rate < 0 or term_months <= 0:
+    if type(term_months) is not int:
+        raise ValueError("Loan term must be a positive integer number of months")
+    for value in (principal, annual_rate, term_months):
+        _finite(value)
+    if principal < 0 or annual_rate < 0 or term_months <= 0:
         raise ValueError("Loan principal/rate must be nonnegative and term positive")
     if principal == 0: return 0.0, 0.0
     if annual_rate == 0:
@@ -347,6 +356,10 @@ def _current_commercial_facts(req, facts, latest, operating, loan):
 
 
 def consumer_dti(gross_monthly_income: float, housing_pi: float, housing_tax_ins: float, other_monthly_debt: float) -> tuple[float, float]:
+    for value in (gross_monthly_income, housing_pi, housing_tax_ins, other_monthly_debt):
+        _finite(value)
     if gross_monthly_income <= 0: raise ValueError("gross_monthly_income must be positive")
+    if min(housing_pi, housing_tax_ins, other_monthly_debt) < 0:
+        raise ValueError("Consumer debt components must be nonnegative")
     housing = housing_pi + housing_tax_ins
     return _finite(housing / gross_monthly_income), _finite((housing + other_monthly_debt) / gross_monthly_income)

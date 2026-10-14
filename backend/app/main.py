@@ -8,6 +8,7 @@ from .scenario_routes import router as scenario_router, owns_scenario_json, inst
 from .comparison_routes import router as comparison_router, owns_comparison_json, install_comparison_openapi
 from .cases import CaseStoreError
 from .json_transport import read_contract
+from .request_limits import RequestBodyLimitMiddleware
 from .schemas import CommercialRequest, ConsumerRequest, Decision, DISCLAIMER, SBACase
 from .decision import decide_commercial, decide_consumer
 from .sba import load_size_table, evaluate_sba
@@ -33,7 +34,9 @@ async def validate_raw_json(request: Request, call_next):
     return await call_next(request)
 
 
-# CORS must wrap validation so a rejected JSON request remains readable by the UI.
+app.add_middleware(RequestBodyLimitMiddleware)
+
+# CORS wraps body limits and validation so rejected requests remain readable.
 app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],allow_credentials=False,allow_methods=["*"],allow_headers=["*"],expose_headers=["ETag", "Idempotency-Replayed", "Retry-After", "Location"])
 
 app.include_router(case_router)
@@ -69,15 +72,21 @@ async def commercial_assessment(request: Request) -> CommercialAssessment:
 
 @app.post("/commercial/decision",response_model=Decision)
 def commercial_decision(req: CommercialRequest) -> Decision:
-    try: return decide_commercial(req)
-    except ValueError as exc: raise HTTPException(status_code=422, detail=str(exc)) from exc
+    try:
+        return decide_commercial(req)
+    except (ValueError, OverflowError, RecursionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 @app.post("/consumer/decision",response_model=Decision)
 def consumer_decision(req: ConsumerRequest) -> Decision:
-    try: return decide_consumer(req)
-    except ValueError as exc: raise HTTPException(status_code=422, detail=str(exc)) from exc
+    try:
+        return decide_consumer(req)
+    except (ValueError, OverflowError, RecursionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 @app.post("/sba/evaluate")
 def sba_evaluate(req: SBACase) -> dict:
-    try: return evaluate_sba(req,load_size_table())
-    except ValueError as exc: raise HTTPException(status_code=422,detail=str(exc)) from exc
+    try:
+        return evaluate_sba(req, load_size_table())
+    except (ValueError, OverflowError, RecursionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
