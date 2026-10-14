@@ -116,9 +116,10 @@ values end to end. A syntax check is not a substitute for linting or mypy.
   replace the empty table with guessed thresholds.
 - Illustrative credit policy and the score require model validation beyond
   synthetic regression tests. Code tests do not provide regulatory certification.
-- Playwright's matching Chromium download failed in the current runtime. The
-  browser suite must run in an environment with a working test browser before
-  completion can be declared.
+- Playwright's matching Chromium download failed locally, but the full browser
+  suite subsequently passed in GitHub CI: 161 tests on implementation commit
+  `1e1aa1ae5bc35156e3e544fd5d1d09d4ffa75d0c`. Keep that working browser
+  verification in place for the financial contract migration.
 
 Approval requested now: the versioned decimal/schema and helper-return changes
 above, plus the two pinned development verification dependencies. Approval to
