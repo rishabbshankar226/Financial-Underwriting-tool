@@ -69,6 +69,27 @@ def test_duplicate_extraction_preserves_evidence_but_cannot_be_promoted():
         confirmed_payload(result)
 
 
+@pytest.mark.parametrize('value', [True, False])
+@pytest.mark.parametrize('confirmed', [True, False])
+def test_extracted_amounts_reject_booleans_before_numeric_coercion(value, confirmed):
+    with pytest.raises(ValueError, match='boolean'):
+        ExtractionField(name='gross_receipts', value=value, confidence=.99, confirmed=confirmed)
+
+
+@pytest.mark.parametrize('value', [True, False])
+def test_json_extraction_records_reject_boolean_amounts(value):
+    payload = json.dumps({'fields': [dict(name='gross_receipts', value=value,
+                                        confidence=.99, confirmed=True)]})
+    with pytest.raises(ValueError, match='boolean'):
+        ExtractionResult.model_validate_json(payload)
+
+
+@pytest.mark.parametrize('value', [0, 0.0, '0', 1, '1'])
+def test_confirmed_numeric_extraction_values_still_preserve_zero_and_one(value):
+    field = ExtractionField(name='gross_receipts', value=value, confidence=.99, confirmed=True)
+    assert confirmed_payload(ExtractionResult(fields=[field])) == {'gross_receipts': float(value)}
+
+
 def test_unconfirmed_duplicate_cannot_silently_resolve_ambiguity():
     result = ExtractionResult(fields=[
         ExtractionField(name='gross_receipts', value=1, confidence=.99, confirmed=True),

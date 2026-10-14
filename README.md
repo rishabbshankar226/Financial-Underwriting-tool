@@ -150,7 +150,7 @@ Playwright starts both development servers automatically. Ensure the Python envi
 - SBA transaction types are `expansion`, `acquisition`, `buyout`, or `esop`. The caller must select the applicable SOP version; effective-date selection is not automated.
 - SBA cases must supply `sop_version`; there is no default. Size rows require a six-digit NAICS code, a positive threshold, and a calendar effective date (ISO `YYYY-MM-DD` in JSON); employee thresholds must be whole numbers. Duplicate NAICS rows and explicitly synthetic rows are rejected by the official table loader. Synthetic test rows can still be injected directly into library tests and are labeled in results. Date validation does not select or prove current policy applicability.
 - Reason codes come from the factors the decision engine actually evaluated.
-- Extracted fields that nobody has confirmed never reach the calculations.
+- Extracted fields that nobody has confirmed never reach the calculations. Extracted amounts reject boolean values while accepting numeric zero and one.
 
 ## Limitations
 
