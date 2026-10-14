@@ -88,5 +88,10 @@ def confirmed_payload(result: ExtractionResult, policy: PolicyConfig = DEFAULT_P
 
 def extraction_accuracy(result: ExtractionResult, truth: dict[str,float]) -> float:
     if not truth: raise ValueError("truth cannot be empty")
+    names = set()
+    for field in result.fields:
+        if field.name in names:
+            raise ValueError(f"Duplicate extracted field: {field.name}; resolve the source evidence first")
+        names.add(field.name)
     got={f.name:float(f.value) for f in result.fields if f.value is not None}
     return sum(1 for k,v in truth.items() if k in got and abs(got[k]-v)<.01)/len(truth)

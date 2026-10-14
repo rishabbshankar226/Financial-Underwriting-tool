@@ -3,7 +3,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from app.ingestion import confirmed_payload, extract_synthetic_text, parse_structured
+from app.ingestion import confirmed_payload, extract_synthetic_text, extraction_accuracy, parse_structured
 from app.main import app
 from app.schemas import AuditEvent, ExtractionField, ExtractionResult
 from fixtures import alpine_request
@@ -67,6 +67,24 @@ def test_duplicate_extraction_preserves_evidence_but_cannot_be_promoted():
     assert len(result.fields) == 2
     with pytest.raises(ValueError, match='Duplicate extracted field'):
         confirmed_payload(result)
+
+
+@pytest.mark.parametrize('values', [(1, 2), (2, 1), (2, 2), (None, 2)])
+def test_duplicate_extraction_cannot_receive_an_accuracy_score(values):
+    result = ExtractionResult(fields=[
+        ExtractionField(name='gross_receipts', value=value, confidence=.99)
+        for value in values
+    ])
+    with pytest.raises(ValueError, match='Duplicate extracted field'):
+        extraction_accuracy(result, {'gross_receipts': 2})
+
+
+def test_extraction_accuracy_preserves_matching_missing_and_unconfirmed_fields():
+    result = ExtractionResult(fields=[
+        ExtractionField(name='gross_receipts', value=2, confidence=.99, confirmed=False),
+        ExtractionField(name='cogs', value=None, confidence=.99),
+    ])
+    assert extraction_accuracy(result, {'gross_receipts': 2, 'cogs': 1}) == .5
 
 
 @pytest.mark.parametrize('value', [True, False])
