@@ -31,6 +31,36 @@ def test_excessive_json_nesting_is_a_validation_error(opening, closing):
         parse_structured(payload, 'json')
 
 
+@pytest.mark.parametrize('opening, closing', [('[', ']'), ('{"nested":', '}')])
+@pytest.mark.parametrize('terminal', ['0', '[]', '{}'])
+@pytest.mark.parametrize('depth', [128, 129])
+def test_json_container_depth_is_bounded_before_native_recursion(opening, closing, terminal, depth):
+    wrappers = depth - 1 - (terminal in ('[]', '{}'))
+    payload = '{"extra":' + opening * wrappers + terminal + closing * wrappers + '}'
+    if depth == 128:
+        assert 'extra' in parse_structured(payload, 'json')
+    else:
+        with pytest.raises(ValueError, match='JSON nesting exceeds the supported depth'):
+            parse_structured(payload, 'json')
+
+
+def test_json_depth_ignores_sibling_count_and_literal_brackets():
+    payload = {'source': '[{"nested":' * 1_000, 'rows': [[], {}] * 128, 'amount': 1.25}
+    assert parse_structured(json.dumps(payload), 'json') == payload
+
+
+@pytest.mark.parametrize('path', [
+    '/commercial/decision', '/consumer/decision', '/sba/evaluate', '/commercial/assessment',
+])
+def test_api_enforces_explicit_json_depth_with_readable_cors_error(path):
+    payload = '{"extra":' + '[' * 128 + '0' + ']' * 128 + '}'
+    response = TestClient(app, raise_server_exceptions=False).post(path, content=payload,
+        headers={'Content-Type': 'application/json', 'Origin': 'http://localhost:5173'})
+    assert response.status_code == 422
+    assert response.json()['detail'] == 'JSON nesting exceeds the supported depth'
+    assert response.headers['access-control-allow-origin'] == 'http://localhost:5173'
+
+
 @pytest.mark.parametrize('path', [
     '/commercial/decision', '/consumer/decision', '/sba/evaluate', '/commercial/assessment',
 ])

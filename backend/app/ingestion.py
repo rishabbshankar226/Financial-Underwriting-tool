@@ -5,6 +5,9 @@ from .config import DEFAULT_POLICY, PolicyConfig
 from .schemas import ExtractionField, ExtractionResult
 
 
+_MAX_JSON_DEPTH = 128
+
+
 def _unique_json_object(pairs: list[tuple[str, object]]) -> dict:
     out = {}
     for key, value in pairs:
@@ -25,6 +28,27 @@ def _finite_json_float(raw: str) -> float:
     return value
 
 
+def _validate_json_depth(payload: object) -> None:
+    # Check container depth explicitly; native decoder limits vary by Python.
+    # Iterators avoid retaining a separate stack entry for every sibling row.
+    stack = [iter((payload,))]
+    while stack:
+        try:
+            value = next(stack[-1])
+        except StopIteration:
+            stack.pop()
+            continue
+        if isinstance(value, dict):
+            children = iter(value.values())
+        elif isinstance(value, list):
+            children = iter(value)
+        else:
+            continue
+        if len(stack) > _MAX_JSON_DEPTH:
+            raise ValueError("JSON nesting exceeds the supported depth")
+        stack.append(children)
+
+
 def parse_structured(payload: str, kind: str) -> dict:
     if kind=="json":
         try:
@@ -33,6 +57,7 @@ def parse_structured(payload: str, kind: str) -> dict:
         except RecursionError as exc:
             raise ValueError("JSON nesting exceeds the supported depth") from exc
         if not isinstance(out,dict): raise ValueError("JSON root must be an object")
+        _validate_json_depth(out)
         return out
     if kind=="csv":
         try:
