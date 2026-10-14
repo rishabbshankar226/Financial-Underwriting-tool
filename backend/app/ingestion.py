@@ -27,8 +27,11 @@ def _finite_json_float(raw: str) -> float:
 
 def parse_structured(payload: str, kind: str) -> dict:
     if kind=="json":
-        out=json.loads(payload, object_pairs_hook=_unique_json_object,
-                       parse_constant=_reject_json_constant, parse_float=_finite_json_float)
+        try:
+            out=json.loads(payload, object_pairs_hook=_unique_json_object,
+                           parse_constant=_reject_json_constant, parse_float=_finite_json_float)
+        except RecursionError as exc:
+            raise ValueError("JSON nesting exceeds the supported depth") from exc
         if not isinstance(out,dict): raise ValueError("JSON root must be an object")
         return out
     if kind=="csv":

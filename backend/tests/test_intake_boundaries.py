@@ -24,6 +24,25 @@ def test_json_nonfinite_tokens_are_rejected(token):
         parse_structured('{"amount": ' + token + '}', 'json')
 
 
+@pytest.mark.parametrize('opening, closing', [('[', ']'), ('{"nested":', '}')])
+def test_excessive_json_nesting_is_a_validation_error(opening, closing):
+    payload = '{"extra":' + opening * 10_000 + '0' + closing * 10_000 + '}'
+    with pytest.raises(ValueError, match='JSON nesting exceeds the supported depth'):
+        parse_structured(payload, 'json')
+
+
+@pytest.mark.parametrize('path', [
+    '/commercial/decision', '/consumer/decision', '/sba/evaluate', '/commercial/assessment',
+])
+def test_api_rejects_excessive_json_nesting_with_readable_cors_error(path):
+    payload = '{"extra":' + '[' * 10_000 + '0' + ']' * 10_000 + '}'
+    response = TestClient(app, raise_server_exceptions=False).post(path, content=payload,
+        headers={'Content-Type': 'application/json', 'Origin': 'http://localhost:5173'})
+    assert response.status_code == 422
+    assert response.json()['detail'] == 'JSON nesting exceeds the supported depth'
+    assert response.headers['access-control-allow-origin'] == 'http://localhost:5173'
+
+
 @pytest.mark.parametrize('payload', [
     'gross_receipts,gross_receipts\n1,2\n',
     'gross_receipts, gross_receipts\n1,2\n',
