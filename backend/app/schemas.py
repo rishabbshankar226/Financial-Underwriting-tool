@@ -140,6 +140,13 @@ class ExtractionField(FiniteModel):
     confirmed: bool = False
     source_line: str | None = None
 
+    @field_validator("value", mode="before")
+    @classmethod
+    def reject_boolean_value(cls, value: Any) -> Any:
+        if isinstance(value, bool):
+            raise ValueError("Extracted financial values cannot be boolean")
+        return value
+
 class ExtractionResult(FiniteModel):
     fields: list[ExtractionField]
     measured_accuracy: float | None = None

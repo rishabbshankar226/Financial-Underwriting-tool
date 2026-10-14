@@ -3,7 +3,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from app.ingestion import confirmed_payload, extract_synthetic_text, parse_structured
+from app.ingestion import confirmed_payload, extract_synthetic_text, extraction_accuracy, parse_structured
 from app.main import app
 from app.schemas import AuditEvent, ExtractionField, ExtractionResult
 from fixtures import alpine_request
@@ -22,6 +22,55 @@ def test_json_duplicate_keys_are_rejected(payload):
 def test_json_nonfinite_tokens_are_rejected(token):
     with pytest.raises(ValueError, match='Non-finite JSON'):
         parse_structured('{"amount": ' + token + '}', 'json')
+
+
+@pytest.mark.parametrize('opening, closing', [('[', ']'), ('{"nested":', '}')])
+def test_excessive_json_nesting_is_a_validation_error(opening, closing):
+    payload = '{"extra":' + opening * 10_000 + '0' + closing * 10_000 + '}'
+    with pytest.raises(ValueError, match='JSON nesting exceeds the supported depth'):
+        parse_structured(payload, 'json')
+
+
+@pytest.mark.parametrize('opening, closing', [('[', ']'), ('{"nested":', '}')])
+@pytest.mark.parametrize('terminal', ['0', '[]', '{}'])
+@pytest.mark.parametrize('depth', [128, 129])
+def test_json_container_depth_is_bounded_before_native_recursion(opening, closing, terminal, depth):
+    wrappers = depth - 1 - (terminal in ('[]', '{}'))
+    payload = '{"extra":' + opening * wrappers + terminal + closing * wrappers + '}'
+    if depth == 128:
+        assert 'extra' in parse_structured(payload, 'json')
+    else:
+        with pytest.raises(ValueError, match='JSON nesting exceeds the supported depth'):
+            parse_structured(payload, 'json')
+
+
+def test_json_depth_ignores_sibling_count_and_literal_brackets():
+    payload = {'source': '[{"nested":' * 1_000, 'rows': [[], {}] * 128, 'amount': 1.25}
+    assert parse_structured(json.dumps(payload), 'json') == payload
+
+
+@pytest.mark.parametrize('path', [
+    '/commercial/decision', '/consumer/decision', '/sba/evaluate', '/commercial/assessment',
+])
+def test_api_enforces_explicit_json_depth_with_readable_cors_error(path):
+    payload = '{"extra":' + '[' * 128 + '0' + ']' * 128 + '}'
+    response = TestClient(app, raise_server_exceptions=False).post(path, content=payload,
+        headers={'Content-Type': 'application/json', 'Origin': 'http://localhost:5173'})
+    assert response.status_code == 422
+    assert response.json()['detail'] == 'JSON nesting exceeds the supported depth'
+    assert response.headers['access-control-allow-origin'] == 'http://localhost:5173'
+
+
+@pytest.mark.parametrize('path', [
+    '/commercial/decision', '/consumer/decision', '/sba/evaluate', '/commercial/assessment',
+])
+def test_api_rejects_excessive_json_nesting_with_readable_cors_error(path):
+    payload = '{"extra":' + '[' * 10_000 + '0' + ']' * 10_000 + '}'
+    response = TestClient(app, raise_server_exceptions=False).post(path, content=payload,
+        headers={'Content-Type': 'application/json', 'Origin': 'http://localhost:5173'})
+    assert response.status_code == 422
+    assert response.json()['detail'] == 'JSON nesting exceeds the supported depth'
+    assert response.headers['access-control-allow-origin'] == 'http://localhost:5173'
 
 
 @pytest.mark.parametrize('payload', [
@@ -48,6 +97,45 @@ def test_duplicate_extraction_preserves_evidence_but_cannot_be_promoted():
     assert len(result.fields) == 2
     with pytest.raises(ValueError, match='Duplicate extracted field'):
         confirmed_payload(result)
+
+
+@pytest.mark.parametrize('values', [(1, 2), (2, 1), (2, 2), (None, 2)])
+def test_duplicate_extraction_cannot_receive_an_accuracy_score(values):
+    result = ExtractionResult(fields=[
+        ExtractionField(name='gross_receipts', value=value, confidence=.99)
+        for value in values
+    ])
+    with pytest.raises(ValueError, match='Duplicate extracted field'):
+        extraction_accuracy(result, {'gross_receipts': 2})
+
+
+def test_extraction_accuracy_preserves_matching_missing_and_unconfirmed_fields():
+    result = ExtractionResult(fields=[
+        ExtractionField(name='gross_receipts', value=2, confidence=.99, confirmed=False),
+        ExtractionField(name='cogs', value=None, confidence=.99),
+    ])
+    assert extraction_accuracy(result, {'gross_receipts': 2, 'cogs': 1}) == .5
+
+
+@pytest.mark.parametrize('value', [True, False])
+@pytest.mark.parametrize('confirmed', [True, False])
+def test_extracted_amounts_reject_booleans_before_numeric_coercion(value, confirmed):
+    with pytest.raises(ValueError, match='boolean'):
+        ExtractionField(name='gross_receipts', value=value, confidence=.99, confirmed=confirmed)
+
+
+@pytest.mark.parametrize('value', [True, False])
+def test_json_extraction_records_reject_boolean_amounts(value):
+    payload = json.dumps({'fields': [dict(name='gross_receipts', value=value,
+                                        confidence=.99, confirmed=True)]})
+    with pytest.raises(ValueError, match='boolean'):
+        ExtractionResult.model_validate_json(payload)
+
+
+@pytest.mark.parametrize('value', [0, 0.0, '0', 1, '1'])
+def test_confirmed_numeric_extraction_values_still_preserve_zero_and_one(value):
+    field = ExtractionField(name='gross_receipts', value=value, confidence=.99, confirmed=True)
+    assert confirmed_payload(ExtractionResult(fields=[field])) == {'gross_receipts': float(value)}
 
 
 def test_unconfirmed_duplicate_cannot_silently_resolve_ambiguity():

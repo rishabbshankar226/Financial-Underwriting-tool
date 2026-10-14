@@ -144,13 +144,13 @@ Playwright starts both development servers automatically. Ensure the Python envi
 - `backend/data/sba_size_standards.json` records where the SBA size standards come from but holds no NAICS rows yet, because the current SBA workbook isn't bundled. A missing row fails closed instead of falling back to a guessed threshold.
 - Every decision and memo carries a prototype disclaimer.
 - Requests reject non-finite values, invalid debt/loan inputs, empty financial histories, and combined ownership above 100%. Overflow returns HTTP 422. Zero debt-service coverage is marked not applicable and cannot satisfy an approval factor.
-- JSON intake rejects duplicate object keys and non-finite numeric tokens, including overflowing exponents. Browser imports send the original JSON text for backend validation. CSV intake requires one complete row with unique, nonblank headers. Duplicate extracted fields must be resolved before any payload is promoted.
+- JSON intake rejects duplicate object keys and non-finite numeric tokens, including overflowing exponents. JSON supports at most 128 nested object/array levels, counting the root and empty containers; row count and literal brackets inside strings do not count as depth. Excessive nesting returns a readable validation error, including HTTP 422 on decision routes. Browser imports send the original JSON text for backend validation. CSV intake requires one complete row with unique, nonblank headers. Duplicate extracted fields must be resolved before promotion or accuracy scoring.
 - Audit rationales are trimmed and must be nonblank on the backend as well as in the browser. Saved case commands have a 2,000-character limit. Session/imported history stays separate from immutable saved events; all actor labels remain unverified prototype demonstrations.
 - The prototype consumer documentation checklist requires `income`, `assets`, and `debts`; it is configurable and is not a complete legal ATR checklist. The DTI review boundary is recorded as its own decision factor.
 - SBA transaction types are `expansion`, `acquisition`, `buyout`, or `esop`. The caller must select the applicable SOP version; effective-date selection is not automated.
 - SBA cases must supply `sop_version`; there is no default. Size rows require a six-digit NAICS code, a positive threshold, and a calendar effective date (ISO `YYYY-MM-DD` in JSON); employee thresholds must be whole numbers. Duplicate NAICS rows and explicitly synthetic rows are rejected by the official table loader. Synthetic test rows can still be injected directly into library tests and are labeled in results. Date validation does not select or prove current policy applicability.
 - Reason codes come from the factors the decision engine actually evaluated.
-- Extracted fields that nobody has confirmed never reach the calculations.
+- Extracted fields that nobody has confirmed never reach the calculations. Extracted amounts reject boolean values while accepting numeric zero and one.
 
 ## Limitations
 
