@@ -2,13 +2,24 @@
 
 The default synthetic Alpine case uses the dated assessment API. Explicit legacy mode preserves undated intake and the legacy decision route. The browser formats backend values and manages local drafts; Python performs all financial calculations.
 
+## Access
+
+Enter the configured operator token in **Connect workspace**. The workspace
+mounts only after a protected authentication check. The token stays in page
+memory and is sent only to the configured API origin; remote URLs require HTTPS.
+Reload, disconnect or a 401 requires re-entry. Requests have a 30-second deadline.
+Disconnect cancels requests and clears visible financial data without deleting
+exact pending-write tracking. Reconnecting never submits a write automatically.
+The tab-local journal may contain financial inputs and requires an appropriate
+browser/host policy. See [security requirements](SECURITY_ARCHITECTURE.md).
+
 ## Views
 
 - **Spread:** all nine annual inputs across supplied periods, plus reconciled gross profit, OBI, EBITDA, and K-1 ratio. Selecting an earlier period does not change current coverage to historical coverage.
 - **Assumptions:** annual existing debt, proposed loan, supplied guarantors, and latest-period working capital. Input amounts are editable with field-specific validation and rationale. Dates, case structure, and repayment conventions are changed through complete JSON import.
 - **Details:** backend definitions, expressions, actual operands and references, raw results, K-1 comparison periods, guarantor contributions, raw policy comparisons, and the complete policy snapshot. The content fingerprint does not authenticate documents.
 - **Memo:** a narrative from the accepted response's factors and reasons, unavailable while an input is pending/rejected.
-- **History:** unsaved cases show successfully applied session edits with period-aware paths and separately labeled imported overrides. Saved cases show immutable server-recorded revision summaries and the selected original event, including its unit, period/as-of date, guarantor context, rationale, actor and recording time. All demonstration actors remain unverified.
+- **History:** unsaved cases show successfully applied session edits with period-aware paths and separately labeled imported overrides. Saved cases show immutable server-recorded revision summaries and the selected original event, including its unit, period/as-of date, guarantor context, rationale, actor and recording time. New saved events display the configured credential identity; archived demonstration actors retain their original unverified label.
 - **Scenarios:** author and review explicit current shocks against a supported saved dated revision, retain a reviewed batch as a separate original comparison, and reopen case-wide comparison summaries. The selected underwriting result remains unchanged.
 
 ## State contract
@@ -34,7 +45,7 @@ Selection identifiers are allocated before asynchronous file reads. Raw import t
 
 Legacy financial values are explicitly normalized only after backend success; booleans are rejected. V2 inputs, edits, percentage conversions and reporting use decimal strings and BigInt operations. Import presentation preserves original numeric tokens while the unmodified body goes to the backend. Legacy annual periods remain ordinal, dated-only trace/spread results remain unavailable, and no dates or explicit units are inferred.
 
-Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. This workspace has no authentication or export. Decision scores and policy values remain illustrative prototype settings.
+Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. The access gate authenticates the configured operator credential; the workspace has no export. Decision scores and policy values remain illustrative settings requiring institutional approval.
 
 ## Save, reopen and revise
 
@@ -54,7 +65,7 @@ There is at most one unresolved saved write per tab. Network/abort errors, unrea
 
 Definite command rejections (400/404/412/413/422/428) clear matching tracking only after storage confirms removal. A 412 retains the proposal separately, reads the latest original snapshot, and compares the field's server context. **Review proposed edit** opens a prefilled dialog against the latest value; only **Save revision** submits a fresh UUID and latest ETag. Canceling sends no write. A rejected saved selection offers an original stored read, never stateless re-evaluation as a saved-case recovery action.
 
-Invalid, oversized, changed-backend, or unsupported recovery envelopes block new saved writes and show an explicit recovery message. **Review discarding tracking** requires a modal action with a keep option; Escape preserves the record. Discarding or closing the tab can lose an exact retry key without undoing a server commit. Recovery data and actor labels are prototype conveniences, not authentication or evidence of a human identity. Switching to another selection does not imply that an in-flight write was rolled back.
+Invalid, oversized, changed-backend, or unsupported recovery envelopes block new saved writes and show an explicit recovery message. **Review discarding tracking** requires a modal action with a keep option; Escape preserves the record. Discarding or closing the tab can lose an exact retry key without undoing a server commit. Recovery data does not authenticate requests. The Bearer boundary authenticates the configured credential; actor labels do not independently verify a human identity. Switching to another selection does not imply that an in-flight write was rolled back.
 
 ## Scenario review and original comparisons
 
@@ -104,8 +115,9 @@ JSON depth 100; existing case guards retain depth 64. The browser limit does
 not cap the backend preview response contract. Only the selected scenario's
 detail is rendered, trace/guarantor rows are created on opening and paged in
 groups of 50, and original JSON text pages are at most 64 KiB UTF-8. All returned
-text renders as text. Source/runtime recording metadata and actor identity
-remain explicitly unverified. The copy-upgrade workflow is operator-driven;
+text renders as text. Source/runtime metadata retains its recorded verification
+status. New actors identify the configured credential; archived demonstration
+actors retain their original labels. The copy-upgrade workflow is operator-driven;
 the browser explains `storage_upgrade_required` without choosing or upgrading
 a database.
 
@@ -115,4 +127,4 @@ a database.
 
 ## Verification
 
-Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the existing dated/legacy workspace and saved-case workflow, plus scenario authoring, immutable comparison retention/original reads, archive pagination, shared recovery, bounded responses and rendering, delayed responses, unsupported definitions, keyboard focus and mobile layout. See [verification coverage](VERIFICATION.md#browser-scenario-and-shared-recovery-coverage). Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. V2 financial tests include exact transport, reporting allocation and immutable numeric-v1 compatibility; the independent reference gate uses a separate Decimal implementation.
+Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the existing dated/legacy workspace and saved-case workflow, plus scenario authoring, immutable comparison retention/original reads, archive pagination, shared recovery, bounded responses and rendering, delayed responses, unsupported definitions, keyboard focus and mobile layout. See [verification coverage](VERIFICATION.md#reproduction-and-regression-coverage). Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. V2 financial tests include exact transport, reporting allocation and immutable numeric-v1 compatibility; the independent reference gate uses a separate Decimal implementation.

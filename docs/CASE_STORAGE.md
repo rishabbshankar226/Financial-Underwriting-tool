@@ -8,12 +8,15 @@ for original-result reads, conflict review, and exact-write recovery.
 
 New accepted inputs normalize to `commercial-assessment-v2`. V1 intake remains
 explicitly compatible; archived numeric v1 assessments stay read-only. Legacy, consumer, and SBA
-requests remain stateless. Use synthetic data. The recording actor is the fixed
-`prototype-demo-unverified` demonstration identity, not a verified person.
+requests remain stateless. All HTTP operations require the configured Bearer
+credential. New events record the server-derived operator ID; archived
+`prototype-demo-unverified` actors and original receipt bytes remain unchanged.
+That ID identifies a credential, not an independently verified person.
 
 ## Enable storage
 
-With the pinned Python 3.12 environment active, from `backend`:
+With the pinned Python 3.12 environment active and the operator environment
+variables configured as in the [README](../README.md#setup), from `backend`:
 
 ```bash
 mkdir -p .spreadline-data/backups
@@ -71,9 +74,11 @@ print(json.dumps({"input": json.loads(Path("backend/fixtures/alpine_dated_v2.jso
                   "rationale": "Initial synthetic example"}))
 PY
 curl --fail-with-body -i http://localhost:8000/cases \
-  -H 'Content-Type: application/json' \
-  -H 'Idempotency-Key: 2aeb5db0-1662-46a4-8b4b-5f87e5ab5b59' \
-  --data-binary @/tmp/spreadline-create.json
+  --header @- --data-binary @/tmp/spreadline-create.json <<HEADERS
+Authorization: Bearer $SPREADLINE_API_TOKEN
+Content-Type: application/json
+Idempotency-Key: 2aeb5db0-1662-46a4-8b4b-5f87e5ab5b59
+HEADERS
 ```
 
 For a new write, generate a new UUID. To retry a lost response, retain that
@@ -95,6 +100,7 @@ return and expose their canonical `Location`.
 
 | Condition | Result |
 |---|---|
+| Missing/invalid/duplicate Bearer header | 401 before storage dependencies; invalid server authentication configuration returns 503. |
 | Missing edit `If-Match` | 428 `precondition_required`. |
 | Weak/wildcard/multiple/malformed `If-Match` or repeated header | 400. |
 | Stale ETag for a new operation | 412 `stale_revision`; no records added. |

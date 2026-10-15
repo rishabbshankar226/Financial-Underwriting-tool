@@ -1,85 +1,67 @@
-# Remaining production contract approval
+# Approved authentication and SBA contract record
 
-The Decimal migration and mypy/Ruff dependencies were approved by the user's
-continuation after `DECIMAL_MIGRATION_APPROVAL.md`. They are implemented in the
-review branch. The changes below are proposed, not implemented.
+Target: `rishabbshankar226/Financial-Underwriting-tool` only.
 
-The user's stop condition is: **"STOP and ask for human approval before deleting
-directories, adding any new third-party dependency, or making breaking
-schema/API changes."** The earlier Decimal proposal explicitly
-excluded a new authentication/session contract. This document makes that next
-decision concrete; it does not request approval to advance to another repository.
+The user continued after the concrete authentication/SBA proposal, approving
+the required HTTP credential and stricter SBA evidence/result contracts. These
+changes are implemented. The earlier Decimal migration and pinned mypy/Ruff
+approval remains recorded in [DECIMAL_MIGRATION_APPROVAL.md](DECIMAL_MIGRATION_APPROVAL.md).
+No additional dependency, directory deletion, main merge or other repository
+work forms part of this approval.
 
-## 1. Protect the existing single-operator application
+## Implemented access contract
 
-The inspected route dependencies select a database without authenticating a
-caller. Current events use a fixed unverified actor. ETags, operation UUIDs,
-CORS and hashes cannot provide access control.
-
-Proposed smallest contract for a single-operator deployment, using stdlib only:
-
-| Surface | Proposed behavior |
+| Surface | Behavior |
 | --- | --- |
-| Configuration | Require `SPREADLINE_API_TOKEN` and `SPREADLINE_OPERATOR_ID`; explicit configuration errors name the missing variable without exposing credentials |
-| Protected routes | All financial, saved-case, scenario, comparison and schema-documentation routes require one `Authorization: Bearer` credential before database dependencies or arithmetic |
-| Public route | `/health` exposes only minimal readiness/liveness information |
-| Token validation | Validate bounded credentials; compare with `hmac.compare_digest`; never log, persist, echo or embed a token in a URL/frontend bundle |
-| Failure states | Missing/invalid credentials return 401 with a Bearer challenge; unconfigured protection fails closed; duplicate authorization headers are rejected |
-| Authorization | One operator credential owns the configured single-operator database; no caller-supplied actor, owner or database selection |
-| Event identity | New records use a server-derived operator credential identity; archived demonstration actor strings and original receipt bytes remain readable |
-| Browser | Explicit credential entry kept in memory for the current page; send only to the configured API origin; reload requires re-entry and never submits a pending write automatically |
-| Recovery | Preserve exact saved command/key/ETag; token rotation/re-entry does not rewrite the operation or old records |
+| Configuration | Require `SPREADLINE_API_TOKEN` and `SPREADLINE_OPERATOR_ID`; bounded ASCII values; reserved actor and secret-as-actor rejected |
+| Protected routes | Financial, saved-case, scenario, comparison and schema/documentation routes require one Bearer header before body consumption, arithmetic or database initialization |
+| Public routes | Minimal `GET /health`; permitted CORS preflight grants no application access |
+| Verification | `hmac.compare_digest`; malformed, wrong or duplicate credentials return 401; invalid server configuration returns 503 without exposing values |
+| Authorization | One operator credential accesses the configured single-operator database; commands cannot supply an actor, owner or database |
+| Event identity | New events use the server-derived operator ID; archived demonstration actors and committed receipts remain unchanged |
+| Browser | Manual entry; page-memory credentials; API-origin binding; HTTPS except loopback; no redirects/cookies; bounded request deadlines |
+| Recovery | Reload/disconnect/401 clears access; exact command/key/ETag tracking remains for explicit review; no automatic resubmission |
 
-This changes required HTTP credentials and the event actor contract. A shared
-operator token identifies a credential, not an independently verified human.
-It does not provide multi-user tenancy or MFA. A multi-user institutional
-installation instead requires its chosen identity provider/gateway and ownership
-model; no provider or dependency is selected without approval.
+This model identifies a credential, not an independently verified human. It
+does not provide multiple tenants or MFA. A multi-user deployment needs its
+own reviewed identity/ownership design. Host CLI operations rely on host
+access controls. TLS termination, private store placement, backup protection,
+rate limits and an approved lending policy are deployment responsibilities.
 
-Acceptance checks: unauthenticated/wrong-token/duplicate-header requests fail
-before storage initialization; protected reads cannot bypass the guard; origin
-changes never forward a credential; new event identity cannot be spoofed;
-original archives/receipts remain byte-identical; token rotation and lost-write
-recovery remain explicit; no token appears in logs, storage or built assets.
+## Implemented SBA contract
 
-TLS, private database placement, restrictive file permissions and a reviewed
-operating policy remain deployment responsibilities. New POSIX database files
-already use 0600; existing files are not silently chmodded.
+`sba-screen-v2` requires an assessment date and strict `size_evidence` specifying
+the complete measurement period, supported receipts/payroll-average basis,
+affiliate treatment and evidence reference. Employee inputs remain integer
+ceilings of the supplied average; financial inputs remain exact decimals.
 
-## 2. Make SBA screens supportable before claiming eligibility
+The packaged official workbook is hash-pinned and effective March 17, 2023,
+verified through October 15, 2026. Supported rows retain their URL, hash, dates
+and workbook row. Footnotes, exceptions and unsupported measures fail explicitly.
+The selected SOP must apply on the assessment date.
 
-`backend/data/sba_size_standards.json` has no official rows. `sba.py` implements
-limited size, coverage and personal-resources screens, not all SBA origination
-requirements. The current case contract lacks a dated size-evidence basis and
-an explicit distinction between these screens and a complete eligibility result.
+The strict `sba-screen-result-v2` separates completed size/coverage screens
+from unresolved lender determinations. It always reports incomplete eligibility.
+Limited supplied-resource arithmetic cannot pass credit elsewhere. Default
+coverage floors remain identified as configured operator policy. The complete
+source/methodology and a valid input are in [SBA_SCREENING.md](SBA_SCREENING.md).
+Old synthetic examples remain historical fixtures and are not relabeled as
+official source data or complete eligibility decisions.
 
-Proposed v2 contract changes:
+## Acceptance evidence
 
-- Require an assessment date and an explicit basis for supplied SBA receipts or
-  employee measurements, including treatment of affiliates. Retain exact decimal
-  amounts and integer employee counts.
-- Load only verified official dated standards with source URL/effective date and
-  content hash. Do not flatten ambiguous exceptions or unsupported measures into
-  a guessed threshold; reject unsupported rows explicitly.
-- Check the selected SOP and standard against the assessment date. Keep policy
-  floors identified as approved operator policy, not inferred legal rules.
-- Report completed screens and unresolved requirements separately. Three passing
-  screens must not present a complete SBA eligibility approval. Missing required
-  evidence remains unavailable/review-required.
-- Preserve old synthetic fixtures as v1 examples; do not silently reinterpret
-  archived results or add guessed official thresholds.
+Authentication tests first reproduced 143 failures on the unguarded service.
+Current tests cover every protected route family, aliases, malformed/duplicate
+headers, configuration failures, no unauthorized body reads/calculations/store
+creation, token rotation, immutable retries, event attribution and no credential
+in stored receipts. SBA tests reproduced missing-source/contract failures and
+now verify exact boundaries, source/date/evidence failures and incomplete
+outcomes. Browser contracts cover origin confinement, cancellation, deadlines,
+401 re-entry and exact pending-write retention. Real browser checks cover
+manual entry, reload, disconnect and committed-write recovery.
 
-Primary resources inspected on 2026-10-14:
-
-- [SBA size-standards dataset](https://data.sba.gov/dataset/small-business-size-standards): lists the current workbook and reference periods.
-- [SBA size-standard explanation](https://legacy.sba.gov/document/support-table-size-standards): describes receipt/employee measures and related businesses.
-- [SOP 50 10 versions](https://legacy.sba.gov/document/sop-50-10-lender-development-company-loan-programs): lists version 8.1 and technical updates effective October 1, 2026.
-
-These sources establish where verified policy/data must come from. They do not
-supply an approved lender's complete credit policy. Acceptance requires dated
-source fixtures, exact measurement-boundary tests, missing/ambiguous-evidence
-failures, and an explicit incomplete-eligibility outcome.
-
-Approval requested: implement the single-operator access boundary above and the
-stricter SBA evidence/result contract. No new third-party package, directory
-deletion, main merge or other repository work is included.
+[CI run 38780154052](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38780154052)
+verified implementation commit `6d9fdcd1b96957b85108721710030b42dad27e88`:
+948 backend tests and 185 Playwright tests passed. Exact commands and logs are
+recorded in [VERIFICATION.md](VERIFICATION.md). These checks establish supported
+software behavior; they do not provide credit-policy approval or legal certification.

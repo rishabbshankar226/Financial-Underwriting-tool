@@ -2,79 +2,92 @@
 
 Target: `rishabbshankar226/Financial-Underwriting-tool` only.
 Baseline: `1b59a90f715853a41c5791edf6dce03c1a77839e`.
-The approved Decimal migration is implemented. Authentication, SBA evidence and
-independent operating-policy approval remain open production gates.
+Approved Decimal, authentication and SBA contract changes are implemented.
+
+## Verified implementation and full CI
+
+[GitHub Actions run 38780154052](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38780154052)
+completed successfully on implementation commit
+`6d9fdcd1b96957b85108721710030b42dad27e88`, October 15, 2026 UTC.
+Both job conclusions and complete decoded logs were retrieved and inspected.
+
+| Executed CI check | Observed result |
+| --- | --- |
+| Backend job `116577938914` | 948 tests passed in 32.78s |
+| Python quality in that job | Ruff passed; strict mypy passed all 31 application/CLI/gate source files; pip consistency passed |
+| Independent reference gate | 18 values and 2 flags passed; all 7 named mutations killed |
+| Original precision probes | All 4 corrected results passed exact assertions |
+| Frontend job `116577938427` | Node 22 install, audit, exact decimal tests and strict TypeScript production build passed; 37 Vite modules transformed |
+| Dependency audit in that job | npm audit exited 0 and reported zero vulnerabilities |
+| Full Chromium Playwright suite | 185 passed in 1.1m: 121 browser-independent contract/recovery checks and 64 real browser interactions |
+| Node decimal suite | 5 tests passed, including 3,012 generated signed rounding cases |
+
+The final follow-up updates documentation only. Application, tests, dependency
+pins, official workbook and CI files remain identical to this verified commit.
+The complete decoded logs accompany the review export. The earlier passing
+migration run 38666759875 (768 backend / 168 Playwright) is historical evidence,
+not the verification of the final access/SBA implementation.
 
 ## Executed local checks
 
-Verified 2026-10-15 UTC, following the audit begun 2026-10-14. A clean Python
-3.12 environment was installed from the exact development requirements and
-constraints. CI uses Python 3.12 and Node 22; local Node is 24.19.0.
+A clean Python 3.12 environment was installed from the exact development
+requirements and constraints. CI uses Python 3.12 and Node 22; local Node is
+24.19.0. The final implementation produced:
 
 | Executed command | Observed result |
 | --- | --- |
 | `python -m pip check` | No broken requirements found |
 | `python -m ruff check backend/app backend/tools backend/tests gate` | All checks passed |
-| `python -m mypy --strict backend/app backend/tools gate/reference_calculator.py` | No issues in 30 source files |
-| `python gate/reference_calculator.py --selftest` | 18 values and 2 flags passed; all 7 named mutations killed |
-| `python docs/precision_probe.py` | Four original defects pass exact expected results |
-| `cd backend && python -m pytest -q` | 768 passed in 20.10s |
-| `cd frontend && npm run test:decimal` | 5 passed, including 3,012 generated signed rounding cases |
-| `cd frontend && ./node_modules/.bin/tsc --noEmit` | Passed |
-| `cd frontend && npm run build` | Passed; Vite 8.3.1, 35 transformed modules |
+| `python -m mypy --strict backend/app backend/tools gate/reference_calculator.py` | No issues in 31 source files |
+| `python gate/reference_calculator.py --selftest` | 18 values, 2 flags and all 7 mutations passed |
+| `python docs/precision_probe.py` | All 4 original defects now pass exact expected results |
+| `cd backend && python -m pytest -q --tb=short` | 948 passed in 22.01s |
+| `cd frontend && npm run test:decimal` | 5 passed, including 3,012 generated rounding cases |
+| `cd frontend && npm run build` | Strict TypeScript and production build passed; 37 modules |
 | `cd frontend && npm audit --audit-level=high` | Exit 0; 0 vulnerabilities reported |
-| Three contract spec files via Playwright | 103 passed in 3.3s |
-| `tests/scenario-recovery.spec.ts` via Playwright | 6 passed in 1.9s |
+| Five contract/recovery spec files through Playwright | 121 passed in 4.4s |
+| `cd frontend && npm run test:e2e -- --list` | Collected 185 tests in 10 files |
 
-Published-tree CI results are recorded after verification below. A blocked
-launch is never counted as a passing browser interaction test.
+Local matching Chromium provisioning was unavailable. The 64 real browser
+interaction checks are **[Not executed in local runtime]**; they actually ran
+and passed in the identified CI job above. Contract tests do not substitute
+for browser interaction results.
 
-## Verified GitHub Actions result
+## Reproduction and regression coverage
 
-[Run 38666759875](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38666759875)
-completed successfully on implementation commit
-`16d38968970778cff81c761dff1fc4604ca3ec26`. Both job conclusions and their
-decoded logs were retrieved and inspected.
+Tests first reproduced the defects before implementation: 29 precision failures,
+143 authentication failures, and 15 SBA evidence/source failures. Separate
+regressions reproduced rejection of legitimate pagination queries, credential
+identity equal to the secret, and invalid copied SBA models. They now pass.
+Additional trailing-line-terminator rejection tests passed on first execution;
+no validator change or reproduced defect is claimed for those checks.
 
-| Executed CI check | Observed result |
+| Suite | Properties and failure modes |
 | --- | --- |
-| Backend job `116200368272` | 768 passed in 31.51s; dependency consistency, Ruff, strict mypy in 30 source files, reference gate and all four precision probes passed |
-| Frontend job `116200368444` | Node 22 install/audit, 5 decimal tests, strict TypeScript and production build passed; npm audit reported zero vulnerabilities |
-| Full Playwright suite in that frontend job | 168 passed in 52.6s, including all 109 contract/recovery checks and 59 real browser interactions |
+| `test_decimal_precision.py` | Large cents/cancellation, exact policy equality, HALF_EVEN, 32 generated independent annuities, weights, thread/context isolation, malformed values and immutable v1 receipt bytes |
+| `test_decimal_math.py` | Numeric domains/traps, signed residual ties, maximum rate/term, strict Metric and direct-v2 JSON precision rejection |
+| `test_reporting_reconciliation.py` | 120 fixed-seed ledgers / 240 periods, subcent and large inputs; exact reported gross-profit/EBITDA/income identities and additive trace reconciliation without changing accepted inputs |
+| `test_numeric_domain_audit.py` | Payment references/domains, zero-rate identity, DTI identities and monotonicity |
+| `test_request_budget_audit.py` | Inclusive actual-byte boundary, chunks, misleading lengths, media types, early stop and disconnect |
+| `test_storage_permissions.py` | New POSIX store uses 0600 under umask 0; original implementation reproduced 0644 |
+| `test_replay_precision_audit.py` | Large-balance cent differences; bounded legacy absolute tolerance |
+| `test_authentication.py` | 158 parameterized cases across route families/aliases; headers, configuration, no unauthorized body/calculation/store initialization, CORS, attribution, token rotation and original receipts |
+| `test_sba_evidence.py` | 22 cases: official rows and dates, exact boundaries, employee averaging basis, unknown/footnoted/exception/asset measures, strict evidence, tampered source, copied-model domain bypass and exact schema-locked API output |
+| API/storage/scenario suites | V2 contracts, immutable originals, original retries, concurrency, backup/restore, policy retention and scenario identities |
+| `tests/decimal-checks.mjs` | Independent integer oracle, large balances, HALF_EVEN ties, percentages, exact JSON tokens and unsupported domains |
+| `authentication-contracts.spec.ts` | 12 transport checks: strict identifiers, query preservation, origin binding, no override/redirect/cookie/cache leaks, 401 clearing, stale response rejection, timeout/cancel/disconnect exact-write retention |
+| `authentication.spec.ts` | 5 real browser workflows: no anonymous API request, invalid-token retry, API-only credential/no storage/reload, disconnect and committed-write exact recovery |
+| Other Playwright suites | Runtime guards, frozen archives, saved-case/scenario recovery, original attribution, desktop/mobile layout, keyboard focus and obsolete-response handling |
 
-Local browser provisioning remains unavailable; CI supplied the actual browser
-execution. Final follow-up changes only the audit/verification documentation.
-Application, dependency, CI and test files match the verified implementation
-commit. Complete decoded job logs accompany the review export.
-
-## Regression and property checks
-
-The new precision suite first reproduced 29 failures and 5 passes on the
-pre-migration implementation. Current tests preserve the original accounting
-identities, thresholds and failure assertions.
-
-| Suite | Properties and failures verified |
-| --- | --- |
-| `test_decimal_precision.py` | Cancellation/large cents, threshold equality, HALF_EVEN, 32 generated independent annuities, policy weights, context/thread isolation, malformed inputs and immutable v1 receipt bytes |
-| `test_decimal_math.py` | Numeric bounds/traps, residual ties, maximum rate/term, Metric validation and direct-v2 JSON precision rejection |
-| `test_reporting_reconciliation.py` | 120 fixed-seed ledgers / 240 periods, including subcent and large values; exact reported gross-profit/EBITDA/income identities, unchanged inputs and additive trace reconciliation |
-| `test_storage_permissions.py` | New store is 0600 under umask 0; reproduced 0644 before the fix |
-| `test_numeric_domain_audit.py` | Payment domains/references, zero-rate identity, DTI identities and monotonicity |
-| `test_request_budget_audit.py` | Actual bytes, inclusive boundary, media types, misleading lengths, chunks, early stop and HTTP failures |
-| `test_replay_precision_audit.py` | Cent discrepancies at large balances; bounded legacy absolute tolerance |
-| API/storage/scenario suites | Exact v2 contracts, immutable archives, original retries, concurrency, restore, scenario identities and policy retention |
-| `tests/decimal-checks.mjs` | Independent integer rounding oracle, exact large balances, ties, percentages, raw numeric tokens and unsupported domains |
-| Playwright suites | Runtime guards, frozen opaque archives, command recovery and real desktop/mobile workflows |
-
-Generated checks use isolated fixed-seed standard-library generators and
-independent Decimal/integer oracles. No property-testing package was added.
-Accounting identities use exact assertions. Loan-power comparisons use a
-declared `1e-24` reference tolerance; policy comparisons use no epsilon.
+Generated properties use isolated fixed-seed standard-library generators and
+independent Decimal/integer oracles. No property-testing dependency was added.
+Accounting identities use exact assertions. Loan-power reference comparisons
+use a declared `1e-24` tolerance; policy comparisons use no epsilon.
 
 ## Repeatable commands
 
-Use the complete [README](../README.md) setup. With the environment active,
-from the repository root:
+Use the complete [README setup](../README.md). With the Python environment
+active, from the repository root:
 
 ```bash
 python -m pip check
@@ -92,48 +105,37 @@ npm --prefix frontend run build
 ```
 
 The aggregate script stops on the first failure. Ports 8000/5173 must be free.
-An existing isolated compatible Chromium can be selected with
+Browser tests own a temporary store and explicitly configured synthetic
+credential; they neither bypass the production guard nor require real secrets.
+An installed compatible isolated Chromium can be selected using
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
-## Browser provisioning and CI
-
-Local matching Chromium downloads were truncated or stalled. A selected
-workspace test reached browser launch and failed because the headless executable
-was absent. The 59 browser interaction tests are therefore
-**[Not executed in local runtime]**. Contract checks run without a browser:
+Browser-independent checks can run without Chromium:
 
 ```bash
 cd frontend
 npm run test:e2e -- tests/contracts.spec.ts tests/cases-contracts.spec.ts \
-  tests/scenario-contracts.spec.ts tests/scenario-recovery.spec.ts --reporter=line
+  tests/scenario-contracts.spec.ts tests/scenario-recovery.spec.ts \
+  tests/authentication-contracts.spec.ts --reporter=line
 ```
 
-The full suite collects 168 tests: 109 contracts and 59 browser interactions.
-Initial migration CI run
-[38666492601](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38666492601)
-on commit `4898b453a3240404637d46c5a1e09a73f751c423` passed the backend
-job: 768 tests in 29.99s, Ruff, strict mypy, reference gate and all four
-precision probes. The frontend job passed install, audit, decimal tests and
-build, then reported 167 passing Playwright tests and one stale percentage
-format assertion. `assessment.spec.ts:324` expected `12.5%`; the application
-correctly displayed the new fixed-precision `12.50%`. That expected display
-was corrected without relaxing API-unit, history, recovery or math assertions.
-Follow-up run 38666759875 passed all 168 tests as recorded above. The older
-717-backend/161-browser run predates this migration and does not verify it.
+## Dependency and delivery evidence
 
-## Dependency evidence and limits
+Runtime and development requirements have exact constraints. Only the approved
+mypy/Ruff direct development dependencies were added; multipart was removed.
+The npm lockfile remains the resolved frontend dependency source. An actual OSV
+batch query of all 28 pinned Python development packages returned no matched
+advisories; [the dated request/response](DEPENDENCY_AUDIT_2026-10-14.json) is
+retained. Advisory results are point-in-time, not absence-of-vulnerability proof.
 
-Runtime requirements and `constraints-py312.txt` pin runtime packages.
-Development requirements and `constraints-dev-py312.txt` add existing tests and
-approved mypy/Ruff. The clean environment has no multipart dependency. The npm
-lockfile remains the resolved frontend source.
+The complete baseline-to-review binary unified diff is checked with
+`git apply --check` against a separate clean checkout of the exact baseline.
+The review ZIP includes all complete changed-file replacements, the patch,
+SHA-256 manifest, complete README/audit and decoded final CI logs. Frozen v1
+SQL/provenance and original receipt fixtures remain byte-identical to baseline.
 
-An actual OSV batch query for all 28 pinned Python development packages returned
-no matched advisories. Its dated request/response is in
-[the dependency audit](DEPENDENCY_AUDIT_2026-10-14.json). Advisory lookups do not
-prove absence of vulnerabilities.
-
-Software tests establish synthetic regression behavior, not predictive validity,
-legal compliance, complete SBA eligibility or production access control. See
-the [audit](AUDIT_2026-10-14.md) and
-[remaining proposal](PRODUCTION_CONTRACT_APPROVAL.md).
+These checks establish supported deterministic software behavior. Predictive
+credit-model validation, institutional policy approval, complete SBA eligibility,
+and deployment-specific compliance are outside what software tests establish.
+See [the audit](AUDIT_2026-10-14.md), [SBA methodology](SBA_SCREENING.md) and
+[security deployment requirements](SECURITY_ARCHITECTURE.md).

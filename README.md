@@ -6,12 +6,13 @@ consumer ratios and policy comparisons. A React workspace reviews dated
 spreads, analyst edits, and scenario comparisons. SQLite retains original
 inputs, decisions, traces, policies, and retry receipts.
 
-Production hardening remains incomplete. Caller authentication and verified
-actor attribution require the [next contract approval](docs/PRODUCTION_CONTRACT_APPROVAL.md).
-The SBA dataset contains source metadata and no official thresholds; SBA
-eligibility remains unavailable. Default credit rules are illustrative and
-require independent approval for actual lending. Use synthetic inputs until
-these controls and operating policies are implemented and validated.
+The supported deployment is one operator credential and one private database.
+Financial and storage routes require authentication before processing inputs.
+SBA screens use a pinned official workbook and dated measurement evidence;
+they explicitly report incomplete eligibility. Default credit rules remain
+illustrative and require institutional approval and independent validation
+before actual lending. Software regression results do not approve a credit
+policy or certify regulatory compliance.
 
 ## Architecture
 
@@ -23,6 +24,8 @@ these controls and operating policies are implemented and validated.
 | `assessment.py`, `scenarios.py` | Dated financial reports, hypothetical projections and fingerprints |
 | `cases.py`, `comparison_storage.py` | Atomic immutable records, original receipts, integrity verification and pagination |
 | `main.py`, route adapters, `request_limits.py` | Bounded HTTP intake, exact numeric-token decoding and error translation |
+| `authentication.py` | Environment-loaded Bearer verification and server-derived operator identity before request processing |
+| `sba.py`, `backend/data/` | Verified official size rows, dated evidence checks and incomplete eligibility screens |
 | `frontend/src/` | Typed response guards, exact editor values, report formatting and explicit write recovery |
 | `gate/reference_calculator.py` | Independent Decimal reference formulas and named mutation checks |
 
@@ -110,7 +113,23 @@ Runtime-only installations use `backend/requirements.txt` with
 packages and pinned mypy/Ruff. All direct versions and transitive resolutions
 are pinned; npm uses `frontend/package-lock.json`.
 
-Start the backend with the Python environment active:
+Configure a cryptographically random operator token obtained from your private
+credential manager. It must contain 32–4,096 ASCII bearer characters. The
+following Bash input keeps its value out of shell history and command output:
+
+```bash
+read -r -s -p 'Operator API token: ' SPREADLINE_API_TOKEN
+export SPREADLINE_API_TOKEN
+export SPREADLINE_OPERATOR_ID=local-underwriter
+```
+
+The operator ID is a non-secret ASCII identifier of 1–128 characters. It must
+start with a letter or digit; remaining characters may also include `_.:@-`.
+The archived demonstration ID and an ID equal to the token are rejected.
+An absent or invalid configuration fails closed with 503 and names the required
+environment variable without exposing its value.
+
+Start the backend in that shell with the Python environment active:
 
 ```bash
 cd backend
@@ -121,20 +140,37 @@ In another terminal:
 
 ```bash
 cd frontend
-npm run dev -- --host 127.0.0.1
+VITE_API_URL=http://127.0.0.1:8000 npm run dev -- --host 127.0.0.1
 ```
 
 Open `http://127.0.0.1:5173`. `VITE_API_URL` sets the API base at frontend
-startup/build time; its default is `http://localhost:8000`. Keep credentials out
-of that URL and the public frontend bundle. `/health` reports process health.
+startup/build time; its default is `http://localhost:8000`. Enter the operator
+token in **Connect workspace**. The application verifies access before mounting
+the financial workspace. Keep credentials out of URLs and the public bundle.
+Remote API URLs require HTTPS; HTTP is accepted only on loopback.
+
+Credentials remain in page memory. Reload, disconnect or a 401 requires re-entry.
+Disconnect cancels in-flight requests and clears the view. Requests have a
+30-second deadline, do not follow redirects, omit cookies, and send the token
+only to the configured API origin. Pending writes remain available for explicit
+review and exact retry; reconnecting never submits them automatically.
 
 Submit the complete v2 example:
 
 ```bash
 curl --fail-with-body http://127.0.0.1:8000/commercial/assessment \
-  -H 'Content-Type: application/json' \
-  --data-binary @backend/fixtures/alpine_dated_v2.json
+  --header @- --data-binary @backend/fixtures/alpine_dated_v2.json <<HEADERS
+Authorization: Bearer $SPREADLINE_API_TOKEN
+Content-Type: application/json
+HEADERS
 ```
+
+All application routes, including `/openapi.json`, `/docs` and `/redoc`, require
+one Bearer header. Missing, invalid or duplicate authorization returns 401 with
+a Bearer challenge. `GET /health` returns only `{"status":"ok"}` publicly;
+permitted CORS preflight is public and grants no application access. Protected
+responses use `Cache-Control: no-store`. See [security architecture](docs/SECURITY_ARCHITECTURE.md)
+for TLS, browser storage and host operating requirements.
 
 ## Contracts and storage
 
@@ -143,7 +179,7 @@ curl --fail-with-body http://127.0.0.1:8000/commercial/assessment \
 | `POST /commercial/decision` | Undated commercial rules and reasons |
 | `POST /commercial/assessment` | Dated v2 spread, raw/reported facts, policy and trace |
 | `POST /consumer/decision` | DTI and configured policy/documentation checks |
-| `POST /sba/evaluate` | Limited size/coverage screens; missing official rows fail closed |
+| `POST /sba/evaluate` | Dated `sba-screen-v2` input and strict `sba-screen-result-v2`; completed screens and unresolved eligibility requirements |
 | `/cases` | Dated case creation, original reads, revisions and replay |
 | `/cases/{id}/revisions/{revision}/scenarios/preview` | Read-only shocks under the selected saved policy |
 | `/cases/{id}/revisions/{revision}/scenario-comparisons` | Immutable reviewed comparison retention |
@@ -153,6 +189,17 @@ buffering and store dependencies. JSON rejects duplicates, non-finite tokens,
 invalid UTF-8 and nesting above 128 containers. Unknown model fields and
 boolean-as-money values are rejected. Oversized requests return 413; invalid
 financial input returns 422. Storage errors use `{detail: {code, message}}`.
+
+The bundled SBA workbook is effective March 17, 2023 and was verified through
+October 15, 2026. Its bytes, URL, hash and row references are checked. The loader
+supports 850 unambiguous receipts/employee rows and refuses 128 rows with
+footnotes, industry exceptions or unsupported measures. Inputs require a
+completed three- or five-fiscal-year receipts average, or the integer ceiling
+of a 24-month pay-period employee average, with dates, affiliate treatment and
+a source reference. Unsupported periods or assessment dates fail explicitly.
+Passing size and configured coverage screens returns `review_required` with
+`eligibility_status: incomplete`; owner-resource arithmetic never establishes
+credit elsewhere. See the complete [SBA methodology and example](docs/SBA_SCREENING.md).
 
 Current financial versions are `commercial-assessment-v2`,
 `commercial-calculation-v2`, `assessment-json-v2`, and the v2 scenario versions.
@@ -179,6 +226,10 @@ Saved writes require one operation UUID; edits also require the selected strong
 ETag. Original committed retries retain their receipts. New operations, stale
 ETags, conflicting keys, and unresolved browser tracking have explicit states.
 Neither an ETag nor an operation UUID authenticates a caller.
+New events record the server-configured operator ID, identifying the credential
+used. Archived actors and original committed receipts remain unchanged after
+token/operator rotation. This model provides no separate human verification,
+multi-user tenancy or MFA. Local storage CLI access relies on host permissions.
 
 From `backend`:
 
@@ -221,9 +272,10 @@ permissions, immutable archives, retry identity and scenario invariants. Node
 checks exact browser formatting and JSON-token preservation. Playwright checks
 contracts and real desktop/mobile workflows against an owned temporary store.
 
-[Verification evidence](docs/VERIFICATION.md) distinguishes executed checks from
-blocked browser provisioning. The [audit ledger](docs/AUDIT_2026-10-14.md) records
-root causes, patches, results and open production gates. An OSV query of the 28
+[Verification evidence](docs/VERIFICATION.md) records executed local checks and
+real browser CI. The [audit ledger](docs/AUDIT_2026-10-14.md) records root causes,
+remediation and compatibility. The [contract approval record](docs/PRODUCTION_CONTRACT_APPROVAL.md)
+documents the authorized authentication/SBA migration. An OSV query of the 28
 pinned development-environment packages returned no matched advisories; its
 [dated response](docs/DEPENDENCY_AUDIT_2026-10-14.json) is a point-in-time lookup,
 not proof that software has no vulnerabilities.

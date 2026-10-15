@@ -1,9 +1,11 @@
 # Policy and regulatory sources
 
-Checked 2026-10-14 against the primary pages below. These are policy-source
+Policy pages checked 2026-10-14; SBA workbook, measurement basis and technical
+SOP updates verified 2026-10-15. Detailed source hashes and supported scope are
+in [SBA_SCREENING.md](SBA_SCREENING.md). These are policy-source
 references, not an approved lender policy or a legal compliance determination.
 
-- **SBA SOP 50 10.** The version listing includes Version 8.1 and technical updates effective 2026-10-01. Select the applicable version by transaction date. https://legacy.sba.gov/document/sop-50-10-lender-development-company-loan-programs
+- **SBA SOP 50 10.** The version listing includes Version 8.1 and technical updates effective 2026-10-01. The screen selects the applicable supported version by its explicit assessment date; full transaction applicability remains lender review. https://legacy.sba.gov/document/sop-50-10-lender-development-company-loan-programs
 - **SBA size standards (open data).** The current workbook is listed as effective 2023-03-17. https://data.sba.gov/dataset/small-business-size-standards
 - **Regulation B, §1002.9.** Adverse-action reasons must relate to the factors actually considered or scored. https://www.consumerfinance.gov/rules-policy/regulations/1002/9/
 - **Regulation Z, §1026.43.** The ability-to-repay and qualified mortgage rules. General QM no longer uses a fixed 43% DTI limit. https://www.consumerfinance.gov/rules-policy/regulations/1026/43/

@@ -1,43 +1,79 @@
-# Security architecture and deployment limits
+# Security architecture and deployment requirements
 
-Reviewed 2026-10-14. This branch is a tested hardening checkpoint. Caller
-authentication and verified actor attribution remain open. Keep the application
-on loopback with synthetic data pending the
-[required contract approval](PRODUCTION_CONTRACT_APPROVAL.md).
+Reviewed October 15, 2026. Supported scope: one configured operator credential,
+one private SQLite store, and the browser workspace. The approved access
+contract is implemented; [verification](VERIFICATION.md) records its tests.
+
+## Access boundary
+
+ASGI authentication runs before request buffering, route parsing, calculations
+and storage dependencies. Every application route requires one Bearer header
+except minimal `GET /health`. Permitted CORS preflight is public; it does not
+invoke protected handlers. CORS is not used as authentication. WebSockets are
+refused.
+
+`SPREADLINE_API_TOKEN` must be a cryptographically random ASCII bearer secret
+of 32–4,096 characters. `SPREADLINE_OPERATOR_ID` is a non-secret ASCII identifier
+of 1–128 characters. The demonstration ID and secret-as-ID are forbidden.
+Invalid configuration fails closed with 503 naming the variable; missing,
+malformed, wrong or repeated credentials return 401 with a Bearer challenge.
+Comparison uses `hmac.compare_digest`. Application errors do not echo secrets.
+Protected responses use `no-store` and `nosniff`.
+
+New case/comparison events record the authenticated credential's configured
+operator ID. Commands cannot supply identity or database placement. Original
+archives, hashes and committed retry receipts retain their original identity
+and bytes after credential rotation. Shared credentials do not independently
+identify a person. Direct Python store use and the storage CLI rely on host
+permissions; their compatibility defaults cannot bypass the HTTP guard.
+
+## Browser credential and data handling
+
+The workspace mounts only after explicit credential verification. The token
+stays in module memory, never a URL, persistent browser storage, pending-write
+journal or built asset. Requests attach it only to the configured API origin,
+refuse caller authorization overrides and redirects, omit cookies and referrers,
+disable response caching, and have a 30-second deadline. Remote origins require
+HTTPS; loopback HTTP is supported for local operation.
+
+Reload, disconnect or 401 requires re-entry. Disconnect aborts active requests
+and unmounts financial views; obsolete responses cannot restore a session or
+result. An interrupted write may already have committed. Its exact command,
+UUID and ETag remain in tab-local session storage for explicit review/retry;
+credential entry never submits it automatically. That journal can contain
+financial data. Disconnect does not erase it, and shared-browser use requires
+an appropriate host/browser-session policy. A compromised same-origin script,
+browser extension or host can read page memory and data; authentication does
+not defend against a compromised client or host.
 
 ## Implemented controls
 
-| Control | Implementation and evidence | Limit |
+| Control | Implementation | Scope |
 | --- | --- | --- |
-| Request budget | Actual POST/PUT/PATCH bytes capped at 1,000,000 before JSON buffering and database dependencies; chunk/boundary/disconnect tests | Deployment rate limiting remains necessary |
-| Structured inputs | Duplicate-key, UTF-8, depth and finite-token checks; extra fields forbidden; boolean money rejected; exact decimal decoding | Does not authenticate financial evidence |
-| Numeric bounds | 34 input digits, declared magnitude/rate/term domains, isolated 96-digit contexts with traps | Explicit finite domains |
-| Atomic writes | Operation identity, strong ETags, transactions, immutable records and original receipts | Concurrency controls do not identify a caller |
-| Archive integrity | Content/command hashes, schema identity, provenance and byte-preserving retained receipts | Hashes are not signatures; host administrators can replace the store |
-| File creation | New POSIX stores and backups use 0600; tested under umask 0 | Existing files are not chmodded; encryption remains an operator control |
-| SQL input | Bound user values and explicit accepted-field/path allowlists | Host and backup placement still require review |
-| Browser recovery | Reviewed command/key/ETag retries; no automatic ambiguous resubmission | Browser storage currently holds synthetic commands |
-| Dependencies | Exact pins, pip consistency checks, npm audit and dated OSV response | Advisory lookups are point-in-time evidence |
+| Request budget | Actual POST/PUT/PATCH bytes capped at 1,000,000 before buffering; early stop/disconnect tests | Reverse-proxy rate/concurrency limits remain deployment controls |
+| Structured input | Duplicate-key, UTF-8, depth and finite-token checks; extra fields forbidden; boolean money rejected | Supplied financial evidence is not authenticated |
+| Numeric domains | 34 input digits; isolated 96-digit contexts/traps; finite rates/terms/results | Explicit supported mathematical domains |
+| Atomic writes | Operation identity, strong ETags, transactions, immutable records and original receipts | Single-host local store |
+| Archive integrity | Content/command hashes, schema identity and byte-preserving receipts | Consistency checks, not signatures against a hostile administrator |
+| File creation | New POSIX stores/backups use 0600, including under umask 0 | Existing files retain permissions; disk encryption is external |
+| SQL input | Bound values and explicit editable-field/path allowlists | Store/backup placement remains operator-controlled |
+| SBA source | Exact pinned workbook hash and dated provenance; ambiguous rows refused | Limited screens; no complete eligibility attestation |
+| Dependencies | Exact pins, pip consistency, npm audit and dated OSV evidence | Advisory results are point-in-time |
 
-## Open access boundary
+## Deployment controls
 
-Saved-case and stateless financial routes have no caller guard. Events use a
-fixed demonstration actor. CORS restricts browsers, not direct network clients.
-Case UUIDs, ETags, operation keys and hashes are not credentials.
+Serve through reviewed TLS termination and trusted network boundaries. Review
+the existing CORS origin allowlist for the deployment; credentials are never
+part of an origin or URL. Configure request/rate limits, protect logs from
+header/body capture, rotate tokens through the deployment environment, and
+use the non-secret operator ID for new accepted events. Restrict host, store,
+backup and CLI access; review existing file permissions, encryption/key
+management, retention, recovery, monitoring and incident response.
 
-The proposed minimum single-operator contract uses environment-loaded Bearer
-credentials, constant-time comparison, protection before storage dependencies,
-server-derived credential identity and memory-only browser entry. The required
-HTTP credential changes need approval. This model does not provide MFA,
-multi-user ownership or independently verified human identity.
-
-## Operating controls
-
-A real installation needs reviewed TLS termination, identity/authorization,
-protected hosts/stores/backups, encryption and key management, retention,
-recovery exercises, monitoring and incident response. The application has no
-LLM tool boundary, external OCR service or bureau connection.
-
-The [FTC Safeguards Rule](https://www.ftc.gov/legal-library/browse/rules/safeguards-rule)
-is a primary reference for institutions assessing applicability. This document
-does not establish compliance or replace the institution's review.
+The application provides no multi-user tenant separation, MFA, external OCR
+service, bureau connection or LLM tool boundary. Credit-policy approval,
+independent validation and applicable institutional privacy/security obligations
+remain the institution's responsibility. The
+[FTC Safeguards Rule](https://www.ftc.gov/legal-library/browse/rules/safeguards-rule)
+is a primary reference for applicability review; this document is not a
+compliance certification.

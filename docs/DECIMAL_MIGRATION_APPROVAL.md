@@ -62,11 +62,10 @@ reference calculator. Ruff covers application, tools, backend tests and gate.
 The frontend retains strict TypeScript and unused-variable checks. Executed
 commands and results are in [verification](VERIFICATION.md).
 
-## Remaining approval
+## Subsequent approved contract
 
-The original proposal excluded a new authentication/session API. Routes still
-lack caller authentication, and the SBA dataset has no verified official rows.
-The [next concrete proposal](PRODUCTION_CONTRACT_APPROVAL.md) specifies the
-single-operator credential boundary and stricter SBA evidence/result contract.
-They have not been applied. Independent policy/model approval remains separate
-from software test success.
+The original Decimal proposal excluded authentication/session changes. The user
+subsequently approved the concrete single-operator access and stricter SBA
+evidence/result contract. Both are implemented and verified by full CI; see
+[the approval record](PRODUCTION_CONTRACT_APPROVAL.md). Independent institutional
+credit-policy/model approval remains separate from software test success.

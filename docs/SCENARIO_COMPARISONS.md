@@ -7,9 +7,11 @@ or the browser's **Scenarios** view. The browser lists original comparison
 summaries across all revisions of the selected case and opens the selected
 original record without recalculation. See [the scenario workflow](WORKSPACE.md#scenario-review-and-original-comparisons).
 
-Use synthetic data. The actor is `prototype-demo-unverified`, matching the local
-case prototype. Retention uses the existing calculation definitions and does
-not change their [financial limits](MODEL_DOCUMENTATION.md).
+All HTTP operations require the configured Bearer credential. New records use
+the server-derived operator ID; archived demonstration actors and original
+committed receipts remain unchanged. This is credential attribution, not
+independent verification of a person. Retention uses the existing calculation
+definitions and their [financial limits](MODEL_DOCUMENTATION.md).
 
 ## Preview, then retain
 
@@ -54,8 +56,8 @@ and guarantor pages of at most 50 rows when opened, and pages original JSON
 into at most 64 KiB of UTF-8 text. Comparison list reads request 25 summaries
 per page with scoped cursors and cancellation. The optional comparison hint
 stores only backend/case/comparison IDs; reload always performs a fresh GET.
-No result or ETag is restored from it. Source status and prototype actors
-remain explicitly unverified.
+No result or ETag is restored from it. Source status and archived demonstration
+actors retain their original labels; new records display the configured actor.
 
 Read the selected saved revision and POST the final scenario command to its
 preview endpoint. Copy the preview's `fingerprint.value` into the retention
@@ -212,6 +214,7 @@ retain the v2 data/backup and review recovery. There is no automatic downgrade.
 
 | Status | Meaning |
 |---|---|
+| 401 | Missing, invalid or duplicate Bearer credential, before storage processing |
 | 400 | Malformed locator/operation UUID, repeated header, invalid cursor/page size |
 | 404 | Missing selected case/revision/comparison or a comparison under the wrong case |
 | 409 | Baseline support/replay/run guard, `preview_changed`, `operation_conflict`, `storage_upgrade_required` |

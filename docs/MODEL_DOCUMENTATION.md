@@ -1,7 +1,8 @@
 # Spreadline model documentation
 
-**Status:** prototype / synthetic data only / not independently validated.  
-**Documentation date:** 2026-10-14.
+**Status:** deterministic software verified for the documented scope; default
+credit policies are illustrative and not independently validated for lending.
+**Documentation date:** 2026-10-15.
 
 ## Intended use and limits
 
@@ -32,7 +33,7 @@ finite-precision implementations with explicit domains, not symbolic arithmetic.
 
 This does **not** validate predictive power, calibration, production data quality, legal compliance, document OCR, disparate impact, cybersecurity, or operational resilience. Independent production validation must be performed by qualified reviewers outside the development team.
 
-## 3. Governance and monitoring sketch
+## 3. Deployment governance and monitoring
 
 Production monitoring would need input drift/missingness; override rates and reasons; ratio/reason-code reconciliation; approval/adverse-action outcomes; fair-lending analysis using real applicant data with qualified statistical/legal review; policy-source change control; and access/security monitoring.
 
@@ -46,9 +47,10 @@ Internal reasons record exact raw comparisons, policy versions, commercial
 decline triggers, and unavailable factors with manual-review explanations. They
 are explanation records, not legally validated applicant notices. Optional
 saved cases retain immutable server-derived events and original receipts.
-Actor attribution remains a fixed unverified demonstration identity; caller
-authentication is an open production gate. See
-[the proposed access contract](PRODUCTION_CONTRACT_APPROVAL.md).
+HTTP routes require an authenticated operator credential before processing. New
+events record its server-configured identity; original archived actors and
+receipt bytes are preserved. Credential identity is not independently verified
+human identity. See [the implemented access contract](PRODUCTION_CONTRACT_APPROVAL.md).
 
 If a synthetic credit-file input participates in a consumer decision, documentation flags that a real system using consumer-report information may trigger parallel FCRA notice obligations. Spreadline performs no bureau pull.
 
@@ -62,7 +64,13 @@ Current source: https://www.consumerfinance.gov/rules-policy/regulations/1026/43
 
 SOP 50 10 8 is effective June 1, 2025. SBA publishes SOP 50 10 8.1 as effective October 1, 2026. Source: https://legacy.sba.gov/document/sop-50-10-lender-development-company-loan-programs
 
-SBA's size-standards landing page identifies a current workbook effective March 17, 2023. That workbook isn't bundled here, so `backend/data/sba_size_standards.json` contains **no guessed thresholds** and the evaluator fails closed when a NAICS row is missing. Source: https://data.sba.gov/dataset/small-business-size-standards
+The official workbook effective March 17, 2023 is bundled with its exact hash
+and verified through October 15, 2026. The loader supports 850 unambiguous rows
+and explicitly refuses 128 footnoted/exception/unsupported rows. Strict dated
+measurement and affiliate evidence is required. Passing size and configured
+coverage screens still returns incomplete eligibility; supplied owner-resource
+arithmetic cannot establish credit elsewhere. Source provenance, supported
+periods and complete examples are in [SBA_SCREENING.md](SBA_SCREENING.md).
 
 ## Fair-lending harness
 
