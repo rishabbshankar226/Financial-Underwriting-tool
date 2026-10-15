@@ -1,22 +1,22 @@
 """Retention crosses CaseStore and preserves the exact reviewed preview."""
-from concurrent.futures import ThreadPoolExecutor
-from copy import deepcopy
-from dataclasses import replace
 import json
-from pathlib import Path
 import sqlite3
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
+from dataclasses import replace
+from pathlib import Path
 from threading import Barrier
 from uuid import uuid4
 
 import pytest
-
 from app.case_contracts import CaseCreate, CaseEdit
 from app.cases import CaseStore, CaseStoreError
 from app.config import DEFAULT_POLICY
 from app.scenario_contracts import ScenarioPreviewCommand
 from app.scenarios import preview_commercial_scenarios
+from financial_assertions import wire_decimal
 
 
 @pytest.fixture
@@ -31,13 +31,13 @@ def saved(tmp_path):
 def command(baseline, **shocks):
     from app.comparison_contracts import ComparisonCreate
     preview_command = ScenarioPreviewCommand.model_validate_json(json.dumps({
-        "schema_version": "commercial-scenario-preview-v1", "baseline_run_id": baseline.run_id,
+        "schema_version": "commercial-scenario-preview-v2", "baseline_run_id": baseline.run_id,
         "scenarios": [{"scenario_key": "downside", "name": "Revenue down 10%", "rationale": "Other assumptions held fixed",
-                       "assumptions": {"revenue_change": -.1, "cogs_change": 0, "operating_expense_change": 0,
-                                       "proposed_rate_change_bps": 0, **shocks}}]}))
+                       "assumptions": {"revenue_change": "-0.1", "cogs_change": "0", "operating_expense_change": "0",
+                                       "proposed_rate_change_bps": "0", **shocks}}]}))
     preview = preview_commercial_scenarios(baseline, preview_command)
     create = ComparisonCreate.model_validate_json(json.dumps({**preview_command.model_dump(mode="json"),
-        "schema_version": "commercial-scenario-comparison-create-v1", "expected_preview_fingerprint": preview.fingerprint.value}))
+        "schema_version": "commercial-scenario-comparison-create-v2", "expected_preview_fingerprint": preview.fingerprint.value}))
     return create, preview.model_dump(mode="json")
 
 
@@ -61,11 +61,11 @@ def test_retained_preview_is_original_one_batch_without_case_history_changes(sav
     assert receipt.record.actor == "prototype-demo-unverified"
     assert receipt.record.recording == store.recording
     projected = receipt.record.preview["scenarios"][0]["current_facts"]
-    assert projected["ordinary_business_income"]["raw_value"] == 3000
-    assert projected["ebitda"]["raw_value"] == 210000
-    assert projected["uca_cash_flow"]["raw_value"] == -35000
+    assert wire_decimal(projected["ordinary_business_income"]["raw_value"]) == 3000
+    assert wire_decimal(projected["ebitda"]["raw_value"]) == 210000
+    assert wire_decimal(projected["uca_cash_flow"]["raw_value"]) == -35000
     assert counts(store.path) == {**before, "scenario_comparisons": 1, "scenario_comparison_operations": 1}
-    assert store.get(first.snapshot.case_id).model_dump() == first.snapshot.model_dump()
+    assert store.get(first.snapshot.case_id).model_dump(mode="json") == first.snapshot.model_dump(mode="json")
     assert store.get_comparison(first.snapshot.case_id, receipt.record.comparison_id) == receipt.record
     assert store.verify()["scenario_comparisons"] == 1
 
@@ -100,7 +100,7 @@ def test_successful_global_key_conflicts_with_changed_command(saved, change):
     if change in ("name", "rationale"):
         changed["scenarios"][0][change] = "Changed review text"
     elif change == "shock":
-        changed["scenarios"][0]["assumptions"]["cogs_change"] = .1
+        changed["scenarios"][0]["assumptions"]["cogs_change"] = "0.1"
     elif change == "run":
         changed["baseline_run_id"] = str(uuid4())
     elif change == "fingerprint":
@@ -148,7 +148,7 @@ def test_historical_baseline_remains_eligible_and_new_keys_create_new_comparison
 def test_competing_connections_have_one_acceptance_and_exact_retry_or_conflict(saved, changed):
     store, first, _ = saved
     create, _ = command(first.snapshot)
-    other, _ = command(first.snapshot, cogs_change=.1)
+    other, _ = command(first.snapshot, cogs_change="0.1")
     barrier, key = Barrier(2), str(uuid4())
     def submit(number):
         independent = CaseStore(store.path, initialize=False)
@@ -205,6 +205,7 @@ def test_busy_commit_rolls_back_comparison_and_key(saved):
 
 
 def test_v1_comparison_operations_require_explicit_upgrade(tmp_path):
+    from app.comparison_contracts import ComparisonCreate
     fixture = Path(__file__).parent / "fixtures/schema_v1"
     path = tmp_path / "v1.sqlite3"
     with sqlite3.connect(path) as connection:
@@ -212,7 +213,16 @@ def test_v1_comparison_operations_require_explicit_upgrade(tmp_path):
     store = CaseStore(path)
     case_id = json.loads((fixture / "provenance.json").read_text())["case_id"]
     baseline = store.get(case_id, 1)
-    create, _ = command(baseline)
+    with pytest.raises(CaseStoreError) as unsupported:
+        command(baseline)
+    assert unsupported.value.code == "baseline_unsupported"
+    create = ComparisonCreate.model_validate_json(json.dumps({
+        "schema_version": "commercial-scenario-comparison-create-v2", "baseline_run_id": baseline.run_id,
+        "expected_preview_fingerprint": "0" * 64,
+        "scenarios": [{"scenario_key": "downside", "name": "Archived baseline", "rationale": "Unsupported archived calculation",
+                       "assumptions": {"revenue_change": "-0.1", "cogs_change": "0", "operating_expense_change": "0",
+                                       "proposed_rate_change_bps": "0"}}],
+    }))
     before = path.read_bytes()
     with pytest.raises(CaseStoreError) as error:
         retain(store, baseline, create)
@@ -245,7 +255,7 @@ def test_new_invalid_batch_never_reserves_key(saved, change):
         data["scenarios"][0]["name"] = "Changed reviewed name"
     else:
         data["scenarios"].append({**deepcopy(data["scenarios"][0]), "scenario_key": "overflow"})
-        data["scenarios"][1]["assumptions"]["revenue_change"] = 1e308
+        data["scenarios"][1]["assumptions"]["revenue_change"] = "1e30"
     bad = ComparisonCreate.model_validate_json(json.dumps(data))
     key, before = str(uuid4()), counts(store.path)
     with pytest.raises(CaseStoreError) as error:
@@ -258,8 +268,8 @@ def test_new_invalid_batch_never_reserves_key(saved, change):
 @pytest.mark.parametrize("multibyte", [False, True])
 def test_record_byte_cap_accepts_exact_limit_rejects_one_byte_over_and_keeps_key_free(saved, multibyte):
     from app.case_schema import MAX_COMPARISON_BYTES
-    from app.comparison_storage import serialize_comparison
     from app.cases import _canonical
+    from app.comparison_storage import serialize_comparison
     store, first, _ = saved
     create, _ = command(first.snapshot)
     reference = retain(store, first.snapshot, create)
@@ -314,7 +324,7 @@ def test_sql_foreign_key_rejects_wrong_baseline_tuple(saved, field, value):
     with sqlite3.connect(store.path) as connection:
         connection.execute("PRAGMA foreign_keys=ON")
         row = dict(zip([col[1] for col in connection.execute("PRAGMA table_info(scenario_comparisons)")],
-                       connection.execute("SELECT * FROM scenario_comparisons").fetchone()))
+                       connection.execute("SELECT * FROM scenario_comparisons").fetchone(), strict=True))
         row.update(comparison_id=str(uuid4()), **{field: value})
         with pytest.raises(sqlite3.IntegrityError, match="FOREIGN KEY"):
             connection.execute("INSERT INTO scenario_comparisons VALUES(?,?,?,?,?,?,?,?)", tuple(row.values()))
@@ -322,6 +332,7 @@ def test_sql_foreign_key_rejects_wrong_baseline_tuple(saved, field, value):
 
 def test_pagination_is_bounded_with_tied_times_and_case_scoped_cursor(saved, monkeypatch):
     from datetime import datetime, timezone
+
     import app.comparison_storage as storage
     store, first, case_create = saved
     create, _ = command(first.snapshot)
@@ -336,7 +347,7 @@ def test_pagination_is_bounded_with_tied_times_and_case_scoped_cursor(saved, mon
     assert [item.comparison_id for item in page.items] == expected[:2]
     assert page.items[0].scenario_count == 1
     assert page.items[0].scenarios[0].name == create.scenarios[0].name
-    assert "preview" not in page.items[0].model_dump() and "recording" not in page.items[0].model_dump()
+    assert "preview" not in page.items[0].model_dump(mode="json") and "recording" not in page.items[0].model_dump(mode="json")
     page2 = store.list_comparisons(first.snapshot.case_id, limit=2, after=page.next_cursor)
     assert [item.comparison_id for item in page2.items] == expected[2:]
     assert page2.next_cursor is None
@@ -452,8 +463,9 @@ def test_read_retry_verify_and_backup_detect_broken_content_without_repair(saved
 def test_unsupported_retained_scenario_definition_remains_readable_and_retryable(saved):
     """A consistent future-definition record uses the same known storage envelope."""
     from hashlib import sha256
-    from app.comparison_contracts import ComparisonCreate
+
     from app.cases import _canonical
+    from app.comparison_contracts import ComparisonCreate
     store, first, _ = saved
     create, _ = command(first.snapshot)
     key = str(uuid4())
@@ -571,14 +583,14 @@ def test_new_insertions_do_not_shift_older_comparison_pages(saved):
 
 
 def test_ten_scenarios_retain_one_batch_and_replay_baseline_once(saved):
-    from app.comparison_contracts import ComparisonCreate
     from app.assessment import assess_commercial
+    from app.comparison_contracts import ComparisonCreate
     store, first, _ = saved
     create, _ = command(first.snapshot)
     preview_command = create.preview_command().model_dump(mode="json")
     preview_command["scenarios"] = [{**preview_command["scenarios"][0], "scenario_key": f"scenario-{i}"} for i in range(10)]
     expected = preview_commercial_scenarios(first.snapshot, ScenarioPreviewCommand.model_validate_json(json.dumps(preview_command)))
-    create = ComparisonCreate.model_validate_json(json.dumps({**preview_command, "schema_version": "commercial-scenario-comparison-create-v1",
+    create = ComparisonCreate.model_validate_json(json.dumps({**preview_command, "schema_version": "commercial-scenario-comparison-create-v2",
                                                              "expected_preview_fingerprint": expected.fingerprint.value}))
     calls = []
     def assess(request, policy):

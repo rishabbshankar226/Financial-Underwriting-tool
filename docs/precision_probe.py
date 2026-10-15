@@ -1,4 +1,4 @@
-"""Reproduce public-contract precision defects without changing application types."""
+"""Verify the four precision defects reproduced in the baseline audit."""
 from __future__ import annotations
 
 from decimal import Decimal, ROUND_HALF_EVEN, localcontext
@@ -32,7 +32,7 @@ def request(financials: FinancialYear, debt: str) -> CommercialRequest:
         geography="60601",
         years=[financials, financials],
         existing_debt=ExistingDebt.model_validate({"cpltd_annual": debt}),
-        proposed_loan=ProposedLoan(amount=0, annual_rate=0, term_months=12),
+        proposed_loan=ProposedLoan(amount=Decimal("0"), annual_rate=Decimal("0"), term_months=12),
         working_capital=WorkingCapital(),
     )
 
@@ -72,7 +72,7 @@ def main() -> None:
                 "input_decimal_strings": ["1000.30", "1000.10", "0.20"],
                 "observed": repr(cancellation_observed),
                 "exact": str(exact_cancellation),
-                "defect_reproduced": Decimal(str(cancellation_observed)) != exact_cancellation,
+                "passed": cancellation_observed == exact_cancellation,
             },
             {
                 "case": "cent_lost_at_schema_coercion",
@@ -80,7 +80,7 @@ def main() -> None:
                 "input_decimal_strings": ["10000000000000000.01", "10000000000000000.00"],
                 "observed": repr(lost_cent_observed),
                 "exact": str(exact_cent),
-                "defect_reproduced": Decimal(str(lost_cent_observed)) != exact_cent,
+                "passed": lost_cent_observed == exact_cent,
             },
             {
                 "case": "exact_dscr_threshold_misclassification",
@@ -93,7 +93,7 @@ def main() -> None:
                 "exact_threshold_passed": exact_dscr >= threshold,
                 "observed_decision": observed_decision.outcome,
                 "exact_policy_outcome": "approve",
-                "defect_reproduced": observed_dscr < DEFAULT_POLICY.commercial_min_dscr,
+                "passed": observed_dscr == exact_dscr and observed_decision.outcome == "approve",
             },
             {
                 "case": "report_boundary_half_even_rounding",
@@ -101,10 +101,12 @@ def main() -> None:
                 "input_decimal_strings": ["2.675"],
                 "observed": repr(rounded_cash),
                 "exact": str(exact_rounding),
-                "defect_reproduced": Decimal(str(rounded_cash)) != exact_rounding,
+                "passed": rounded_cash == exact_rounding,
             },
         ]
-    print(json.dumps({"precision_evidence": evidence}, indent=2, allow_nan=False))
+    print(json.dumps({"baseline": "1b59a90f715853a41c5791edf6dce03c1a77839e", "precision_evidence": evidence}, indent=2, allow_nan=False))
+    if not all(case["passed"] for case in evidence):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

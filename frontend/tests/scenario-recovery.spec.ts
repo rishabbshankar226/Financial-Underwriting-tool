@@ -9,9 +9,9 @@ let preview: ScenarioPreview, record: unknown, headers: Record<string, string>;
 test.beforeAll(async ({ request }) => {
     const created = await request.post("http://127.0.0.1:8000/cases", { headers: { "Idempotency-Key": randomUUID() }, data: { input, rationale: "Recovery contract baseline" } });
     const baseline = await created.json(), path = `http://127.0.0.1:8000/cases/${baseline.case_id}/revisions/1`;
-    const command = { schema_version: "commercial-scenario-preview-v1", baseline_run_id: baseline.run_id, scenarios: [{ scenario_key: "recovery", name: "Recovery example", rationale: "Synthetic recovery exercise", assumptions: { revenue_change: 0, cogs_change: 0, operating_expense_change: 0, proposed_rate_change_bps: 0 } }] };
+    const command = { schema_version: "commercial-scenario-preview-v2", baseline_run_id: baseline.run_id, scenarios: [{ scenario_key: "recovery", name: "Recovery example", rationale: "Synthetic recovery exercise", assumptions: { revenue_change: "0", cogs_change: "0", operating_expense_change: "0", proposed_rate_change_bps: "0" } }] };
     preview = guardPreview(await (await request.post(`${path}/scenarios/preview`, { data: command })).json());
-    const saved = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v1", expected_preview_fingerprint: preview.fingerprint.value } });
+    const saved = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v2", expected_preview_fingerprint: preview.fingerprint.value } });
     expect(saved.status()).toBe(201);
     record = await saved.json();
     headers = { ETag: saved.headers().etag, Location: saved.headers().location, "Idempotency-Replayed": "false" };

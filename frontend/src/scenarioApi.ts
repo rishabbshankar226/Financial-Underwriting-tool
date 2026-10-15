@@ -75,7 +75,7 @@ async function json(path: string, init: RequestInit, transport: typeof fetch) {
 }
 function commandBody(command: unknown) { const c = guardScenarioCommand(command), body = JSON.stringify(c); requireCase(new TextEncoder().encode(body).length <= 1000000, "scenario request byte limit"); return body; }
 export async function previewScenarios(view: StoredCase, command: PreviewCommand, signal: AbortSignal, transport: typeof fetch = fetch) {
-    requireCase(command.schema_version === "commercial-scenario-preview-v1", "preview command version");
+    requireCase(command.schema_version === "commercial-scenario-preview-v2", "preview command version");
     const { response, body } = await json(`${baselinePath(view.snapshot.case_id, view.snapshot.revision)}/scenarios/preview`, { method: "POST", headers: { "Content-Type": "application/json" }, body: commandBody(command), signal }, transport);
     requireCase(response.status === 200, "preview status");
     return guardPreview(body, view, command);

@@ -1,9 +1,14 @@
 from __future__ import annotations
+
+from decimal import Decimal
 from pathlib import Path
+
 from .config import DEFAULT_POLICY, PolicyConfig
 from .core import _finite
+from .finance import ZERO, calculation
 from .ingestion import parse_structured
-from .schemas import SBACase, SBASizeRow, DISCLAIMER
+from .json_values import canonical_json, json_array
+from .schemas import DISCLAIMER, SBACase, SBASizeRow
 
 # Current source identified 2026-09-08:
 # https://data.sba.gov/dataset/small-business-size-standards
@@ -16,7 +21,7 @@ def load_size_table(path: Path = DATA_FILE) -> list[SBASizeRow]:
     payload = parse_structured(path.read_text(), "json")
     if not isinstance(payload.get("rows"), list):
         raise ValueError("SBA size-standard table must contain a rows array")
-    rows = [SBASizeRow.model_validate(row) for row in payload["rows"]]
+    rows = [SBASizeRow.model_validate_json(canonical_json(row)) for row in json_array(payload["rows"])]
     _validate_size_rows(rows)
     if any(row.synthetic_test_only for row in rows):
         raise ValueError("Official SBA table loader cannot accept synthetic test rows")
@@ -35,26 +40,46 @@ def size_eligible(case: SBACase, rows: list[SBASizeRow]) -> tuple[bool, str]:
     _validate_size_rows(rows)
     row = next((r for r in rows if r.naics == case.naics), None)
     if row is None:
-        raise ValueError(f"No current size-standard row is loaded for NAICS {case.naics}. Do not infer eligibility; load the dated SBA table first.")
+        raise ValueError(
+            f"No current size-standard row is loaded for NAICS {case.naics}. Do not infer eligibility; load the dated SBA table first."
+        )
     if row.measure == "receipts_millions":
-        if case.annual_receipts_millions is None: raise ValueError("annual_receipts_millions is required for this NAICS row")
+        if case.annual_receipts_millions is None:
+            raise ValueError("annual_receipts_millions is required for this NAICS row")
         return case.annual_receipts_millions <= row.threshold, f"receipts <= {row.threshold}M"
-    if case.employees is None: raise ValueError("employees is required for this NAICS row")
+    if case.employees is None:
+        raise ValueError("employees is required for this NAICS row")
     return case.employees <= row.threshold, f"employees <= {int(row.threshold)}"
 
 
-def credit_elsewhere(case: SBACase) -> dict:
+@calculation
+def credit_elsewhere(case: SBACase) -> dict[str, Decimal | bool | str]:
     if case.sop_version == "8":
-        return {"applied": False, "passes": True, "reason": "Prototype does not apply the SOP 8.1 personal-resources test under SOP 8."}
+        return {
+            "applied": False,
+            "passes": True,
+            "reason": "Prototype does not apply the SOP 8.1 personal-resources test under SOP 8.",
+        }
     protected = _finite(case.retirement_allowance + case.college_allowance + case.medical_allowance)
-    excess = _finite(max(0.0, _finite(case.owner_liquid_resources - protected)))
-    return {"applied": True, "passes": excess < case.requested_loan, "excess_liquid_resources": excess, "reason": "Limited personal-resources screen; lender must document specific credit-elsewhere reasons."}
+    excess = _finite(max(ZERO, _finite(case.owner_liquid_resources - protected)))
+    return {
+        "applied": True,
+        "passes": excess < case.requested_loan,
+        "excess_liquid_resources": excess,
+        "reason": "Limited personal-resources screen; lender must document specific credit-elsewhere reasons.",
+    }
 
 
-def evaluate_sba(case: SBACase, rows: list[SBASizeRow], policy: PolicyConfig = DEFAULT_POLICY) -> dict:
+def evaluate_sba(
+    case: SBACase, rows: list[SBASizeRow], policy: PolicyConfig = DEFAULT_POLICY
+) -> dict[str, object]:
     eligible, size_reason = size_eligible(case, rows)
     elsewhere = credit_elsewhere(case)
-    floor = policy.sba_global_dscr_floor_acquisition if case.transaction_type in {"acquisition", "buyout", "esop"} else policy.sba_global_dscr_floor_expansion
+    floor = (
+        policy.sba_global_dscr_floor_acquisition
+        if case.transaction_type in {"acquisition", "buyout", "esop"}
+        else policy.sba_global_dscr_floor_expansion
+    )
     coverage = case.global_dscr >= floor
     row = next(row for row in rows if row.naics == case.naics)
     return {
@@ -62,8 +87,10 @@ def evaluate_sba(case: SBACase, rows: list[SBASizeRow], policy: PolicyConfig = D
         "sop_version": case.sop_version,
         "size_eligible": eligible,
         "size_reason": size_reason,
-        "size_standard_source": {"effective_date": row.source_effective_date.isoformat(),
-                                 "synthetic_test_only": row.synthetic_test_only},
+        "size_standard_source": {
+            "effective_date": row.source_effective_date.isoformat(),
+            "synthetic_test_only": row.synthetic_test_only,
+        },
         "policy_version": policy.version,
         "credit_elsewhere": elsewhere,
         "global_dscr": case.global_dscr,

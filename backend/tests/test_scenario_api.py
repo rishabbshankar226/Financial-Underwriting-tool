@@ -1,24 +1,24 @@
 """Real HTTP previews against owned local databases, including read-only failures."""
-from concurrent.futures import ThreadPoolExecutor
-from copy import deepcopy
 import asyncio
 import json
 import os
-from pathlib import Path
 import sqlite3
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
+from pathlib import Path
 from threading import Event
 from uuid import uuid4
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.assessment import assess_commercial
 from app.case_contracts import CaseCreate, CaseEdit
 from app.cases import CaseStore
 from app.main import app
 from app.scenario_routes import configured_read_store
+from fastapi.testclient import TestClient
+from financial_assertions import wire_decimal
 
 ORIGIN = "http://localhost:5173"
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/alpine_dated.json"
@@ -45,7 +45,7 @@ def path(saved):
 
 
 def command(saved):
-    return {"schema_version": "commercial-scenario-preview-v1", "baseline_run_id": saved["run_id"], "scenarios": [{
+    return {"schema_version": "commercial-scenario-preview-v2", "baseline_run_id": saved["run_id"], "scenarios": [{
         "scenario_key": "downside", "name": "Revenue down 10%", "rationale": "Other assumptions held fixed",
         "assumptions": dict(revenue_change=-.1, cogs_change=0, operating_expense_change=0, proposed_rate_change_bps=0),
     }]}
@@ -65,7 +65,7 @@ def test_preview_returns_200_without_receipt_or_storage_change(client, saved, su
     result = response.json()
     assert result["persisted"] is False
     assert result["baseline"]["assessment"] == saved["assessment"]
-    assert result["scenarios"][0]["current_facts"]["ebitda"]["raw_value"] == 210000
+    assert wire_decimal(result["scenarios"][0]["current_facts"]["ebitda"]["raw_value"]) == 210000
     assert response.headers["access-control-allow-origin"] == ORIGIN
     assert "idempotency-replayed" not in response.headers
     assert counts() == before
@@ -74,10 +74,10 @@ def test_preview_returns_200_without_receipt_or_storage_change(client, saved, su
 
 
 @pytest.mark.parametrize("field,value", [
-    ("revenue_change", True), ("revenue_change", "-0.1"), ("revenue_change", -1.01),
+    ("revenue_change", True), ("revenue_change", "-0.1x"), ("revenue_change", -1.01),
     ("cogs_change", False), ("cogs_change", -1.0001),
-    ("operating_expense_change", "0"), ("operating_expense_change", -2),
-    ("proposed_rate_change_bps", True), ("proposed_rate_change_bps", "200"),
+    ("operating_expense_change", "zero"), ("operating_expense_change", -2),
+    ("proposed_rate_change_bps", True), ("proposed_rate_change_bps", "2OO"),
     ("proposed_rate_change_bps", -1051), ("proposed_rate_change_bps", 8951),
     ("revenue_change", 1e308), ("cogs_change", 1e308),
 ])
@@ -165,7 +165,7 @@ def test_locator_and_run_guards(client, saved, kind, status):
 def test_one_invalid_scenario_rejects_the_whole_preview(client, saved):
     body = command(saved)
     body["scenarios"].append({**deepcopy(body["scenarios"][0]), "scenario_key": "overflow"})
-    body["scenarios"][1]["assumptions"]["revenue_change"] = 1e308
+    body["scenarios"][1]["assumptions"]["revenue_change"] = "1e30"
     response = client.post(path(saved), json=body)
     assert response.status_code == 422
     assert "Scenario 1 (overflow)" in response.json()["detail"]["message"]
@@ -291,12 +291,26 @@ def test_concurrent_edit_does_not_redirect_preview_or_block_the_event_loop(clien
         assert result["baseline"]["revision"] == 1
         assert result["baseline"]["run_id"] == saved["run_id"]
         assert result["baseline"]["assessment"] == saved["assessment"]
-        assert result["scenarios"][0]["projection_inputs"]["operating"]["gross_receipts"] == 3_780_000
+        assert wire_decimal(result["scenarios"][0]["projection_inputs"]["operating"]["gross_receipts"]) == 3_780_000
         assert client.get(f"/cases/{saved['case_id']}").json()["revision"] == 2
         assert counts() == [1, 2, 2, 2, 2]
     finally:
         release.set()
         app.dependency_overrides.pop(configured_read_store)
+
+
+def test_decimal_string_shocks_normalize_to_the_same_preview_as_legacy_numbers(client, saved):
+    numeric = command(saved)
+    decimal_strings = deepcopy(numeric)
+    decimal_strings["scenarios"][0]["assumptions"] = dict(
+        revenue_change="-0.10", cogs_change="0.00", operating_expense_change="0", proposed_rate_change_bps="0.0"
+    )
+    first = client.post(path(saved), json=numeric)
+    second = client.post(path(saved), json=decimal_strings)
+    assert first.status_code == second.status_code == 200
+    assert first.json() == second.json()
+    assert second.json()["schema_version"] == "commercial-scenario-preview-v2"
+    assert second.json()["scenarios"][0]["assumptions"]["revenue_change"] == "-0.1"
 
 
 def test_historical_preview_survives_restore_and_a_fresh_application_process(client, tmp_path, monkeypatch):

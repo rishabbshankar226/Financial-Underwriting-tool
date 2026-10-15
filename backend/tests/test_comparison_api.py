@@ -1,20 +1,19 @@
 """Retained comparison transport, original response bytes and worker ownership."""
-from concurrent.futures import ThreadPoolExecutor
-from copy import deepcopy
 import json
 import os
-from pathlib import Path
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
+from pathlib import Path
 from threading import Event
 from uuid import uuid4
 
-from fastapi.testclient import TestClient
 import pytest
-
 from app.assessment import assess_commercial
 from app.cases import CaseStore
 from app.main import app
 from app.scenario_routes import configured_read_store
+from fastapi.testclient import TestClient
 
 ORIGIN = "http://localhost:5173"
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/alpine_dated.json"
@@ -41,12 +40,12 @@ def path(saved):
 
 
 def create_command(client, saved):
-    preview = {"schema_version": "commercial-scenario-preview-v1", "baseline_run_id": saved["run_id"], "scenarios": [{
+    preview = {"schema_version": "commercial-scenario-preview-v2", "baseline_run_id": saved["run_id"], "scenarios": [{
         "scenario_key": "downside", "name": "Revenue down 10%", "rationale": "Other assumptions held fixed",
         "assumptions": {"revenue_change": -.1, "cogs_change": 0, "operating_expense_change": 0, "proposed_rate_change_bps": 0}}]}
     response = client.post(f"/cases/{saved['case_id']}/revisions/1/scenarios/preview", json=preview)
     assert response.status_code == 200
-    return {**preview, "schema_version": "commercial-scenario-comparison-create-v1",
+    return {**preview, "schema_version": "commercial-scenario-comparison-create-v2",
             "expected_preview_fingerprint": response.json()["fingerprint"]["value"]}, response.json()
 
 
@@ -114,15 +113,15 @@ def test_raw_json_failures_return_safe_cors_response_without_rows(client, saved,
 
 
 @pytest.mark.parametrize("kind", ["fingerprint_missing", "fingerprint_short", "fingerprint_upper", "fingerprint_number",
-                                  "numeric_string", "boolean", "duplicate", "unknown", "blank", "too_many", "missing_shock"])
+                                  "malformed_decimal", "boolean", "duplicate", "unknown", "blank", "too_many", "missing_shock"])
 def test_strict_create_contract_preserves_preview_validation(client, saved, kind):
     command, _ = create_command(client, saved)
     if kind == "fingerprint_missing":
         del command["expected_preview_fingerprint"]
     elif kind.startswith("fingerprint_"):
         command["expected_preview_fingerprint"] = {"fingerprint_short": "0" * 63, "fingerprint_upper": "A" * 64, "fingerprint_number": 42}[kind]
-    elif kind in ("numeric_string", "boolean"):
-        command["scenarios"][0]["assumptions"]["revenue_change"] = "-.1" if kind == "numeric_string" else True
+    elif kind in ("malformed_decimal", "boolean"):
+        command["scenarios"][0]["assumptions"]["revenue_change"] = "-.1x" if kind == "malformed_decimal" else True
     elif kind == "duplicate":
         command["scenarios"].append(deepcopy(command["scenarios"][0]))
     elif kind == "unknown":
@@ -246,7 +245,7 @@ def test_http_retry_after_new_head_uses_original_bytes_with_unavailable_engine(c
     assert client.get(retry.headers["location"]).content == original.content
 
 
-def test_v1_http_preview_and_empty_listing_work_but_retention_requires_upgrade(client, tmp_path, monkeypatch):
+def test_v1_http_archives_remain_readable_but_preview_is_unavailable_and_retention_requires_upgrade(client, tmp_path, monkeypatch):
     fixture = Path(__file__).parent / "fixtures/schema_v1"
     database = tmp_path / "v1.sqlite3"
     with sqlite3.connect(database) as connection:
@@ -254,7 +253,14 @@ def test_v1_http_preview_and_empty_listing_work_but_retention_requires_upgrade(c
     monkeypatch.setenv("SPREADLINE_CASE_DB", str(database))
     saved = CaseStore(database).get(json.loads((fixture / "provenance.json").read_text())["case_id"], 1).model_dump(mode="json")
     before = database.read_bytes()
-    command, _ = create_command(client, saved)
+    preview = {"schema_version": "commercial-scenario-preview-v2", "baseline_run_id": saved["run_id"], "scenarios": [{
+        "scenario_key": "downside", "name": "Archived baseline", "rationale": "Unsupported archived calculation",
+        "assumptions": {"revenue_change": "-0.1", "cogs_change": "0", "operating_expense_change": "0", "proposed_rate_change_bps": "0"}}]}
+    archived = client.get(f"/cases/{saved['case_id']}/revisions/1")
+    assert archived.status_code == 200 and archived.json() == saved
+    unavailable = client.post(f"/cases/{saved['case_id']}/revisions/1/scenarios/preview", json=preview)
+    assert unavailable.status_code == 409 and unavailable.json()["detail"]["code"] == "baseline_unsupported"
+    command = {**preview, "schema_version": "commercial-scenario-comparison-create-v2", "expected_preview_fingerprint": "0" * 64}
     response = client.post(path(saved), json=command, headers={"Idempotency-Key": str(uuid4())})
     assert response.status_code == 409 and response.json()["detail"]["code"] == "storage_upgrade_required"
     assert client.get(f"/cases/{saved['case_id']}/scenario-comparisons").json() == {"items": [], "next_cursor": None}

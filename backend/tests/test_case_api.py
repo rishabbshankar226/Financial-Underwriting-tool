@@ -4,10 +4,9 @@ import json
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi.testclient import TestClient
 import pytest
-
 from app.main import app
+from fastapi.testclient import TestClient
 
 ORIGIN = "http://localhost:5173"
 
@@ -95,13 +94,26 @@ def test_client_cannot_supply_server_history_fields(client, command, field, valu
     assert response.status_code == 422
 
 
-@pytest.mark.parametrize("value", [True, "100", None])
-def test_edit_values_are_strict_json_numbers(client, command, value):
+@pytest.mark.parametrize("value", [True, "1O0", None])
+def test_edit_values_reject_booleans_malformed_decimals_and_missing_amounts(client, command, value):
     first = create(client, command)
     response = client.post(f'/cases/{first.json()["case_id"]}/revisions',
                            json={"field_path": "/proposed_loan/amount", "new_value": value, "rationale": "Test"},
                            headers={"Idempotency-Key": str(uuid4()), "If-Match": first.headers["etag"]})
     assert response.status_code == 422
+
+
+def test_exact_decimal_string_edit_preserves_unrounded_value_in_event_and_input(client, command):
+    first = create(client, command)
+    response = client.post(f'/cases/{first.json()["case_id"]}/revisions',
+                           json={"field_path": "/proposed_loan/amount", "new_value": "600000.015", "rationale": "Exact amount"},
+                           headers={"Idempotency-Key": str(uuid4()), "If-Match": first.headers["etag"]})
+    assert response.status_code == 201, response.text
+    result = response.json()
+    assert result["event"]["before"] == "500000"
+    assert result["event"]["after"] == "600000.015"
+    assert result["normalized_input"]["proposed_loan"]["amount"] == "600000.015"
+    assert result["assessment"]["schema_version"] == "commercial-assessment-v2"
 
 
 @pytest.mark.parametrize("body", [b'{"a":1,"a":2}', b'{"a":NaN}', b'{"a":1e999}', b'\xff', b'{'])
@@ -189,6 +201,7 @@ def test_invalid_identifiers_and_listing_parameters(client, path, status):
 def test_busy_storage_returns_retry_after_and_cors(client, command, monkeypatch):
     import os
     import sqlite3
+
     from app.case_routes import configured_store
     from app.cases import CaseStore
     create(client, command)

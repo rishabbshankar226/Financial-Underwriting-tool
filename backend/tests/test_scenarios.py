@@ -1,14 +1,13 @@
 """Projected facts cross the public preview interface; observed evidence stays fixed."""
+import json
 from copy import deepcopy
 from dataclasses import replace
 from decimal import Decimal, localcontext
 from hashlib import sha256
-import json
 from pathlib import Path
 from uuid import uuid4
 
 import pytest
-
 from app.assessment import assess_commercial
 from app.assessment_contracts import CommercialAssessmentRequest
 from app.case_contracts import CaseCreate
@@ -16,9 +15,10 @@ from app.cases import CaseStore, CaseStoreError
 from app.config import DEFAULT_POLICY
 from app.decision import decide_commercial
 from app.schemas import CommercialRequest
+from financial_assertions import decimal_approx, wire_decimal
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
-ZERO = dict(revenue_change=0, cogs_change=0, operating_expense_change=0, proposed_rate_change_bps=0)
+ZERO = dict(revenue_change="0", cogs_change="0", operating_expense_change="0", proposed_rate_change_bps="0")
 
 
 def saved_baseline(tmp_path, payload=None, policy=DEFAULT_POLICY):
@@ -41,21 +41,22 @@ def preview(baseline, *scenarios):
     from app.scenario_contracts import ScenarioPreviewCommand
     from app.scenarios import preview_commercial_scenarios
     command = ScenarioPreviewCommand.model_validate_json(json.dumps({
-        "schema_version": "commercial-scenario-preview-v1", "baseline_run_id": baseline.run_id,
+        "schema_version": "commercial-scenario-preview-v2", "baseline_run_id": baseline.run_id,
         "scenarios": list(scenarios) or [scenario()],
     }))
     return preview_commercial_scenarios(baseline, command).model_dump(mode="json")
 
 
 def values(result):
-    return {name: fact["raw_value"] for name, fact in result["current_facts"].items()}
+    return {name: wire_decimal(fact["raw_value"]) if fact["raw_value"] is not None and fact["unit"] != "category"
+            else fact["raw_value"] for name, fact in result["current_facts"].items()}
 
 
 def test_zero_shock_preserves_original_facts_decision_history_and_snapshot(baseline):
     before = baseline.model_dump(mode="json")
     result = preview(baseline)
     projected = result["scenarios"][0]
-    assert values(projected) == {name: fact["raw_value"] for name, fact in baseline.assessment["current_facts"].items()}
+    assert values(projected) == values(baseline.assessment)
     assert projected["decision"] == baseline.assessment["decision"]
     assert result["baseline"]["assessment"] == baseline.assessment
     assert result["baseline"]["run_id"] == baseline.run_id
@@ -67,17 +68,17 @@ def test_zero_shock_preserves_original_facts_decision_history_and_snapshot(basel
 
 
 @pytest.mark.parametrize("shocks,obi,ebitda,uca", [
-    ({"revenue_change": -.1}, 3000, 210000, -35000),
-    ({"cogs_change": .1}, 148000, 355000, 110000),
-    ({"operating_expense_change": .1}, 359000, 566000, 321000),
-    ({"revenue_change": -.1, "cogs_change": .1, "operating_expense_change": .1}, -336000, -129000, -374000),
+    ({"revenue_change": "-0.1"}, 3000, 210000, -35000),
+    ({"cogs_change": "0.1"}, 148000, 355000, 110000),
+    ({"operating_expense_change": "0.1"}, 359000, 566000, 321000),
+    ({"revenue_change": "-0.1", "cogs_change": "0.1", "operating_expense_change": "0.1"}, -336000, -129000, -374000),
 ])
 def test_independent_operating_examples_preserve_history(baseline, shocks, obi, ebitda, uca):
     projected = preview(baseline, scenario(**shocks))["scenarios"][0]
     got = values(projected)
-    assert got["ordinary_business_income"] == pytest.approx(obi, abs=1e-8)
-    assert got["ebitda"] == pytest.approx(ebitda, abs=1e-8)
-    assert got["uca_cash_flow"] == pytest.approx(uca, abs=1e-8)
+    assert got["ordinary_business_income"] == decimal_approx(obi, abs="1e-8")
+    assert got["ebitda"] == decimal_approx(ebitda, abs="1e-8")
+    assert got["uca_cash_flow"] == decimal_approx(uca, abs="1e-8")
     assert got["k1_history"] == "stable"
     k1 = next(f for f in projected["decision"]["factors"] if f["name"] == "k1_history")
     assert k1 == next(f for f in baseline.assessment["decision"]["factors"] if f["name"] == "k1_history")
@@ -88,27 +89,27 @@ def test_independent_operating_examples_preserve_history(baseline, shocks, obi, 
 
 
 def test_rate_shock_reconciles_with_independent_high_precision_amortization(baseline):
-    projected = preview(baseline, scenario(proposed_rate_change_bps=200))["scenarios"][0]
+    projected = preview(baseline, scenario(proposed_rate_change_bps="200"))["scenarios"][0]
     with localcontext() as context:
         context.prec = 60
         r = Decimal("0.125") / 12
         annual = Decimal(500000) * r / (1 - (1 + r) ** -120) * 12
         dscr = Decimal(630000) / (Decimal(120000) + annual)
     got = values(projected)
-    assert projected["projection_inputs"]["proposed_loan"]["annual_rate"] == .125
-    assert got["proposed_annual_payment"] == pytest.approx(float(annual), rel=1e-12, abs=1e-8)
-    assert got["dscr"] == pytest.approx(float(dscr), rel=1e-12)
-    assert got["proposed_annual_payment"] > baseline.assessment["current_facts"]["proposed_annual_payment"]["raw_value"]
+    assert wire_decimal(projected["projection_inputs"]["proposed_loan"]["annual_rate"]) == Decimal(".125")
+    assert got["proposed_annual_payment"] == decimal_approx(annual, rel="1e-12", abs="1e-8")
+    assert got["dscr"] == decimal_approx(dscr, rel="1e-12")
+    assert got["proposed_annual_payment"] > wire_decimal(baseline.assessment["current_facts"]["proposed_annual_payment"]["raw_value"])
     assert got["ordinary_business_income"] == 423000
-    assert projected["projection_inputs"]["operating"]["interest_expense"] == 62000
+    assert wire_decimal(projected["projection_inputs"]["operating"]["interest_expense"]) == 62000
 
 
 def test_scenarios_are_independent_and_request_order_only_orders_results(baseline):
-    a, b = scenario("a", revenue_change=-.1), scenario("b", revenue_change=-.2)
+    a, b = scenario("a", revenue_change="-0.1"), scenario("b", revenue_change="-0.2")
     forward, reverse = preview(baseline, a, b), preview(baseline, b, a)
     assert [r["scenario_key"] for r in forward["scenarios"]] == ["a", "b"]
     assert {r["scenario_key"]: r for r in forward["scenarios"]} == {r["scenario_key"]: r for r in reverse["scenarios"]}
-    assert forward["scenarios"][1]["projection_inputs"]["operating"]["gross_receipts"] == 3360000
+    assert wire_decimal(forward["scenarios"][1]["projection_inputs"]["operating"]["gross_receipts"]) == 3360000
     assert preview(baseline, a, b) == forward
     assert forward["fingerprint"]["value"] != reverse["fingerprint"]["value"]
 
@@ -125,7 +126,7 @@ def test_stress_never_replaces_observed_history(tmp_path, kind):
     else:
         data["years"][0]["gross_receipts"] = 0
     base = saved_baseline(tmp_path, data)
-    result = preview(base, scenario(revenue_change=-1))
+    result = preview(base, scenario(revenue_change="-1"))
     assert result["baseline"]["assessment"]["historical_spread"] == base.assessment["historical_spread"]
     projected = result["scenarios"][0]
     for name in ("k1_history", "k1_ratio_difference"):
@@ -142,11 +143,11 @@ def test_retained_policy_and_raw_headroom_control_results(tmp_path):
     projected = result["scenarios"][0]
     comparisons = {r["metric"]: r for r in projected["comparisons"]}
     dscr = comparisons["dscr"]
-    assert dscr["delta"] == 0
-    assert dscr["policy_headroom"]["projected_approval"] == pytest.approx(3.1349366596756265 - 3.2)
+    assert wire_decimal(dscr["delta"]) == 0
+    assert wire_decimal(dscr["policy_headroom"]["projected_approval"]) == decimal_approx(Decimal("3.1349366596756265") - Decimal("3.2"))
     uca = comparisons["uca_cash_flow"]
     assert uca["policy_headroom"]["comparison_operator"] == ">"
-    assert uca["policy_headroom"]["projected_approval"] == 0
+    assert wire_decimal(uca["policy_headroom"]["projected_approval"]) == 0
     assert next(f for f in projected["decision"]["factors"] if f["name"] == "uca_positive")["passed"] is False
     assert projected["decision"] == base.assessment["decision"]
 
@@ -157,7 +158,7 @@ def test_no_service_keeps_metrics_delta_and_headroom_unavailable(tmp_path):
     data["proposed_loan"]["amount"] = 0
     data["existing_debt"] = dict(cpltd_annual=0, operating_lease_annual=0)
     data["years"][-1]["interest_expense"] = 0
-    result = preview(saved_baseline(tmp_path, data), scenario(revenue_change=-.1))
+    result = preview(saved_baseline(tmp_path, data), scenario(revenue_change="-0.1"))
     for row in result["scenarios"][0]["comparisons"]:
         if row["metric"] in ("dscr", "fccr", "global_dscr"):
             assert row["baseline_value"] is row["projected_value"] is row["delta"] is None
@@ -166,12 +167,12 @@ def test_no_service_keeps_metrics_delta_and_headroom_unavailable(tmp_path):
 
 
 @pytest.mark.parametrize("variant,expected", [
-    ("alpine", "2e1362076a27277037b435f81248757756a675614d0edb2d0b66babbc304842d"),
-    ("single", "3881a4df9c1d201da0b084e5af018e01ae4677fa89c8318ef79e107c5b52e738"),
-    ("gap", "ed64045bb385a28cf97db8f01f48992957701d02957f575ab72c0b66216b787f"),
-    ("no_debt", "84e8c657cdc36491eddf6bc5679c8ddef863b9ad4a651e686bacb772250fdfa6"),
+    ("alpine", "8c46e6fa35248a47c41291db1f183189473d3b42ff792af6357d2b734efad2ba"),
+    ("single", "20e5a3b463a348bc1c4edfec172e45cb22a761fef70724f0996b18eaf47a79f9"),
+    ("gap", "2fffe180d8290ca724c6fc3075a84d33000cf7e04241d729cb84c204d91651e0"),
+    ("no_debt", "ea6f5021d631daff76c3198e38dad6f0a939b5b666010094e3720485ebf77177"),
 ])
-def test_pre_change_dated_assessment_serialization_is_pinned(variant, expected):
+def test_v2_dated_assessment_serialization_is_pinned(variant, expected):
     data = json.loads((FIXTURES / "alpine_dated.json").read_text())
     if variant == "single":
         data["years"] = data["years"][-1:]
@@ -183,14 +184,17 @@ def test_pre_change_dated_assessment_serialization_is_pinned(variant, expected):
         data["proposed_loan"]["amount"] = 0
         data["years"][-1]["interest_expense"] = 0
     result = assess_commercial(CommercialAssessmentRequest.model_validate_json(json.dumps(data))).model_dump(mode="json")
+    assert result["schema_version"] == "commercial-assessment-v2"
+    assert result["calculation_version"] == "commercial-calculation-v2"
+    assert result["serialization_version"] == "assessment-json-v2"
     canonical = json.dumps(result, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
     assert sha256(canonical.encode()).hexdigest() == expected
 
 
-def test_pre_change_legacy_decision_serialization_is_pinned():
+def test_v2_decision_serialization_is_pinned():
     result = decide_commercial(CommercialRequest.model_validate_json((FIXTURES / "alpine.json").read_text())).model_dump(mode="json")
     canonical = json.dumps(result, sort_keys=True, separators=(",", ":"))
-    assert sha256(canonical.encode()).hexdigest() == "59cbb86ae4d029cacf58838b0dd350e7d73435fda62dec22d4e0049572a7cc03"
+    assert sha256(canonical.encode()).hexdigest() == "a0e37eef7ea2a70da198c8622cfc32e7eafe172dfe7ed8a91b57161e6cdcd257"
 
 
 def pointer(document, reference):
@@ -200,7 +204,7 @@ def pointer(document, reference):
 
 
 def test_trace_operands_and_comparison_identities_resolve_to_actual_evidence(baseline):
-    result = preview(baseline, scenario(revenue_change=-.1, cogs_change=.1, proposed_rate_change_bps=200))
+    result = preview(baseline, scenario(revenue_change="-0.1", cogs_change="0.1", proposed_rate_change_bps="200"))
     projected = result["scenarios"][0]
     rows = {r["fact_id"]: r for r in projected["calculation_trace"]}
     assert len(rows) == len(projected["calculation_trace"])
@@ -241,17 +245,17 @@ def test_supported_projection_edges_have_explicit_results(tmp_path, kind):
     shocks = {}
     if kind == "zero_principal":
         data["proposed_loan"]["amount"] = 0
-        shocks["proposed_rate_change_bps"] = 200
+        shocks["proposed_rate_change_bps"] = "200"
     elif kind == "zero_rate":
         data["proposed_loan"]["annual_rate"] = 0
     elif kind == "zero_targets":
         for name in ("gross_receipts", "cogs", "operating_expense_excl_dna_interest_comp"):
             data["years"][-1][name] = 0
-        shocks = dict(revenue_change=1e308, cogs_change=1e308, operating_expense_change=1e308)
+        shocks = dict(revenue_change="1e30", cogs_change="1e30", operating_expense_change="1e30")
     elif kind == "fractional_bps":
-        shocks["proposed_rate_change_bps"] = 1.5
+        shocks["proposed_rate_change_bps"] = "1.5"
     else:
-        shocks["revenue_change"] = -1
+        shocks["revenue_change"] = "-1"
     projected = preview(saved_baseline(tmp_path, data), scenario(**shocks))["scenarios"][0]
     got = values(projected)
     if kind == "zero_principal":
@@ -260,12 +264,12 @@ def test_supported_projection_edges_have_explicit_results(tmp_path, kind):
     elif kind == "zero_rate":
         assert got["proposed_annual_payment"] == 50000
     elif kind == "zero_targets":
-        assert all(projected["projection_inputs"]["operating"][name] == 0 for name in
+        assert all(wire_decimal(projected["projection_inputs"]["operating"][name]) == 0 for name in
                    ("gross_receipts", "cogs", "operating_expense_excl_dna_interest_comp"))
     elif kind == "fractional_bps":
-        assert projected["projection_inputs"]["proposed_loan"]["annual_rate"] == pytest.approx(.10515, rel=1e-15)
+        assert wire_decimal(projected["projection_inputs"]["proposed_loan"]["annual_rate"]) == decimal_approx(".10515", rel="1e-15")
     else:
-        assert projected["projection_inputs"]["operating"]["gross_receipts"] == 0
+        assert wire_decimal(projected["projection_inputs"]["operating"]["gross_receipts"]) == 0
         assert got["ebitda"] == -3570000
 
 
@@ -277,7 +281,7 @@ def test_signed_negative_target_remains_readable_but_cannot_be_stressed(tmp_path
     with pytest.raises(CaseStoreError) as failure:
         preview(base)
     assert failure.value.status == 422 and failure.value.code == "scenario_baseline"
-    assert base.assessment["normalized_input"]["years"][-1][field] == -1
+    assert wire_decimal(base.assessment["normalized_input"]["years"][-1][field]) == -1
 
 
 @pytest.mark.parametrize("kind,code,status", [
@@ -296,7 +300,10 @@ def test_unusable_baseline_never_falls_back_to_current_assessment(baseline, kind
     elif kind == "input_mismatch":
         base.normalized_input["borrower_name"] = "Different accepted input"
     else:
-        base.assessment["decision"]["factors"][0]["raw_value"] += 1e-13
+        with localcontext() as context:
+            context.prec = 100
+            raw = wire_decimal(base.assessment["decision"]["factors"][0]["raw_value"])
+            base.assessment["decision"]["factors"][0]["raw_value"] = str(raw + Decimal("1e-13"))
     with pytest.raises(CaseStoreError) as failure:
         preview(base)
     assert (failure.value.code, failure.value.status) == (code, status)
@@ -306,8 +313,8 @@ def test_replay_is_once_per_batch_and_unavailable_replay_cannot_preview(baseline
     from app.scenario_contracts import ScenarioPreviewCommand
     from app.scenarios import preview_commercial_scenarios
     command = ScenarioPreviewCommand.model_validate_json(json.dumps({
-        "schema_version": "commercial-scenario-preview-v1", "baseline_run_id": baseline.run_id,
-        "scenarios": [scenario(str(i), revenue_change=-i / 100) for i in range(10)],
+        "schema_version": "commercial-scenario-preview-v2", "baseline_run_id": baseline.run_id,
+        "scenarios": [scenario(str(i), revenue_change=str(Decimal(str(-i)) / Decimal("100"))) for i in range(10)],
     }))
     policies = []
     def recorded(request, policy):
@@ -325,24 +332,34 @@ def test_replay_is_once_per_batch_and_unavailable_replay_cannot_preview(baseline
 
 @pytest.mark.parametrize("ratio", ["dscr", "fccr", "global_dscr"])
 @pytest.mark.parametrize("boundary", ["approval_equal", "below_approval", "decline_equal", "below_decline"])
-def test_raw_coverage_boundaries_cannot_be_hidden_by_display_rounding(tmp_path, baseline, ratio, boundary):
-    raw = baseline.assessment["current_facts"][ratio]["raw_value"]
-    change = {f"commercial_min_{ratio}": raw if boundary == "approval_equal" else raw + 1e-12}
+def test_raw_coverage_boundaries_cannot_be_hidden_by_display_rounding(tmp_path, ratio, boundary):
+    data = json.loads((FIXTURES / "alpine_dated.json").read_text())
+    for year in data["years"]:
+        for name in year:
+            if name not in ("period_start", "period_end"):
+                year[name] = "0"
+        year["gross_receipts"] = "125000"
+    data["existing_debt"] = {"cpltd_annual": "100000", "operating_lease_annual": "0"}
+    data["proposed_loan"]["amount"] = "0"
+    data["guarantors"] = []
+    raw = Decimal("1.25")
+    change = {f"commercial_min_{ratio}": raw if boundary == "approval_equal" else raw + Decimal("1e-12")}
     if boundary in ("decline_equal", "below_decline"):
         change[f"commercial_decline_{ratio}"] = raw
     policy = replace(DEFAULT_POLICY, **change)
-    base = saved_baseline(tmp_path, policy=policy)
-    projected = preview(base, scenario(revenue_change=-1e-12 if boundary == "below_decline" else 0))["scenarios"][0]
+    base = saved_baseline(tmp_path, data, policy=policy)
+    assert wire_decimal(base.assessment["current_facts"][ratio]["raw_value"]) == raw
+    projected = preview(base, scenario(revenue_change="-1e-12" if boundary == "below_decline" else "0"))["scenarios"][0]
     factor = next(f for f in projected["decision"]["factors"] if f["name"] == ratio)
     assert factor["passed"] is (boundary == "approval_equal")
     assert factor["decline_triggered"] is (boundary == "below_decline")
     headroom = next(row["policy_headroom"] for row in projected["comparisons"] if row["metric"] == ratio)
     if boundary == "approval_equal":
-        assert headroom["projected_approval"] == 0
+        assert wire_decimal(headroom["projected_approval"]) == 0
     elif boundary == "decline_equal":
-        assert headroom["projected_decline"] == 0
+        assert wire_decimal(headroom["projected_decline"]) == 0
     elif boundary == "below_decline":
-        assert headroom["projected_decline"] < 0
+        assert wire_decimal(headroom["projected_decline"]) < 0
         assert projected["decision"]["outcome"] == "decline"
         assert factor["value"] == next(f["value"] for f in base.assessment["decision"]["factors"] if f["name"] == ratio)
 
@@ -354,15 +371,15 @@ def test_projected_global_cash_flow_reuses_ownership_and_business_only_fallback(
         data["guarantors"][0]["ownership_percentage"] = .65
     else:
         data["guarantors"] = []
-    got = values(preview(saved_baseline(tmp_path, data), scenario(revenue_change=-.1))["scenarios"][0])
+    got = values(preview(saved_baseline(tmp_path, data), scenario(revenue_change="-0.1"))["scenarios"][0])
     assert got["global_business_ebitda"] == (136500 if has_guarantor else 210000)
     assert got["global_outside_income"] == (68000 if has_guarantor else 0)
     assert got["global_personal_debt"] == (39600 if has_guarantor else 0)
-    assert got["global_dscr"] == pytest.approx((204500 if has_guarantor else 210000) /
-                                             (240560.9980653282 if has_guarantor else 200960.9980653282), rel=1e-12)
+    expected = Decimal("204500" if has_guarantor else "210000") / Decimal("240560.9980653282" if has_guarantor else "200960.9980653282")
+    assert got["global_dscr"] == decimal_approx(expected, rel="1e-12")
 
 
-def test_comparison_overflow_rejects_even_when_projected_facts_are_finite(tmp_path):
+def test_comparison_overflow_example_is_rejected_before_accepting_out_of_range_baseline(tmp_path):
     data = json.loads((FIXTURES / "alpine_dated.json").read_text())
     data["years"] = data["years"][-1:]
     data["years"][0].update(gross_receipts=6e307, cogs=0, operating_expense_excl_dna_interest_comp=1.2e308,
@@ -372,14 +389,11 @@ def test_comparison_overflow_rejects_even_when_projected_facts_are_finite(tmp_pa
     data["working_capital"].update(ar_increase=0, inventory_increase=0, ap_increase=0, cash_taxes_paid=0)
     data["existing_debt"].update(cpltd_annual=1e308, operating_lease_annual=0)
     data["proposed_loan"].update(amount=0, annual_rate=0)
-    base = saved_baseline(tmp_path, data)
-    assert base.assessment["current_facts"]["ebitda"]["raw_value"] == -6e307
-    with pytest.raises(CaseStoreError) as failure:
-        preview(base, scenario(revenue_change=1, operating_expense_change=-1))
-    assert failure.value.status == 422 and failure.value.code == "scenario_invalid"
+    with pytest.raises(ValueError, match="finite range"):
+        saved_baseline(tmp_path, data)
 
 
-def test_headroom_overflow_rejects_even_when_facts_and_delta_are_finite(tmp_path):
+def test_headroom_overflow_example_is_rejected_before_accepting_out_of_range_policy(tmp_path):
     data = json.loads((FIXTURES / "alpine_dated.json").read_text())
     data["years"] = data["years"][-1:]
     data["years"][0].update(gross_receipts=0, cogs=0, operating_expense_excl_dna_interest_comp=1.7e308,
@@ -389,22 +403,19 @@ def test_headroom_overflow_rejects_even_when_facts_and_delta_are_finite(tmp_path
     data["working_capital"].update(ar_increase=0, inventory_increase=0, ap_increase=0, cash_taxes_paid=0)
     data["existing_debt"].update(cpltd_annual=1, operating_lease_annual=0)
     data["proposed_loan"].update(amount=0, annual_rate=0)
-    policy = replace(DEFAULT_POLICY, commercial_min_dscr=1.7e308)
-    base = saved_baseline(tmp_path, data, policy)
-    assert base.assessment["current_facts"]["dscr"]["raw_value"] == -1.7e308
-    with pytest.raises(CaseStoreError) as failure:
-        preview(base)
-    assert failure.value.status == 422 and failure.value.code == "scenario_invalid"
+    with pytest.raises(ValueError, match="finite range"):
+        policy = replace(DEFAULT_POLICY, commercial_min_dscr=1.7e308)
+        saved_baseline(tmp_path, data, policy)
 
 
-@pytest.mark.parametrize("bps,rate", [(-1050, 0), (8950, 1)])
+@pytest.mark.parametrize("bps,rate", [("-1050", 0), ("8950", 1)])
 def test_rate_endpoints_are_supported_without_clamping(baseline, bps, rate):
     projected = preview(baseline, scenario(proposed_rate_change_bps=bps))["scenarios"][0]
-    assert projected["projection_inputs"]["proposed_loan"]["annual_rate"] == rate
-    assert projected["current_facts"]["proposed_annual_payment"]["raw_value"] > 0
+    assert wire_decimal(projected["projection_inputs"]["proposed_loan"]["annual_rate"]) == Decimal(str(rate))
+    assert wire_decimal(projected["current_facts"]["proposed_annual_payment"]["raw_value"]) > 0
 
 
-@pytest.mark.parametrize("starting_revenue,shock", [(4_200_000, -.1), (3_780_000, 1 / 9)])
+@pytest.mark.parametrize("starting_revenue,shock", [(4_200_000, "-0.1"), (3_780_000, "0.1111111111111111")])
 def test_outcome_factor_and_reason_differences_reconcile_with_both_decisions(tmp_path, starting_revenue, shock):
     data = json.loads((FIXTURES / "alpine_dated.json").read_text())
     data["years"][-1]["gross_receipts"] = starting_revenue
@@ -426,17 +437,21 @@ def test_outcome_factor_and_reason_differences_reconcile_with_both_decisions(tmp
 
 
 def test_fingerprint_covers_normalized_command_and_saved_baseline_identity(baseline, tmp_path):
-    from app.scenario_contracts import SCENARIO_DEFINITION_VERSION, SCENARIO_SCHEMA_VERSION, SCENARIO_SERIALIZATION_VERSION
-    item = scenario(revenue_change=-.1)
+    from app.scenario_contracts import (
+        SCENARIO_DEFINITION_VERSION,
+        SCENARIO_SCHEMA_VERSION,
+        SCENARIO_SERIALIZATION_VERSION,
+    )
+    item = scenario(revenue_change="-0.1")
     result = preview(baseline, item)
     normalized = deepcopy(item)
-    normalized["assumptions"] = {k: float(v) for k, v in normalized["assumptions"].items()}
+    normalized["assumptions"] = {k: str(Decimal(str(v)).normalize()) for k, v in normalized["assumptions"].items()}
     content = {
         "baseline_identity": dict(case_id=baseline.case_id, revision=baseline.revision, run_id=baseline.run_id),
         "payload_hash": baseline.payload_hash,
         "normalized_command": dict(schema_version=SCENARIO_SCHEMA_VERSION, baseline_run_id=baseline.run_id, scenarios=[normalized]),
         "policy_snapshot": baseline.assessment["policy_snapshot"],
-        "versions": dict(schema=SCENARIO_SCHEMA_VERSION, calculation="commercial-calculation-v1",
+        "versions": dict(schema=SCENARIO_SCHEMA_VERSION, calculation="commercial-calculation-v2",
                          definition=SCENARIO_DEFINITION_VERSION, serialization=SCENARIO_SERIALIZATION_VERSION),
     }
     encoded = json.dumps(content, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode()

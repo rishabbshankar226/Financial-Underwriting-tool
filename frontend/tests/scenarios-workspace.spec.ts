@@ -2,20 +2,22 @@ import { test, expect, type Page, type APIRequestContext } from "@playwright/tes
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { RECOVERY_KEY } from "../src/caseRecovery";
+import { guardSavedCase, type CaseSnapshot } from "../src/caseContracts";
+import { guardComparison, guardScenarioCommand, type PreviewCommand } from "../src/scenarioContracts";
 const dated = JSON.parse(readFileSync(new URL("../../backend/fixtures/alpine_dated.json", import.meta.url), "utf8"));
 async function create(request: APIRequestContext, input = dated) {
     const result = await request.post("http://127.0.0.1:8000/cases", { headers: { "Idempotency-Key": randomUUID() }, data: { input, rationale: "Synthetic browser case" } });
     expect(result.status()).toBe(201);
-    return await result.json();
+    return guardSavedCase(await result.json(), result.headers().etag).snapshot;
 }
-async function retain(request: APIRequestContext, original: any, name: string) {
+async function retain(request: APIRequestContext, original: CaseSnapshot, name: string) {
     const path = `http://127.0.0.1:8000/cases/${original.case_id}/revisions/${original.revision}`;
-    const command = { schema_version: "commercial-scenario-preview-v1", baseline_run_id: original.run_id, scenarios: [{ scenario_key: "archive", name, rationale: "Synthetic archive review", assumptions: { revenue_change: 0, cogs_change: 0, operating_expense_change: 0, proposed_rate_change_bps: 0 } }] };
+    const command = { schema_version: "commercial-scenario-preview-v2", baseline_run_id: original.run_id, scenarios: [{ scenario_key: "archive", name, rationale: "Synthetic archive review", assumptions: { revenue_change: "0", cogs_change: "0", operating_expense_change: "0", proposed_rate_change_bps: "0" } }] };
     const previewed = await request.post(`${path}/scenarios/preview`, { data: command });
     expect(previewed.status()).toBe(200);
-    const result = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v1", expected_preview_fingerprint: (await previewed.json()).fingerprint.value } });
+    const result = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v2", expected_preview_fingerprint: (await previewed.json()).fingerprint.value } });
     expect(result.status()).toBe(201);
-    return { record: await result.json(), headers: result.headers() };
+    return { record: guardComparison(await result.json(), result.headers().etag).record, headers: result.headers() };
 }
 async function baseline(page: Page) {
     await page.goto("/");
@@ -24,7 +26,8 @@ async function baseline(page: Page) {
     await page.getByLabel("Save rationale").fill("Synthetic scenario baseline");
     const saved = page.waitForResponse(r => new URL(r.url()).pathname === "/cases" && r.request().method() === "POST" && r.status() === 201);
     await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
-    const original = await (await saved).json();
+    const response = await saved;
+    const original = guardSavedCase(await response.json(), response.headers().etag).snapshot;
     await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
     await page.getByRole("button", { name: "Scenarios", exact: true }).click();
     return original;
@@ -239,10 +242,10 @@ test("blank shocks block preview, fractional basis points convert once, and ten 
     await baseline(page);
     await page.getByLabel("Scenario 1 rationale").fill("Unicode review 😀");
     await page.getByLabel("Scenario 1 Revenue change (%)").fill("");
-    let posts = 0, command: any;
+    let posts = 0, command: PreviewCommand | undefined;
     page.on("request", r => { if (r.url().endsWith("/scenarios/preview")) {
         posts++;
-        command = r.postDataJSON();
+        command = guardScenarioCommand(r.postDataJSON()) as PreviewCommand;
     } });
     await page.getByRole("button", { name: "Preview scenarios", exact: true }).click();
     await expect(page.getByRole("alert")).toBeVisible();
@@ -257,11 +260,14 @@ test("blank shocks block preview, fractional basis points convert once, and ten 
     await expect(page.getByRole("button", { name: "Add scenario", exact: true })).toBeDisabled();
     await page.getByRole("button", { name: "Preview scenarios", exact: true }).click();
     await expect(page.getByRole("button", { name: "Save reviewed comparison", exact: true })).toBeEnabled();
+    expect(command).toBeDefined();
+    if (!command) throw new Error("Expected the reviewed preview command");
     expect(command.scenarios).toHaveLength(10);
     expect(command.scenarios[0].name).toBe("😀");
-    expect(command.scenarios[0].assumptions.revenue_change).toBe(-0.1);
-    expect(command.scenarios[0].assumptions.proposed_rate_change_bps).toBe(200.5);
-    expect(new Set(command.scenarios.map((s: any) => s.scenario_key)).size).toBe(10);
+    expect(command.schema_version).toBe("commercial-scenario-preview-v2");
+    expect(command.scenarios[0].assumptions.revenue_change).toBe("-0.1");
+    expect(command.scenarios[0].assumptions.proposed_rate_change_bps).toBe("200.5");
+    expect(new Set(command.scenarios.map(s => s.scenario_key)).size).toBe(10);
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.locator(".comparisonContext")).toContainText("Saved comparison");
     await expect(page.getByLabel("Reviewed scenario", { exact: true })).toHaveCount(1);

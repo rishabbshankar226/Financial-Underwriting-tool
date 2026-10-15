@@ -1,15 +1,16 @@
 import json
 from dataclasses import replace
+from datetime import date
+from decimal import Decimal
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.config import DEFAULT_POLICY
 from app.decision import decide_commercial, decide_consumer
 from app.main import app
 from app.sba import credit_elsewhere, evaluate_sba, load_size_table, size_eligible
-from app.schemas import SBACase, SBASizeRow, ConsumerRequest, CommercialRequest
-from fixtures import alpine_request, BRISTLE, BRISTLE_EXISTING, BRISTLE_LOAN, BRISTLE_G, BRISTLE_WC
+from app.schemas import CommercialRequest, ConsumerRequest, SBACase, SBASizeRow
+from fastapi.testclient import TestClient
+from fixtures import BRISTLE, BRISTLE_EXISTING, BRISTLE_G, BRISTLE_LOAN, BRISTLE_WC, alpine_request
 
 
 def sba_payload():
@@ -19,7 +20,7 @@ def sba_payload():
 
 def size_row(**changes):
     payload = dict(naics='999999', measure='receipts_millions', threshold=10,
-                   source_effective_date='2025-06-01', synthetic_test_only=True)
+                   source_effective_date=date(2025, 6, 1), synthetic_test_only=True)
     return SBASizeRow(**dict(payload, **changes))
 
 
@@ -68,9 +69,9 @@ def test_official_loader_rejects_synthetic_rows(tmp_path):
 
 
 def test_sba_resources_overflow_never_yields_a_passing_screen():
-    case = SBACase(**dict(sba_payload(), owner_liquid_resources=1e308,
-                         retirement_allowance=1e308, college_allowance=1e308))
     with pytest.raises(ValueError, match='finite'):
+        case = SBACase(**dict(sba_payload(), owner_liquid_resources=1e308,
+                             retirement_allowance=1e308, college_allowance=1e308))
         credit_elsewhere(case)
 
 
@@ -80,7 +81,7 @@ def test_sba_api_overflow_with_a_loaded_test_table_returns_422(monkeypatch):
                    retirement_allowance=1e308, college_allowance=1e308)
     response = TestClient(app, raise_server_exceptions=False).post('/sba/evaluate', json=payload)
     assert response.status_code == 422
-    assert 'finite' in response.json()['detail']
+    assert 'finite' in str(response.json()['detail'])
 
 
 def test_synthetic_size_source_is_identified_in_result():
@@ -147,11 +148,11 @@ def test_confirmed_payload_obeys_injected_extraction_policy():
 def test_policy_version_and_raw_boundary_value_are_preserved():
     policy = replace(DEFAULT_POLICY, version='synthetic-boundary-test')
     req = consumer_request()
-    req.other_monthly_debt = 1200.09
+    req.other_monthly_debt = Decimal("1200.09")
     result = decide_consumer(req, policy)
     assert result.policy_version == policy.version
     factor = next(f for f in result.factors if f.name == 'back_end_dti_review')
-    assert factor.value == .43
+    assert factor.value == Decimal(".43")
     assert factor.raw_value > policy.consumer_review_dti
     assert factor.comparison_operator == '<'
     assert factor.passed is False

@@ -1,8 +1,9 @@
+import { compareDecimal, inputDecimal, isDecimal, legacyDecimal, shiftDecimal } from "./decimal";
 import { annualFields, currentFactKeys, guardAssessment, guardDatedInput, guardDecision, metric, type Assessment, type Decision, type DatedRequest, type Factor, type Metric, type Period, type Policy, type Trace } from "./contracts";
 import { date, finite, finiteJson, guardRecording, hash, object, requireCase, revision, sameJson, text, timestamp, uuid, type Page, type Recording, type StoredCase } from "./caseContracts";
 type Obj = Record<string, unknown>;
 export const shockKeys = ["revenue_change", "cogs_change", "operating_expense_change", "proposed_rate_change_bps"] as const;
-export type Assumptions = Record<(typeof shockKeys)[number], number>;
+export type Assumptions = Record<(typeof shockKeys)[number], string>;
 export type ScenarioCommand = {
     scenario_key: string;
     name: string;
@@ -10,31 +11,31 @@ export type ScenarioCommand = {
     assumptions: Assumptions;
 };
 export type PreviewCommand = {
-    schema_version: "commercial-scenario-preview-v1";
+    schema_version: "commercial-scenario-preview-v1" | "commercial-scenario-preview-v2";
     baseline_run_id: string;
     scenarios: ScenarioCommand[];
 };
 export type ComparisonCommand = Omit<PreviewCommand, "schema_version"> & {
-    schema_version: "commercial-scenario-comparison-create-v1";
+    schema_version: "commercial-scenario-comparison-create-v1" | "commercial-scenario-comparison-create-v2";
     expected_preview_fingerprint: string;
 };
 export type Headroom = {
     comparison_operator: ">=" | ">";
-    approval_threshold: number;
-    decline_threshold: number | null;
-    baseline_approval: number | null;
-    projected_approval: number | null;
-    baseline_decline: number | null;
-    projected_decline: number | null;
+    approval_threshold: string;
+    decline_threshold: string | null;
+    baseline_approval: string | null;
+    projected_approval: string | null;
+    baseline_decline: string | null;
+    projected_decline: string | null;
 };
 export type ComparisonMetric = {
     metric: string;
     baseline_fact_id: string;
     projected_fact_id: string;
     unit: string;
-    baseline_value: number | null;
-    projected_value: number | null;
-    delta: number | null;
+    baseline_value: string | null;
+    projected_value: string | null;
+    delta: string | null;
     delta_explanation: string | null;
     policy_headroom: Headroom | null;
 };
@@ -75,8 +76,8 @@ export type ScenarioResult = ScenarioCommand & {
     }[];
 };
 export type ScenarioPreview = {
-    schema_version: "commercial-scenario-preview-v1";
-    serialization_version: "scenario-preview-json-v1";
+    schema_version: "commercial-scenario-preview-v1" | "commercial-scenario-preview-v2";
+    serialization_version: "scenario-preview-json-v2";
     scenario_definition_version: string;
     calculation_version: string;
     persisted: false;
@@ -102,7 +103,7 @@ export type ScenarioPreview = {
     disclaimer: string;
 };
 export type ComparisonRecord = {
-    schema_version: "commercial-scenario-comparison-v1";
+    schema_version: "commercial-scenario-comparison-v1" | "commercial-scenario-comparison-v2";
     storage_serialization_version: "scenario-comparison-json-v1";
     persisted: true;
     comparison_id: string;
@@ -141,7 +142,7 @@ export type ComparisonSummary = {
     scenario_definition_version: string;
     calculation_version: string;
 };
-const schema = "commercial-scenario-preview-v1", serialization = "scenario-preview-json-v1";
+const schema = "commercial-scenario-preview-v2", serialization = "scenario-preview-json-v2";
 export function exact(value: Obj, keys: readonly string[]) { requireCase(Object.keys(value).length === keys.length && keys.every(k => Object.prototype.hasOwnProperty.call(value, k)), "scenario fields"); }
 // Python's str.strip whitespace set. FEFF is deliberately not included.
 export function scenarioText(value: unknown, max: number): string {
@@ -150,24 +151,25 @@ export function scenarioText(value: unknown, max: number): string {
     requireCase(result.length > 0 && [...result].length <= max, `nonblank scenario text, at most ${max} characters`);
     return result;
 }
-export function parseShock(raw: string, percentage: boolean): number {
+export function parseShock(raw: string, percentage: boolean): string {
     const value = raw.trim();
     requireCase(/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(value), "Enter a finite decimal change");
-    const number = Number(value.replace(/,/g, "")) / (percentage ? 100 : 1);
-    requireCase(finite(number) && (!percentage || number >= -1), "Percentage changes must be at least -100%; all changes must be finite");
+    const number = inputDecimal(shiftDecimal(value.replace(/,/g, ""), percentage ? -2 : 0));
+    requireCase(isDecimal(number) && (!percentage || compareDecimal(number, "-1") >= 0), "Percentage changes must be at least -100%; all changes must be finite");
     return number;
 }
-export function normalizedScenario(value: unknown): ScenarioCommand {
+export function normalizedScenario(value: unknown, legacy = false): ScenarioCommand {
     const s = object(value, "scenario"), a = object(s.assumptions, "shocks");
     requireCase(text(s.scenario_key) && /^[A-Za-z0-9_-]{1,64}$/.test(s.scenario_key), "scenario key");
     exact(a, shockKeys);
     for (const k of shockKeys)
-        requireCase(finite(a[k]) && (k === "proposed_rate_change_bps" || Number(a[k]) >= -1), "finite explicit shock");
+        requireCase((isDecimal(a[k]) || legacy && finite(a[k])) && (k === "proposed_rate_change_bps" || compareDecimal(legacyDecimal(a[k]), "-1") >= 0), "finite explicit shock");
     return { scenario_key: s.scenario_key, name: scenarioText(s.name, 120), rationale: scenarioText(s.rationale, 2000), assumptions: a as Assumptions };
 }
 export function guardScenarioCommand(value: unknown): PreviewCommand | ComparisonCommand {
-    const c = object(value, "scenario command"), retained = c.schema_version === "commercial-scenario-comparison-create-v1";
-    requireCase(retained || c.schema_version === schema, "scenario command version");
+    const c = object(value, "scenario command"), retained = ["commercial-scenario-comparison-create-v1", "commercial-scenario-comparison-create-v2"].includes(String(c.schema_version));
+    const legacy = String(c.schema_version).endsWith("-v1");
+    requireCase(retained || c.schema_version === schema || c.schema_version === "commercial-scenario-preview-v1", "scenario command version");
     exact(c, ["schema_version", "baseline_run_id", "scenarios", ...(retained ? ["expected_preview_fingerprint"] : [])]);
     requireCase(uuid(c.baseline_run_id) && String(c.baseline_run_id).toLowerCase() === c.baseline_run_id, "canonical baseline run");
     if (retained)
@@ -177,7 +179,7 @@ export function guardScenarioCommand(value: unknown): PreviewCommand | Compariso
     for (const s of c.scenarios) {
         const row = object(s, "scenario command row");
         exact(row, ["scenario_key", "name", "rationale", "assumptions"]);
-        const normalized = normalizedScenario(s);
+        const normalized = normalizedScenario(s, legacy);
         requireCase(sameJson(normalized, s) && !keys.has(normalized.scenario_key), "normalized unique scenario command");
         keys.add(normalized.scenario_key);
     }
@@ -186,13 +188,13 @@ export function guardScenarioCommand(value: unknown): PreviewCommand | Compariso
 export function previewCommand(p: ScenarioPreview | Obj): PreviewCommand {
     const b = object(p.baseline, "preview baseline");
     requireCase(Array.isArray(p.scenarios), "preview scenarios");
-    return guardScenarioCommand({ schema_version: schema, baseline_run_id: b.run_id, scenarios: p.scenarios.map(normalizedScenario) }) as PreviewCommand;
+    return guardScenarioCommand({ schema_version: p.schema_version, baseline_run_id: b.run_id, scenarios: p.scenarios.map(value => normalizedScenario(value, p.schema_version === "commercial-scenario-preview-v1")) }) as PreviewCommand;
 }
 function array(value: unknown, label: string): unknown[] { requireCase(Array.isArray(value), label); return value; }
-function nullableNumber(v: unknown) { return v === null || finite(v); }
+function nullableNumber(v: unknown) { return v === null || isDecimal(v); }
 function canonicalId(v: unknown) { return uuid(v) && v.toLowerCase() === v; }
 function baselineEnvelope(p: Obj) {
-    requireCase(p.schema_version === schema && p.serialization_version === serialization && p.persisted === false && text(p.scenario_definition_version) && text(p.calculation_version), "preview envelope versions");
+    requireCase(((p.schema_version === schema && p.serialization_version === serialization) || (p.schema_version === "commercial-scenario-preview-v1" && p.serialization_version === "scenario-preview-json-v1")) && p.persisted === false && text(p.scenario_definition_version) && text(p.calculation_version), "preview envelope versions");
     const b = object(p.baseline, "baseline evidence");
     requireCase(canonicalId(b.case_id) && canonicalId(b.run_id) && revision(b.revision) && hash(b.input_hash) && hash(b.payload_hash), "baseline evidence identity");
     const a = object(b.assessment, "original assessment"), fp = object(p.fingerprint, "preview fingerprint");
@@ -210,7 +212,7 @@ export function guardPreview(value: unknown, view?: StoredCase, command?: Previe
     const p = object(value, "scenario preview");
     finiteJson(p, 0, 100);
     const { b, a } = baselineEnvelope(p);
-    requireCase(p.scenario_definition_version === "commercial-scenario-definition-v1" && p.calculation_version === "commercial-calculation-v1", "supported live scenario definition");
+    requireCase(p.schema_version === schema && p.scenario_definition_version === "commercial-scenario-definition-v2" && p.calculation_version === "commercial-calculation-v2", "supported live scenario definition");
     const baseline = guardAssessment(a);
     if (view)
         requireCase(b.case_id === view.snapshot.case_id && b.revision === view.snapshot.revision && b.run_id === view.snapshot.run_id && b.input_hash === view.snapshot.input_hash && b.payload_hash === view.snapshot.payload_hash && sameJson(baseline, view.snapshot.assessment), "selected original baseline");
@@ -283,7 +285,7 @@ function guardResult(value: unknown, p: Obj, baseline: Assessment) {
         }
     for (const m of metrics) {
         const linked = trace.get(m.fact_id);
-        requireCase(linked && ["fact_id", "raw_value", "unit", "display_precision", "status", "explanation"].every(k => (linked as unknown as Obj)[k] === (m as unknown as Obj)[k]), "fact/trace fields");
+        requireCase(linked && ["fact_id", "raw_value", "reported_value", "unit", "display_precision", "status", "explanation"].every(k => (linked as unknown as Obj)[k] === (m as unknown as Obj)[k]), "fact/trace fields");
     }
     // Trace rows include definition/operands; compare just the Metric display fields.
     const comparisons = array(s.comparisons, "metric comparisons");
@@ -295,7 +297,7 @@ function guardResult(value: unknown, p: Obj, baseline: Assessment) {
         seen.add(c.metric);
         const old = baseline.current_facts[c.metric as keyof Assessment["current_facts"]], now = metric(facts[c.metric]);
         requireCase(c.baseline_fact_id === "baseline." + old.fact_id && c.projected_fact_id === now.fact_id && c.baseline_value === old.raw_value && c.projected_value === now.raw_value && c.unit === now.unit && nullableNumber(c.delta), "comparison fact links");
-        requireCase((old.raw_value === null || now.raw_value === null) ? c.delta === null && text(c.delta_explanation) : finite(c.delta) && c.delta_explanation === null, "comparison availability");
+        requireCase((old.raw_value === null || now.raw_value === null) ? c.delta === null && text(c.delta_explanation) : isDecimal(c.delta) && c.delta_explanation === null, "comparison availability");
         const factor = decision.factors.find(f => f.name === (c.metric === "uca_cash_flow" ? "uca_positive" : c.metric));
         if (["dscr", "fccr", "global_dscr", "uca_cash_flow"].includes(c.metric)) {
             const h = object(c.policy_headroom, "policy headroom");
@@ -336,13 +338,13 @@ function objectOrArray(value: unknown): Obj { requireCase(value !== null && type
 export function guardComparison(value: unknown, etag: string | null): StoredComparison {
     const r = object(value, "original comparison");
     finiteJson(r, 0, 100);
-    requireCase(r.schema_version === "commercial-scenario-comparison-v1" && r.storage_serialization_version === "scenario-comparison-json-v1" && r.persisted === true && canonicalId(r.comparison_id) && canonicalId(r.case_id) && canonicalId(r.baseline_run_id) && revision(r.baseline_revision) && hash(r.payload_hash), "comparison storage identity");
+    requireCase(["commercial-scenario-comparison-v1", "commercial-scenario-comparison-v2"].includes(String(r.schema_version)) && r.storage_serialization_version === "scenario-comparison-json-v1" && r.persisted === true && canonicalId(r.comparison_id) && canonicalId(r.case_id) && canonicalId(r.baseline_run_id) && revision(r.baseline_revision) && hash(r.payload_hash), "comparison storage identity");
     requireCase(timestamp(r.recorded_at) && /^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{6}\+00:00$/.test(r.recorded_at) && r.actor === "prototype-demo-unverified", "comparison recording time/actor");
     guardRecording(r.recording);
     requireCase(etag === `"scenario-comparison-json-v1:${r.case_id}:${r.comparison_id}:${r.payload_hash}"`, "comparison ETag");
     const p = object(r.preview, "original preview"), { b, a } = baselineEnvelope(p);
     requireCase(b.case_id === r.case_id && b.revision === r.baseline_revision && b.run_id === r.baseline_run_id, "inner/outer original baseline");
-    const known = p.scenario_definition_version === "commercial-scenario-definition-v1" && p.calculation_version === "commercial-calculation-v1" && a.schema_version === "commercial-assessment-v1" && a.calculation_version === "commercial-calculation-v1" && a.serialization_version === "assessment-json-v1";
+    const known = p.schema_version === schema && p.scenario_definition_version === "commercial-scenario-definition-v2" && p.calculation_version === "commercial-calculation-v2" && a.schema_version === "commercial-assessment-v2" && a.calculation_version === "commercial-calculation-v2" && a.serialization_version === "assessment-json-v2";
     return { record: r as ComparisonRecord, etag: etag!, preview: known ? guardPreview(p) : null, compatibility: known ? null : `Original definition: ${p.scenario_definition_version} / ${p.calculation_version}; baseline ${a.schema_version} / ${a.calculation_version} / ${a.serialization_version}. Original JSON remains available; typed projection and new preview are unavailable.` };
 }
 export function guardComparisonPage(value: unknown, caseId: string): Page<ComparisonSummary> {
@@ -355,7 +357,7 @@ export function guardComparisonPage(value: unknown, caseId: string): Page<Compar
         const s = object(v, "comparison summary");
         requireCase(s.case_id === caseId && canonicalId(s.comparison_id) && canonicalId(s.baseline_run_id) && revision(s.baseline_revision) && timestamp(s.recorded_at) && hash(s.preview_fingerprint) && !ids.has(String(s.comparison_id)), "summary identity");
         ids.add(String(s.comparison_id));
-        requireCase(s.schema_version === "commercial-scenario-comparison-v1" && s.storage_serialization_version === "scenario-comparison-json-v1" && s.preview_schema_version === schema && s.preview_serialization_version === serialization && text(s.policy_version) && text(s.scenario_definition_version) && text(s.calculation_version), "summary versions");
+        requireCase(["commercial-scenario-comparison-v1", "commercial-scenario-comparison-v2"].includes(String(s.schema_version)) && s.storage_serialization_version === "scenario-comparison-json-v1" && ((s.preview_schema_version === schema && s.preview_serialization_version === serialization) || (s.preview_schema_version === "commercial-scenario-preview-v1" && s.preview_serialization_version === "scenario-preview-json-v1")) && text(s.policy_version) && text(s.scenario_definition_version) && text(s.calculation_version), "summary versions");
         const rows = array(s.scenarios, "scenario summaries"), keys = new Set<string>();
         requireCase(rows.length >= 1 && rows.length <= 10 && s.scenario_count === rows.length, "scenario count");
         for (const v of rows) {

@@ -1,0 +1,203 @@
+{
+  "checked_at": "2026-10-14T20:20:56.645757+00:00",
+  "source": "https://api.osv.dev/v1/querybatch",
+  "environment": "clean Python 3.12, requirements-dev.txt + constraints-dev-py312.txt",
+  "results": [
+    {
+      "package": {
+        "name": "annotated-doc",
+        "version": "0.0.5"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "annotated-types",
+        "version": "0.8.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "anyio",
+        "version": "4.15.1"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "ast_serialize",
+        "version": "0.13.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "click",
+        "version": "8.5.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "fastapi",
+        "version": "0.142.2"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "h11",
+        "version": "0.16.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "httpcore2",
+        "version": "2.13.1"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "httpx2",
+        "version": "2.13.1"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "idna",
+        "version": "3.20"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "iniconfig",
+        "version": "2.3.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "librt",
+        "version": "0.16.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "mypy",
+        "version": "2.4.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "mypy_extensions",
+        "version": "1.1.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "opentelemetry-api",
+        "version": "1.45.1"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "packaging",
+        "version": "26.3"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "pathspec",
+        "version": "1.1.1"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "pluggy",
+        "version": "1.6.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "pydantic",
+        "version": "2.13.5"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "pydantic_core",
+        "version": "2.46.5"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "Pygments",
+        "version": "2.21.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "pytest",
+        "version": "9.1.1"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "ruff",
+        "version": "0.17.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "starlette",
+        "version": "1.7.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "truststore",
+        "version": "0.10.4"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "typing-inspection",
+        "version": "0.4.4"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "typing_extensions",
+        "version": "4.16.0"
+      },
+      "result": {}
+    },
+    {
+      "package": {
+        "name": "uvicorn",
+        "version": "0.54.0"
+      },
+      "result": {}
+    }
+  ]
+}

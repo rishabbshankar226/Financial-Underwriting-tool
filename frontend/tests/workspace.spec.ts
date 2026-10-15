@@ -138,7 +138,7 @@ test("UCA card displays the configured cash-flow floor from the API", async ({
     const factor = body.factors.find(
       (item: { name: string }) => item.name === "uca_positive",
     );
-    factor.threshold = 400000;
+    factor.threshold = "400000";
     factor.passed = false;
     body.outcome = "review";
     await route.fulfill({ response, json: body });

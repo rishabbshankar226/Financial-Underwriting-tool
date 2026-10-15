@@ -1,3 +1,4 @@
+import { formatDecimal, isDecimal, shiftDecimal } from "./decimal";
 import { useEffect, useRef, useState } from "react";
 import {
   annualFields,
@@ -25,6 +26,7 @@ const disclaimer =
   "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.";
 const labels: Record<string, string> = {
   gross_receipts: "Gross receipts",
+  gross_profit: "Gross profit",
   cogs: "COGS",
   operating_expense_excl_dna_interest_comp: "Operating expenses",
   officer_compensation: "Officer compensation",
@@ -56,8 +58,7 @@ const labels: Record<string, string> = {
   ap_increase: "AP increase",
   cash_taxes_paid: "Cash taxes paid",
 };
-const money = (value: number) =>
-  value.toLocaleString("en-US", { maximumFractionDigits: 2 });
+const money = (value: string) => formatDecimal(value, 2);
 const periodLabel = (year: Partial<Period>, index: number) =>
   year.period_start && year.period_end
     ? `${year.period_start} – ${year.period_end}`
@@ -65,8 +66,8 @@ const periodLabel = (year: Partial<Period>, index: number) =>
 function factorText(f: Factor): string {
   const v = f.raw_value;
   if (v === null) return "Not applicable";
-  if (typeof v !== "number") return String(v);
-  return f.name === "uca_positive" ? `$${money(v)}` : `${v.toFixed(3)}x`;
+  if (!isDecimal(v)) return String(v);
+  return f.name === "uca_positive" ? `$${money(v)}` : `${formatDecimal(v, 3)}x`;
 }
 function TraceDetail({
   metric,
@@ -95,7 +96,7 @@ function TraceDetail({
             {o.raw_value === null ? "Not applicable" : String(o.raw_value)}{" "}
             {o.unit}
           </span>
-          <small>{o.reference_type}</small>
+          <small>{o.reference_type}{o.reported_value !== null && ` · Reported component: ${formatDecimal(String(o.reported_value), 2)} ${o.unit}`}</small>
         </div>
       ))}
       <p>
@@ -150,10 +151,10 @@ export default function App() {
   function field(
     path: string,
     label: string,
-    value: number,
+    value: string | number,
     unit: EditableField["unit"] = "USD",
-    min?: number,
-    max?: number,
+    min?: string | number,
+    max?: string | number,
     integer = false,
     period?: string,
   ) {
@@ -186,7 +187,7 @@ export default function App() {
   function assumptionGroup(
     title: string,
     prefix: string,
-    values: Record<string, number>,
+    values: Record<string, string | number>,
     period?: string,
   ) {
     return (
@@ -228,10 +229,10 @@ export default function App() {
               )}
               <strong>
                 {percent
-                  ? `${money(value * 100)}%`
+                  ? `${money(shiftDecimal(String(value), 2))}%`
                   : integer
                     ? `${value} months`
-                    : `$${money(value)}`}
+                    : `$${money(String(value))}`}
               </strong>
             </div>
           );
@@ -533,12 +534,12 @@ export default function App() {
                                   value: y[key],
                                   unit: "USD",
                                   min:
-                                    key === "interest_expense" ? 0 : undefined,
+                                    key === "interest_expense" ? "0" : undefined,
                                   period: periodLabel(y, i),
                                 });
                               }}
                             >
-                              ${money(y[key])}
+                              ${money(assessment?.historical_spread[i].reported_financials[key] ?? y[key])}
                             </button>
                           </td>
                         ))}
@@ -547,6 +548,7 @@ export default function App() {
                     {assessment &&
                       (
                         [
+                          "gross_profit",
                           "ordinary_business_income",
                           "ebitda",
                           "k1_distribution_ratio",
@@ -570,6 +572,7 @@ export default function App() {
             ) : (
               <p>No accepted inputs yet.</p>
             )}
+            {assessment && <p className="fine">Report amounts reconcile to income totals in cents. Editing opens the original unrounded input.</p>}
             {accepted?.mode === "legacy" && (
               <p className="fine">
                 Legacy inputs have no verified dates or dated calculation trace.
@@ -586,7 +589,7 @@ export default function App() {
                   <strong>{factorText(f)}</strong>
                   <small>
                     {f.name === "uca_positive"
-                      ? `Must exceed $${money(Number(f.threshold))}`
+                      ? `Must exceed $${money(String(f.threshold))}`
                       : `Policy: ${f.comparison_operator ?? "comparison unavailable"} ${String(f.threshold)}`}{" "}
                     ·{" "}
                     {f.passed === null
@@ -692,6 +695,7 @@ export default function App() {
               </h3>
               {(
                 [
+                  "gross_profit",
                   "ordinary_business_income",
                   "ebitda",
                   "k1_distribution_ratio",

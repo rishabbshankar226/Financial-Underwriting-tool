@@ -37,7 +37,7 @@ Replace `<stored_run_id>` with the selected revision's UUID. All four assumption
 
 ```json
 {
-  "schema_version": "commercial-scenario-preview-v1",
+  "schema_version": "commercial-scenario-preview-v2",
   "baseline_run_id": "<stored_run_id>",
   "scenarios": [
     {
@@ -45,10 +45,10 @@ Replace `<stored_run_id>` with the selected revision's UUID. All four assumption
       "name": "Revenue down 10%",
       "rationale": "Other assumptions held fixed",
       "assumptions": {
-        "revenue_change": -0.1,
-        "cogs_change": 0,
-        "operating_expense_change": 0,
-        "proposed_rate_change_bps": 0
+        "revenue_change": "-0.1",
+        "cogs_change": "0",
+        "operating_expense_change": "0",
+        "proposed_rate_change_bps": "0"
       }
     }
   ]
@@ -71,7 +71,7 @@ Limits:
 - 1–10 scenarios with distinct keys matching `[A-Za-z0-9_-]{1,64}`.
 - Trimmed nonblank names up to 120 characters and rationales up to 2,000 characters.
 - 1,000,000 actual streamed request bytes. The byte limit does not trust `Content-Length` and stops reading when exceeded.
-- Strict fields and finite JSON numbers: unknown fields, duplicate object keys, numeric strings, booleans in numeric fields and non-finite tokens are rejected.
+- Strict fields and exact decimal strings: unknown fields, duplicate object keys, booleans in numeric fields and non-finite tokens are rejected. Existing HTTP numeric tokens are decoded exactly for compatibility. Input precision and projected values must satisfy the documented decimal bounds.
 
 ## Held-fixed assumptions
 
@@ -89,7 +89,7 @@ Factor comparisons retain both decisions' raw values, operators and boundaries. 
 
 Trace fact IDs distinguish `baseline.*` from `projection.*`. Baseline trace rows retain their original numeric operands. Assumption rows show the baseline input, shock and projected value. Input references resolve against a scenario context containing the scenario fields plus the envelope's `baseline` and `policy_snapshot`; projected operating and loan inputs live under `/projection_inputs`.
 
-The preview fingerprint uses SHA-256 over compact sorted-key UTF-8 JSON containing baseline case/revision/run identity, baseline payload hash, normalized command, retained policy and versions. The versions are `commercial-scenario-preview-v1`, `commercial-scenario-definition-v1`, `scenario-preview-json-v1` and the unchanged `commercial-calculation-v1`. It contains no new timestamp or randomly generated ID. Repeating the same request against the same stored baseline produces the same response and fingerprint.
+The preview fingerprint uses SHA-256 over compact sorted-key UTF-8 JSON containing baseline case/revision/run identity, baseline payload hash, normalized command, retained policy and versions. Archived numeric v1 baselines cannot produce a new v2 preview. The versions are `commercial-scenario-preview-v2`, `commercial-scenario-definition-v2`, `scenario-preview-json-v2` and `commercial-calculation-v2`. It contains no new timestamp or randomly generated ID. Repeating the same request against the same stored baseline produces the same response and fingerprint.
 
 ## Errors
 

@@ -1,69 +1,113 @@
-# Verification
+# Verification evidence
 
-Run `scripts/run_all_checks.sh` from the repository root with the Python environment active. The setup commands are in the [README](../README.md#verify-the-project). Python 3.12 on Linux and Node 22 are the CI baseline.
+Target: `rishabbshankar226/Financial-Underwriting-tool` only.
+Baseline: `1b59a90f715853a41c5791edf6dce03c1a77839e`.
+The approved Decimal migration is implemented. Authentication, SBA evidence and
+independent operating-policy approval remain open production gates.
 
-## Checks
+## Executed local checks
 
-| Check | What it verifies |
-|---|---|
-| Python dependency consistency | Installed requirements have compatible versions |
-| Independent reference calculator | Core formulas match pinned synthetic results; mutation checks catch known formula errors |
-| Backend tests | Inputs, calculations, policy decisions, API contracts, and case storage |
-| Frontend dependency audit | No reported high or critical dependency findings |
-| Frontend build | TypeScript checks and the Vite production build |
-| Browser tests | Workspace behavior against a running backend |
+Verified 2026-10-15 UTC, following the audit begun 2026-10-14. A clean Python
+3.12 environment was installed from the exact development requirements and
+constraints. CI uses Python 3.12 and Node 22; local Node is 24.19.0.
 
-The script stops at the first failure and leaves the command's output visible. Browser tests start development servers, so ports 8000 and 5173 must be free.
+| Executed command | Observed result |
+| --- | --- |
+| `python -m pip check` | No broken requirements found |
+| `python -m ruff check backend/app backend/tools backend/tests gate` | All checks passed |
+| `python -m mypy --strict backend/app backend/tools gate/reference_calculator.py` | No issues in 30 source files |
+| `python gate/reference_calculator.py --selftest` | 18 values and 2 flags passed; all 7 named mutations killed |
+| `python docs/precision_probe.py` | Four original defects pass exact expected results |
+| `cd backend && python -m pytest -q` | 768 passed in 20.10s |
+| `cd frontend && npm run test:decimal` | 5 passed, including 3,012 generated signed rounding cases |
+| `cd frontend && ./node_modules/.bin/tsc --noEmit` | Passed |
+| `cd frontend && npm run build` | Passed; Vite 8.3.1, 35 transformed modules |
+| `cd frontend && npm audit --audit-level=high` | Exit 0; 0 vulnerabilities reported |
+| Three contract spec files via Playwright | 103 passed in 3.3s |
+| `tests/scenario-recovery.spec.ts` via Playwright | 6 passed in 1.9s |
 
-These checks establish regression behavior for synthetic fixtures. They do not establish fitness for real lending; see the [model documentation](MODEL_DOCUMENTATION.md) for the validation limits.
+Published-tree CI results are recorded after verification below. A blocked
+launch is never counted as a passing browser interaction test.
 
-## Independent arithmetic checks
+## Regression and property checks
 
-`gate/reference_calculator.py` is a second implementation of the core formulas, with pinned results for three synthetic borrowers. The application never imports it. Backend tests compare their results with its expected numbers.
+The new precision suite first reproduced 29 failures and 5 passes on the
+pre-migration implementation. Current tests preserve the original accounting
+identities, thresholds and failure assertions.
 
-Run the arithmetic and backend checks separately:
+| Suite | Properties and failures verified |
+| --- | --- |
+| `test_decimal_precision.py` | Cancellation/large cents, threshold equality, HALF_EVEN, 32 generated independent annuities, policy weights, context/thread isolation, malformed inputs and immutable v1 receipt bytes |
+| `test_decimal_math.py` | Numeric bounds/traps, residual ties, maximum rate/term, Metric validation and direct-v2 JSON precision rejection |
+| `test_reporting_reconciliation.py` | 120 fixed-seed ledgers / 240 periods, including subcent and large values; exact reported gross-profit/EBITDA/income identities, unchanged inputs and additive trace reconciliation |
+| `test_storage_permissions.py` | New store is 0600 under umask 0; reproduced 0644 before the fix |
+| `test_numeric_domain_audit.py` | Payment domains/references, zero-rate identity, DTI identities and monotonicity |
+| `test_request_budget_audit.py` | Actual bytes, inclusive boundary, media types, misleading lengths, chunks, early stop and HTTP failures |
+| `test_replay_precision_audit.py` | Cent discrepancies at large balances; bounded legacy absolute tolerance |
+| API/storage/scenario suites | Exact v2 contracts, immutable archives, original retries, concurrency, restore, scenario identities and policy retention |
+| `tests/decimal-checks.mjs` | Independent integer rounding oracle, exact large balances, ties, percentages, raw numeric tokens and unsupported domains |
+| Playwright suites | Runtime guards, frozen opaque archives, command recovery and real desktop/mobile workflows |
+
+Generated checks use isolated fixed-seed standard-library generators and
+independent Decimal/integer oracles. No property-testing package was added.
+Accounting identities use exact assertions. Loan-power comparisons use a
+declared `1e-24` reference tolerance; policy comparisons use no epsilon.
+
+## Repeatable commands
+
+Use the complete [README](../README.md) setup. With the environment active,
+from the repository root:
 
 ```bash
-python3 gate/reference_calculator.py --selftest
-(cd backend && python3 -m pytest -q)
+python -m pip check
+python -m ruff check backend/app backend/tools backend/tests gate
+python -m mypy --strict backend/app backend/tools gate/reference_calculator.py
+python gate/reference_calculator.py --selftest
+python docs/precision_probe.py
+(cd backend && python -m pytest -q)
+(cd frontend && ./node_modules/.bin/tsc --noEmit)
+npm --prefix frontend run test:decimal
+npm --prefix frontend audit --audit-level=high
+npm --prefix frontend run build
+(cd frontend && npx playwright install --with-deps chromium)
+./scripts/run_all_checks.sh
 ```
 
-## Dependency pins
+The aggregate script stops on the first failure. Ports 8000/5173 must be free.
+An existing isolated compatible Chromium can be selected with
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
-`backend/requirements.txt` lists direct dependencies. `backend/constraints-py312.txt` pins their complete resolved versions for Python 3.12 on Linux. CI uses the same constraints for backend and browser tests.
+## Browser provisioning and CI
 
-The pinned Starlette 1.7.0 TestClient uses `httpx2` 2.13.1, following [Starlette's supported transport](https://starlette.dev/testclient/). This replaces the deprecated plain `httpx` dependency without filtering warnings or changing application code.
+Local matching Chromium downloads were truncated or stalled. A selected
+workspace test reached browser launch and failed because the headless executable
+was absent. The 59 browser interaction tests are therefore
+**[Not executed in local runtime]**. Contract checks run without a browser:
 
-The frontend lockfile pins `source-map-js` 1.2.2 within PostCSS's existing `^1.2.1` range to address [GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q).
+```bash
+cd frontend
+npm run test:e2e -- tests/contracts.spec.ts tests/cases-contracts.spec.ts \
+  tests/scenario-contracts.spec.ts tests/scenario-recovery.spec.ts --reporter=line
+```
 
-Refresh Python pins in a clean Python 3.12 environment, review each dependency change, and run the complete verification sequence before accepting a new baseline.
+The full suite collects 168 tests: 109 contracts and 59 browser interactions.
+Final GitHub Actions logs must be inspected for the published implementation
+commit before claiming full-suite success. The older 717-backend/161-browser
+run predates this migration and does not verify it.
 
-## Browser scenario and shared-recovery coverage
+## Dependency evidence and limits
 
-The browser suite uses an owned synthetic backend and fresh temporary database.
-Scenario checks cover real preview/retention/reload; original baseline identity,
-policy, trace and factor links; percentage/basis-point normalization; Unicode
-text limits; ordered ten-row batches; historical baselines; preserving the case
-head, selected assessment and newer drafts; original JSON compatibility;
-26-record archives and cursor cycles; stale preview/detail responses; keyboard
-focus and 390px/desktop layout; opened trace/guarantor pages and 64 KiB JSON
-pages; actual 16 MiB response boundaries independent of declared lengths; and
-shared pending-write behavior across case and comparison commands.
+Runtime requirements and `constraints-py312.txt` pin runtime packages.
+Development requirements and `constraints-dev-py312.txt` add existing tests and
+approved mypy/Ruff. The clean environment has no multipart dependency. The npm
+lockfile remains the resolved frontend source.
 
-Fault injection covers commit followed by lost or malformed success, exact
-retry after reload, storage preflight/clear failure, abort-ignoring transport,
-503/Retry-After without automatic retry, known pre-commit 409 codes, and
-operation conflict with explicit discard review. Existing case-write-v1
-recovery records remain part of the regression checks. The happy-path browser
-check records page/console errors and warnings and requires none. Generated
-desktop and mobile screenshots remain under `frontend/test-results`.
+An actual OSV batch query for all 28 pinned Python development packages returned
+no matched advisories. Its dated request/response is in
+[the dependency audit](DEPENDENCY_AUDIT_2026-10-14.json). Advisory lookups do not
+prove absence of vulnerabilities.
 
-These checks validate browser/server contract use and synthetic regression
-behavior. The browser formats and compares response fields; all financial
-arithmetic, policy assessment and stress projection remain in Python. Backend
-definitions, dependency pins, storage schemas and CI configuration are unchanged
-by the scenario browser work.
-
-## Existing Chromium installations
-
-Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to the browser's absolute executable path to use an existing isolated Chromium installation. Keep its required libraries available and omit the Playwright browser download step. CI installs Playwright's bundled Chromium.
+Software tests establish synthetic regression behavior, not predictive validity,
+legal compliance, complete SBA eligibility or production access control. See
+the [audit](AUDIT_2026-10-14.md) and
+[remaining proposal](PRODUCTION_CONTRACT_APPROVAL.md).

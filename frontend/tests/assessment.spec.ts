@@ -143,7 +143,7 @@ test("older file read cannot overwrite a newer malformed selection", async ({
     File.prototype.text = function () {
       if (this.name !== "delayed.json") return read.call(this);
       return new Promise<string>((resolve) => {
-        (window as any).releaseFile = async () =>
+        (window as Window & {releaseFile?: () => Promise<void>}).releaseFile = async () =>
           resolve(await read.call(this));
       });
     };
@@ -159,7 +159,11 @@ test("older file read cannot overwrite a newer malformed selection", async ({
     buffer: Buffer.from("{"),
   });
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
-  await page.evaluate(() => (window as any).releaseFile());
+  await page.evaluate(async () => {
+    const release = (window as Window & {releaseFile?: () => Promise<void>}).releaseFile;
+    if (!release) throw new Error("Missing delayed file-read fixture");
+    await release();
+  });
   await expect(page.locator(".uploadbar")).toContainText("malformed.json");
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
 });

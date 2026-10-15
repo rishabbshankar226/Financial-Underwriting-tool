@@ -1,7 +1,7 @@
 # Spreadline model documentation
 
 **Status:** prototype / synthetic data only / not independently validated.  
-**Documentation date:** 2026-09-08.
+**Documentation date:** 2026-10-14.
 
 ## Intended use and limits
 
@@ -19,6 +19,13 @@ The arithmetic core in `backend/app/core.py` is pure and deterministic. Document
 
 Key definitions match the independent reference calculator in `gate/reference_calculator.py`: EBITDA add-backs, proposed-loan amortization, UCA-style cash flow, DSCR, FCCR, global DSCR, K-1 history, and consumer DTI.
 
+The current calculator uses isolated 96-digit Decimal contexts and exact policy
+comparisons. Raw amounts and reporting allocations remain separate. HALF_EVEN
+reporting and deterministic residual-cent allocation reconcile source rows,
+additive traces and guarantor aggregates. The independent calculator uses an
+80-digit context and an algebraically different annuity expression. These are
+finite-precision implementations with explicit domains, not symbolic arithmetic.
+
 ## 2. Validation / effective challenge
 
 `gate/reference_calculator.py` is never imported by application code. Its pinned values give an outside check on the arithmetic, and its mutation tests confirm those checks catch common formula errors. The backend tests rebuild the fixture inputs and compare their outputs to its expected values.
@@ -35,7 +42,13 @@ Regulation B §1002.9 requires specific reasons tied to factors actually conside
 
 Current source: https://www.consumerfinance.gov/rules-policy/regulations/1002/9/
 
-The October 3 correctness update records raw comparison values, policy versions, and commercial decline triggers. Internal reason records now include unavailable factors with manual-review explanations and retain all failed factors. They are prototype explanation records, not legally validated applicant notices. Override rationales are checked server-side, but history and actor identity remain client-held demonstration data.
+Internal reasons record exact raw comparisons, policy versions, commercial
+decline triggers, and unavailable factors with manual-review explanations. They
+are explanation records, not legally validated applicant notices. Optional
+saved cases retain immutable server-derived events and original receipts.
+Actor attribution remains a fixed unverified demonstration identity; caller
+authentication is an open production gate. See
+[the proposed access contract](PRODUCTION_CONTRACT_APPROVAL.md).
 
 If a synthetic credit-file input participates in a consumer decision, documentation flags that a real system using consumer-report information may trigger parallel FCRA notice obligations. Spreadline performs no bureau pull.
 

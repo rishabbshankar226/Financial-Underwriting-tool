@@ -4,7 +4,7 @@ The default synthetic Alpine case uses the dated assessment API. Explicit legacy
 
 ## Views
 
-- **Spread:** all nine annual inputs across supplied periods, plus dated OBI, EBITDA, and K-1 ratio. Selecting an earlier period does not change current coverage to historical coverage.
+- **Spread:** all nine annual inputs across supplied periods, plus reconciled gross profit, OBI, EBITDA, and K-1 ratio. Selecting an earlier period does not change current coverage to historical coverage.
 - **Assumptions:** annual existing debt, proposed loan, supplied guarantors, and latest-period working capital. Input amounts are editable with field-specific validation and rationale. Dates, case structure, and repayment conventions are changed through complete JSON import.
 - **Details:** backend definitions, expressions, actual operands and references, raw results, K-1 comparison periods, guarantor contributions, raw policy comparisons, and the complete policy snapshot. The content fingerprint does not authenticate documents.
 - **Memo:** a narrative from the accepted response's factors and reasons, unavailable while an input is pending/rejected.
@@ -32,7 +32,7 @@ The default synthetic Alpine case uses the dated assessment API. Explicit legacy
 
 Selection identifiers are allocated before asynchronous file reads. Raw import text goes unchanged to the chosen endpoint, preserving duplicate-key rejection. The byte limit is inclusive at 1,000,000 bytes. Response guards validate the nested display contract and structural references; they do not recompute financial arithmetic or validate document authenticity.
 
-Legacy defaults/coercions needed to display accepted input are normalized only after backend success. Legacy annual periods remain ordinal, dated-only trace/spread results remain unavailable, and no dates or explicit units are inferred.
+Legacy financial values are explicitly normalized only after backend success; booleans are rejected. V2 inputs, edits, percentage conversions and reporting use decimal strings and BigInt operations. Import presentation preserves original numeric tokens while the unmodified body goes to the backend. Legacy annual periods remain ordinal, dated-only trace/spread results remain unavailable, and no dates or explicit units are inferred.
 
 Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. This workspace has no authentication or export. Decision scores and policy values remain illustrative prototype settings.
 
@@ -115,4 +115,4 @@ a database.
 
 ## Verification
 
-Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the existing dated/legacy workspace and saved-case workflow, plus scenario authoring, immutable comparison retention/original reads, archive pagination, shared recovery, bounded responses and rendering, delayed responses, unsupported definitions, keyboard focus and mobile layout. See [verification coverage](VERIFICATION.md#browser-scenario-and-shared-recovery-coverage). Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. Financial baseline tests and the independent reference gate remain unchanged.
+Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the existing dated/legacy workspace and saved-case workflow, plus scenario authoring, immutable comparison retention/original reads, archive pagination, shared recovery, bounded responses and rendering, delayed responses, unsupported definitions, keyboard focus and mobile layout. See [verification coverage](VERIFICATION.md#browser-scenario-and-shared-recovery-coverage). Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. V2 financial tests include exact transport, reporting allocation and immutable numeric-v1 compatibility; the independent reference gate uses a separate Decimal implementation.

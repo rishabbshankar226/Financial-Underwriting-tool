@@ -15,10 +15,16 @@ jobs:
           python-version: '3.12'
       - name: Install backend dependencies
         run: |
-          python -m pip install -r backend/requirements.txt -c backend/constraints-py312.txt
+          python -m pip install -r backend/requirements-dev.txt -c backend/constraints-dev-py312.txt
           python -m pip check
+      - name: Python lint and strict types
+        run: |
+          python -m ruff check backend/app backend/tools backend/tests gate
+          python -m mypy --strict backend/app backend/tools gate/reference_calculator.py
       - name: Reference calculator self-test
-        run: python gate/reference_calculator.py --selftest
+        run: |
+          python gate/reference_calculator.py --selftest
+          python docs/precision_probe.py
       - name: Backend tests
         run: cd backend && python -m pytest -q
 
@@ -33,6 +39,8 @@ jobs:
         run: cd frontend && npm ci
       - name: Audit high-severity dependencies
         run: cd frontend && npm audit --audit-level=high
+      - name: Exact decimal presentation tests
+        run: cd frontend && npm run test:decimal
       - name: Build
         run: cd frontend && npm run build
 
@@ -41,7 +49,7 @@ jobs:
           python-version: '3.12'
       - name: Install backend for browser tests
         run: |
-          python -m pip install -r backend/requirements.txt -c backend/constraints-py312.txt
+          python -m pip install -r backend/requirements-dev.txt -c backend/constraints-dev-py312.txt
           python -m pip check
       - name: Install test browser
         run: cd frontend && npx playwright install --with-deps chromium

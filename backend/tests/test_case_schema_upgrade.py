@@ -1,16 +1,15 @@
 """Version dispatch and copy upgrades use a store produced by the pre-3B app."""
-from concurrent.futures import ThreadPoolExecutor
-from hashlib import sha256
 import json
-from pathlib import Path
 import sqlite3
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
+from hashlib import sha256
+from pathlib import Path
 from threading import Barrier
 from uuid import uuid4
 
 import pytest
-
 from app.case_contracts import CaseCreate, CaseEdit
 from app.cases import CaseStore, CaseStoreError, serialize_snapshot
 
@@ -50,7 +49,9 @@ def test_frozen_v1_schema_and_receipts_are_from_reviewed_source(v1):
         assert sha256(receipt.encode()).hexdigest() == expected["receipt_sha256"]
         snapshot = store.get(evidence["case_id"], json.loads(receipt)["revision"])
         assert serialize_snapshot(snapshot) == receipt
-        assert store.replay(snapshot.case_id, snapshot.revision).status == "matched"
+        replay = store.replay(snapshot.case_id, snapshot.revision)
+        assert replay.status == "replay_unavailable"
+        assert replay.differences == [] and replay.explanation
 
 
 def test_new_stores_are_v2_and_parallel_initializers_agree(tmp_path):
@@ -65,7 +66,7 @@ def test_new_stores_are_v2_and_parallel_initializers_agree(tmp_path):
                       "scenario_comparison_operations": 0}
 
 
-def test_opening_v1_does_not_upgrade_and_case_writes_still_work(v1):
+def test_opening_v1_preserves_receipt_retries_and_refuses_archived_revision_edits(v1):
     before = v1.read_bytes()
     store = CaseStore(v1)
     assert v1.read_bytes() == before
@@ -76,10 +77,13 @@ def test_opening_v1_does_not_upgrade_and_case_writes_still_work(v1):
     create = CaseCreate.model_validate_json(json.dumps(json.loads(original[0])["command"]))
     assert serialize_snapshot(store.create(create, original[1]).snapshot) == serialize_snapshot(first)
     from app.cases import etag_for
-    changed = store.edit(head.case_id, CaseEdit(field_path="/years/1/gross_receipts", new_value=4400000,
-                                              rationale="Later synthetic correction"), etag_for(head), str(uuid4()))
-    assert changed.snapshot.revision == 4
-    assert store.verify()["schema_version"] == 1
+    with pytest.raises(CaseStoreError) as error:
+        store.edit(head.case_id, CaseEdit(field_path="/years/1/gross_receipts", new_value=4400000,
+                                         rationale="Later synthetic correction"), etag_for(head), str(uuid4()))
+    assert error.value.status == 409 and error.value.code == "baseline_unsupported"
+    assert store.verify() == evidence["summary"]
+    assert store.get(head.case_id).model_dump(mode="json") == head.model_dump(mode="json")
+    assert v1.read_bytes() == before
 
 
 def test_copy_upgrade_preserves_source_and_original_rows_receipts(v1, tmp_path):
@@ -190,8 +194,8 @@ def test_upgrade_failure_cleans_only_new_copy_and_keeps_source(v1, tmp_path, mon
 
 
 def test_successful_backup_steps_still_enforce_overall_copy_deadline(v1, tmp_path, monkeypatch):
-    from app.case_migrations import upgrade_store
     import app.cases as cases
+    from app.case_migrations import upgrade_store
     before, target = v1.read_bytes(), tmp_path / "timeout.sqlite3"
     clock = iter([0.0, 0.0, 31.0])
     monkeypatch.setattr(cases, "monotonic", lambda: next(clock))
@@ -202,8 +206,8 @@ def test_successful_backup_steps_still_enforce_overall_copy_deadline(v1, tmp_pat
 
 
 def test_copy_deadline_stops_repeated_successful_restarts_from_concurrent_writes(v1, tmp_path, monkeypatch):
-    from app.case_migrations import upgrade_store
     import app.cases as cases
+    from app.case_migrations import upgrade_store
     with sqlite3.connect(v1) as connection:
         connection.execute("PRAGMA page_size=512")
         connection.execute("VACUUM")

@@ -1,233 +1,229 @@
 # Spreadline
 
-Spreadline is a deterministic underwriting reference application for synthetic
-commercial, consumer, and SBA cases. A FastAPI service calculates financial
-facts and policy comparisons; a React workspace displays those results and
-records explicit analyst edits. Optional SQLite storage retains original dated
-commercial assessments, revisions, and reviewed scenario comparisons.
+Deterministic underwriting calculations, exact financial reports, and immutable
+local assessment records. The FastAPI service calculates commercial and
+consumer ratios and policy comparisons. A React workspace reviews dated
+spreads, analyst edits, and scenario comparisons. SQLite retains original
+inputs, decisions, traces, policies, and retry receipts.
 
-## Operational status
-
-This repository is a development reference implementation. It is not ready for
-real borrower information or unattended lending decisions. Current financial
-contracts use binary floating-point values, the API has no authentication, and
-the bundled SBA size table contains no official rows. Passing regression tests
-does not resolve these production blockers or validate the illustrative policy.
-
-The [audit ledger](docs/AUDIT_2026-10-14.md) distinguishes implemented fixes from
-remaining findings. The [approval proposal](docs/DECIMAL_MIGRATION_APPROVAL.md)
-defines the contract, calculation, and verification changes required next.
+Production hardening remains incomplete. Caller authentication and verified
+actor attribution require the [next contract approval](docs/PRODUCTION_CONTRACT_APPROVAL.md).
+The SBA dataset contains source metadata and no official thresholds; SBA
+eligibility remains unavailable. Default credit rules are illustrative and
+require independent approval for actual lending. Use synthetic inputs until
+these controls and operating policies are implemented and validated.
 
 ## Architecture
 
-| Component | Responsibility |
+| Module | Responsibility |
 | --- | --- |
-| `backend/app/schemas.py`, `assessment_contracts.py`, `scenario_contracts.py` | Request and response validation; dated periods, units, and scenario bounds |
-| `backend/app/core.py` | Shared financial arithmetic and calculation operands |
-| `backend/app/decision.py`, `config.py` | Explicit policy comparisons, outcomes, and reason codes |
-| `backend/app/assessment.py`, `scenarios.py` | Dated spreads, fingerprints, and hypothetical projections |
-| `backend/app/cases.py`, `comparison_storage.py` | Atomic SQLite writes, immutable revisions, original receipts, and integrity checks |
-| `backend/app/main.py`, `request_limits.py`, route adapters | HTTP transport, request budgets, validation, and error translation |
-| `frontend/src/` | Typed response guards, input editing, saved-write recovery, and financial presentation |
-| `gate/reference_calculator.py` | Independent fixture calculations and mutation checks; never imported by the application |
+| `backend/app/finance.py` | Decimal validation, isolated contexts, canonical values, HALF_EVEN reporting and residual allocation |
+| `schemas.py`, `assessment_contracts.py`, `scenario_contracts.py` | Strict runtime request and response contracts |
+| `core.py`, `decision.py`, `config.py` | Shared calculations, recorded operands, policy comparisons and grounded reasons |
+| `assessment.py`, `scenarios.py` | Dated financial reports, hypothetical projections and fingerprints |
+| `cases.py`, `comparison_storage.py` | Atomic immutable records, original receipts, integrity verification and pagination |
+| `main.py`, route adapters, `request_limits.py` | Bounded HTTP intake, exact numeric-token decoding and error translation |
+| `frontend/src/` | Typed response guards, exact editor values, report formatting and explicit write recovery |
+| `gate/reference_calculator.py` | Independent Decimal reference formulas and named mutation checks |
 
-All financial decisions and projections run in Python. There is no LLM,
-stochastic model, bureau integration, OCR service, or external financial-data
-connection. Browser code formats server facts and normalizes editor inputs.
+The application has no LLM, Monte Carlo model, bureau connection, or OCR
+service. Python calculates financial results. Browser BigInt arithmetic handles
+decimal-place conversion, validation, and financial presentation.
 
-## Calculation and decision methodology
+## Precision and reporting
 
-For each supplied annual period:
+Financial calculations use string-initialized `Decimal` with 96 significant
+digits in fresh local contexts. DivisionByZero, InvalidOperation, Overflow,
+and Underflow traps are enabled. Intermediate exponent capacity supports the
+full declared loan range; returned results have an explicit finite range.
+Ambient process/thread rounding cannot change the calculations.
 
-- Gross profit = gross receipts − COGS.
-- Ordinary business income = gross profit − operating expenses − officer
-  compensation − depreciation − amortization − existing interest − Section 179.
-- EBITDA = ordinary business income + existing interest + depreciation +
-  amortization + Section 179.
-- Proposed monthly debt service uses a fully amortizing fixed-rate payment.
-  For principal `P`, nominal annual rate `a`, and term `n`, monthly rate `r = a/12`
-  and payment `P*r / (1 - (1+r)^(-n))`. At zero rate, payment is `P/n`.
-  Annualized service is twelve monthly payments.
-- Business debt service = existing interest + annual CPLTD + proposed annualized
-  debt service. DSCR = EBITDA / business debt service.
-- Simplified FCCR = EBITDA / (business debt service + operating lease).
-- Global DSCR uses ownership-weighted business EBITDA plus supplied outside
-  income over business and personal debt service. With no guarantors, it uses
-  full business EBITDA.
-- Simplified UCA cash flow = EBITDA − cash taxes − (increase in receivables +
-  increase in inventory − increase in payables).
-- Consumer front-end DTI uses housing principal/interest, tax, and insurance;
-  back-end DTI adds other monthly debt. Both divide by positive gross income.
+Financial input supports up to 34 significant digits, zero, or a nonzero
+magnitude from `1e-30` through `1e30`. Annual nominal rates lie in `[0, 1]`.
+Dated loan terms are integer months from 12 through 12,000; the legacy payment
+helper also supports shorter positive terms. Unsupported values are rejected.
 
-Policy comparisons use unrounded calculation values. Decision display values
-currently use Python's binary-float rounding; exact decimal reporting is an
-open audit finding. The weighted decision score is illustrative and is not a
-calibrated probability of default.
+Canonical JSON financial values are decimal strings. Term months, revisions,
+indexes, employee counts, and credit-score inputs remain integers. Existing
+HTTP numeric input is decoded from its original token before binary float
+conversion. Direct Python callers should use `Decimal` or decimal strings;
+new v2 model JSON validation rejects floating financial tokens rather than
+silently rounding them. Existing v1 intake is explicitly normalized.
 
-Negative coverage denominators, invalid loan terms, and non-finite direct
-calculation inputs are rejected. A zero debt-service denominator remains an
-explicit not-applicable metric in HTTP assessments and cannot satisfy approval.
-Legacy Python coverage helpers retain their existing infinity sentinel until
-the approved decimal contract replaces it.
+Raw intermediates remain separate from reported amounts. Reporting applies
+`ROUND_HALF_EVEN`: monetary figures use cents and ratios use four places.
+`reported_financials` reconciles annual source rows to gross profit, EBITDA,
+and ordinary income. Guarantor reported contributions reconcile to their
+reported aggregates. Additive traces include contextual reported operands
+whose signed sum equals the reported total. Residual cents go to the largest
+signed rounding residual, with input order breaking ties. Raw values and
+accepted inputs remain unchanged; reporting allocations never determine policy.
 
-Dated inputs must contain complete, ordered annual periods. Working capital
-must match the latest period. K-1 stability requires comparable adjacent annual
-periods; missing periods are not inferred. Scenario previews retain observed
-history and the original policy while changing only their explicit targets.
+## Methodology
 
-The SBA loader fails closed when its required NAICS row is absent. Default
-coverage, consumer, and SBA rules are illustrative configuration values, not a
-claim that an actual transaction complies with current regulation.
+- Gross profit = receipts − COGS. Ordinary income subtracts operating expenses,
+  officer compensation, depreciation, amortization, existing interest, and
+  Section 179. EBITDA adds back interest, depreciation, amortization, and
+  Section 179.
+- For principal `P`, annual nominal rate `a`, and months `n`, monthly rate
+  `r = a/12` and level payment is `P*r/(1-(1+r)^(-n))`. A zero rate uses `P/n`.
+  Annual proposed service uses twelve unrounded monthly payments; the displayed
+  monthly amount is an indicative rounded amount, not an amortization schedule.
+- Business service = existing interest + annual CPLTD + proposed annual service.
+  DSCR = EBITDA / business service. Simplified FCCR adds operating leases to
+  the denominator.
+- Global DSCR uses ownership-weighted EBITDA plus outside income over business
+  and personal service. Empty guarantors use full business EBITDA. K-1
+  distributions are not added to EBITDA again.
+- Simplified UCA = EBITDA − cash taxes − (AR increase + inventory increase − AP
+  increase). Consumer DTI divides housing and total monthly debt by positive
+  gross monthly income.
 
-## Prerequisites
+Zero coverage denominators return an explicit unavailable result and cannot
+pass a policy factor. Negative denominators, negative consumer debt, and
+non-finite values are rejected. Financial periods must be complete, ordered,
+non-overlapping years; working capital must match the latest period. K-1
+stability uses comparable adjacent periods and does not invent missing history.
+Scenario projections retain observed history and the saved policy.
 
-- Python 3.12. SQLite commands use Python 3.12's explicit `autocommit` API.
-- Node.js 22.12 or later in the Node 22 release line, or a compatible later
-  supported release. CI uses Node 22; this audit also built with Node 24.19.0.
-- A Chromium executable for browser regression tests. CI installs Playwright's
-  matching browser build.
-- Free local ports 8000 and 5173 for browser tests.
+The weighted-rule score is not a probability of default. FCCR and UCA are
+simplified definitions. LTV, debt yield, IRR, NPV, and payment schedules are not
+implemented. See [model documentation](docs/MODEL_DOCUMENTATION.md).
 
-Direct dependencies are exactly pinned in the manifests. Python's complete
-resolution is constrained by `backend/constraints-py312.txt`; npm's complete
-resolution is retained in `frontend/package-lock.json`.
+## Setup
 
-## Setup and execution
+Prerequisites: Python 3.12, Node.js 22.12 or later in the supported Node 22 line,
+SQLite from Python 3.12, and free ports 8000/5173 for browser tests. CI uses
+Python 3.12 and Node 22.
 
-Run these commands from the repository root:
+From the repository root:
 
 ```bash
 python3.12 -m venv backend/.venv
 source backend/.venv/bin/activate
-python -m pip install -r backend/requirements.txt -c backend/constraints-py312.txt
+python -m pip install -r backend/requirements-dev.txt -c backend/constraints-dev-py312.txt
 npm --prefix frontend ci
 ```
 
-Start the backend in one terminal with the Python environment active:
+Runtime-only installations use `backend/requirements.txt` with
+`backend/constraints-py312.txt`. Development requirements add the existing test
+packages and pinned mypy/Ruff. All direct versions and transitive resolutions
+are pinned; npm uses `frontend/package-lock.json`.
+
+Start the backend with the Python environment active:
 
 ```bash
 cd backend
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Start the frontend in another terminal:
+In another terminal:
 
 ```bash
 cd frontend
 npm run dev -- --host 127.0.0.1
 ```
 
-Open `http://127.0.0.1:5173`. `VITE_API_URL` sets the backend URL at frontend
-startup/build time; its default is `http://localhost:8000`. It must not contain
-credentials. `GET /health` returns process health, not model-validation status.
+Open `http://127.0.0.1:5173`. `VITE_API_URL` sets the API base at frontend
+startup/build time; its default is `http://localhost:8000`. Keep credentials out
+of that URL and the public frontend bundle. `/health` reports process health.
 
-Submit the separate dated synthetic fixture:
+Submit the complete v2 example:
 
 ```bash
 curl --fail-with-body http://127.0.0.1:8000/commercial/assessment \
   -H 'Content-Type: application/json' \
-  --data-binary @backend/fixtures/alpine_dated.json
+  --data-binary @backend/fixtures/alpine_dated_v2.json
 ```
 
-## HTTP contracts and local storage
+## Contracts and storage
 
-| Route family | Behavior |
+| Interface | Behavior |
 | --- | --- |
-| `POST /commercial/decision` | Legacy undated commercial assessment |
-| `POST /commercial/assessment` | Dated spread, current pro forma facts, policy comparisons, trace, and fingerprint |
-| `POST /consumer/decision` | Consumer DTI and configured documentation/policy checks |
-| `POST /sba/evaluate` | SBA evaluation using an explicitly selected SOP and loaded size row |
-| `/cases` | Optional local dated-case creation, original reads, revisions, and replay |
-| `/cases/{id}/revisions/{revision}/scenarios/preview` | Read-only shocks against an explicit original saved baseline |
-| `/cases/{id}/revisions/{revision}/scenario-comparisons` | Retain a reviewed batch using its fingerprint and operation UUID |
+| `POST /commercial/decision` | Undated commercial rules and reasons |
+| `POST /commercial/assessment` | Dated v2 spread, raw/reported facts, policy and trace |
+| `POST /consumer/decision` | DTI and configured policy/documentation checks |
+| `POST /sba/evaluate` | Limited size/coverage screens; missing official rows fail closed |
+| `/cases` | Dated case creation, original reads, revisions and replay |
+| `/cases/{id}/revisions/{revision}/scenarios/preview` | Read-only shocks under the selected saved policy |
+| `/cases/{id}/revisions/{revision}/scenario-comparisons` | Immutable reviewed comparison retention |
 
-All POST, PUT, and PATCH request bodies are bounded at 1,000,000 actual bytes
-before framework decoding and route dependencies. Acceptance does not trust
-`Content-Length`. JSON intake rejects duplicate keys, non-finite tokens, invalid
-UTF-8, and container nesting above 128 levels. Dated and saved commands reject
-unknown fields; legacy models retain their documented compatibility behavior.
-Oversized requests return 413; invalid arithmetic returns 422. Local development
-CORS origins can read these error responses.
+POST/PUT/PATCH bodies are limited to 1,000,000 actual bytes before framework
+buffering and store dependencies. JSON rejects duplicates, non-finite tokens,
+invalid UTF-8 and nesting above 128 containers. Unknown model fields and
+boolean-as-money values are rejected. Oversized requests return 413; invalid
+financial input returns 422. Storage errors use `{detail: {code, message}}`.
 
-To enable storage, with the backend stopped and the Python environment active:
+Current financial versions are `commercial-assessment-v2`,
+`commercial-calculation-v2`, `assessment-json-v2`, and the v2 scenario versions.
+The SQL schema and storage wrappers remain unchanged. Archived numeric v1
+records, hashes, and original receipts are preserved. They remain readable as
+original JSON; their unsupported calculator returns `replay_unavailable`.
+Archived numeric assessments are read-only. Current v2 replay compares exact
+financial strings under the retained policy.
+
+Enable local storage from `backend`, with the server stopped:
 
 ```bash
-cd backend
 mkdir -p .spreadline-data/backups
 export SPREADLINE_CASE_DB="$PWD/.spreadline-data/cases.sqlite3"
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-`SPREADLINE_CASE_DB` is optional for stateless assessment. Missing configuration
-returns 503 from storage routes. New empty stores initialize schema v2;
-supported schema-v1 stores are not upgraded automatically. Revisions, receipts,
-and comparison records are immutable. Numeric edits require `If-Match` and an
-operation UUID; exact retries return the original committed receipt. The fixed
-demonstration actor label is not an authenticated human identity.
+New database files and backup copies use private mode 0600 on POSIX systems.
+Existing stores are not chmodded or upgraded automatically. Review permissions
+on existing files before use. Missing `SPREADLINE_CASE_DB` leaves stateless
+routes available and returns 503 from saved-case routes.
 
-See [case storage](docs/CASE_STORAGE.md) for verify/backup/restore commands and
-[saved comparisons](docs/SCENARIO_COMPARISONS.md) for the explicit copy upgrade.
-Keep databases and backups in ignored `.spreadline-data` directories or outside
-the repository. `.env` files are ignored; do not commit credentials.
+Saved writes require one operation UUID; edits also require the selected strong
+ETag. Original committed retries retain their receipts. New operations, stale
+ETags, conflicting keys, and unresolved browser tracking have explicit states.
+Neither an ETag nor an operation UUID authenticates a caller.
+
+From `backend`:
+
+```bash
+python -m tools.case_store verify --source .spreadline-data/cases.sqlite3
+python -m tools.case_store backup --source .spreadline-data/cases.sqlite3 \
+  --destination .spreadline-data/backups/review.sqlite3
+python -m tools.case_store restore --source .spreadline-data/backups/review.sqlite3 \
+  --destination .spreadline-data/restored.sqlite3
+```
+
+Destinations must be fresh. See [storage](docs/CASE_STORAGE.md),
+[scenario retention](docs/SCENARIO_COMPARISONS.md), and
+[workspace recovery](docs/WORKSPACE.md). Environment files and local databases
+are ignored by git.
 
 ## Verification
 
-With the Python environment active:
+With the Python environment active, from the repository root:
 
 ```bash
 python -m pip check
+python -m ruff check backend/app backend/tools backend/tests gate
+python -m mypy --strict backend/app backend/tools gate/reference_calculator.py
 python gate/reference_calculator.py --selftest
+python docs/precision_probe.py
 (cd backend && python -m pytest -q)
 (cd frontend && ./node_modules/.bin/tsc --noEmit)
-npm --prefix frontend run build
+npm --prefix frontend run test:decimal
 npm --prefix frontend audit --audit-level=high
-```
-
-TypeScript enables strict checking and rejects unused local variables and
-parameters. The backend regression suite includes deterministic generated
-payment/DTI identities, non-finite/negative-input failures, actual streamed-body
-budgets, and cent discrepancies in replay. These checks still use the v1 float
-contract; they do not prove exact decimal accounting.
-
-For browser verification:
-
-```bash
+npm --prefix frontend run build
 (cd frontend && npx playwright install --with-deps chromium)
 ./scripts/run_all_checks.sh
 ```
 
-Alternatively, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to an existing isolated
-Chromium installation and keep its system libraries available. Tests own a new
-temporary database and both local servers; they do not adopt a configured user
-database. Browser checks require a working executable; a build alone does not
-verify browser behavior.
+The backend includes exact threshold/cancellation tests, independent 80-digit
+annuity references, fixed-seed generated accounting identities, reporting
+reconciliation, context/thread isolation, strict failures, body budgets, storage
+permissions, immutable archives, retry identity and scenario invariants. Node
+checks exact browser formatting and JSON-token preservation. Playwright checks
+contracts and real desktop/mobile workflows against an owned temporary store.
 
-Python linting and strict type checking require approval to add Ruff and mypy
-as development dependencies. They are not currently installed or part of the
-verification script. Their intended commands are:
-
-```bash
-python -m ruff check backend/app backend/tools backend/tests gate
-python -m mypy --strict backend/app backend/tools
-```
-
-See [verification notes](docs/VERIFICATION.md) and the dated audit for executed
-results and blocked checks.
-
-## Security and model limits
-
-Bind the development services to loopback. CORS, ETags, operation UUIDs, and
-payload hashes do not authenticate callers. An externally reachable deployment
-requires an approved access-control boundary, TLS, verified actor attribution,
-and operational monitoring before real financial information is handled.
-
-FCCR and UCA are simplified definitions. The repository does not implement LTV,
-debt yield, IRR, NPV, or an amortization schedule. Synthetic geography checks do
-not establish disparate impact. The deterministic text extractor is not OCR,
-and each promoted field requires explicit confirmation. The official SBA table
-must be loaded and its applicability reviewed before SBA eligibility is used.
-
-Further definitions and limits are in [model documentation](docs/MODEL_DOCUMENTATION.md),
-[assessment contracts](docs/ASSESSMENT_CONTRACT.md),
-[policy sources](docs/POLICY_SOURCES.md), and
-[security architecture](docs/SECURITY_ARCHITECTURE.md).
+[Verification evidence](docs/VERIFICATION.md) distinguishes executed checks from
+blocked browser provisioning. The [audit ledger](docs/AUDIT_2026-10-14.md) records
+root causes, patches, results and open production gates. An OSV query of the 28
+pinned development-environment packages returned no matched advisories; its
+[dated response](docs/DEPENDENCY_AUDIT_2026-10-14.json) is a point-in-time lookup,
+not proof that software has no vulnerabilities.

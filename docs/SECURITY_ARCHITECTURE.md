@@ -1,17 +1,43 @@
-# Security architecture placeholders
+# Security architecture and deployment limits
 
-Spreadline processes **synthetic data only**. These are architecture locations, not a GLBA compliance certification.
+Reviewed 2026-10-14. This branch is a tested hardening checkpoint. Caller
+authentication and verified actor attribution remain open. Keep the application
+on loopback with synthetic data pending the
+[required contract approval](PRODUCTION_CONTRACT_APPROVAL.md).
 
-Current FTC Safeguards Rule resource: https://www.ftc.gov/legal-library/browse/rules/safeguards-rule
+## Implemented controls
 
-| Control | Production location | Prototype status |
-|---|---|---|
-| Encryption in transit | TLS termination / API gateway | Local development only; not certified |
-| Encryption at rest | Managed database/object store keys | No production store exists |
-| Access control | API authorization + role model | Placeholder; synthetic-only |
-| MFA | Identity provider before application session | Not implemented |
-| Audit logging | Append-only audit event store/SIEM export | Optional local dated-case revisions and immutable server-derived demonstration events are available in the browser; fixed unverified actor; unsaved and imported history remain separate |
-| Incident response | Alerting + incident runbook + notification workflow | Documentation placeholder |
-| Service-provider oversight | Vendor inventory / contracts / control reviews | Not applicable to prototype |
+| Control | Implementation and evidence | Limit |
+| --- | --- | --- |
+| Request budget | Actual POST/PUT/PATCH bytes capped at 1,000,000 before JSON buffering and database dependencies; chunk/boundary/disconnect tests | Deployment rate limiting remains necessary |
+| Structured inputs | Duplicate-key, UTF-8, depth and finite-token checks; extra fields forbidden; boolean money rejected; exact decimal decoding | Does not authenticate financial evidence |
+| Numeric bounds | 34 input digits, declared magnitude/rate/term domains, isolated 96-digit contexts with traps | Explicit finite domains |
+| Atomic writes | Operation identity, strong ETags, transactions, immutable records and original receipts | Concurrency controls do not identify a caller |
+| Archive integrity | Content/command hashes, schema identity, provenance and byte-preserving retained receipts | Hashes are not signatures; host administrators can replace the store |
+| File creation | New POSIX stores and backups use 0600; tested under umask 0 | Existing files are not chmodded; encryption remains an operator control |
+| SQL input | Bound user values and explicit accepted-field/path allowlists | Host and backup placement still require review |
+| Browser recovery | Reviewed command/key/ETag retries; no automatic ambiguous resubmission | Browser storage currently holds synthetic commands |
+| Dependencies | Exact pins, pip consistency checks, npm audit and dated OSV response | Advisory lookups are point-in-time evidence |
 
-The amended FTC Safeguards Rule includes security requirements and a breach/security-event notification requirement that took effect May 13, 2024. A real deployment needs qualified security/legal review before handling nonpublic personal information.
+## Open access boundary
+
+Saved-case and stateless financial routes have no caller guard. Events use a
+fixed demonstration actor. CORS restricts browsers, not direct network clients.
+Case UUIDs, ETags, operation keys and hashes are not credentials.
+
+The proposed minimum single-operator contract uses environment-loaded Bearer
+credentials, constant-time comparison, protection before storage dependencies,
+server-derived credential identity and memory-only browser entry. The required
+HTTP credential changes need approval. This model does not provide MFA,
+multi-user ownership or independently verified human identity.
+
+## Operating controls
+
+A real installation needs reviewed TLS termination, identity/authorization,
+protected hosts/stores/backups, encryption and key management, retention,
+recovery exercises, monitoring and incident response. The application has no
+LLM tool boundary, external OCR service or bureau connection.
+
+The [FTC Safeguards Rule](https://www.ftc.gov/legal-library/browse/rules/safeguards-rule)
+is a primary reference for institutions assessing applicability. This document
+does not establish compliance or replace the institution's review.

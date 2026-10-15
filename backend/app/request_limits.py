@@ -1,4 +1,5 @@
 """Bound write-request bodies before framework decoding or route dependencies."""
+
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
@@ -22,9 +23,12 @@ class RequestBodyLimitMiddleware:
                 return
             chunk = message.get("body", b"")
             if len(body) + len(chunk) > self.max_bytes:
-                response = JSONResponse(status_code=413, content={
-                    "detail": f"Request exceeds {self.max_bytes:,} bytes",
-                })
+                response = JSONResponse(
+                    status_code=413,
+                    content={
+                        "detail": f"Request exceeds {self.max_bytes:,} bytes",
+                    },
+                )
                 await response(scope, receive, send)
                 return
             body.extend(chunk)

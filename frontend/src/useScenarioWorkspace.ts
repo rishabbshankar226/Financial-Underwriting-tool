@@ -105,7 +105,7 @@ export function useScenarioWorkspace(workspace: ReturnType<typeof useAnalystWork
         const controller = new AbortController();
         previewRead.current = controller;
         try {
-            const command = guardScenarioCommand({ schema_version: "commercial-scenario-preview-v1", baseline_run_id: view.snapshot.run_id,
+            const command = guardScenarioCommand({ schema_version: "commercial-scenario-preview-v2", baseline_run_id: view.snapshot.run_id,
                 scenarios: rows.map(value => ({ scenario_key: value.key, name: scenarioText(value.name, 120), rationale: scenarioText(value.rationale, 2000),
                     assumptions: Object.fromEntries(shockKeys.map(k => [k, parseShock(value.shocks[k], k !== "proposed_rate_change_bps")])) })) }) as PreviewCommand;
             setBusy(true);

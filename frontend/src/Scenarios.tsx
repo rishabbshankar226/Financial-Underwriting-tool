@@ -62,7 +62,7 @@ function TraceRow({ row }: {
     {row.explanation && <p>{row.explanation}</p>}</details>;
 }
 function raw(value: number | string | boolean | null) { return value === null ? "Not applicable" : String(value); }
-function headroom(value: number | null) { return value === null ? "Not applicable" : String(value); }
+function headroom(value: string | null) { return value === null ? "Not applicable" : String(value); }
 function Projection({ preview, result }: {
     preview: ScenarioPreview;
     result: ScenarioResult;
@@ -76,7 +76,7 @@ function Projection({ preview, result }: {
       {currentFactKeys.map(key => {
             const comparison = result.comparisons.find(value => value.metric === key);
             return <tr key={key}><th scope="row">{labels[key]}</th><td className="num">{metricText(original.current_facts[key])}</td><td className="num">{metricText(result.current_facts[key])}</td>
-          <td className="num">{comparison ? comparison.delta === null ? "Not applicable" : metricText({ ...result.current_facts[key], raw_value: comparison.delta }) : "Held fixed"}
+          <td className="num">{comparison ? comparison.delta === null ? "Not applicable" : metricText({ ...result.current_facts[key], raw_value: comparison.delta, reported_value: null }) : "Held fixed"}
             {comparison?.delta_explanation && <small>{comparison.delta_explanation}</small>}</td></tr>;
         })}
     </tbody></table></div>

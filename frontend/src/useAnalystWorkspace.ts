@@ -1,6 +1,7 @@
+import { parseInputJson } from "./decimal";
 import { useEffect, useReducer, useRef, useState } from "react";
 import alpine from "../../backend/fixtures/alpine.json";
-import datedAlpine from "../../backend/fixtures/alpine_dated.json";
+import datedAlpine from "../../backend/fixtures/alpine_dated_v2.json";
 import {
   detectMode,
   guardLegacyInput,
@@ -108,7 +109,7 @@ export function useAnalystWorkspace() {
         mode === "dated"
           ? (datedAlpine as DatedRequest)
           : guardLegacyInput(alpine),
-      filename: mode === "dated" ? "alpine_dated.json" : "alpine.json",
+      filename: mode === "dated" ? "alpine_dated_v2.json" : "alpine.json",
       resetHistory: true,
     });
   }
@@ -121,7 +122,7 @@ export function useAnalystWorkspace() {
         throw new Error("Use a JSON file no larger than 1,000,000 bytes.");
       const rawJson = await file.text();
       if (id !== sequence.current) return;
-      const payload: unknown = JSON.parse(rawJson),
+      const payload: unknown = parseInputJson(rawJson),
         mode = detectMode(payload);
       await submit(
         {
@@ -404,7 +405,7 @@ export function useAnalystWorkspace() {
     const c = conflictRef.current;
     if (!c?.latest) return null;
     const command = JSON.parse(c.operation.body) as {
-      new_value: number;
+      new_value: string | number;
       rationale: string;
     };
     const value = inputField(

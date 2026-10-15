@@ -1,18 +1,42 @@
 """The dated commercial interface; legacy intake models keep their own contract."""
+
 from __future__ import annotations
 
 from datetime import date, timedelta
-from math import fsum, isfinite
-from typing import Literal
+from decimal import Decimal
+from itertools import pairwise
+from typing import Annotated, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, model_validator
 
 from .config import PolicyConfig
-from .schemas import Decision, DISCLAIMER
+from .finance import (
+    MAX_TERM_MONTHS,
+    ExactFinancialDecimal,
+    MetricValue,
+    ReportedDecimal,
+    ReportedValue,
+    decimal_sum,
+    legacy_decimal_values,
+)
+from .schemas import DISCLAIMER, Decision
 
-SCHEMA_VERSION = "commercial-assessment-v1"
-SERIALIZATION_VERSION = "assessment-json-v1"
+SCHEMA_VERSION: Literal["commercial-assessment-v2"] = "commercial-assessment-v2"
+SERIALIZATION_VERSION: Literal["assessment-json-v2"] = "assessment-json-v2"
 MAX_REQUEST_BYTES = 1_000_000
+
+
+def iso_date(value: object) -> date:
+    if type(value) is date:
+        return value
+    if isinstance(value, str) and len(value) == 10:
+        parsed = date.fromisoformat(value)
+        if parsed.isoformat() == value:
+            return parsed
+    raise ValueError("A calendar date in ISO YYYY-MM-DD format is required")
+
+
+ISODate = Annotated[date, BeforeValidator(iso_date)]
 
 
 class ContractModel(BaseModel):
@@ -20,23 +44,23 @@ class ContractModel(BaseModel):
 
 
 class Period(ContractModel):
-    period_start: date
-    period_end: date
+    period_start: ISODate
+    period_end: ISODate
 
 
 class DatedFinancialYear(Period):
-    gross_receipts: float
-    cogs: float
-    operating_expense_excl_dna_interest_comp: float
-    officer_compensation: float
-    depreciation: float
-    amortization: float
-    interest_expense: float = Field(ge=0)
-    section_179: float
-    k1_distribution: float
+    gross_receipts: ExactFinancialDecimal
+    cogs: ExactFinancialDecimal
+    operating_expense_excl_dna_interest_comp: ExactFinancialDecimal
+    officer_compensation: ExactFinancialDecimal
+    depreciation: ExactFinancialDecimal
+    amortization: ExactFinancialDecimal
+    interest_expense: ExactFinancialDecimal = Field(ge=0)
+    section_179: ExactFinancialDecimal
+    k1_distribution: ExactFinancialDecimal
 
     @model_validator(mode="after")
-    def complete_annual_period(self):
+    def complete_annual_period(self) -> Self:
         start = self.period_start
         if start.day != 1 or start.year == 9999:
             raise ValueError("Annual periods must start on the first day of a month in a supported year")
@@ -53,49 +77,39 @@ class AssessmentUnits(ContractModel):
 
 
 class AssessmentExistingDebt(ContractModel):
-    cpltd_annual: float = Field(ge=0)
-    operating_lease_annual: float = Field(ge=0)
+    cpltd_annual: ExactFinancialDecimal = Field(ge=0)
+    operating_lease_annual: ExactFinancialDecimal = Field(ge=0)
 
 
 class AssessmentLoan(ContractModel):
-    amount: float = Field(ge=0)
-    annual_rate: float = Field(ge=0, le=1)
-    term_months: int = Field(ge=12)
+    amount: ExactFinancialDecimal = Field(ge=0)
+    annual_rate: ExactFinancialDecimal = Field(ge=0, le=1)
+    term_months: int = Field(ge=12, le=MAX_TERM_MONTHS)
     rate_type: Literal["fixed"]
     repayment_type: Literal["fully_amortizing"]
     payment_frequency: Literal["monthly"]
 
-    @field_validator("term_months")
-    @classmethod
-    def supported_integer_range(cls, value: int) -> int:
-        try:
-            if not isfinite(value):
-                raise ValueError("Term exceeds the supported finite calculation range")
-        except OverflowError as exc:
-            raise ValueError("Term exceeds the supported finite calculation range") from exc
-        return value
-
 
 class AssessmentGuarantor(ContractModel):
     name: str
-    ownership_percentage: float = Field(ge=0, le=1)
-    wages: float
-    interest_dividend_income: float
-    mortgage_pi_annual: float = Field(ge=0)
-    auto_loan_annual: float = Field(ge=0)
-    credit_card_min_annual: float = Field(ge=0)
+    ownership_percentage: ExactFinancialDecimal = Field(ge=0, le=1)
+    wages: ExactFinancialDecimal
+    interest_dividend_income: ExactFinancialDecimal
+    mortgage_pi_annual: ExactFinancialDecimal = Field(ge=0)
+    auto_loan_annual: ExactFinancialDecimal = Field(ge=0)
+    credit_card_min_annual: ExactFinancialDecimal = Field(ge=0)
 
 
 class AssessmentWorkingCapital(Period):
-    ar_increase: float
-    inventory_increase: float
-    ap_increase: float
-    cash_taxes_paid: float
+    ar_increase: ExactFinancialDecimal
+    inventory_increase: ExactFinancialDecimal
+    ap_increase: ExactFinancialDecimal
+    cash_taxes_paid: ExactFinancialDecimal
 
 
 class CommercialAssessmentRequest(ContractModel):
-    schema_version: Literal["commercial-assessment-v1"]
-    assessment_as_of: date
+    schema_version: Literal["commercial-assessment-v2"]
+    assessment_as_of: ISODate
     borrower_name: str
     geography: str
     units: AssessmentUnits
@@ -105,9 +119,18 @@ class CommercialAssessmentRequest(ContractModel):
     guarantors: list[AssessmentGuarantor]
     working_capital: AssessmentWorkingCapital
 
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_legacy_version(cls, value: object) -> object:
+        if isinstance(value, dict) and value.get("schema_version") == "commercial-assessment-v1":
+            converted = legacy_decimal_values(value)
+            if isinstance(converted, dict):
+                return {**converted, "schema_version": SCHEMA_VERSION}
+        return value
+
     @model_validator(mode="after")
-    def consistent_assumptions(self):
-        for previous, current in zip(self.years, self.years[1:]):
+    def consistent_assumptions(self) -> Self:
+        for previous, current in pairwise(self.years):
             if current.period_start <= previous.period_end:
                 raise ValueError("Financial periods must be oldest first, unique, and non-overlapping")
         if any(y.period_end > self.assessment_as_of for y in self.years):
@@ -115,24 +138,46 @@ class CommercialAssessmentRequest(ContractModel):
         latest, wc = self.years[-1], self.working_capital
         if (wc.period_start, wc.period_end) != (latest.period_start, latest.period_end):
             raise ValueError("Working-capital period must match the latest financial period")
-        if fsum(g.ownership_percentage for g in self.guarantors) > 1.0 + 1e-9:
+        if decimal_sum([g.ownership_percentage for g in self.guarantors]) > Decimal("1"):
             raise ValueError("Total guarantor ownership cannot exceed 100%")
         return self
 
 
 class Metric(ContractModel):
     fact_id: str
-    raw_value: float | str | None
+    raw_value: MetricValue
+    reported_value: ReportedValue = None
     unit: str
-    display_precision: int | None
+    display_precision: int | None = Field(ge=0, le=30)
     status: Literal["available", "not_applicable"]
     explanation: str | None
+
+    @model_validator(mode="after")
+    def valid_metric_state(self) -> Self:
+        if self.status == "not_applicable":
+            if (
+                self.raw_value is not None
+                or self.reported_value is not None
+                or not self.explanation
+                or not self.explanation.strip()
+            ):
+                raise ValueError("Unavailable metrics require null values and an explicit explanation")
+        elif self.unit == "category":
+            if (
+                self.raw_value not in ("stable", "unstable", "insufficient_history")
+                or self.reported_value != self.raw_value
+            ):
+                raise ValueError("A category metric requires an explicit supported category")
+        elif not isinstance(self.raw_value, Decimal) or not isinstance(self.reported_value, Decimal):
+            raise ValueError("Available financial metrics require finite raw and reported decimals")
+        return self
 
 
 class TraceOperand(ContractModel):
     reference_type: Literal["input", "fact", "policy"]
     reference: str
-    raw_value: float | int | str | None
+    raw_value: int | MetricValue
+    reported_value: int | ReportedValue = None
     unit: str
 
 
@@ -142,8 +187,22 @@ class TraceRow(Metric):
     operands: list[TraceOperand]
 
 
+class ReportedFinancialYear(Period):
+    gross_receipts: ReportedDecimal
+    cogs: ReportedDecimal
+    operating_expense_excl_dna_interest_comp: ReportedDecimal
+    officer_compensation: ReportedDecimal
+    depreciation: ReportedDecimal
+    amortization: ReportedDecimal
+    interest_expense: ReportedDecimal
+    section_179: ReportedDecimal
+    k1_distribution: ReportedDecimal
+
+
 class HistoricalPeriod(Period):
     financials: DatedFinancialYear
+    reported_financials: ReportedFinancialYear
+    gross_profit: Metric
     ordinary_business_income: Metric
     ebitda: Metric
     k1_distribution_ratio: Metric
@@ -152,7 +211,9 @@ class HistoricalPeriod(Period):
 class AssessmentFingerprint(ContractModel):
     algorithm: Literal["sha256"]
     value: str
-    content: Literal["normalized_input+policy_snapshot+calculation_version+schema_version+serialization_version"]
+    content: Literal[
+        "normalized_input+policy_snapshot+calculation_version+schema_version+serialization_version"
+    ]
 
 
 class CurrentFacts(ContractModel):
@@ -185,9 +246,9 @@ class GuarantorContribution(ContractModel):
 
 
 class CommercialAssessment(ContractModel):
-    schema_version: Literal["commercial-assessment-v1"]
+    schema_version: Literal["commercial-assessment-v2"]
     calculation_version: str
-    serialization_version: Literal["assessment-json-v1"]
+    serialization_version: Literal["assessment-json-v2"]
     normalized_input: CommercialAssessmentRequest
     selected_period: Period
     coverage_basis: Literal["current_pro_forma"]

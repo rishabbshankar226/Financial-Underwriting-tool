@@ -1,12 +1,13 @@
 """Commands are strict; stored assessment JSON remains readable without replay."""
-from math import isfinite
-from typing import Any, Literal
 
-from pydantic import Field, field_validator
+from typing import Literal, Self
+
+from pydantic import Field, JsonValue, field_validator, model_validator
 
 from .assessment_contracts import CommercialAssessmentRequest, ContractModel
+from .finance import FinancialDecimal, as_decimal
 
-STORAGE_VERSION = "case-json-v1"
+STORAGE_VERSION: Literal["case-json-v1"] = "case-json-v1"
 REPLAY_HEADER = "Idempotency-Replayed"
 
 
@@ -16,7 +17,7 @@ class CaseCreate(ContractModel):
 
     @field_validator("rationale")
     @classmethod
-    def nonblank_rationale(cls, value):
+    def nonblank_rationale(cls, value: str) -> str:
         if not value.strip():
             raise ValueError("A nonblank rationale is required")
         return value.strip()
@@ -24,20 +25,27 @@ class CaseCreate(ContractModel):
 
 class CaseEdit(ContractModel):
     field_path: str = Field(max_length=160)
-    new_value: float | int
+    new_value: int | FinancialDecimal
     rationale: str = Field(max_length=2000)
 
-    _rationale = field_validator("rationale")(CaseCreate.nonblank_rationale.__func__)
+    @field_validator("rationale")
+    @classmethod
+    def nonblank_rationale(cls, value: str) -> str:
+        return CaseCreate.nonblank_rationale(value)
 
     @field_validator("new_value", mode="before")
     @classmethod
-    def strict_number(cls, value):
-        try:
-            if type(value) not in (int, float) or not isfinite(value):
-                raise ValueError("Edit values must be finite JSON numbers")
-        except OverflowError as exc:
-            raise ValueError("Edit exceeds the supported finite range") from exc
-        return value
+    def strict_number(cls, value: object) -> object:
+        if type(value) is int:
+            as_decimal(value)
+            return value
+        return as_decimal(value)
+
+    @model_validator(mode="after")
+    def integer_term(self) -> Self:
+        if self.field_path == "/proposed_loan/term_months" and type(self.new_value) is not int:
+            raise ValueError("Loan term edits require a JSON integer")
+        return self
 
 
 class EventContext(ContractModel):
@@ -56,8 +64,8 @@ class CaseEvent(ContractModel):
     revision: int
     run_id: str
     field_path: str | None
-    before: float | int | None
-    after: float | int | None
+    before: str | float | int | None
+    after: str | float | int | None
     context: EventContext
     rationale: str
     actor: Literal["prototype-demo-unverified"]
@@ -80,9 +88,9 @@ class CaseSnapshot(ContractModel):
     parent_revision: int | None
     run_id: str
     recorded_at: str
-    normalized_input: dict[str, Any]
+    normalized_input: dict[str, JsonValue]
     input_hash: str
-    assessment: dict[str, Any]
+    assessment: dict[str, JsonValue]
     event: CaseEvent
     recording: RecordingMetadata
     payload_hash: str

@@ -63,7 +63,7 @@ command's `expected_preview_fingerprint`:
 
 ```json
 {
-  "schema_version": "commercial-scenario-comparison-create-v1",
+  "schema_version": "commercial-scenario-comparison-create-v2",
   "baseline_run_id": "<selected original run UUID>",
   "expected_preview_fingerprint": "<64 lowercase hexadecimal characters>",
   "scenarios": [
@@ -72,10 +72,10 @@ command's `expected_preview_fingerprint`:
       "name": "Revenue down 10%",
       "rationale": "Other assumptions held fixed",
       "assumptions": {
-        "revenue_change": -0.1,
-        "cogs_change": 0,
-        "operating_expense_change": 0,
-        "proposed_rate_change_bps": 0
+        "revenue_change": "-0.1",
+        "cogs_change": "0",
+        "operating_expense_change": "0",
+        "proposed_rate_change_bps": "0"
       }
     }
   ]
@@ -129,13 +129,17 @@ full record hashes/links; listing checks the bounded summary envelope and receip
 
 ## Retained evidence and integrity
 
-The outer record uses `commercial-scenario-comparison-v1`,
+New outer records use `commercial-scenario-comparison-v2`,
 `scenario-comparison-json-v1` and `persisted: true`, with a server-generated
 comparison UUID, UTC recording time, baseline identity, actor, actual recording
 metadata, full `preview` and payload hash. The nested preview preserves its
 original `persisted: false` value and fingerprint: it describes the calculation
 that was reviewed. One batch has one comparison and one operation receipt.
 Retention leaves the case head and original run/event/receipt counts unchanged.
+
+Original v1 comparison records retain their original schema labels, numeric
+JSON, fingerprints, hashes and receipts. Reading them does not normalize them
+to v2 or rerun their calculator.
 
 The canonical record JSON is also the original receipt body. Hashing uses
 compact sorted-key finite UTF-8 JSON with the wrapper
@@ -159,7 +163,10 @@ inconsistency; they do not authenticate offline edits or people.
 ## Schema compatibility and explicit copy upgrade
 
 New stores initialized through the case interface use schema v2. Exact v1 stores
-continue to support case reads/writes/retries/replay, previews and backup/restore.
+retain original case records, receipts and backup/restore. New decimal v2 cases
+can be created in either supported SQL schema. Archived numeric v1 financial
+records are read-only, their replay is unavailable, and they cannot be new
+preview baselines. Supported committed retries preserve their original receipts.
 Opening them never upgrades them. V1 comparison lists are empty; missing
 comparison reads return 404, and new retention returns
 `409 storage_upgrade_required`.

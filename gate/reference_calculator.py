@@ -1,52 +1,62 @@
 #!/usr/bin/env python3
-"""Independent reference calculator for Spreadline's underwriting math.
+"""Independent 80-digit reference calculations and named defect mutations.
 
-The application never imports this file. It recomputes the key figures for
-three synthetic borrowers with a separate implementation, so the backend's
-DSCR, FCCR and DTI numbers can be checked against something other than
-themselves. None of the inputs are real financial data.
-
-The three borrower fixtures:
-
-  A. Alpine Fabrication, Inc. (1120-S, 100% owner-guarantor), a clear
-     approve. DSCR, FCCR and global DSCR are all well above the 1.15x-1.25x
-     range that commercial and SBA policies commonly use. Its UCA-style
-     cash flow is well below EBITDA (working capital is absorbing cash), and
-     its two years of K-1 distributions are stable.
-  B. Bristlecone Logistics, LLC (1065, 100% owner-guarantor), a clear
-     decline, with all three coverage ratios below 1.0x. It has only one
-     year of K-1 data, so it exercises the "insufficient_history" flag.
-  C. A consumer applicant at exactly 43% back-end DTI, the old General QM
-     limit, to test boundary handling. This fixture pins the DTI figures
-     only. Whether 43% leads to approve, review or decline is a policy
-     setting in the application, so no decision is pinned here.
-
-There is no SBA fixture (no NAICS size-standard check, credit-elsewhere test
-or SOP version switch). The backend tests cover those.
-
-Every number below comes from running this script. Re-run it before relying
-on a figure quoted elsewhere.
-
-    python3 reference_calculator.py            # prints all fixture results
-    python3 reference_calculator.py --selftest # checks pinned values and runs the mutation tests
-
-Each function's docstring states its formula and the convention it follows.
-These are common, defensible variants. There is no single industry-wide
-formula, so a production system should make each definition a configurable,
-versioned policy setting instead of a hard-coded constant.
+This program does not import application modules. The annuity implementation
+uses the accumulated-value formula, independently of the application's
+inverse-power formula. All inputs and pinned outputs use decimal strings.
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
-from dataclasses import dataclass, field
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass
+from decimal import (
+    ROUND_HALF_EVEN,
+    Context,
+    Decimal,
+    DivisionByZero,
+    InvalidOperation,
+    Overflow,
+    localcontext,
+)
+from functools import wraps
+from typing import ParamSpec, TypeVar
 
-TOLERANCE = 0.005  # ratios must match to within 0.005x; dollars to within $1
+Input = Mapping[str, Decimal | int | str | float]
+TOLERANCE = Decimal("1e-24")
+ZERO = Decimal("0")
+ONE = Decimal("1")
+MONTHS = Decimal("12")
+P = ParamSpec("P")
+T = TypeVar("T")
 
-# --------------------------------------------------------------------------
-# Fixture A: Alpine Fabrication, Inc. -- 1120-S, Dana Alpine, 100% owner
-# --------------------------------------------------------------------------
+
+def reference(function: Callable[P, T]) -> Callable[P, T]:
+    @wraps(function)
+    def evaluate(*args: P.args, **kwargs: P.kwargs) -> T:
+        context = Context(prec=80, rounding=ROUND_HALF_EVEN)
+        for trap in (DivisionByZero, InvalidOperation, Overflow):
+            context.traps[trap] = True
+        with localcontext(context):
+            return function(*args, **kwargs)
+
+    return evaluate
+
+
+def number(value: Decimal | int | str | float) -> Decimal:
+    if isinstance(value, bool):
+        raise ValueError("Boolean financial input is unsupported")
+    result = Decimal(str(value))
+    if not result.is_finite():
+        raise ValueError("Financial input must be finite")
+    return result
+
+
+def amounts(value: Input) -> dict[str, Decimal]:
+    return {key: number(item) for key, item in value.items()}
+
 
 ALPINE_2025 = dict(
     gross_receipts=4_200_000,
@@ -73,7 +83,9 @@ ALPINE_2024 = dict(
 )
 
 ALPINE_EXISTING_DEBT = dict(cpltd_annual=58_000, operating_lease_annual=24_000)
-ALPINE_PROPOSED_LOAN = dict(amount=500_000, annual_rate=0.105, term_months=120)
+ALPINE_PROPOSED_LOAN: dict[str, Decimal | int | str | float] = dict(
+    amount=500_000, annual_rate="0.105", term_months=120
+)
 ALPINE_GUARANTOR = dict(
     wages=65_000,
     interest_dividend_income=3_000,
@@ -82,9 +94,6 @@ ALPINE_GUARANTOR = dict(
     credit_card_min_annual=3_600,
 )
 
-# Working-capital movement for 2025, used only by uca_cash_flow(). A growing
-# borrower: receivables and inventory are both building, which is exactly the
-# gap between EBITDA and real cash that UCA is supposed to catch.
 ALPINE_WORKING_CAPITAL = dict(
     ar_increase=140_000,
     inventory_increase=60_000,
@@ -92,10 +101,6 @@ ALPINE_WORKING_CAPITAL = dict(
     cash_taxes_paid=95_000,
 )
 
-# --------------------------------------------------------------------------
-# Fixture B: Bristlecone Logistics, LLC -- 1065, same guarantor structure,
-# thinner margins and heavier debt, engineered to decline.
-# --------------------------------------------------------------------------
 
 BRISTLECONE_2025 = dict(
     gross_receipts=2_200_000,
@@ -110,7 +115,9 @@ BRISTLECONE_2025 = dict(
 )
 
 BRISTLECONE_EXISTING_DEBT = dict(cpltd_annual=45_000, operating_lease_annual=18_000)
-BRISTLECONE_PROPOSED_LOAN = dict(amount=350_000, annual_rate=0.115, term_months=120)
+BRISTLECONE_PROPOSED_LOAN: dict[str, Decimal | int | str | float] = dict(
+    amount=350_000, annual_rate="0.115", term_months=120
+)
 BRISTLECONE_GUARANTOR = dict(
     wages=42_000,
     interest_dividend_income=500,
@@ -126,9 +133,6 @@ BRISTLECONE_WORKING_CAPITAL = dict(
     cash_taxes_paid=15_000,
 )
 
-# --------------------------------------------------------------------------
-# Fixture C: consumer applicant, engineered to 43.00% back-end DTI exactly.
-# --------------------------------------------------------------------------
 
 CONSUMER_C = dict(
     gross_monthly_income=9_000,
@@ -138,191 +142,159 @@ CONSUMER_C = dict(
 )
 
 
-# --------------------------------------------------------------------------
-# Formulas
-# --------------------------------------------------------------------------
+@reference
+def ordinary_business_income(year: Input) -> Decimal:
+    y = amounts(year)
+    expenses = (
+        "cogs",
+        "operating_expense_excl_dna_interest_comp",
+        "officer_compensation",
+        "depreciation",
+        "amortization",
+        "interest_expense",
+        "section_179",
+    )
+    return y["gross_receipts"] - sum((y.get(key, ZERO) for key in expenses), ZERO)
 
 
-def ordinary_business_income(year: dict) -> float:
-    """Reconstructs 1120-S/1065 ordinary business (trade or business) income
-    from its component lines, in the order those lines actually net on the
-    return: gross profit, less operating expense, less officer compensation
-    or guaranteed payments, less depreciation and amortization, less interest
-    expense, less any Section 179 election taken that year."""
-    gross_profit = year["gross_receipts"] - year["cogs"]
-    after_opex = gross_profit - year["operating_expense_excl_dna_interest_comp"]
-    after_comp = after_opex - year["officer_compensation"]
-    after_dna = after_comp - year["depreciation"] - year["amortization"]
-    after_interest = after_dna - year["interest_expense"]
-    return after_interest - year.get("section_179", 0)
+@reference
+def ebitda(year: Input) -> Decimal:
+    y = amounts(year)
+    return y["gross_receipts"] - sum(
+        (y[key] for key in ("cogs", "operating_expense_excl_dna_interest_comp", "officer_compensation")), ZERO
+    )
 
 
-def ebitda(year: dict) -> float:
-    """EBITDA-analog for a pass-through return: ordinary business income with
-    interest, depreciation, amortization and any Section 179 election added
-    back. Section 179 is added back alongside depreciation because it is the
-    same non-cash capital-cost election accelerated into one year, the
-    standard add-back when spreading tax returns."""
-    obi = ordinary_business_income(year)
+@reference
+def amortized_annual_debt_service(
+    principal: Decimal | int | str | float, annual_rate: Decimal | int | str | float, term_months: int
+) -> Decimal:
+    amount, annual = number(principal), number(annual_rate)
+    if (
+        type(term_months) is not int
+        or not 0 < term_months <= 12000
+        or amount < ZERO
+        or not ZERO <= annual <= ONE
+    ):
+        raise ValueError("Unsupported fixed-rate loan")
+    if annual == ZERO:
+        return amount * MONTHS / Decimal(str(term_months))
+    rate = annual / MONTHS
+    accumulated = (ONE + rate) ** term_months
+    return amount * rate * accumulated / (accumulated - ONE) * MONTHS
+
+
+@reference
+def uca_cash_flow(year: Input, working_capital: Input) -> Decimal:
+    wc = amounts(working_capital)
     return (
-        obi
-        + year["interest_expense"]
-        + year["depreciation"]
-        + year["amortization"]
-        + year.get("section_179", 0)
+        ebitda(year)
+        - wc["cash_taxes_paid"]
+        - wc["ar_increase"]
+        - wc["inventory_increase"]
+        + wc["ap_increase"]
     )
 
 
-def amortized_annual_debt_service(principal: float, annual_rate: float, term_months: int) -> float:
-    """Standard fixed-rate amortization: level monthly payment times 12.
-    Used for the proposed loan, which has no existing amortization schedule
-    to read a payment from."""
-    r = annual_rate / 12
-    n = term_months
-    monthly = principal * r / (1 - (1 + r) ** -n)
-    return monthly * 12
-
-
-def uca_cash_flow(year: dict, working_capital: dict) -> float:
-    """A simplified UCA-style Net Cash After Operations figure: EBITDA less
-    cash taxes paid, less the net increase in working capital investment
-    (accounts-receivable growth plus inventory growth, net of
-    accounts-payable growth that frees up cash). This is the number section 2
-    means when it says UCA catches what EBITDA alone misses: a borrower whose
-    EBITDA is strong but whose receivables and inventory are absorbing the
-    cash. Real UCA analysis builds several more subtotals (Gross Cash Flow,
-    Net Cash Income, financing requirement) from a full balance-sheet
-    comparison across two periods; this fixture set supplies only the net
-    working-capital movement directly, as a deliberate simplification, not a
-    claim that this is the complete UCA method."""
-    net_working_capital_increase = (
-        working_capital["ar_increase"] + working_capital["inventory_increase"] - working_capital["ap_increase"]
-    )
-    return ebitda(year) - working_capital["cash_taxes_paid"] - net_working_capital_increase
-
-
-def k1_distribution_ratio(year: dict) -> float:
-    """Ratio of a K-1's cash distribution to that year's ordinary business
-    income -- the basis for judging whether a K-1 income claim has a stable,
-    comparable distribution history."""
+@reference
+def k1_distribution_ratio(year: Input) -> Decimal | None:
     obi = ordinary_business_income(year)
-    if obi <= 0:
-        return float("inf")
-    return year["k1_distribution"] / obi
+    return number(year["k1_distribution"]) / obi if obi > ZERO else None
 
 
-def k1_history_flag(years: list[dict], stability_band: float = 0.15) -> str:
-    """Returns 'insufficient_history' when fewer than two years of K-1 data
-    are supplied, 'stable' when the distribution-to-income ratio across the
-    two most recent years differs by no more than stability_band (an
-    absolute fraction), otherwise 'unstable'. K-1 income without enough
-    history is flagged instead of passed, so an implementation that always
-    reports 'stable', or never checks, fails against these fixtures."""
+@reference
+def k1_history_flag(years: list[Input], stability_band: Decimal | str | float = Decimal("0.15")) -> str:
     if len(years) < 2:
         return "insufficient_history"
-    ratios = [k1_distribution_ratio(y) for y in years[-2:]]
-    if abs(ratios[0] - ratios[1]) <= stability_band:
-        return "stable"
-    return "unstable"
-
-
-def dscr(year: dict, existing_debt: dict, proposed_loan: dict) -> float:
-    """DSCR = EBITDA / Total Debt Service, where Total Debt Service is the
-    existing interest expense (already on the P&L) plus the existing current
-    portion of long-term debt (principal only, the CPLTD line) plus the full
-    principal-and-interest debt service of the proposed loan. Interest is
-    counted once: it is added back into EBITDA and then charged once, in
-    full, in the denominator. Counting interest once, in the denominator, is
-    the piece of RMA/UCA convention this formula borrows. It is not itself a
-    UCA cash-flow figure, and is not an SBA-specific formula. See uca_cash_flow() above for the actual
-    UCA-style figure."""
-    total_debt_service = (
-        year["interest_expense"] + existing_debt["cpltd_annual"] + proposed_loan["debt_service"]
+    first, second = (k1_distribution_ratio(year) for year in years[-2:])
+    return (
+        "stable"
+        if first is not None and second is not None and abs(first - second) <= number(stability_band)
+        else "unstable"
     )
-    return ebitda(year) / total_debt_service
 
 
-def fccr(year: dict, existing_debt: dict, proposed_loan: dict) -> float:
-    """FCCR, as used in this fixture set = EBITDA / (Total Debt Service, as
-    in dscr() above, plus the existing operating lease payment). No unfinanced
-    capex or cash-tax adjustment is modeled in this simplified fixture; a real
-    system must expose those as explicit, separately-sourced line items
-    rather than assuming zero, and must cite whichever FCCR definition its
-    credit policy adopts (several are in use)."""
-    total_debt_service = (
-        year["interest_expense"]
-        + existing_debt["cpltd_annual"]
-        + proposed_loan["debt_service"]
-        + existing_debt["operating_lease_annual"]
+def _service(year: Input, existing_debt: Input, proposed_loan: Input) -> Decimal:
+    return (
+        number(year["interest_expense"])
+        + number(existing_debt["cpltd_annual"])
+        + number(proposed_loan["debt_service"])
     )
-    return ebitda(year) / total_debt_service
 
 
-def global_dscr(year: dict, existing_debt: dict, proposed_loan: dict, guarantor: dict) -> float:
-    """Global DSCR for a guarantor who owns 100% of the borrowing entity:
-    numerator is business EBITDA plus the guarantor's income from sources
-    outside the business (wages, interest/dividends); denominator is the
-    business's total debt service (as in dscr()) plus the guarantor's
-    personal debt service. K-1 distributions are NOT added on top of EBITDA:
-    for a wholly-owned pass-through, EBITDA already represents the full
-    economic earnings available to that owner, and adding distributions on
-    top would double count the same dollars. For an entity with more than
-    one owner, pro-rate EBITDA by the guarantor's ownership percentage before
-    combining -- this fixture does not exercise that case because both
-    guarantors here own 100%."""
-    business_tds = year["interest_expense"] + existing_debt["cpltd_annual"] + proposed_loan["debt_service"]
-    personal_debt_service = (
-        guarantor["mortgage_pi_annual"] + guarantor["auto_loan_annual"] + guarantor["credit_card_min_annual"]
+def _coverage(numerator: Decimal, denominator: Decimal) -> Decimal | None:
+    if denominator < ZERO:
+        raise ValueError("Negative coverage denominator")
+    return numerator / denominator if denominator != ZERO else None
+
+
+@reference
+def dscr(year: Input, existing_debt: Input, proposed_loan: Input) -> Decimal | None:
+    return _coverage(ebitda(year), _service(year, existing_debt, proposed_loan))
+
+
+@reference
+def fccr(year: Input, existing_debt: Input, proposed_loan: Input) -> Decimal | None:
+    return _coverage(
+        ebitda(year),
+        _service(year, existing_debt, proposed_loan) + number(existing_debt["operating_lease_annual"]),
     )
-    global_cash_flow = ebitda(year) + guarantor["wages"] + guarantor["interest_dividend_income"]
-    global_total_debt_service = business_tds + personal_debt_service
-    return global_cash_flow / global_total_debt_service
 
 
-def consumer_dti(applicant: dict) -> tuple[float, float]:
-    """Returns (front_end_dti, back_end_dti). Front-end is proposed housing
-    payment (P&I + tax/insurance escrow) over gross monthly income; back-end
-    adds all other monthly debt obligations. Whether 43% back-end is a hard
-    ceiling depends on which Reg Z / QM category applies and is a policy
-    parameter rather than a constant."""
-    housing = applicant["proposed_housing_pi"] + applicant["proposed_housing_tax_ins"]
-    front = housing / applicant["gross_monthly_income"]
-    back = (housing + applicant["other_monthly_debt"]) / applicant["gross_monthly_income"]
-    return front, back
+@reference
+def global_dscr(year: Input, existing_debt: Input, proposed_loan: Input, guarantor: Input) -> Decimal | None:
+    g = amounts(guarantor)
+    numerator = ebitda(year) + g["wages"] + g["interest_dividend_income"]
+    denominator = _service(year, existing_debt, proposed_loan) + sum(
+        (g[key] for key in ("mortgage_pi_annual", "auto_loan_annual", "credit_card_min_annual")), ZERO
+    )
+    return _coverage(numerator, denominator)
 
 
-# --------------------------------------------------------------------------
-# Pinned expected values -- computed by running the functions above once,
-# 2026-09-08, and hardcoded here so a later edit to a formula is caught by
-# comparing against a number nobody re-derives from the same code.
-# --------------------------------------------------------------------------
+@reference
+def consumer_dti(applicant: Input) -> tuple[Decimal, Decimal]:
+    a = amounts(applicant)
+    housing = a["proposed_housing_pi"] + a["proposed_housing_tax_ins"]
+    if a["gross_monthly_income"] <= ZERO or min(housing, a["other_monthly_debt"]) < ZERO:
+        raise ValueError("Unsupported consumer income/debt")
+    return housing / a["gross_monthly_income"], (housing + a["other_monthly_debt"]) / a[
+        "gross_monthly_income"
+    ]
 
 
-def _proposed(loan: dict) -> dict:
-    out = dict(loan)
-    out["debt_service"] = amortized_annual_debt_service(loan["amount"], loan["annual_rate"], loan["term_months"])
-    return out
+def _proposed(loan: Input) -> dict[str, Decimal]:
+    result = amounts(loan)
+    result["debt_service"] = amortized_annual_debt_service(
+        loan["amount"], loan["annual_rate"], int(number(loan["term_months"]))
+    )
+    return result
+
+
+def available(value: Decimal | None) -> Decimal:
+    if value is None:
+        raise ValueError("Fixture coverage is unavailable")
+    return value
 
 
 EXPECTED = {
-    "alpine_obi_2025": 423_000.0,
-    "alpine_obi_2024": 390_000.0,
-    "alpine_ebitda_2025": 630_000.0,
-    "alpine_ebitda_2024": 548_000.0,
-    "alpine_proposed_debt_service": 80_961.0,
-    "alpine_dscr": 3.135,
-    "alpine_fccr": 2.800,
-    "alpine_global_dscr": 2.902,
-    "alpine_uca_cash_flow": 385_000.0,
-    "bristlecone_obi": 17_000.0,
-    "bristlecone_ebitda": 110_000.0,
-    "bristlecone_proposed_debt_service": 59_050.09,
-    "bristlecone_dscr": 0.723,
-    "bristlecone_fccr": 0.647,
-    "bristlecone_global_dscr": 0.816,
-    "bristlecone_uca_cash_flow": 88_000.0,
-    "consumer_c_front_dti": 0.2967,
-    "consumer_c_back_dti": 0.4300,
+    "alpine_obi_2025": Decimal("423000.000000000000000000000000"),
+    "alpine_obi_2024": Decimal("390000.000000000000000000000000"),
+    "alpine_ebitda_2025": Decimal("630000.000000000000000000000000"),
+    "alpine_ebitda_2024": Decimal("548000.000000000000000000000000"),
+    "alpine_proposed_debt_service": Decimal("80960.998065328192761785853332"),
+    "alpine_dscr": Decimal("3.134936659675626479525752"),
+    "alpine_fccr": Decimal("2.800485441556626394622475"),
+    "alpine_global_dscr": Decimal("2.901550981304321485169439"),
+    "alpine_uca_cash_flow": Decimal("385000.000000000000000000000000"),
+    "bristlecone_obi": Decimal("17000.000000000000000000000000"),
+    "bristlecone_ebitda": Decimal("110000.000000000000000000000000"),
+    "bristlecone_proposed_debt_service": Decimal("59050.086471171724267341873410"),
+    "bristlecone_dscr": Decimal("0.723445823365945245112592"),
+    "bristlecone_fccr": Decimal("0.646868239132875101245077"),
+    "bristlecone_global_dscr": Decimal("0.816162319644034804304488"),
+    "bristlecone_uca_cash_flow": Decimal("88000.000000000000000000000000"),
+    "consumer_c_front_dti": Decimal("0.296666666666666666666667"),
+    "consumer_c_back_dti": Decimal("0.430000000000000000000000"),
 }
 
 EXPECTED_FLAGS = {
@@ -334,9 +306,9 @@ EXPECTED_FLAGS = {
 @dataclass
 class Check:
     name: str
-    got: float
-    expected: float
-    tolerance: float = TOLERANCE
+    got: Decimal
+    expected: Decimal
+    tolerance: Decimal = TOLERANCE
 
     @property
     def passed(self) -> bool:
@@ -360,60 +332,81 @@ def run_fixtures() -> list[Check]:
     front_c, back_c = consumer_dti(CONSUMER_C)
 
     checks = [
-        Check("alpine_obi_2025", ordinary_business_income(ALPINE_2025), EXPECTED["alpine_obi_2025"], 0.01),
-        Check("alpine_obi_2024", ordinary_business_income(ALPINE_2024), EXPECTED["alpine_obi_2024"], 0.01),
-        Check("alpine_ebitda_2025", ebitda(ALPINE_2025), EXPECTED["alpine_ebitda_2025"], 0.01),
-        Check("alpine_ebitda_2024", ebitda(ALPINE_2024), EXPECTED["alpine_ebitda_2024"], 0.01),
+        Check(
+            "alpine_obi_2025", ordinary_business_income(ALPINE_2025), EXPECTED["alpine_obi_2025"], TOLERANCE
+        ),
+        Check(
+            "alpine_obi_2024", ordinary_business_income(ALPINE_2024), EXPECTED["alpine_obi_2024"], TOLERANCE
+        ),
+        Check("alpine_ebitda_2025", ebitda(ALPINE_2025), EXPECTED["alpine_ebitda_2025"], TOLERANCE),
+        Check("alpine_ebitda_2024", ebitda(ALPINE_2024), EXPECTED["alpine_ebitda_2024"], TOLERANCE),
         Check(
             "alpine_proposed_debt_service",
             alpine_loan["debt_service"],
             EXPECTED["alpine_proposed_debt_service"],
-            1.0,
+            TOLERANCE,
         ),
-        Check("alpine_dscr", dscr(ALPINE_2025, ALPINE_EXISTING_DEBT, alpine_loan), EXPECTED["alpine_dscr"]),
-        Check("alpine_fccr", fccr(ALPINE_2025, ALPINE_EXISTING_DEBT, alpine_loan), EXPECTED["alpine_fccr"]),
+        Check(
+            "alpine_dscr",
+            available(dscr(ALPINE_2025, ALPINE_EXISTING_DEBT, alpine_loan)),
+            EXPECTED["alpine_dscr"],
+        ),
+        Check(
+            "alpine_fccr",
+            available(fccr(ALPINE_2025, ALPINE_EXISTING_DEBT, alpine_loan)),
+            EXPECTED["alpine_fccr"],
+        ),
         Check(
             "alpine_global_dscr",
-            global_dscr(ALPINE_2025, ALPINE_EXISTING_DEBT, alpine_loan, ALPINE_GUARANTOR),
+            available(global_dscr(ALPINE_2025, ALPINE_EXISTING_DEBT, alpine_loan, ALPINE_GUARANTOR)),
             EXPECTED["alpine_global_dscr"],
         ),
         Check(
             "alpine_uca_cash_flow",
             uca_cash_flow(ALPINE_2025, ALPINE_WORKING_CAPITAL),
             EXPECTED["alpine_uca_cash_flow"],
-            0.01,
+            TOLERANCE,
         ),
-        Check("bristlecone_obi", ordinary_business_income(BRISTLECONE_2025), EXPECTED["bristlecone_obi"], 0.01),
-        Check("bristlecone_ebitda", ebitda(BRISTLECONE_2025), EXPECTED["bristlecone_ebitda"], 0.01),
+        Check(
+            "bristlecone_obi",
+            ordinary_business_income(BRISTLECONE_2025),
+            EXPECTED["bristlecone_obi"],
+            TOLERANCE,
+        ),
+        Check("bristlecone_ebitda", ebitda(BRISTLECONE_2025), EXPECTED["bristlecone_ebitda"], TOLERANCE),
         Check(
             "bristlecone_proposed_debt_service",
             bristlecone_loan["debt_service"],
             EXPECTED["bristlecone_proposed_debt_service"],
-            1.0,
+            TOLERANCE,
         ),
         Check(
             "bristlecone_dscr",
-            dscr(BRISTLECONE_2025, BRISTLECONE_EXISTING_DEBT, bristlecone_loan),
+            available(dscr(BRISTLECONE_2025, BRISTLECONE_EXISTING_DEBT, bristlecone_loan)),
             EXPECTED["bristlecone_dscr"],
         ),
         Check(
             "bristlecone_fccr",
-            fccr(BRISTLECONE_2025, BRISTLECONE_EXISTING_DEBT, bristlecone_loan),
+            available(fccr(BRISTLECONE_2025, BRISTLECONE_EXISTING_DEBT, bristlecone_loan)),
             EXPECTED["bristlecone_fccr"],
         ),
         Check(
             "bristlecone_global_dscr",
-            global_dscr(BRISTLECONE_2025, BRISTLECONE_EXISTING_DEBT, bristlecone_loan, BRISTLECONE_GUARANTOR),
+            available(
+                global_dscr(
+                    BRISTLECONE_2025, BRISTLECONE_EXISTING_DEBT, bristlecone_loan, BRISTLECONE_GUARANTOR
+                )
+            ),
             EXPECTED["bristlecone_global_dscr"],
         ),
         Check(
             "bristlecone_uca_cash_flow",
             uca_cash_flow(BRISTLECONE_2025, BRISTLECONE_WORKING_CAPITAL),
             EXPECTED["bristlecone_uca_cash_flow"],
-            0.01,
+            TOLERANCE,
         ),
-        Check("consumer_c_front_dti", front_c, EXPECTED["consumer_c_front_dti"], 0.0005),
-        Check("consumer_c_back_dti", back_c, EXPECTED["consumer_c_back_dti"], 0.0005),
+        Check("consumer_c_front_dti", front_c, EXPECTED["consumer_c_front_dti"], TOLERANCE),
+        Check("consumer_c_back_dti", back_c, EXPECTED["consumer_c_back_dti"], TOLERANCE),
     ]
     return checks
 
@@ -433,82 +426,51 @@ def run_flag_checks() -> list[FlagCheck]:
     ]
 
 
-# --------------------------------------------------------------------------
-# Mutation self-test: proves the checks above are sensitive to the formulas
-# they claim to test, not just asserting a number against itself. Each
-# mutation reimplements one function with a specific, named defect and
-# asserts the mutated result misses its pinned expected value by more than
-# tolerance. A mutation that still matches means the check above could
-# not catch that defect in the application.
-# --------------------------------------------------------------------------
+@reference
+def _mutant_dscr_omits_addback(year: Input, existing_debt: Input, proposed_loan: Input) -> Decimal:
+    return ordinary_business_income(year) / _service(year, existing_debt, proposed_loan)
 
 
-def _mutant_dscr_omits_addback(year: dict, existing_debt: dict, proposed_loan: dict) -> float:
-    """Defect: uses ordinary business income instead of EBITDA (forgets to
-    add back interest/D&A/179) -- a common real mistake when a build reads
-    net income off a P&L line without reconstructing cash flow."""
-    obi = ordinary_business_income(year)
-    total_debt_service = year["interest_expense"] + existing_debt["cpltd_annual"] + proposed_loan["debt_service"]
-    return obi / total_debt_service
+@reference
+def _mutant_fccr_omits_lease(year: Input, existing_debt: Input, proposed_loan: Input) -> Decimal:
+    return ebitda(year) / _service(year, existing_debt, proposed_loan)
 
 
-def _mutant_fccr_omits_lease(year: dict, existing_debt: dict, proposed_loan: dict) -> float:
-    """Defect: computes FCCR identically to DSCR, dropping the lease
-    payment from the denominator -- the single line that is supposed to
-    distinguish the two ratios."""
-    total_debt_service = year["interest_expense"] + existing_debt["cpltd_annual"] + proposed_loan["debt_service"]
-    return ebitda(year) / total_debt_service
-
-
+@reference
 def _mutant_global_dscr_double_counts_distribution(
-    year: dict, existing_debt: dict, proposed_loan: dict, guarantor: dict
-) -> float:
-    """Defect: adds K-1 distributions on top of EBITDA for a wholly-owned
-    entity, double counting the same economic earnings once as business
-    EBITDA and once as a personal cash receipt."""
-    business_tds = year["interest_expense"] + existing_debt["cpltd_annual"] + proposed_loan["debt_service"]
-    personal_debt_service = (
-        guarantor["mortgage_pi_annual"] + guarantor["auto_loan_annual"] + guarantor["credit_card_min_annual"]
+    year: Input, existing_debt: Input, proposed_loan: Input, guarantor: Input
+) -> Decimal:
+    g = amounts(guarantor)
+    income = ebitda(year) + number(year["k1_distribution"]) + g["wages"] + g["interest_dividend_income"]
+    service = _service(year, existing_debt, proposed_loan) + sum(
+        (g[key] for key in ("mortgage_pi_annual", "auto_loan_annual", "credit_card_min_annual")), ZERO
     )
-    global_cash_flow = ebitda(year) + year["k1_distribution"] + guarantor["wages"] + guarantor["interest_dividend_income"]
-    global_total_debt_service = business_tds + personal_debt_service
-    return global_cash_flow / global_total_debt_service
+    return income / service
 
 
-def _mutant_uca_omits_working_capital(year: dict, working_capital: dict) -> float:
-    """Defect: subtracts cash taxes but never touches the working-capital
-    lines at all, so this mutant is indistinguishable from a build that
-    read "UCA" as just "EBITDA minus taxes" and never traced the
-    balance-sheet movement the whole method exists to catch."""
-    return ebitda(year) - working_capital["cash_taxes_paid"]
+@reference
+def _mutant_uca_omits_working_capital(year: Input, working_capital: Input) -> Decimal:
+    return ebitda(year) - number(working_capital["cash_taxes_paid"])
 
 
-def _mutant_amortization_simple_interest(principal: float, annual_rate: float, term_months: int) -> float:
-    """Defect: straight-line principal plus flat first-year interest on the
-    full original balance, instead of a compounding amortization schedule --
-    a plausible mistake for a build that never implements true amortization
-    and instead approximates it."""
-    annual_principal = principal / (term_months / 12)
-    annual_interest = principal * annual_rate
-    return annual_principal + annual_interest
+@reference
+def _mutant_amortization_simple_interest(
+    principal: Decimal | int | str | float, annual_rate: Decimal | int | str | float, term_months: int
+) -> Decimal:
+    amount = number(principal)
+    return amount * MONTHS / Decimal(str(term_months)) + amount * number(annual_rate)
 
 
-def _mutant_dti_swaps_front_back(applicant: dict) -> tuple[float, float]:
-    """Defect: returns (back_end, front_end) in place of
-    (front_end, back_end) -- the two are numerically distinct in this
-    fixture specifically so a swap cannot hide by coincidence."""
+def _mutant_dti_swaps_front_back(applicant: Input) -> tuple[Decimal, Decimal]:
     front, back = consumer_dti(applicant)
     return back, front
 
 
-def _mutant_k1_always_stable(years: list[dict]) -> str:
-    """Defect: a reason-code or spreading engine that always reports a K-1
-    income claim as having a stable, sufficient history, regardless of how
-    many years of data actually exist -- the silent-pass failure mode
-    section 2 explicitly forbids."""
+def _mutant_k1_always_stable(years: list[Input]) -> str:
     return "stable"
 
 
+@reference
 def run_mutations() -> list[tuple[str, bool]]:
     alpine_loan = _proposed(ALPINE_PROPOSED_LOAN)
     results = []
@@ -532,17 +494,19 @@ def run_mutations() -> list[tuple[str, bool]]:
     results.append(("uca_omits_working_capital", killed))
 
     mutated = _mutant_amortization_simple_interest(
-        ALPINE_PROPOSED_LOAN["amount"], ALPINE_PROPOSED_LOAN["annual_rate"], ALPINE_PROPOSED_LOAN["term_months"]
+        ALPINE_PROPOSED_LOAN["amount"],
+        ALPINE_PROPOSED_LOAN["annual_rate"],
+        int(number(ALPINE_PROPOSED_LOAN["term_months"])),
     )
-    killed = abs(mutated - EXPECTED["alpine_proposed_debt_service"]) > 1.0
+    killed = abs(mutated - EXPECTED["alpine_proposed_debt_service"]) > TOLERANCE
     results.append(("amortization_simple_interest", killed))
 
     mutated_front, mutated_back = _mutant_dti_swaps_front_back(CONSUMER_C)
-    killed = abs(mutated_front - EXPECTED["consumer_c_front_dti"]) > 0.0005
+    killed = abs(mutated_front - EXPECTED["consumer_c_front_dti"]) > TOLERANCE
     results.append(("dti_swaps_front_back", killed))
 
-    mutated = _mutant_k1_always_stable([BRISTLECONE_2025])
-    killed = mutated != EXPECTED_FLAGS["bristlecone_k1_history_flag"]
+    mutated_flag = _mutant_k1_always_stable([BRISTLECONE_2025])
+    killed = mutated_flag != EXPECTED_FLAGS["bristlecone_k1_history_flag"]
     results.append(("k1_always_stable", killed))
 
     return results

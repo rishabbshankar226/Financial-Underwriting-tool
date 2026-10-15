@@ -1,8 +1,7 @@
 import pytest
-from fastapi.testclient import TestClient
-
 from app.assessment_contracts import MAX_REQUEST_BYTES
 from app.main import app
+from fastapi.testclient import TestClient
 from fixtures import alpine_request
 
 
@@ -31,7 +30,7 @@ def test_request_at_budget_remains_readable_by_downstream_validation():
 
 
 def test_commercial_huge_integer_term_is_a_validation_error():
-    payload = alpine_request().model_dump()
+    payload = alpine_request().model_dump(mode="json")
     payload["proposed_loan"]["term_months"] = 10 ** 400
     response = TestClient(app, raise_server_exceptions=False).post("/commercial/decision", json=payload)
     assert response.status_code == 422, response.text
