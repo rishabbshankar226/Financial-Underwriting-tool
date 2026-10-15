@@ -5,6 +5,7 @@ from typing import Literal, Self
 from pydantic import Field, JsonValue, field_validator, model_validator
 
 from .assessment_contracts import CommercialAssessmentRequest, ContractModel
+from .authentication import valid_actor
 from .finance import FinancialDecimal, as_decimal
 
 STORAGE_VERSION: Literal["case-json-v1"] = "case-json-v1"
@@ -68,8 +69,10 @@ class CaseEvent(ContractModel):
     after: str | float | int | None
     context: EventContext
     rationale: str
-    actor: Literal["prototype-demo-unverified"]
+    actor: str
     recorded_at: str
+
+    _actor = field_validator("actor")(valid_actor)
 
 
 class RecordingMetadata(ContractModel):

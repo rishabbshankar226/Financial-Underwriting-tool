@@ -882,7 +882,7 @@ export default function App() {
       <footer>
         Spreadline · Synthetic analyst demonstration ·{" "}
         {state.saved
-          ? "Local saved revisions · unverified demonstration actor"
+          ? `Saved revisions · recorded credential ${state.saved.view.snapshot.event.actor}`
           : "Unsaved session workspace"}
       </footer>
     </main>

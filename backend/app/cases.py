@@ -23,6 +23,7 @@ from pydantic import JsonValue
 from .assessment import assess_commercial
 from .assessment_contracts import SCHEMA_VERSION as ASSESSMENT_SCHEMA_VERSION
 from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest
+from .authentication import DEMONSTRATION_ACTOR, valid_actor
 from .case_contracts import (
     STORAGE_VERSION,
     CaseCreate,
@@ -173,10 +174,12 @@ class CaseStore:
         policy_provider: Callable[[], PolicyConfig] = _default_policy,
         recording: RecordingMetadata | None = None,
         initialize: bool = True,
+        actor: str = DEMONSTRATION_ACTOR,
     ) -> None:
         if str(path) == ":memory:":
             raise ValueError("Durable cases require an explicit file path")
         self.path = Path(path).expanduser().resolve()
+        self.actor = valid_actor(actor)
         self.timeout = timeout
         self.assessment_operation = assessment_operation
         self.policy_provider = policy_provider
@@ -435,7 +438,7 @@ class CaseStore:
                 "revision": revision,
                 "run_id": run_id,
                 "recorded_at": timestamp,
-                "actor": "prototype-demo-unverified",
+                "actor": self.actor,
             }
         )
         data = dict(

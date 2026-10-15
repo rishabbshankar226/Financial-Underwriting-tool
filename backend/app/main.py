@@ -7,6 +7,7 @@ from starlette.responses import Response
 
 from .assessment import assess_commercial
 from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest
+from .authentication import OperatorAuthenticationMiddleware
 from .case_routes import install_case_openapi, owns_case_json
 from .case_routes import router as case_router
 from .cases import CaseStoreError
@@ -20,7 +21,7 @@ from .request_limits import RequestBodyLimitMiddleware
 from .sba import evaluate_sba, load_size_table
 from .scenario_routes import install_scenario_openapi, owns_scenario_json
 from .scenario_routes import router as scenario_router
-from .schemas import DISCLAIMER, CommercialRequest, ConsumerRequest, Decision, SBACase
+from .schemas import DISCLAIMER, CommercialRequest, ConsumerRequest, Decision, SBACase, SBAScreenResult
 
 app = FastAPI(title="Spreadline", version="0.1.0", description=DISCLAIMER)
 
@@ -54,6 +55,7 @@ async def validate_raw_json(
 
 
 app.add_middleware(RequestBodyLimitMiddleware)
+app.add_middleware(OperatorAuthenticationMiddleware)
 
 # CORS wraps body limits and validation so rejected requests remain readable.
 app.add_middleware(
@@ -84,7 +86,7 @@ async def case_store_error(request: Request, exc: CaseStoreError) -> JSONRespons
 
 @app.get("/health")
 def health() -> JsonObject:
-    return {"status": "ok", "prototype": True, "disclaimer": DISCLAIMER}
+    return {"status": "ok"}
 
 
 @app.post("/commercial/assessment/", response_model=CommercialAssessment, include_in_schema=False)
@@ -146,6 +148,7 @@ async def consumer_decision(request: Request) -> Decision:
 
 @app.post(
     "/sba/evaluate",
+    response_model=SBAScreenResult,
     openapi_extra={
         "requestBody": {
             "required": True,
@@ -153,11 +156,9 @@ async def consumer_decision(request: Request) -> Decision:
         }
     },
 )
-async def sba_evaluate(request: Request) -> Response:
+async def sba_evaluate(request: Request) -> SBAScreenResult:
     req = await read_contract(request, SBACase, "SBA")
     try:
-        return Response(
-            content=canonical_json(evaluate_sba(req, load_size_table())), media_type="application/json"
-        )
+        return SBAScreenResult.model_validate_json(canonical_json(evaluate_sba(req, load_size_table())))
     except (ValueError, OverflowError, RecursionError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

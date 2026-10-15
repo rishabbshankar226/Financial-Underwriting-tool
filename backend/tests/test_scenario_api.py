@@ -12,12 +12,12 @@ from threading import Event
 from uuid import uuid4
 
 import pytest
+from api_client import AUTHORIZATION_ASGI_HEADER, TestClient
 from app.assessment import assess_commercial
 from app.case_contracts import CaseCreate, CaseEdit
 from app.cases import CaseStore
 from app.main import app
 from app.scenario_routes import configured_read_store
-from fastapi.testclient import TestClient
 from financial_assertions import wire_decimal
 
 ORIGIN = "http://localhost:5173"
@@ -231,7 +231,7 @@ def test_adapter_stops_reading_the_actual_stream_at_limit(client, saved, suffix,
         async def send(message):
             sent.append(message)
 
-        headers = [(b"origin", ORIGIN.encode()), (b"content-type", b"application/json")]
+        headers = [AUTHORIZATION_ASGI_HEADER, (b"origin", ORIGIN.encode()), (b"content-type", b"application/json")]
         if declared_length is not None:
             headers.append((b"content-length", declared_length))
         target = path(saved) + suffix
@@ -329,14 +329,15 @@ def test_historical_preview_survives_restore_and_a_fresh_application_process(cli
     CaseStore.restore(backup, restored)
     monkeypatch.setenv("SPREADLINE_CASE_DB", str(restored))
     source = '''import json, sys
-from fastapi.testclient import TestClient
+sys.path.insert(0, sys.argv[1])
+from api_client import TestClient
 from app.main import app
 target, body = json.load(sys.stdin)
 with TestClient(app) as client:
     response = client.post(target, json=body)
     print(json.dumps({"status": response.status_code, "body": response.json()}))
 '''
-    process = subprocess.run([sys.executable, "-c", source], input=json.dumps([path(saved), command(saved)]),
+    process = subprocess.run([sys.executable, "-c", source, str(Path(__file__).resolve().parent)], input=json.dumps([path(saved), command(saved)]),
                              capture_output=True, text=True, timeout=15)
     assert process.returncode == 0, process.stderr
     assert json.loads(process.stdout) == {"status": 200, "body": expected.json()}

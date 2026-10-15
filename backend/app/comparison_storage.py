@@ -269,7 +269,7 @@ def retain(
         baseline_revision=revision,
         baseline_run_id=snapshot.run_id,
         recorded_at=datetime.now(UTC).isoformat(timespec="microseconds"),
-        actor="prototype-demo-unverified",
+        actor=store.actor,
         recording=store.recording.model_dump(mode="json"),
         preview=preview.model_dump(mode="json"),
     )

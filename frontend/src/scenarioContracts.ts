@@ -1,6 +1,6 @@
 import { compareDecimal, inputDecimal, isDecimal, legacyDecimal, shiftDecimal } from "./decimal";
 import { annualFields, currentFactKeys, guardAssessment, guardDatedInput, guardDecision, metric, type Assessment, type Decision, type DatedRequest, type Factor, type Metric, type Period, type Policy, type Trace } from "./contracts";
-import { date, finite, finiteJson, guardRecording, hash, object, requireCase, revision, sameJson, text, timestamp, uuid, type Page, type Recording, type StoredCase } from "./caseContracts";
+import { actor, date, finite, finiteJson, guardRecording, hash, object, requireCase, revision, sameJson, text, timestamp, uuid, type Page, type Recording, type StoredCase } from "./caseContracts";
 type Obj = Record<string, unknown>;
 export const shockKeys = ["revenue_change", "cogs_change", "operating_expense_change", "proposed_rate_change_bps"] as const;
 export type Assumptions = Record<(typeof shockKeys)[number], string>;
@@ -111,7 +111,7 @@ export type ComparisonRecord = {
     baseline_revision: number;
     baseline_run_id: string;
     recorded_at: string;
-    actor: "prototype-demo-unverified";
+    actor: string;
     recording: Recording;
     preview: Obj;
     payload_hash: string;
@@ -339,7 +339,7 @@ export function guardComparison(value: unknown, etag: string | null): StoredComp
     const r = object(value, "original comparison");
     finiteJson(r, 0, 100);
     requireCase(["commercial-scenario-comparison-v1", "commercial-scenario-comparison-v2"].includes(String(r.schema_version)) && r.storage_serialization_version === "scenario-comparison-json-v1" && r.persisted === true && canonicalId(r.comparison_id) && canonicalId(r.case_id) && canonicalId(r.baseline_run_id) && revision(r.baseline_revision) && hash(r.payload_hash), "comparison storage identity");
-    requireCase(timestamp(r.recorded_at) && /^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{6}\+00:00$/.test(r.recorded_at) && r.actor === "prototype-demo-unverified", "comparison recording time/actor");
+    requireCase(timestamp(r.recorded_at) && /^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{6}\+00:00$/.test(r.recorded_at) && actor(r.actor), "comparison recording time/actor");
     guardRecording(r.recording);
     requireCase(etag === `"scenario-comparison-json-v1:${r.case_id}:${r.comparison_id}:${r.payload_hash}"`, "comparison ETag");
     const p = object(r.preview, "original preview"), { b, a } = baselineEnvelope(p);

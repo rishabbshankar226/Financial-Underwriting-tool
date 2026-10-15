@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { guardSavedCase, object, type Page, type StoredCase } from "../src/caseContracts";

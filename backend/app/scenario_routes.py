@@ -7,6 +7,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, FastAPI, Request
 from starlette.concurrency import run_in_threadpool
 
+from .authentication import authenticated_operator
 from .cases import CaseStore, CaseStoreError, require_uuid
 from .json_transport import install_contract_openapi, read_contract
 from .scenario_contracts import ScenarioPreview, ScenarioPreviewCommand
@@ -25,7 +26,7 @@ def configured_read_store() -> CaseStore:
         raise CaseStoreError(
             503, "storage_not_configured", "Set SPREADLINE_CASE_DB to enable local saved cases"
         )
-    return CaseStore(path, initialize=False)
+    return CaseStore(path, initialize=False, actor=authenticated_operator())
 
 
 ReadStore = Annotated[CaseStore, Depends(configured_read_store)]

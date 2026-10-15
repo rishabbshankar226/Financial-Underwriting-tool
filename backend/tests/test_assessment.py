@@ -4,9 +4,9 @@ from decimal import Decimal, localcontext
 from pathlib import Path
 
 import pytest
+from api_client import AUTHORIZATION_ASGI_HEADER, TestClient
 from app.config import DEFAULT_POLICY
 from app.main import app
-from fastapi.testclient import TestClient
 from financial_assertions import decimal_approx, wire_decimal
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -449,7 +449,7 @@ def test_unused_older_financials_still_cannot_bypass_input_range_validation():
 @pytest.mark.parametrize("declared_length", [None, b"1", b"2000000"])
 def test_streamed_body_limit_counts_actual_bytes_before_parsing(path, declared_length):
     import asyncio
-    headers = [(b"origin", b"http://localhost:5173")]
+    headers = [AUTHORIZATION_ASGI_HEADER, (b"origin", b"http://localhost:5173")]
     if declared_length is not None:
         headers.append((b"content-length", declared_length))
     chunks = [b"x" * 600000, b"y" * 400001, b"not consumed"]

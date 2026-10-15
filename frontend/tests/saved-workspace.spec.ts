@@ -1,4 +1,6 @@
-import { test, expect, type Page } from "@playwright/test";
+import { connectWorkspace } from "./testCredentials";
+import { test, expect } from "./authenticatedTest";
+import type { Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { guardCasePage, guardSavedCase, type CaseSnapshot, type CaseSummary, type Page as CasePage } from "../src/caseContracts";
@@ -10,7 +12,7 @@ const dated = JSON.parse(
 );
 
 async function save(page: Page, rationale = "Synthetic creation") {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill(rationale);
@@ -47,7 +49,7 @@ async function editRevenue(page: Page, value: string, rationale: string) {
     .click();
 }
 async function openSaved(page: Page, id: string) {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Saved cases", exact: true }).click();
   await page
@@ -67,7 +69,7 @@ test("real save/reload/edit/history reads original runs without stateless recalc
   page.on("request", (r) => {
     if (r.url().endsWith("/commercial/assessment")) assessments++;
   });
-  await page.reload();
+  await page.reload(); await connectWorkspace(page);
   await expect(page.locator(".savedContext")).toContainText(snapshot.case_id);
   await editRevenue(page, "1", "Synthetic revenue revision");
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
@@ -105,7 +107,7 @@ test("lost create response survives reload and retry creates exactly one case", 
   page,
   request,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   let committed!: CaseSnapshot;
   let originalKey = "";
@@ -126,7 +128,7 @@ test("lost create response survives reload and retry creates exactly one case", 
   ).toBeEnabled();
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   await page.unroute("**/cases");
-  await page.reload();
+  await page.reload(); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   const retry = page.waitForRequest(
     (r) => new URL(r.url()).pathname === "/cases" && r.method() === "POST",
@@ -298,7 +300,7 @@ test("stateless edits remain usable when the browser cannot keep recovery storag
       },
     }),
   );
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   const field = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -362,7 +364,7 @@ test("lost edit retry after reload identifies its old receipt when head advanced
   );
   expect(advance.status()).toBe(201);
   await page.unroute("**/cases/*/revisions");
-  await page.reload();
+  await page.reload(); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   const retry = page.waitForRequest(
     (r) => r.method() === "POST" && r.url().endsWith("/revisions"),
@@ -417,7 +419,7 @@ test("accepted receipt remains readable and read-only when latest refresh fails"
         })
       : route.continue(),
   );
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page
@@ -549,7 +551,7 @@ test("malformed successful save keeps its exact recovery key after the real comm
     delete headers.etag;
     await route.fulfill({ response, headers });
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Invalid receipt headers");
@@ -614,7 +616,7 @@ test("saved pagination reads more than one page of cases and revisions", async (
     expect(response.status()).toBe(201);
     etag = response.headers().etag;
   }
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Saved cases", exact: true }).click();
   await expect(
@@ -648,7 +650,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
   page,
   request,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page
     .getByRole("button", {
@@ -698,7 +700,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
 test("save rationale validation and cancellation preserve the accepted input and focus", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   let writes = 0;
   page.on("request", (r) => {
@@ -738,7 +740,7 @@ test("save rationale validation and cancellation preserve the accepted input and
 test("unsaved edits preserve the existing session rationale behavior", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page
     .getByRole("button", {
@@ -786,7 +788,7 @@ test("an older saved read cannot replace the newer selected case", async ({
       finished();
     }
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Saved cases", exact: true }).click();
   await page
@@ -808,7 +810,7 @@ test("an older saved read cannot replace the newer selected case", async ({
     "Latest selected saved case",
   );
   await expect(page.locator(".savedContext")).toContainText(cases[1].run_id);
-  await page.reload();
+  await page.reload(); await connectWorkspace(page);
   await expect(page.locator(".savedContext")).toContainText(cases[1].case_id);
 });
 
@@ -823,7 +825,7 @@ test("invalid recovery tracking never auto-posts and needs explicit discard", as
     if (r.method() === "POST" && new URL(r.url()).pathname.startsWith("/cases"))
       writes++;
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await expect(
     page.getByRole("heading", { name: "Saved write recovery unavailable" }),
@@ -880,7 +882,7 @@ test("a journal quota failure stops the write and preserves the accepted result"
     if (r.method() === "POST" && new URL(r.url()).pathname === "/cases")
       writes++;
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   const saveButton = page.getByRole("button", {
     name: "Save case",
@@ -964,7 +966,7 @@ test("a refreshed case page wins over an older delayed list response", async ({
       finished();
     }
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Saved cases", exact: true }).click();
   await started;

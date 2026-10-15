@@ -158,6 +158,28 @@ nav button {
   align-items: start;
   gap: 20px;
 }
+.accessGate {
+  max-width: 620px;
+  padding-top: 12vh;
+}
+.accessGate form {
+  display: grid;
+  gap: 14px;
+}
+.accessGate input {
+  box-sizing: border-box;
+  width: 100%;
+}
+.accessBar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 32px;
+  border-bottom: 1px solid #303b46;
+  color: #b5bfc9;
+}
 .panelTitle span {
   font-size: 12px;
   color: #a5b2bd;

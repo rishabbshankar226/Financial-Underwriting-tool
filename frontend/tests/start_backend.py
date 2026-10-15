@@ -13,6 +13,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix="spreadline-playwright-") as directory:
         environment = dict(os.environ)
         environment["SPREADLINE_CASE_DB"] = str(Path(directory) / "cases.sqlite")
+        environment["SPREADLINE_API_TOKEN"] = environment.pop("SPREADLINE_TEST_API_TOKEN")
+        environment["SPREADLINE_OPERATOR_ID"] = environment.pop("SPREADLINE_TEST_OPERATOR_ID")
         environment.pop("SPREADLINE_BUILD_REVISION", None)
         process = subprocess.Popen(
             [

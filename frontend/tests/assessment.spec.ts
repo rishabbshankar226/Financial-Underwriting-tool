@@ -1,9 +1,10 @@
-import { test, expect } from "@playwright/test";
+import { connectWorkspace } from "./testCredentials";
+import { test, expect } from "./authenticatedTest";
 
 test("dated workspace shows all periods, server facts and policy trace", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await expect(
     page.getByText("Dated assessment", { exact: true }),
@@ -32,7 +33,7 @@ test("dated workspace shows all periods, server facts and policy trace", async (
 });
 
 test("malformed import invalidates the result and memo", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.locator("input[type=file]").setInputFiles({
     name: "broken.json",
@@ -52,7 +53,7 @@ test("malformed import invalidates the result and memo", async ({ page }) => {
 test("failed edits remain drafts and retry records the edit once", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.route("**/commercial/assessment", (route) => route.abort());
   await page
@@ -96,7 +97,7 @@ const uploadJson = (name: string, value: unknown) => ({
 test("latest selection wins over an older delayed backend response", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   let release!: () => void;
   let entered!: () => void;
@@ -148,7 +149,7 @@ test("older file read cannot overwrite a newer malformed selection", async ({
       });
     };
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page
     .locator("input[type=file]")
@@ -171,7 +172,7 @@ test("older file read cannot overwrite a newer malformed selection", async ({
 test("dialog validation, keyboard focus and cancellation preserve the accepted result", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   const edit = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -208,7 +209,7 @@ test("incomplete successful response is unavailable and never becomes a memo", a
     delete body.policy_snapshot;
     await route.fulfill({ response, json: body });
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   await expect(page.getByRole("alert")).toContainText("policy");
   await page.getByRole("button", { name: "memo", exact: true }).click();
@@ -218,7 +219,7 @@ test("incomplete successful response is unavailable and never becomes a memo", a
 test("exact import byte limit is accepted and one byte over clears the result", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   const raw = JSON.stringify(dated);
   const padded = Buffer.from(
@@ -248,7 +249,7 @@ test("desktop and mobile workflow fits and has no application console errors", a
   page.on("console", (msg) => {
     if (["warning", "error"].includes(msg.type())) errors.push(msg.text());
   });
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   for (const viewport of [
     { width: 1440, height: 1000 },
@@ -307,7 +308,7 @@ test("desktop and mobile workflow fits and has no application console errors", a
 test("assumption rate and signed working-capital edits use their API units", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "assumptions", exact: true }).click();
   await page
@@ -339,7 +340,7 @@ test("assumption rate and signed working-capital edits use their API units", asy
 test("unavailable ratios and absent guarantors have explicit explanations", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   const input = structuredClone(dated);
   input.proposed_loan.amount = 0;

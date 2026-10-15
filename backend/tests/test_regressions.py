@@ -1,10 +1,10 @@
 import math
 
 import pytest
+from api_client import TestClient
 from app.core import amortized_annual_debt_service
 from app.ingestion import confirmed_payload, extract_synthetic_text
 from app.main import app
-from fastapi.testclient import TestClient
 from fixtures import alpine_request
 
 client = TestClient(app, raise_server_exceptions=False)
@@ -110,7 +110,8 @@ def test_partial_atr_checklist_is_not_complete():
 def test_invalid_sba_inputs_rejected_before_evaluation(field, value):
     from app.schemas import SBACase
     from pydantic import ValidationError
-    payload = dict(borrower_name='Synthetic', naics='999999', requested_loan=100000, global_dscr=1.2, sop_version='8')
+    from test_sba_evidence import evidence_case
+    payload = evidence_case().model_dump()
     payload[field] = value
     with pytest.raises(ValidationError):
         SBACase(**payload)

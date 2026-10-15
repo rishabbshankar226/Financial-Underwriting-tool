@@ -1,10 +1,10 @@
 import json
 
 import pytest
+from api_client import TestClient
 from app.ingestion import confirmed_payload, extract_synthetic_text, extraction_accuracy, parse_structured
 from app.main import app
 from app.schemas import AuditEvent, ExtractionField, ExtractionResult, SourceKind
-from fastapi.testclient import TestClient
 from fixtures import alpine_request
 
 

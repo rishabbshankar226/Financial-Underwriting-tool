@@ -5,8 +5,8 @@ from pathlib import Path
 from uuid import uuid4
 
 import pytest
+from api_client import AUTHORIZATION_ASGI_HEADER, TestClient
 from app.main import app
-from fastapi.testclient import TestClient
 
 ORIGIN = "http://localhost:5173"
 
@@ -161,7 +161,7 @@ def test_streamed_body_stops_reading_at_limit(client, command):
                 return {"type": "http.disconnect"}
         async def send(message):
             sent.append(message)
-        headers = [(b"origin", ORIGIN.encode()), (b"content-length", b"1"),
+        headers = [AUTHORIZATION_ASGI_HEADER, (b"origin", ORIGIN.encode()), (b"content-length", b"1"),
                    (b"idempotency-key", str(uuid4()).encode()), (b"if-match", first.headers["etag"].encode())]
         scope = {"type": "http", "asgi": {"version": "3.0", "spec_version": "2.4"}, "http_version": "1.1",
                  "method": "POST", "scheme": "http", "path": path, "raw_path": path.encode(),
@@ -232,7 +232,8 @@ def test_new_application_process_reads_history_and_original_retry(client, comman
     # A separate interpreter imports a new app and opens only the persisted file.
     script = '''
 import json, sys
-from fastapi.testclient import TestClient
+sys.path.insert(0, sys.argv[1])
+from api_client import TestClient
 from app.main import app
 data = json.load(sys.stdin)
 with TestClient(app) as client:
@@ -244,7 +245,7 @@ with TestClient(app) as client:
                       'etag': retry.headers['etag'], 'replayed': retry.headers['idempotency-replayed'],
                       'replay_status': replay.json()['status']}))
 '''
-    result = subprocess.run([sys.executable, "-c", script], input=json.dumps({"case_id": case_id, "operation": first_operation, "command": command}),
+    result = subprocess.run([sys.executable, "-c", script, str(Path(__file__).resolve().parent)], input=json.dumps({"case_id": case_id, "operation": first_operation, "command": command}),
                             cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     output = json.loads(result.stdout)

@@ -1,4 +1,4 @@
-import { apiBase } from "./api";
+import { apiRequest } from "./api";
 import { CaseApiError } from "./caseApi";
 import { requireCase, sameJson, uuid, revision, type StoredCase } from "./caseContracts";
 import { guardPendingWrite, type ComparisonOperation } from "./caseRecovery";
@@ -42,7 +42,7 @@ async function boundedJson(response: Response) {
 async function json(path: string, init: RequestInit, transport: typeof fetch) {
     let response: Response;
     try {
-        response = await transport(`${apiBase}${path}`, init);
+        response = await apiRequest(path, init, transport);
     }
     catch {
         throw new CaseApiError("The comparison response was lost or unavailable. Keep and retry the exact pending save if one exists.");

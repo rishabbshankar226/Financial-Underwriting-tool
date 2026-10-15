@@ -9,11 +9,11 @@ from threading import Event
 from uuid import uuid4
 
 import pytest
+from api_client import TestClient
 from app.assessment import assess_commercial
 from app.cases import CaseStore
 from app.main import app
 from app.scenario_routes import configured_read_store
-from fastapi.testclient import TestClient
 
 ORIGIN = "http://localhost:5173"
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/alpine_dated.json"

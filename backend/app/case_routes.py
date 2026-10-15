@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
 from .assessment_contracts import ContractModel
+from .authentication import authenticated_operator
 from .case_contracts import (
     REPLAY_HEADER,
     CaseCreate,
@@ -48,7 +49,7 @@ def configured_store() -> CaseStore:
         raise CaseStoreError(
             503, "storage_not_configured", "Set SPREADLINE_CASE_DB to enable local saved cases"
         )
-    return CaseStore(path)
+    return CaseStore(path, actor=authenticated_operator())
 
 
 Store = Annotated[CaseStore, Depends(configured_store)]

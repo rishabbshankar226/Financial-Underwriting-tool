@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { connectWorkspace } from "./testCredentials";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 const alpine = JSON.parse(
   readFileSync(
@@ -8,7 +9,7 @@ const alpine = JSON.parse(
 );
 
 async function gotoLegacy(page: import("@playwright/test").Page) {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page
     .getByRole("button", { name: "Legacy Alpine demo", exact: true })

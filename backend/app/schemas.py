@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, field_validator, model_validator
 
-from .finance import FinancialDecimal, Scalar, decimal_sum
+from .finance import ExactFinancialDecimal, FinancialDecimal, ResultDecimal, Scalar, decimal_sum
 
 DISCLAIMER = (
     "Prototype demonstration only. This output has not been validated for use in an actual "
@@ -172,28 +172,142 @@ class ExtractionResult(FiniteModel):
 
 class SBASizeRow(FiniteModel):
     naics: str = Field(pattern=r"^[0-9]{6}$")
-    measure: Literal["receipts_millions", "employees"]
-    threshold: FinancialDecimal = Field(gt=0)
+    measure: Literal["receipts_millions", "employees", "unsupported"]
+    threshold: FinancialDecimal | None = Field(default=None, gt=0)
     source_effective_date: date
     synthetic_test_only: bool = False
+    source_url: str | None = None
+    source_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
+    source_verified_through: date | None = None
+    source_row: int | None = Field(default=None, ge=1)
+    description: str = ""
+    unsupported_reason: str | None = None
 
     @model_validator(mode="after")
     def validate_employee_threshold(self) -> Self:
-        if self.measure == "employees" and self.threshold != self.threshold.to_integral_value():
+        if self.measure == "unsupported":
+            if self.threshold is not None or not self.unsupported_reason:
+                raise ValueError("An unsupported standard requires a reason and no inferred threshold")
+        elif self.threshold is None:
+            raise ValueError("A supported standard requires a positive threshold")
+        elif self.measure == "employees" and self.threshold != self.threshold.to_integral_value():
             raise ValueError("Employee size threshold must be a whole number")
         return self
 
 
+class SBASizeEvidence(FiniteModel):
+    basis: Literal[
+        "receipts_three_completed_fiscal_year_average",
+        "receipts_five_completed_fiscal_year_average",
+        "employees_24_month_pay_period_average_ceiling",
+    ]
+    period_start: date
+    period_end: date
+    affiliates: Literal["included", "none"]
+    source_reference: str = Field(min_length=1, max_length=500)
+
+    @field_validator("source_reference")
+    @classmethod
+    def nonblank_source(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("Size evidence requires a nonblank source reference")
+        return value.strip()
+
+    @model_validator(mode="after")
+    def complete_measurement_period(self) -> Self:
+        years = 2 if self.basis.startswith("employees") else 3 if "three" in self.basis else 5
+        if self.period_start.day != 1:
+            raise ValueError("Supported size evidence starts at a calendar-month boundary")
+        try:
+            end = self.period_start.replace(year=self.period_start.year + years) - timedelta(days=1)
+        except ValueError as exc:
+            raise ValueError("Unsupported size-evidence period") from exc
+        if end != self.period_end:
+            raise ValueError("Size evidence must cover the complete declared measurement period")
+        return self
+
+
 class SBACase(FiniteModel):
+    schema_version: Literal["sba-screen-v2"] = "sba-screen-v2"
+    assessment_as_of: date
+    size_evidence: SBASizeEvidence
     borrower_name: str
     naics: str = Field(pattern=r"^[0-9]{6}$")
-    annual_receipts_millions: FinancialDecimal | None = Field(default=None, ge=0)
+    annual_receipts_millions: ExactFinancialDecimal | None = Field(default=None, ge=0)
     employees: int | None = Field(default=None, ge=0)
-    requested_loan: FinancialDecimal = Field(gt=0)
-    owner_liquid_resources: FinancialDecimal = Field(default=Decimal("0"), ge=0)
-    retirement_allowance: FinancialDecimal = Field(default=Decimal("0"), ge=0)
-    college_allowance: FinancialDecimal = Field(default=Decimal("0"), ge=0)
-    medical_allowance: FinancialDecimal = Field(default=Decimal("0"), ge=0)
-    global_dscr: FinancialDecimal
+    requested_loan: ExactFinancialDecimal = Field(gt=0)
+    owner_liquid_resources: ExactFinancialDecimal = Field(default=Decimal("0"), ge=0)
+    retirement_allowance: ExactFinancialDecimal = Field(default=Decimal("0"), ge=0)
+    college_allowance: ExactFinancialDecimal = Field(default=Decimal("0"), ge=0)
+    medical_allowance: ExactFinancialDecimal = Field(default=Decimal("0"), ge=0)
+    global_dscr: ExactFinancialDecimal
     transaction_type: Literal["expansion", "acquisition", "buyout", "esop"] = "expansion"
     sop_version: Literal["8", "8.1"]
+
+    @model_validator(mode="after")
+    def supported_evidence(self) -> Self:
+        evidence = self.size_evidence
+        if evidence.period_end >= self.assessment_as_of:
+            raise ValueError("Size evidence must end before the assessment date")
+        if evidence.basis.startswith("employees"):
+            latest_end = self.assessment_as_of.replace(day=1) - timedelta(days=1)
+            if evidence.period_end != latest_end:
+                raise ValueError("Employee evidence must cover the latest completed 24 calendar months")
+            if self.employees is None or self.annual_receipts_millions is not None:
+                raise ValueError(
+                    "Employee evidence requires only the integer ceiling of the pay-period average"
+                )
+        else:
+            if self.annual_receipts_millions is None or self.employees is not None:
+                raise ValueError("Receipts evidence requires only average annual receipts in millions")
+            try:
+                next_year_end = evidence.period_end.replace(year=evidence.period_end.year + 1)
+            except ValueError:
+                next_year_end = evidence.period_end.replace(year=evidence.period_end.year + 1, day=28)
+            if next_year_end < self.assessment_as_of:
+                raise ValueError("Receipts evidence omits the latest completed fiscal year")
+        return self
+
+
+class SBACreditElsewhereScreen(FiniteModel):
+    applied: bool
+    passes: None
+    reason: str
+    excess_liquid_resources: ResultDecimal | None = None
+    resource_indicator_below_requested: bool | None = None
+
+
+class SBASizeSource(FiniteModel):
+    effective_date: date
+    verified_through: date | None
+    url: str | None
+    sha256: str | None = Field(pattern=r"^[0-9a-f]{64}$")
+    row: int | None = Field(ge=1)
+    synthetic_test_only: bool
+
+
+class SBAScreenResult(FiniteModel):
+    schema_version: Literal["sba-screen-result-v2"]
+    borrower: str
+    assessment_as_of: date
+    sop_version: Literal["8", "8.1"]
+    size_eligible: bool
+    size_reason: str
+    size_evidence: SBASizeEvidence
+    size_standard_source: SBASizeSource
+    policy_version: str
+    credit_elsewhere: SBACreditElsewhereScreen
+    global_dscr: ResultDecimal
+    configured_global_dscr_floor: ResultDecimal
+    coverage_pass: bool
+    outcome: Literal["review_required", "screen_failed"]
+    eligibility_status: Literal["incomplete"]
+    unresolved_requirements: list[
+        Literal[
+            "lender_credit_elsewhere_determination",
+            "industry_selection_and_affiliation_review",
+            "alternative_size_standards_and_program_eligibility",
+            "approved_lender_credit_policy",
+        ]
+    ] = Field(min_length=1)
+    disclaimer: str

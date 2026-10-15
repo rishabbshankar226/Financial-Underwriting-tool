@@ -37,7 +37,7 @@ export type CaseEvent = {
   after: string | number | null;
   context: EventContext;
   rationale: string;
-  actor: "prototype-demo-unverified";
+  actor: string;
   recorded_at: string;
 };
 export type Recording = {
@@ -107,6 +107,8 @@ export function object(value: unknown, field: string): Obj {
 export const finite = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v);
 export const text = (v: unknown): v is string => typeof v === "string";
+export const actor = (v: unknown): v is string =>
+  text(v) && /^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/.test(v);
 export const uuid = (v: unknown): v is string =>
   text(v) && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(v);
 export const revision = (v: unknown): v is number =>
@@ -364,7 +366,7 @@ export function guardSavedCase(
       e.revision === s.revision &&
       e.run_id === s.run_id &&
       e.recorded_at === s.recorded_at &&
-      e.actor === "prototype-demo-unverified",
+      actor(e.actor),
     "event identity",
   );
   rationale(e.rationale);

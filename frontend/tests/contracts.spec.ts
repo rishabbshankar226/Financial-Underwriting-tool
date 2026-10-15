@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 import { guardAssessment, type Assessment } from "../src/contracts";
 import { applyEdit, initialWorkspace, transition } from "../src/workspace";

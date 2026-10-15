@@ -295,8 +295,8 @@ export function SavedHistory({
         <p>Previous saved selection; its recommendation is inactive.</p>
       )}
       <p>
-        Original accepted revisions and server-recorded events. Actor:
-        unverified demonstration identity.
+        Original accepted revisions and server-recorded events. Recorded actor: {event.actor}.
+        {event.actor === "prototype-demo-unverified" ? " Archived demonstration identity." : " Configured credential identity."}
       </p>
       {pages.loading && <p role="status">Loading revisions…</p>}
       {pages.error && <p role="alert">{pages.error}</p>}

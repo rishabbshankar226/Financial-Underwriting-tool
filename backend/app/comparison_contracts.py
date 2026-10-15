@@ -7,6 +7,7 @@ from uuid import UUID
 from pydantic import Field, JsonValue, field_validator, model_validator
 
 from .assessment_contracts import ContractModel
+from .authentication import DEMONSTRATION_ACTOR, valid_actor
 from .case_contracts import RecordingMetadata
 from .finance import legacy_decimal_values
 from .scenario_contracts import SCENARIO_SCHEMA_VERSION, ScenarioBatchCommand, ScenarioPreviewCommand
@@ -63,13 +64,14 @@ class ComparisonRecord(ContractModel):
     baseline_revision: int = Field(ge=1, le=2**63 - 1)
     baseline_run_id: str
     recorded_at: str
-    actor: Literal["prototype-demo-unverified"] = "prototype-demo-unverified"
+    actor: str = DEMONSTRATION_ACTOR
     recording: RecordingMetadata
     preview: dict[str, JsonValue]
     payload_hash: str = Field(pattern=_HASH)
 
     _ids = field_validator("comparison_id", "case_id", "baseline_run_id")(canonical_uuid)
     _stamp = field_validator("recorded_at")(utc_timestamp)
+    _actor = field_validator("actor")(valid_actor)
 
 
 class ComparisonScenarioSummary(ContractModel):

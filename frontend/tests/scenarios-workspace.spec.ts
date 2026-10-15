@@ -1,4 +1,6 @@
-import { test, expect, type Page, type APIRequestContext } from "@playwright/test";
+import { connectWorkspace, TEST_OPERATOR_ID } from "./testCredentials";
+import { test, expect } from "./authenticatedTest";
+import type { Page, APIRequestContext } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { RECOVERY_KEY } from "../src/caseRecovery";
@@ -20,7 +22,7 @@ async function retain(request: APIRequestContext, original: CaseSnapshot, name: 
     return { record: guardComparison(await result.json(), result.headers().etag).record, headers: result.headers() };
 }
 async function baseline(page: Page) {
-    await page.goto("/");
+    await page.goto("/"); await connectWorkspace(page);
     await expect(page.locator(".decision strong")).toHaveText("APPROVE");
     await page.getByRole("button", { name: "Save case", exact: true }).click();
     await page.getByLabel("Save rationale").fill("Synthetic scenario baseline");
@@ -49,10 +51,11 @@ test("preview and one retained batch preserve the original assessment and reopen
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     const record = await (await saved).json();
     await expect(page.locator(".comparisonContext")).toContainText(record.comparison_id);
+    await expect(page.locator(".originalComparison")).toContainText(`Recorded actor: ${TEST_OPERATOR_ID}`);
     await expect(page.getByRole("button", { name: "Save reviewed comparison", exact: true })).toBeDisabled();
     const latest = await (await request.get(`http://127.0.0.1:8000/cases/${original.case_id}`)).json();
     expect(latest).toEqual(original);
-    await page.reload();
+    await page.reload(); await connectWorkspace(page);
     await page.getByRole("button", { name: "Scenarios", exact: true }).click();
     await expect(page.locator(".comparisonContext")).toContainText(record.comparison_id);
     expect((await (await request.get(`http://127.0.0.1:8000/cases/${original.case_id}/scenario-comparisons`)).json()).items).toHaveLength(1);
@@ -90,7 +93,7 @@ test("lost comparison receipt survives reload and blocks other saves until exact
         return route.continue(); originalBody = route.request().postData()!; originalKey = route.request().headers()["idempotency-key"]; await route.fetch(); await route.abort("failed"); });
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
-    await page.reload();
+    await page.reload(); await connectWorkspace(page);
     let posts = 0;
     page.on("request", r => { if (r.method() === "POST" && r.url().endsWith("/scenario-comparisons"))
         posts++; });
@@ -290,7 +293,7 @@ test("large originals render only opened trace and guarantor pages and bound JSO
     input.borrower_name = "Synthetic paged comparison";
     input.guarantors = Array.from({ length: 60 }, (_, i) => ({ ...dated.guarantors[0], ownership_percentage: 0.01, name: `Guarantor ${i + 1} 😀` }));
     const original = await create(request, input), stored = await retain(request, original, "Paged projection");
-    await page.goto("/");
+    await page.goto("/"); await connectWorkspace(page);
     await page.getByRole("button", { name: "Saved cases", exact: true }).click();
     await page.getByRole("button", { name: `Open ${input.borrower_name} case ${original.case_id}`, exact: true }).click();
     await expect(page.locator(".savedContext")).toContainText(original.run_id);
@@ -313,7 +316,7 @@ test("large originals render only opened trace and guarantor pages and bound JSO
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 test("unsaved dated authoring asks for a saved baseline and legacy cannot invoke saving", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/"); await connectWorkspace(page);
     await expect(page.locator(".decision strong")).toHaveText("APPROVE");
     await page.getByRole("button", { name: "Scenarios", exact: true }).click();
     await page.getByRole("button", { name: "Save baseline case", exact: true }).click();
@@ -406,7 +409,7 @@ test("an unsupported baseline still exposes its case archive and original compar
     const input = structuredClone(dated); input.borrower_name = "Synthetic future baseline";
     const original = await create(request, input), stored = await retain(request, original, "Original supported comparison");
     await page.route(`**/cases/${original.case_id}`, async route => { const response = await route.fetch(), future = await response.json(); future.assessment.calculation_version = "future"; await route.fulfill({ response, json: future }); });
-    await page.goto("/"); await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+    await page.goto("/"); await connectWorkspace(page); await page.getByRole("button", { name: "Saved cases", exact: true }).click();
     await page.getByRole("button", { name: `Open ${input.borrower_name} case ${original.case_id}`, exact: true }).click(); await expect(page.locator(".savedContext")).toContainText(original.run_id);
     await page.getByRole("button", { name: "Scenarios", exact: true }).click(); await expect(page.locator(".scenarioComposer")).toContainText("New preview is unavailable");
     await expect(page.getByRole("button", { name: "Preview scenarios", exact: true })).toHaveCount(0);

@@ -45,6 +45,13 @@ def install_contract_openapi(app: "FastAPI", models: "Sequence[type[BaseModel]]"
         schema = json_object(app.openapi_schema or original())
         components = json_object(schema.setdefault("components", {}))
         definitions = json_object(components.setdefault("schemas", {}))
+        schemes = json_object(components.setdefault("securitySchemes", {}))
+        schemes["OperatorBearer"] = {"type": "http", "scheme": "bearer"}
+        schema["security"] = [{"OperatorBearer": []}]
+        paths = json_object(schema.get("paths", {}))
+        health = json_object(paths.get("/health", {}))
+        if isinstance(health.get("get"), dict):
+            json_object(health["get"])["security"] = []
         for model in models:
             definition = json_object(model.model_json_schema(ref_template="#/components/schemas/{model}"))
             definitions.update(json_object(definition.pop("$defs", {})))

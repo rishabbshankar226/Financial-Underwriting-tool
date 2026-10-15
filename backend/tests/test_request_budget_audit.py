@@ -1,7 +1,7 @@
 import pytest
+from api_client import TestClient
 from app.assessment_contracts import MAX_REQUEST_BYTES
 from app.main import app
-from fastapi.testclient import TestClient
 from fixtures import alpine_request
 
 

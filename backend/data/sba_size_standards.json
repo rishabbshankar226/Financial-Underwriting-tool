@@ -1,9 +1,9 @@
 {
-  "source": "U.S. Small Business Administration, Small Business Size Standards",
-  "source_url": "https://data.sba.gov/dataset/small-business-size-standards",
-  "landing_page_last_checked": "2026-09-08",
-  "published_current_effective_date": "2023-03-17",
-  "status": "SOURCE_METADATA_ONLY",
-  "warning": "The official SBA workbook is not bundled. No NAICS thresholds are guessed or presented as current. Load the official dated table before real use.",
-  "rows": []
+  "schema_version": "sba-size-source-v2",
+  "source_url": "https://data.sba.gov/sites/default/files/distribution/SBA-GCBD-2014-08-001/sba-table-of-size-standards_effective-march-17-2023_v0.xlsx",
+  "source_file": "sba-size-standards-2023-03-17.xlsx",
+  "source_sha256": "1e0777f83f6cc34767b97957a8e617b951d347f560538687e6bdfef32209bd74",
+  "source_effective_date": "2023-03-17",
+  "verified_through": "2026-10-15",
+  "checked_on": "2026-10-15"
 }
