@@ -29,6 +29,24 @@ constraints. CI uses Python 3.12 and Node 22; local Node is 24.19.0.
 Published-tree CI results are recorded after verification below. A blocked
 launch is never counted as a passing browser interaction test.
 
+## Verified GitHub Actions result
+
+[Run 38666759875](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38666759875)
+completed successfully on implementation commit
+`16d38968970778cff81c761dff1fc4604ca3ec26`. Both job conclusions and their
+decoded logs were retrieved and inspected.
+
+| Executed CI check | Observed result |
+| --- | --- |
+| Backend job `116200368272` | 768 passed in 31.51s; dependency consistency, Ruff, strict mypy in 30 source files, reference gate and all four precision probes passed |
+| Frontend job `116200368444` | Node 22 install/audit, 5 decimal tests, strict TypeScript and production build passed; npm audit reported zero vulnerabilities |
+| Full Playwright suite in that frontend job | 168 passed in 52.6s, including all 109 contract/recovery checks and 59 real browser interactions |
+
+Local browser provisioning remains unavailable; CI supplied the actual browser
+execution. Final follow-up changes only the audit/verification documentation.
+Application, dependency, CI and test files match the verified implementation
+commit. Complete decoded job logs accompany the review export.
+
 ## Regression and property checks
 
 The new precision suite first reproduced 29 failures and 5 passes on the
@@ -100,7 +118,7 @@ build, then reported 167 passing Playwright tests and one stale percentage
 format assertion. `assessment.spec.ts:324` expected `12.5%`; the application
 correctly displayed the new fixed-precision `12.50%`. That expected display
 was corrected without relaxing API-unit, history, recovery or math assertions.
-Full-suite success requires verified results from the follow-up run. The older
+Follow-up run 38666759875 passed all 168 tests as recorded above. The older
 717-backend/161-browser run predates this migration and does not verify it.
 
 ## Dependency evidence and limits
