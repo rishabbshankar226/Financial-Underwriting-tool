@@ -91,9 +91,17 @@ npm run test:e2e -- tests/contracts.spec.ts tests/cases-contracts.spec.ts \
 ```
 
 The full suite collects 168 tests: 109 contracts and 59 browser interactions.
-Final GitHub Actions logs must be inspected for the published implementation
-commit before claiming full-suite success. The older 717-backend/161-browser
-run predates this migration and does not verify it.
+Initial migration CI run
+[38666492601](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38666492601)
+on commit `4898b453a3240404637d46c5a1e09a73f751c423` passed the backend
+job: 768 tests in 29.99s, Ruff, strict mypy, reference gate and all four
+precision probes. The frontend job passed install, audit, decimal tests and
+build, then reported 167 passing Playwright tests and one stale percentage
+format assertion. `assessment.spec.ts:324` expected `12.5%`; the application
+correctly displayed the new fixed-precision `12.50%`. That expected display
+was corrected without relaxing API-unit, history, recovery or math assertions.
+Full-suite success requires verified results from the follow-up run. The older
+717-backend/161-browser run predates this migration and does not verify it.
 
 ## Dependency evidence and limits
 

@@ -321,7 +321,7 @@ test("assumption rate and signed working-capital edits use their API units", asy
     .click();
   await expect(
     page.locator(".assumption").filter({ hasText: "Annual nominal rate" }),
-  ).toContainText("12.5%");
+  ).toContainText("12.50%");
   await page.getByRole("button", { name: "AR increase", exact: true }).click();
   await page.getByLabel("New value").fill("-1000");
   await page.getByLabel("Rationale").fill("Synthetic AR release");
