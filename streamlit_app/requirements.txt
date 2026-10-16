@@ -1,0 +1,5 @@
+-r ../backend/requirements.txt
+-c ../backend/constraints-py312.txt
+-c constraints-py312.txt
+streamlit==1.66.0
+./streamlit_app/component

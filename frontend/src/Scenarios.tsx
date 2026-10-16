@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { queryWorkspace } from "./workspaceDom";
 import { currentFactKeys, type Trace } from "./contracts";
 import { metricText } from "./metricDisplay";
 import { usePages } from "./SavedCases";
@@ -162,7 +163,7 @@ export function Scenarios({ model, onSaveBaseline, onOpenBaseline }: {
     useEffect(() => {
         if (!focusKey)
             return;
-        document.getElementById(`scenario-name-${focusKey}`)?.focus();
+        queryWorkspace<HTMLInputElement>(`[id="scenario-name-${focusKey}"]`)?.focus();
         setFocusKey(null);
     }, [focusKey]);
     const isDated = model.view?.assessment;

@@ -10,6 +10,8 @@ import {
 import type { EditableField, EditEvent } from "./workspace";
 import EditDialog from "./EditDialog";
 import { metricText } from "./metricDisplay";
+import { queryWorkspace } from "./workspaceDom";
+import AssessmentSummary from "./AssessmentSummary";
 import { Scenarios } from "./Scenarios";
 import { useScenarioWorkspace } from "./useScenarioWorkspace";
 import { writeComparisonLocator } from "./scenarioSelection";
@@ -67,7 +69,7 @@ function factorText(f: Factor): string {
   const v = f.raw_value;
   if (v === null) return "Not applicable";
   if (!isDecimal(v)) return String(v);
-  return f.name === "uca_positive" ? `$${money(v)}` : `${formatDecimal(v, 3)}x`;
+  return f.name === "uca_positive" ? `$${money(v)}` : `${formatDecimal(v, 4)}x`;
 }
 function TraceDetail({
   metric,
@@ -241,7 +243,18 @@ export default function App() {
     );
   }
   return (
-    <main>
+    <main className="analystWorkspace">
+      <div className="workspaceBrand">
+        <div className="wordmark">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+            <path d="M2 5h13v4H2zm7 5h13v4H9zM2 15h13v4H2z" fill="currentColor" />
+          </svg>
+          <span>Spreadline</span>
+        </div>
+        <span className="workspaceType">
+          COMMERCIAL UNDERWRITING <span>USD</span>
+        </span>
+      </div>
       <header>
         <div>
           <div className="eyebrow">SPREADLINE / CREDIT WORKSPACE</div>
@@ -270,7 +283,11 @@ export default function App() {
                 : "Selected input unavailable"}
           </p>
         </div>
-        <div className="decision" aria-live="polite">
+        <div
+          className="decision"
+          data-outcome={decision?.outcome ?? "unavailable"}
+          aria-live="polite"
+        >
           <span>Illustrative decision</span>
           <strong>
             {decision
@@ -290,7 +307,10 @@ export default function App() {
           </small>
         </div>
       </header>
-      <div className="warning">{disclaimer}</div>
+      <div className="warning environmentWarning">
+        <span>Prototype use</span>
+        <p>{disclaimer}</p>
+      </div>
       <div className="uploadbar">
         <div className="actions">
           <button onClick={() => demo("dated")}>Dated Alpine demo</button>
@@ -303,6 +323,7 @@ export default function App() {
             Saved cases
           </button>
           <button
+            className="primary"
             disabled={!workspace.canSave}
             onClick={(event) => {
               opener.current = event.currentTarget;
@@ -339,8 +360,7 @@ export default function App() {
           }}
           onClose={() => {
             setShowCases(false);
-            document
-              .querySelector<HTMLButtonElement>("[data-focus-fallback]")
+            queryWorkspace<HTMLButtonElement>("[data-focus-fallback]")
               ?.focus();
           }}
         />
@@ -467,12 +487,14 @@ export default function App() {
           </span>
         </div>
       )}
-      <nav aria-label="Workspace views">
+      {assessment && <AssessmentSummary assessment={assessment} />}
+      <nav className="workspaceNav" aria-label="Workspace views">
         {(["spread", "assumptions", "details", "memo", "history", "scenarios"] as const).map(
           (value) => (
             <button
               className={tab === value ? "active" : ""}
               aria-pressed={tab === value}
+              aria-current={tab === value ? "page" : undefined}
               onClick={() => setTab(value)}
               key={value}
             >
@@ -554,7 +576,7 @@ export default function App() {
                           "k1_distribution_ratio",
                         ] as const
                       ).map((key) => (
-                        <tr className="derived" key={key}>
+                        <tr className="derived" data-fact={key} key={key}>
                           <th scope="row">
                             {labels[key] ?? "K-1 distribution ratio"}{" "}
                             <small>Calculated</small>
@@ -584,7 +606,7 @@ export default function App() {
             <h2>Current coverage</h2>
             {decision ? (
               decision.factors.map((f) => (
-                <div className="metric" key={f.name}>
+                <div className="metric" data-state={f.passed === null ? "review" : f.passed ? "pass" : "fail"} key={f.name}>
                   <span>{labels[f.name] ?? f.name}</span>
                   <strong>{factorText(f)}</strong>
                   <small>

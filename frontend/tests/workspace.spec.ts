@@ -63,7 +63,7 @@ test("overrides recalculate decision, coverage, memo and audit", async ({
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(
     page.locator(".metric").filter({ hasText: /^DSCR/ }),
-  ).not.toContainText("3.135x");
+  ).not.toContainText("3.1349x");
   await page.getByRole("button", { name: "memo", exact: true }).click();
   await expect(page.locator(".memo")).toContainText("Decline");
   await expect(page.locator(".memo")).not.toContainText(

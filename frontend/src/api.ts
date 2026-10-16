@@ -5,12 +5,10 @@ import {
   type Accepted,
 } from "./contracts";
 import type { Draft } from "./workspace";
-import { authenticatedFetch } from "./authentication";
-export const apiBase = (
-  import.meta.env?.VITE_API_URL || "http://localhost:8000"
-).replace(/\/$/, "");
+import { dispatchRequest } from "./transport";
+export { apiBase } from "./transport";
 export const apiRequest = (path: string, init: RequestInit, transport: typeof fetch = fetch): Promise<Response> =>
-  authenticatedFetch(`${apiBase}${path}`, init, transport);
+  dispatchRequest(path, init, transport);
 export async function evaluate(
   draft: Draft,
   signal: AbortSignal,

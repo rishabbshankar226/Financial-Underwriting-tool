@@ -1,5 +1,6 @@
 import { decimalEqual, isDecimal } from "./decimal";
 import { apiBase } from "./api";
+import { workspaceStorage } from "./transport";
 import {
   date,
   editPath,
@@ -74,11 +75,7 @@ export function makeComparison(value:ScenarioPreview):ComparisonOperation {
   return guardPendingWrite({version:"scenario-comparison-write-v1",kind:"comparison",id:crypto.randomUUID(),apiBase,body:JSON.stringify(command),caseId:p.baseline.case_id,baselineRevision:p.baseline.revision,baselineRunId:p.baseline.run_id,baselinePayloadHash:p.baseline.payload_hash,context:{...p.selected_period,assessment_as_of:p.assumptions_as_of,policy_version:p.policy_snapshot.version,scenario_definition_version:p.scenario_definition_version,calculation_version:p.calculation_version}}) as ComparisonOperation;
 }
 export function browserStorage(): Storage | null {
-  try {
-    return window.sessionStorage;
-  } catch {
-    return null;
-  }
+  return workspaceStorage();
 }
 function size(value: string) {
   return new TextEncoder().encode(value).length;

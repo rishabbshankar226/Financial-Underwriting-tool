@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { rationale } from "./caseContracts";
 import type { DatedRequest } from "./contracts";
+import { activeWorkspaceElement, queryWorkspace } from "./workspaceDom";
 
 export function restoreDialogFocus(element: HTMLElement | null) {
   if (
@@ -9,7 +10,7 @@ export function restoreDialogFocus(element: HTMLElement | null) {
   )
     element.focus();
   else
-    document.querySelector<HTMLButtonElement>("[data-focus-fallback]")?.focus();
+    queryWorkspace<HTMLButtonElement>("[data-focus-fallback]")?.focus();
 }
 function Modal({
   title,
@@ -48,10 +49,10 @@ function Modal({
         );
         const first = nodes[0],
           last = nodes[nodes.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
+        if (e.shiftKey && activeWorkspaceElement(e.currentTarget) === first) {
           e.preventDefault();
           last?.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
+        } else if (!e.shiftKey && activeWorkspaceElement(e.currentTarget) === last) {
           e.preventDefault();
           first?.focus();
         }
