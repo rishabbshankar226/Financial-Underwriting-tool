@@ -251,6 +251,12 @@ Destinations must be fresh. See [storage](docs/CASE_STORAGE.md),
 [workspace recovery](docs/WORKSPACE.md). Environment files and local databases
 are ignored by git.
 
+The workspace **Review** view downloads a [deterministic JSON review package](docs/REVIEW_EXPORTS.md)
+for a saved original, optionally with one matching retained comparison. It
+preserves the parsed originals and recorded hashes with explicit unverified
+provenance; it does not claim original server bytes or independently verified
+hashes.
+
 ## Verification
 
 With the Python environment active, from the repository root:

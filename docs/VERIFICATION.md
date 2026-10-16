@@ -77,6 +77,8 @@ no validator change or reproduced defect is claimed for those checks.
 | `tests/decimal-checks.mjs` | Independent integer oracle, large balances, HALF_EVEN ties, percentages, exact JSON tokens and unsupported domains |
 | `authentication-contracts.spec.ts` | 12 transport checks: strict identifiers, query preservation, origin binding, no override/redirect/cookie/cache leaks, 401 clearing, stale response rejection, timeout/cancel/disconnect exact-write retention |
 | `authentication.spec.ts` | 5 real browser workflows: no anonymous API request, invalid-token retry, API-only credential/no storage/reload, disconnect and committed-write exact recovery |
+| `review-package.spec.ts` | Saved-case/comparison HTTP boundary: ten-scenario order, baseline/hash/evidence matching, unsupported-definition originals, malformed values, deterministic UTF-16 key order, source depths 64/100, inclusive 16 MiB file boundary and cancellation |
+| `review-workspace.spec.ts` | Actual Chromium download bytes/filenames, explicit inclusion, historical stability after later edits, pending-journal preservation, blocked export from unsaved/pending/legacy state, late-completion and worker validation, keyboard use and 390px/1280px layout |
 | Other Playwright suites | Runtime guards, frozen archives, saved-case/scenario recovery, original attribution, desktop/mobile layout, keyboard focus and obsolete-response handling |
 
 Generated properties use isolated fixed-seed standard-library generators and

@@ -21,6 +21,7 @@ browser/host policy. See [security requirements](SECURITY_ARCHITECTURE.md).
 - **Memo:** a narrative from the accepted response's factors and reasons, unavailable while an input is pending/rejected.
 - **History:** unsaved cases show successfully applied session edits with period-aware paths and separately labeled imported overrides. Saved cases show immutable server-recorded revision summaries and the selected original event, including its unit, period/as-of date, guarantor context, rationale, actor and recording time. New saved events display the configured credential identity; archived demonstration actors retain their original unverified label.
 - **Scenarios:** author and review explicit current shocks against a supported saved dated revision, retain a reviewed batch as a separate original comparison, and reopen case-wide comparison summaries. The selected underwriting result remains unchanged.
+- **Review:** summarize a current ready saved original and download its full parsed JSON evidence, optionally including an explicitly selected matching retained comparison. Display original identity, period, units, backend facts and unverified recording metadata; unsupported financial definitions permit original JSON only. [Review exports](REVIEW_EXPORTS.md) specifies eligibility, linkage, representation and limits.
 
 ## State contract
 
@@ -45,7 +46,7 @@ Selection identifiers are allocated before asynchronous file reads. Raw import t
 
 Legacy financial values are explicitly normalized only after backend success; booleans are rejected. V2 inputs, edits, percentage conversions and reporting use decimal strings and BigInt operations. Import presentation preserves original numeric tokens while the unmodified body goes to the backend. Legacy annual periods remain ordinal, dated-only trace/spread results remain unavailable, and no dates or explicit units are inferred.
 
-Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. The access gate authenticates the configured operator credential; the workspace has no export. Decision scores and policy values remain illustrative settings requiring institutional approval.
+Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. The access gate authenticates the configured operator credential; the saved-run JSON exporter uses guarded originals without recalculation or changes to recovery. The workspace has no CSV export, downloadable memo or print/PDF workflow. Decision scores and policy values remain illustrative settings requiring institutional approval.
 
 ## Save, reopen and revise
 
