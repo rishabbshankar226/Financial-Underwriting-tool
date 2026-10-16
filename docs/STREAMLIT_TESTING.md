@@ -73,6 +73,29 @@ No credential or case database belongs in the public component asset directory.
 Only generated JavaScript and a build manifest are packaged there. The root
 Streamlit configuration uses supported theme and viewer-toolbar settings.
 
+## Verified testing deployment
+
+The app was deployed on October 16, 2026 at
+<https://spreadline-testing.streamlit.app/> from
+`codex/streamlit-testing-workspace`, initially at commit
+`ceff5d9f235f4c923e9d5bf9f5e11f4570f4aee5`, using Python 3.12 and
+`streamlit_app/app.py`. The saved Sharing setting was reopened and confirmed as
+**Only specific people can view this app** before enabling the workspace. No
+additional viewers were invited. An anonymous HTTP request redirected through
+Community Cloud authentication; a complete uninvited interactive browser test
+was not performed.
+
+The hosted smoke test edited synthetic revenue from $4.2 million to $4.3 million,
+verified EBITDA of $730,000 and DSCR of 3.6325, saved revision 1, reloaded, and
+reopened the same stored receipt and values. Selecting the earlier spread column
+kept current coverage unchanged. A 10% revenue downside preview produced
+$300,000 EBITDA and 1.4928 DSCR, then saved and reopened as an original comparison
+without changing the baseline. The live desktop layout was visually reviewed.
+
+On the initial build, Community Cloud replaced PyArrow 26.0.0 with 24.0.0. The
+runtime constraint now matches that working host version; the 23 Python host
+tests and three packaged browser workflows also passed with PyArrow 24.0.0.
+
 ## Temporary storage and recovery
 
 The default store is `.spreadline-data/streamlit/cases.sqlite3`, outside served
