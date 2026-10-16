@@ -1,4 +1,4 @@
-import { apiBase } from "./api";
+import { apiRequest } from "./api";
 import {
   guardCasePage,
   guardCreate,
@@ -35,7 +35,7 @@ export function caseError(error: unknown): CaseApiError {
 async function json(path: string, init: RequestInit, transport: typeof fetch) {
   let response: Response;
   try {
-    response = await transport(`${apiBase}${path}`, init);
+    response = await apiRequest(path, init, transport);
   } catch {
     throw new CaseApiError(
       "The response was lost or unavailable. Retry the exact saved write if one is pending.",

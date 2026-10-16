@@ -1,3 +1,4 @@
+import { isDecimal, legacyDecimal } from "./decimal";
 /** Display contracts for the two existing commercial interfaces. Financial arithmetic stays in Python. */
 export const annualFields = [
   "gross_receipts",
@@ -12,15 +13,15 @@ export const annualFields = [
 ] as const;
 export type AnnualField = (typeof annualFields)[number];
 export type Period = { period_start: string; period_end: string };
-export type FinancialYear = Record<AnnualField, number> & Partial<Period>;
+export type FinancialYear = Record<AnnualField, string> & Partial<Period>;
 export type Guarantor = {
   name: string;
-  ownership_percentage: number;
-  wages: number;
-  interest_dividend_income: number;
-  mortgage_pi_annual: number;
-  auto_loan_annual: number;
-  credit_card_min_annual: number;
+  ownership_percentage: string;
+  wages: string;
+  interest_dividend_income: string;
+  mortgage_pi_annual: string;
+  auto_loan_annual: string;
+  credit_card_min_annual: string;
 };
 export type ImportedOverride = {
   field: string;
@@ -35,14 +36,14 @@ export type LegacyRequest = {
   borrower_name: string;
   geography: string;
   years: FinancialYear[];
-  existing_debt: { cpltd_annual: number; operating_lease_annual: number };
-  proposed_loan: { amount: number; annual_rate: number; term_months: number };
+  existing_debt: { cpltd_annual: string; operating_lease_annual: string };
+  proposed_loan: { amount: string; annual_rate: string; term_months: number };
   guarantors: Guarantor[];
   working_capital: {
-    ar_increase: number;
-    inventory_increase: number;
-    ap_increase: number;
-    cash_taxes_paid: number;
+    ar_increase: string;
+    inventory_increase: string;
+    ap_increase: string;
+    cash_taxes_paid: string;
   };
   overrides?: ImportedOverride[];
 };
@@ -50,7 +51,7 @@ export type DatedRequest = Omit<
   LegacyRequest,
   "years" | "proposed_loan" | "working_capital" | "overrides"
 > & {
-  schema_version: "commercial-assessment-v1";
+  schema_version: "commercial-assessment-v2";
   assessment_as_of: string;
   units: {
     currency: "USD";
@@ -69,33 +70,34 @@ export type Input = LegacyRequest | DatedRequest;
 export type Mode = "dated" | "legacy";
 export type Factor = {
   name: string;
-  value: number | string | boolean;
-  raw_value: number | string | boolean | null;
-  weight: number;
-  threshold: number | string | boolean | null;
+  value: string | boolean;
+  raw_value: string | boolean | null;
+  weight: string;
+  threshold: string | boolean | null;
   passed: boolean | null;
   source: string;
   comparison_operator: ">=" | ">" | "<" | "==" | null;
-  decline_threshold: number | null;
+  decline_threshold: string | null;
   decline_triggered: boolean | null;
 };
 export type Decision = {
   vertical: "commercial";
   outcome: "approve" | "review" | "decline";
-  score: number;
+  score: string;
   factors: Factor[];
   reasons: {
     code: string;
     factor: string;
     message: string;
-    value: number | string | boolean;
+    value: string | boolean;
   }[];
   policy_version: string;
   disclaimer: string;
 };
 export type Metric = {
   fact_id: string;
-  raw_value: number | string | null;
+  raw_value: string | null;
+  reported_value: string | null;
   unit: string;
   display_precision: number | null;
   status: "available" | "not_applicable";
@@ -105,6 +107,7 @@ export type Operand = {
   reference_type: "input" | "fact" | "policy";
   reference: string;
   raw_value: number | string | null;
+  reported_value: number | string | null;
   unit: string;
 };
 export type Trace = Metric & {
@@ -148,22 +151,24 @@ export const policyNumbers = [
   "sba_global_dscr_floor_expansion",
   "sba_global_dscr_floor_acquisition",
 ] as const;
-export type Policy = Record<(typeof policyNumbers)[number], number> & {
+export type Policy = Record<Exclude<(typeof policyNumbers)[number], "consumer_min_credit_score">, string> & { consumer_min_credit_score: number } & {
   version: string;
   consumer_required_atr_fields: string[];
   sba_sop_8_effective: string;
   sba_sop_8_1_effective: string;
 };
 export type Assessment = {
-  schema_version: "commercial-assessment-v1";
+  schema_version: "commercial-assessment-v2";
   calculation_version: string;
-  serialization_version: "assessment-json-v1";
+  serialization_version: "assessment-json-v2";
   normalized_input: DatedRequest;
   selected_period: Period;
   assumptions_as_of: string;
   coverage_basis: "current_pro_forma";
   historical_spread: (Period & {
     financials: FinancialYear & Period;
+    reported_financials: FinancialYear & Period;
+    gross_profit: Metric;
     ordinary_business_income: Metric;
     ebitda: Metric;
     k1_distribution_ratio: Metric;
@@ -215,7 +220,7 @@ function num(x: unknown): x is number {
   return typeof x === "number" && Number.isFinite(x);
 }
 function scalar(x: unknown): boolean {
-  return num(x) || typeof x === "string" || typeof x === "boolean";
+  return typeof x === "string" || typeof x === "boolean";
 }
 function date(x: unknown): x is string {
   return (
@@ -241,7 +246,7 @@ export function detectMode(payload: unknown): Mode {
   const p = object(payload, "request");
   if (!("schema_version" in p)) return "legacy";
   requireValue(
-    p.schema_version === "commercial-assessment-v1",
+    ["commercial-assessment-v1", "commercial-assessment-v2"].includes(String(p.schema_version)),
     "unsupported schema_version",
   );
   return "dated";
@@ -252,7 +257,7 @@ export function guardDecision(value: unknown): Decision {
   requireValue(
     d.vertical === "commercial" &&
       ["approve", "review", "decline"].includes(String(d.outcome)) &&
-      num(d.score) &&
+      isDecimal(d.score) &&
       str(d.policy_version) &&
       str(d.disclaimer),
     "decision identity",
@@ -267,14 +272,14 @@ export function guardDecision(value: unknown): Decision {
         names.includes(f.name) &&
         scalar(f.value) &&
         (f.raw_value === null || scalar(f.raw_value)) &&
-        num(f.weight) &&
+        isDecimal(f.weight) &&
         (f.threshold === null || scalar(f.threshold)) &&
         (f.passed === null || typeof f.passed === "boolean") &&
         str(f.source) &&
         [null, ">=", ">", "<", "=="].includes(
           f.comparison_operator as string | null,
         ) &&
-        (f.decline_threshold === null || num(f.decline_threshold)) &&
+        (f.decline_threshold === null || isDecimal(f.decline_threshold)) &&
         (f.decline_triggered === null ||
           typeof f.decline_triggered === "boolean"),
       "factor fields",
@@ -298,19 +303,10 @@ export function guardDecision(value: unknown): Decision {
 export function guardLegacyInput(value: unknown): LegacyRequest {
   const p = object(value, "legacy input");
   requireValue(str(p.borrower_name) && str(p.geography), "borrower");
-  const numeric = (x: unknown, fallback?: number) => {
-    const v =
-      x === undefined
-        ? fallback
-        : typeof x === "number"
-          ? x
-          : typeof x === "string" && x.trim()
-            ? Number(x)
-            : typeof x === "boolean"
-              ? Number(x)
-              : NaN;
-    requireValue(num(v), "legacy numeric input");
-    return v;
+  const numeric = (x: unknown, fallback?: string): string => {
+    const value = x === undefined ? fallback : x;
+    requireValue(value !== undefined && typeof value !== "boolean", "legacy decimal input");
+    return legacyDecimal(value);
   };
   const years = array(p.years, "years").map((y) => {
     const o = object(y, "year");
@@ -319,7 +315,7 @@ export function guardLegacyInput(value: unknown): LegacyRequest {
         k,
         numeric(
           o[k],
-          ["section_179", "k1_distribution"].includes(k) ? 0 : undefined,
+          ["section_179", "k1_distribution"].includes(k) ? "0" : undefined,
         ),
       ]),
     ) as unknown as FinancialYear;
@@ -341,7 +337,7 @@ export function guardLegacyInput(value: unknown): LegacyRequest {
           "mortgage_pi_annual",
           "auto_loan_annual",
           "credit_card_min_annual",
-        ].map((k) => [k, numeric(g[k], k === "ownership_percentage" ? 1 : 0)]),
+        ].map((k) => [k, numeric(g[k], k === "ownership_percentage" ? "1" : "0")]),
       ),
     } as Guarantor;
   });
@@ -368,12 +364,12 @@ export function guardLegacyInput(value: unknown): LegacyRequest {
     years,
     existing_debt: {
       cpltd_annual: numeric(debt.cpltd_annual),
-      operating_lease_annual: numeric(debt.operating_lease_annual, 0),
+      operating_lease_annual: numeric(debt.operating_lease_annual, "0"),
     },
     proposed_loan: {
       amount: numeric(loan.amount),
       annual_rate: numeric(loan.annual_rate),
-      term_months: numeric(loan.term_months),
+      term_months: (() => { const value = typeof loan.term_months === "string" && /^\d+$/.test(loan.term_months) ? Number(loan.term_months) : loan.term_months; requireValue(Number.isSafeInteger(value), "integer term months"); return value as number; })(),
     },
     guarantors,
     working_capital: Object.fromEntries(
@@ -382,7 +378,7 @@ export function guardLegacyInput(value: unknown): LegacyRequest {
         "inventory_increase",
         "ap_increase",
         "cash_taxes_paid",
-      ].map((k) => [k, numeric(wc[k], 0)]),
+      ].map((k) => [k, numeric(wc[k], "0")]),
     ) as LegacyRequest["working_capital"],
     overrides,
   };
@@ -390,7 +386,7 @@ export function guardLegacyInput(value: unknown): LegacyRequest {
 export function guardDatedInput(value: unknown): DatedRequest {
   const p = object(value, "normalized input");
   requireValue(
-    p.schema_version === "commercial-assessment-v1" &&
+    p.schema_version === "commercial-assessment-v2" &&
       date(p.assessment_as_of) &&
       str(p.borrower_name) &&
       str(p.geography),
@@ -414,15 +410,15 @@ export function guardDatedInput(value: unknown): DatedRequest {
       "year order",
     );
     end = pe.period_end;
-    for (const k of annualFields) requireValue(num(y[k]), `year ${k}`);
+    for (const k of annualFields) requireValue(isDecimal(y[k]), `year ${k}`);
   }
   const check = (value: unknown, keys: string[]) => {
     const o = object(value, "assumption");
-    for (const k of keys) requireValue(num(o[k]), k);
+    for (const k of keys) requireValue(isDecimal(o[k]), k);
     return o;
   };
   check(p.existing_debt, ["cpltd_annual", "operating_lease_annual"]);
-  const loan = check(p.proposed_loan, ["amount", "annual_rate", "term_months"]);
+  const loan = check(p.proposed_loan, ["amount", "annual_rate"]);
   requireValue(
     Number.isSafeInteger(loan.term_months) &&
       loan.rate_type === "fixed" &&
@@ -461,26 +457,28 @@ export function metric(value: unknown): Metric {
       (m.display_precision === null ||
         (Number.isInteger(m.display_precision) &&
           Number(m.display_precision) >= 0 &&
-          Number(m.display_precision) <= 20)) &&
+          Number(m.display_precision) <= 30)) &&
       (m.explanation === null || str(m.explanation)),
     "metric fields",
   );
   requireValue(
     m.status === "available"
-      ? num(m.raw_value) || str(m.raw_value)
+      ? isDecimal(m.raw_value) || m.unit === "category" && str(m.raw_value)
       : m.status === "not_applicable" &&
           m.raw_value === null &&
           str(m.explanation),
     "metric status/value",
   );
+  requireValue(m.status === "not_applicable" ? m.reported_value === null :
+    m.unit === "category" ? m.reported_value === m.raw_value : isDecimal(m.reported_value), "reported metric value");
   return m as Metric;
 }
 export function guardAssessment(value: unknown): Assessment {
   const a = object(value, "assessment");
   requireValue(
-    a.schema_version === "commercial-assessment-v1" &&
-      a.calculation_version === "commercial-calculation-v1" &&
-      a.serialization_version === "assessment-json-v1" &&
+    a.schema_version === "commercial-assessment-v2" &&
+      a.calculation_version === "commercial-calculation-v2" &&
+      a.serialization_version === "assessment-json-v2" &&
       a.coverage_basis === "current_pro_forma" &&
       str(a.disclaimer),
     "versions",
@@ -505,7 +503,11 @@ export function guardAssessment(value: unknown): Assessment {
     const f = object(h.financials, "historical financials");
     for (const k of annualFields)
       requireValue(f[k] === input.years[i][k], "historical inputs");
+    const report = object(h.reported_financials, "reported financials");
+    requireValue(samePeriod(period(report), input.years[i]), "reported period");
+    for (const k of annualFields) requireValue(isDecimal(report[k]) && /^-?\d+\.\d{2}$/.test(report[k]), "reported source amount");
     for (const k of [
+      "gross_profit",
       "ordinary_business_income",
       "ebitda",
       "k1_distribution_ratio",
@@ -525,7 +527,7 @@ export function guardAssessment(value: unknown): Assessment {
             ["stable", "unstable", "insufficient_history"].includes(
               String(m.raw_value),
             )
-        : m.raw_value === null || num(m.raw_value),
+        : m.raw_value === null || isDecimal(m.raw_value),
       "fact type",
     );
     metrics.push(m);
@@ -556,7 +558,7 @@ export function guardAssessment(value: unknown): Assessment {
       date(policy.sba_sop_8_1_effective),
     "policy identity",
   );
-  for (const k of policyNumbers) requireValue(num(policy[k]), `policy ${k}`);
+  for (const k of policyNumbers) requireValue(k === "consumer_min_credit_score" ? Number.isSafeInteger(policy[k]) : isDecimal(policy[k]), `policy ${k}`);
   requireValue(
     array(policy.consumer_required_atr_fields, "ATR fields").every(str),
     "ATR fields",
@@ -585,6 +587,7 @@ export function guardAssessment(value: unknown): Assessment {
             typeof o.raw_value === "string"),
         "operand fields",
       );
+      requireValue(o.reported_value === null || isDecimal(o.reported_value) || Number.isSafeInteger(o.reported_value), "reported operand");
     }
   }
   for (const value of rows) {
@@ -623,6 +626,7 @@ export function guardAssessment(value: unknown): Assessment {
     requireValue(
       t &&
         t.raw_value === m.raw_value &&
+        t.reported_value === m.reported_value &&
         t.status === m.status &&
         t.unit === m.unit,
       "fact/trace correspondence",

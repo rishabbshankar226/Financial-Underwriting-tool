@@ -1,13 +1,14 @@
 """Local verify/backup/restore/copy-upgrade. Never overwrites a destination."""
+
 import argparse
 import json
 import sys
 
-from app.cases import CaseStore, CaseStoreError
 from app.case_migrations import upgrade_store
+from app.cases import CaseStore, CaseStoreError
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subcommands = parser.add_subparsers(dest="command", required=True)
     for name in ("verify", "backup", "restore", "upgrade"):

@@ -7,9 +7,11 @@ or the browser's **Scenarios** view. The browser lists original comparison
 summaries across all revisions of the selected case and opens the selected
 original record without recalculation. See [the scenario workflow](WORKSPACE.md#scenario-review-and-original-comparisons).
 
-Use synthetic data. The actor is `prototype-demo-unverified`, matching the local
-case prototype. Retention uses the existing calculation definitions and does
-not change their [financial limits](MODEL_DOCUMENTATION.md).
+All HTTP operations require the configured Bearer credential. New records use
+the server-derived operator ID; archived demonstration actors and original
+committed receipts remain unchanged. This is credential attribution, not
+independent verification of a person. Retention uses the existing calculation
+definitions and their [financial limits](MODEL_DOCUMENTATION.md).
 
 ## Preview, then retain
 
@@ -54,8 +56,8 @@ and guarantor pages of at most 50 rows when opened, and pages original JSON
 into at most 64 KiB of UTF-8 text. Comparison list reads request 25 summaries
 per page with scoped cursors and cancellation. The optional comparison hint
 stores only backend/case/comparison IDs; reload always performs a fresh GET.
-No result or ETag is restored from it. Source status and prototype actors
-remain explicitly unverified.
+No result or ETag is restored from it. Source status and archived demonstration
+actors retain their original labels; new records display the configured actor.
 
 Read the selected saved revision and POST the final scenario command to its
 preview endpoint. Copy the preview's `fingerprint.value` into the retention
@@ -63,7 +65,7 @@ command's `expected_preview_fingerprint`:
 
 ```json
 {
-  "schema_version": "commercial-scenario-comparison-create-v1",
+  "schema_version": "commercial-scenario-comparison-create-v2",
   "baseline_run_id": "<selected original run UUID>",
   "expected_preview_fingerprint": "<64 lowercase hexadecimal characters>",
   "scenarios": [
@@ -72,10 +74,10 @@ command's `expected_preview_fingerprint`:
       "name": "Revenue down 10%",
       "rationale": "Other assumptions held fixed",
       "assumptions": {
-        "revenue_change": -0.1,
-        "cogs_change": 0,
-        "operating_expense_change": 0,
-        "proposed_rate_change_bps": 0
+        "revenue_change": "-0.1",
+        "cogs_change": "0",
+        "operating_expense_change": "0",
+        "proposed_rate_change_bps": "0"
       }
     }
   ]
@@ -129,13 +131,17 @@ full record hashes/links; listing checks the bounded summary envelope and receip
 
 ## Retained evidence and integrity
 
-The outer record uses `commercial-scenario-comparison-v1`,
+New outer records use `commercial-scenario-comparison-v2`,
 `scenario-comparison-json-v1` and `persisted: true`, with a server-generated
 comparison UUID, UTC recording time, baseline identity, actor, actual recording
 metadata, full `preview` and payload hash. The nested preview preserves its
 original `persisted: false` value and fingerprint: it describes the calculation
 that was reviewed. One batch has one comparison and one operation receipt.
 Retention leaves the case head and original run/event/receipt counts unchanged.
+
+Original v1 comparison records retain their original schema labels, numeric
+JSON, fingerprints, hashes and receipts. Reading them does not normalize them
+to v2 or rerun their calculator.
 
 The canonical record JSON is also the original receipt body. Hashing uses
 compact sorted-key finite UTF-8 JSON with the wrapper
@@ -159,7 +165,10 @@ inconsistency; they do not authenticate offline edits or people.
 ## Schema compatibility and explicit copy upgrade
 
 New stores initialized through the case interface use schema v2. Exact v1 stores
-continue to support case reads/writes/retries/replay, previews and backup/restore.
+retain original case records, receipts and backup/restore. New decimal v2 cases
+can be created in either supported SQL schema. Archived numeric v1 financial
+records are read-only, their replay is unavailable, and they cannot be new
+preview baselines. Supported committed retries preserve their original receipts.
 Opening them never upgrades them. V1 comparison lists are empty; missing
 comparison reads return 404, and new retention returns
 `409 storage_upgrade_required`.
@@ -205,6 +214,7 @@ retain the v2 data/backup and review recovery. There is no automatic downgrade.
 
 | Status | Meaning |
 |---|---|
+| 401 | Missing, invalid or duplicate Bearer credential, before storage processing |
 | 400 | Malformed locator/operation UUID, repeated header, invalid cursor/page size |
 | 404 | Missing selected case/revision/comparison or a comparison under the wrong case |
 | 409 | Baseline support/replay/run guard, `preview_changed`, `operation_conflict`, `storage_upgrade_required` |

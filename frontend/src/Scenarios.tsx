@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { currentFactKeys, type Metric, type Trace } from "./contracts";
+import { currentFactKeys, type Trace } from "./contracts";
 import { metricText } from "./metricDisplay";
 import { usePages } from "./SavedCases";
 import { fetchComparisons } from "./scenarioApi";
@@ -62,7 +62,7 @@ function TraceRow({ row }: {
     {row.explanation && <p>{row.explanation}</p>}</details>;
 }
 function raw(value: number | string | boolean | null) { return value === null ? "Not applicable" : String(value); }
-function headroom(value: number | null) { return value === null ? "Not applicable" : String(value); }
+function headroom(value: string | null) { return value === null ? "Not applicable" : String(value); }
 function Projection({ preview, result }: {
     preview: ScenarioPreview;
     result: ScenarioResult;
@@ -76,7 +76,7 @@ function Projection({ preview, result }: {
       {currentFactKeys.map(key => {
             const comparison = result.comparisons.find(value => value.metric === key);
             return <tr key={key}><th scope="row">{labels[key]}</th><td className="num">{metricText(original.current_facts[key])}</td><td className="num">{metricText(result.current_facts[key])}</td>
-          <td className="num">{comparison ? comparison.delta === null ? "Not applicable" : metricText({ ...result.current_facts[key], raw_value: comparison.delta }) : "Held fixed"}
+          <td className="num">{comparison ? comparison.delta === null ? "Not applicable" : metricText({ ...result.current_facts[key], raw_value: comparison.delta, reported_value: null }) : "Held fixed"}
             {comparison?.delta_explanation && <small>{comparison.delta_explanation}</small>}</td></tr>;
         })}
     </tbody></table></div>
@@ -129,7 +129,7 @@ function Original({ view, onOpen }: {
     return <section className="panel originalComparison">
     <div className="comparisonContext"><h2>Saved comparison</h2><code>{record.comparison_id}</code><p>Original record · Case {record.case_id} · baseline revision {record.baseline_revision}<br />Run {record.baseline_run_id} · recorded {record.recorded_at}</p>
       <button onClick={() => onOpen({ caseId: record.case_id, revision: record.baseline_revision })}>Open baseline revision</button></div>
-    <p>Recording actor: unverified prototype demonstration · source status {record.recording.source_status}{record.recording.source_revision ? ` · ${record.recording.source_revision}` : " · exact build revision not supplied"}</p>
+    <p>Recorded actor: {record.actor} · {record.actor === "prototype-demo-unverified" ? "archived demonstration identity" : "configured credential identity"} · source status {record.recording.source_status}{record.recording.source_revision ? ` · ${record.recording.source_revision}` : " · exact build revision not supplied"}</p>
     {view.preview ? <><p>Operating period {view.preview.selected_period.period_start} – {view.preview.selected_period.period_end} · assumptions as of {view.preview.assumptions_as_of}<br />Retained policy {view.preview.policy_snapshot.version} · {view.preview.scenario_definition_version} · {view.preview.calculation_version}</p>
       <Disclosure title="Baseline hashes, fingerprint and retained policy">{() => <div><p>Input hash <code>{view.preview!.baseline.input_hash}</code><br/>Baseline payload hash <code>{view.preview!.baseline.payload_hash}</code><br/>Reviewed fingerprint <code>{view.preview!.fingerprint.value}</code></p><pre>{JSON.stringify({ units: view.preview!.units, policy_snapshot: view.preview!.policy_snapshot, recording: record.recording }, null, 2)}</pre></div>}</Disclosure>
       <Results key={record.comparison_id} preview={view.preview}/></> : <p className="compatibility" role="status">{view.compatibility}</p>}

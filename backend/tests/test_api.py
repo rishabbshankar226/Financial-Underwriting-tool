@@ -1,4 +1,4 @@
-from fastapi.testclient import TestClient
+from api_client import TestClient
 from app.main import app
 
 
@@ -6,6 +6,4 @@ def test_health_endpoint():
     response=TestClient(app).get('/health')
     assert response.status_code==200
     body=response.json()
-    assert body['status']=='ok'
-    assert body['prototype'] is True
-    assert 'not been validated' in body['disclaimer']
+    assert body == {'status': 'ok'}

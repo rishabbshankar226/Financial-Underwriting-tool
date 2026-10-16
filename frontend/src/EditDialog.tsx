@@ -1,3 +1,4 @@
+import { shiftDecimal } from "./decimal";
 import { useEffect, useRef, useState } from "react";
 import { validateEdit, type EditableField, type EditEvent } from "./workspace";
 import { restoreDialogFocus } from "./CaseDialogs";
@@ -21,7 +22,7 @@ export default function EditDialog({
   const [value, setValue] = useState(
     String(
       field.unit === "%"
-        ? (proposal?.next ?? field.value) * 100
+        ? shiftDecimal(String(proposal?.next ?? field.value), 2)
         : (proposal?.next ?? field.value),
     ),
   );
@@ -84,7 +85,7 @@ export default function EditDialog({
         <p>
           {field.period} · {field.unit}
           <br />
-          Current value: {field.unit === "%" ? field.value * 100 : field.value}
+          Current value: {field.unit === "%" ? shiftDecimal(String(field.value), 2) : field.value}
         </p>
         <label>
           New value{" "}

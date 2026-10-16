@@ -1,12 +1,13 @@
 import json
 from dataclasses import replace
+from decimal import Decimal, localcontext
 from pathlib import Path
 
 import pytest
-from fastapi.testclient import TestClient
-
+from api_client import AUTHORIZATION_ASGI_HEADER, TestClient
 from app.config import DEFAULT_POLICY
 from app.main import app
+from financial_assertions import decimal_approx, wire_decimal
 
 ROOT = Path(__file__).resolve().parents[1]
 client = TestClient(app)
@@ -18,7 +19,7 @@ def payload():
     data.pop("overrides")
     data.update(schema_version="commercial-assessment-v1", assessment_as_of="2026-10-06",
                 units={"currency": "USD", "monetary_unit": "dollars", "annual_rate_unit": "decimal_nominal"})
-    for year, calendar_year in zip(data["years"], (2024, 2025)):
+    for year, calendar_year in zip(data["years"], (2024, 2025), strict=True):
         year.update(period_start=f"{calendar_year}-01-01", period_end=f"{calendar_year}-12-31")
     data["working_capital"].update(period_start="2025-01-01", period_end="2025-12-31")
     data["proposed_loan"].update(rate_type="fixed", repayment_type="fully_amortizing", payment_frequency="monthly")
@@ -40,7 +41,7 @@ def test_dated_alpine_has_pinned_results_and_legacy_decision(payload):
                 "dscr": 3.1349366596756265, "fccr": 2.8004854415566264,
                 "global_dscr": 2.9015509813043215, "uca_cash_flow": 385000}
     for name, value in expected.items():
-        assert facts[name]["raw_value"] == pytest.approx(value, rel=1e-10, abs=1e-8)
+        assert wire_decimal(facts[name]["raw_value"]) == decimal_approx(value, rel="1e-10", abs="1e-8")
     assert facts["k1_history"]["raw_value"] == "stable"
     assert result["decision"] == client.post("/commercial/decision", json=json.loads((ROOT / "fixtures/alpine.json").read_text())).json()
     assert result["selected_period"] == {"period_start": "2025-01-01", "period_end": "2025-12-31"}
@@ -57,9 +58,12 @@ def test_factors_and_trace_share_actual_facts(payload):
         assert factor["raw_value"] == fact["raw_value"]
         assert rows[fact["fact_id"]]["raw_value"] == fact["raw_value"]
     debt = rows[result["current_facts"]["debt_service"]["fact_id"]]
-    assert [o["raw_value"] for o in debt["operands"]] == pytest.approx([62000, 58000, 80960.998065328193])
+    assert [wire_decimal(o["raw_value"]) for o in debt["operands"]] == decimal_approx([62000, 58000, 80960.998065328193])
     assert debt["operands"][0]["reference"] == "/years/1/interest_expense"
-    assert sum(o["raw_value"] for o in debt["operands"]) == debt["raw_value"]
+    with localcontext() as context:
+        context.prec = 96
+        assert sum((wire_decimal(o["raw_value"]) for o in debt["operands"]), Decimal("0")) == wire_decimal(debt["raw_value"])
+    assert wire_decimal(debt["reported_value"]).as_tuple().exponent == -2
 
 
 @pytest.mark.parametrize("kind", ["single", "gap", "fiscal_change"])
@@ -92,7 +96,7 @@ def test_no_debt_and_no_guarantors_are_explicitly_unavailable(payload):
 
 @pytest.mark.parametrize("path,value", [
     (("years", 0, "gross_receipts"), True),
-    (("years", 0, "gross_receipts"), "3900000"),
+    (("years", 0, "gross_receipts"), "3,900,000"),
     (("years", 0, "extra"), 0),
     (("units", "monetary_unit"), "thousands"),
     (("proposed_loan", "term_months"), 11),
@@ -145,7 +149,7 @@ def test_nonfinite_token_guard_precedes_model_decoding(payload, token):
     body = json.dumps(payload).replace('"amount": 500000.0', '"amount": ' + token)
     response = client.post("/commercial/assessment", content=body)
     assert response.status_code == 422
-    assert "Non-finite JSON" in response.json()["detail"]
+    assert "finite" in str(response.json()["detail"])
 
 
 def test_policy_and_normalized_fingerprint(payload):
@@ -157,7 +161,7 @@ def test_policy_and_normalized_fingerprint(payload):
     assert first.fingerprint == assess_commercial(reordered).fingerprint
     policy = replace(DEFAULT_POLICY, version="test-policy", commercial_min_dscr=3.2)
     changed = assess_commercial(request, policy)
-    assert changed.policy_snapshot.commercial_min_dscr == 3.2
+    assert changed.policy_snapshot.commercial_min_dscr == Decimal("3.2")
     assert changed.decision.policy_version == "test-policy"
     assert first.fingerprint != changed.fingerprint
     payload["years"][-1]["gross_receipts"] += 1
@@ -188,7 +192,7 @@ def test_history_period_selection_is_explicit(payload):
     [("2023-03-01", "2024-02-29"), ("2024-03-01", "2025-02-28")],
 ])
 def test_valid_fiscal_and_leap_periods_are_comparable(payload, periods):
-    for row, (start, end) in zip(payload["years"], periods):
+    for row, (start, end) in zip(payload["years"], periods, strict=True):
         row.update(period_start=start, period_end=end)
     payload["working_capital"].update(period_start=periods[-1][0], period_end=periods[-1][1])
     assert assess(payload)["current_facts"]["k1_history"]["raw_value"] == "stable"
@@ -280,15 +284,22 @@ def test_overflowing_history_difference_is_outside_the_new_contract(payload):
     assert client.post("/commercial/assessment", json=payload).status_code == 422
 
 
-@pytest.mark.parametrize("rate", [0, 1e-16, 5e-324])
+@pytest.mark.parametrize("rate", [0, "1e-16", "1e-30"])
 def test_zero_and_tiny_rates_converge_to_zero_rate_payment(payload, rate):
     payload["proposed_loan"]["annual_rate"] = rate
-    assert assess(payload)["current_facts"]["proposed_annual_payment"]["raw_value"] == pytest.approx(50000, rel=1e-12)
+    assert wire_decimal(assess(payload)["current_facts"]["proposed_annual_payment"]["raw_value"]) == decimal_approx(50000, rel="1e-12")
+
+
+def test_subnormal_binary_rate_outside_decimal_input_range_is_rejected(payload):
+    payload["proposed_loan"]["annual_rate"] = 5e-324
+    response = client.post("/commercial/assessment", json=payload)
+    assert response.status_code == 422
+    assert "finite range" in str(response.json()["detail"])
 
 
 def test_signed_working_capital_is_preserved(payload):
     payload["working_capital"].update(ar_increase=-100, inventory_increase=-200, ap_increase=-300, cash_taxes_paid=-50)
-    assert assess(payload)["current_facts"]["uca_cash_flow"]["raw_value"] == 630050
+    assert wire_decimal(assess(payload)["current_facts"]["uca_cash_flow"]["raw_value"]) == Decimal("630050")
 
 
 @pytest.mark.parametrize("single", [False, True])
@@ -306,6 +317,14 @@ def test_nonpositive_obi_is_not_serialized_as_infinity(payload, single):
 def test_coverage_boundaries_compare_raw_values(payload, metric):
     from app.assessment import assess_commercial
     from app.assessment_contracts import CommercialAssessmentRequest
+    for year in payload["years"]:
+        for name in year:
+            if name not in ("period_start", "period_end"):
+                year[name] = "0"
+        year["gross_receipts"] = "31234.56741"
+    payload["proposed_loan"]["amount"] = "0"
+    payload["existing_debt"] = {"cpltd_annual": "100", "operating_lease_annual": "0"}
+    payload["guarantors"] = []
     request = CommercialAssessmentRequest.model_validate_json(json.dumps(payload))
     raw = getattr(assess_commercial(request).current_facts, metric).raw_value
     between = (raw + round(raw, 4)) / 2
@@ -322,8 +341,8 @@ def test_positive_uca_can_display_zero_and_still_pass(payload):
     payload["working_capital"]["ar_increase"] = 524999.996
     result = assess(payload)
     factor = next(f for f in result["decision"]["factors"] if f["name"] == "uca_positive")
-    assert factor["value"] == 0
-    assert factor["raw_value"] > 0
+    assert wire_decimal(factor["value"]) == Decimal("0")
+    assert wire_decimal(factor["raw_value"]) > 0
     assert factor["passed"] is True
 
 
@@ -359,12 +378,12 @@ def test_multiple_guarantor_contributions_reconcile(payload):
     payload["guarantors"].append(dict(first, name="Second Synthetic Owner", ownership_percentage=.4, wages=10000))
     result = assess(payload)
     facts = result["current_facts"]
-    assert facts["global_business_ebitda"]["raw_value"] == 630000
-    assert facts["global_outside_income"]["raw_value"] == 81000
-    assert facts["global_personal_debt"]["raw_value"] == 79200
+    assert wire_decimal(facts["global_business_ebitda"]["raw_value"]) == 630000
+    assert wire_decimal(facts["global_outside_income"]["raw_value"]) == 81000
+    assert wire_decimal(facts["global_personal_debt"]["raw_value"]) == 79200
     contributions = result["guarantor_contributions"]
-    assert contributions[0]["business_ebitda"]["raw_value"] == 378000
-    assert contributions[1]["business_ebitda"]["raw_value"] == 252000
+    assert wire_decimal(contributions[0]["business_ebitda"]["raw_value"]) == 378000
+    assert wire_decimal(contributions[1]["business_ebitda"]["raw_value"]) == 252000
 
 
 def test_aggregate_ownership_limit_is_enforced(payload):
@@ -400,26 +419,37 @@ def test_shipped_dated_fixture_is_complete_and_matches_the_example(payload):
     assert assess(shipped)["decision"]["outcome"] == "approve"
 
 
-def test_legacy_intake_retains_defaults_unknown_fields_and_subannual_terms():
+def test_legacy_intake_retains_defaults_and_subannual_terms():
     legacy = json.loads((ROOT / "fixtures/alpine.json").read_text())
-    legacy["years"][0]["period_start"] = "ignored legacy metadata"
     legacy["proposed_loan"]["term_months"] = 6
     del legacy["guarantors"][0]["wages"]
     assert client.post("/commercial/decision", json=legacy).status_code == 200
 
 
+def test_legacy_intake_rejects_unknown_fields_instead_of_silently_discarding_them():
+    legacy = json.loads((ROOT / "fixtures/alpine.json").read_text())
+    legacy["years"][0]["period_start"] = "unsupported legacy metadata"
+    assert client.post("/commercial/decision", json=legacy).status_code == 422
+
+
 def test_legacy_decision_does_not_evaluate_unused_older_financials():
     legacy = json.loads((ROOT / "fixtures/alpine.json").read_text())
     original = client.post("/commercial/decision", json=legacy).json()
-    legacy["years"].insert(0, dict(legacy["years"][0], gross_receipts=1e308, cogs=-1e308))
+    legacy["years"].insert(0, dict(legacy["years"][0], gross_receipts="1e30", cogs="-1e30"))
     assert client.post("/commercial/decision", json=legacy).json() == original
+
+
+def test_unused_older_financials_still_cannot_bypass_input_range_validation():
+    legacy = json.loads((ROOT / "fixtures/alpine.json").read_text())
+    legacy["years"].insert(0, dict(legacy["years"][0], gross_receipts=1e308, cogs=-1e308))
+    assert client.post("/commercial/decision", json=legacy).status_code == 422
 
 
 @pytest.mark.parametrize("path", ["/commercial/assessment", "/commercial/assessment/"])
 @pytest.mark.parametrize("declared_length", [None, b"1", b"2000000"])
 def test_streamed_body_limit_counts_actual_bytes_before_parsing(path, declared_length):
     import asyncio
-    headers = [(b"origin", b"http://localhost:5173")]
+    headers = [AUTHORIZATION_ASGI_HEADER, (b"origin", b"http://localhost:5173")]
     if declared_length is not None:
         headers.append((b"content-length", declared_length))
     chunks = [b"x" * 600000, b"y" * 400001, b"not consumed"]

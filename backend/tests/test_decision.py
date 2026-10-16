@@ -1,6 +1,8 @@
+from decimal import Decimal
+
 from app.decision import decide_commercial, decide_consumer
 from app.schemas import CommercialRequest, ConsumerRequest
-from fixtures import alpine_request, BRISTLE, BRISTLE_EXISTING, BRISTLE_LOAN, BRISTLE_G, BRISTLE_WC
+from fixtures import BRISTLE, BRISTLE_EXISTING, BRISTLE_G, BRISTLE_LOAN, BRISTLE_WC, alpine_request
 
 
 def test_alpine_approve_and_no_fake_reasons():
@@ -22,5 +24,5 @@ def test_bristlecone_decline_reasons_trace_to_failed_stored_factors():
 def test_fixture_c_boundary_resolution_is_recorded_as_review():
     req=ConsumerRequest(applicant_name="Fixture C",geography="60601",gross_monthly_income=9000,proposed_housing_pi=2200,proposed_housing_tax_ins=470,other_monthly_debt=1200,atr_documentation={"income":True,"assets":True,"debts":True},synthetic_credit_score=700)
     out=decide_consumer(req)
-    assert out.factors[0].value==.43
+    assert out.factors[0].value==Decimal(".43")
     assert out.outcome=="review"

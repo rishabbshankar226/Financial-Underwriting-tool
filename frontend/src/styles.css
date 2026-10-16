@@ -3,14 +3,14 @@
   background: #0b0d10;
   color: #eef1f4;
   font-synthesis: none;
+  font-variant-numeric: tabular-nums;
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 25% 0, #17202a 0, transparent 34%), #0b0d10;
+  background: #0b0d10;
 }
 main {
   max-width: 1440px;
@@ -151,13 +151,34 @@ nav button {
   border: 1px solid #303b46;
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 16px 50px #0003;
 }
 .panelTitle {
   display: flex;
   justify-content: space-between;
   align-items: start;
   gap: 20px;
+}
+.accessGate {
+  max-width: 620px;
+  padding-top: 12vh;
+}
+.accessGate form {
+  display: grid;
+  gap: 14px;
+}
+.accessGate input {
+  box-sizing: border-box;
+  width: 100%;
+}
+.accessBar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 32px;
+  border-bottom: 1px solid #303b46;
+  color: #b5bfc9;
 }
 .panelTitle span {
   font-size: 12px;

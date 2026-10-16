@@ -1,19 +1,32 @@
 from __future__ import annotations
+
+from decimal import Decimal
+
 from .decision import decide_commercial
-from .schemas import CommercialRequest, DISCLAIMER
+from .finance import ONE, ZERO, calculation, decimal_sum
+from .schemas import DISCLAIMER, CommercialRequest
 
 
-def geography_proxy_self_test(base: CommercialRequest, geographies: list[str]) -> dict:
+@calculation
+def geography_proxy_self_test(base: CommercialRequest, geographies: list[str]) -> dict[str, object]:
     """Illustrative synthetic fairness regression harness, not a disparate-impact test.
 
     Geography travels through the decision request but receives zero policy weight in the
     current engine. Varying it while holding creditworthiness constant catches a future
     accidental geography dependency if one is introduced.
     """
-    outcomes={}
+    outcomes = {}
     for geo in geographies:
-        candidate=base.model_copy(deep=True); candidate.geography=geo
-        outcomes[geo]=decide_commercial(candidate).outcome
-    rates={g:1.0 if outcome=="approve" else 0.0 for g,outcome in outcomes.items()}
-    gap=max(rates.values())-min(rates.values()) if rates else 0.0
-    return {"outcomes":outcomes,"approve_rate":sum(rates.values())/len(rates) if rates else 0.0,"outcome_rate_gap":gap,"geography_is_decision_factor":False,"label":"illustrative synthetic self-test; not a certified disparate-impact analysis","disclaimer":DISCLAIMER}
+        candidate = base.model_copy(deep=True)
+        candidate.geography = geo
+        outcomes[geo] = decide_commercial(candidate).outcome
+    rates = {g: ONE if outcome == "approve" else ZERO for g, outcome in outcomes.items()}
+    gap = max(rates.values()) - min(rates.values()) if rates else ZERO
+    return {
+        "outcomes": outcomes,
+        "approve_rate": decimal_sum(list(rates.values())) / Decimal(str(len(rates))) if rates else ZERO,
+        "outcome_rate_gap": gap,
+        "geography_is_decision_factor": False,
+        "label": "illustrative synthetic self-test; not a certified disparate-impact analysis",
+        "disclaimer": DISCLAIMER,
+    }

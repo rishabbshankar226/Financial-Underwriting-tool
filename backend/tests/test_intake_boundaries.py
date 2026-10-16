@@ -1,11 +1,10 @@
 import json
 
 import pytest
-from fastapi.testclient import TestClient
-
+from api_client import TestClient
 from app.ingestion import confirmed_payload, extract_synthetic_text, extraction_accuracy, parse_structured
 from app.main import app
-from app.schemas import AuditEvent, ExtractionField, ExtractionResult
+from app.schemas import AuditEvent, ExtractionField, ExtractionResult, SourceKind
 from fixtures import alpine_request
 
 
@@ -19,8 +18,8 @@ def test_json_duplicate_keys_are_rejected(payload):
 
 
 @pytest.mark.parametrize('token', ['NaN', 'Infinity', '-Infinity', '1e400', '-1e400'])
-def test_json_nonfinite_tokens_are_rejected(token):
-    with pytest.raises(ValueError, match='Non-finite JSON'):
+def test_json_nonfinite_and_out_of_range_tokens_are_rejected(token):
+    with pytest.raises(ValueError, match='finite'):
         parse_structured('{"amount": ' + token + '}', 'json')
 
 
@@ -150,17 +149,17 @@ def test_unconfirmed_duplicate_cannot_silently_resolve_ambiguity():
 @pytest.mark.parametrize('rationale', ['', ' ', '\t\n'])
 def test_blank_audit_rationale_is_rejected(rationale):
     with pytest.raises(ValueError, match='rationale'):
-        AuditEvent(field='gross_receipts', new_value=1, source='human_override', rationale=rationale)
+        AuditEvent(field='gross_receipts', new_value=1, source=SourceKind.human_override, rationale=rationale)
 
 
 def test_audit_rationale_is_trimmed():
-    event = AuditEvent(field='gross_receipts', new_value=1, source='human_override', rationale='  Synthetic correction  ')
+    event = AuditEvent(field='gross_receipts', new_value=1, source=SourceKind.human_override, rationale='  Synthetic correction  ')
     assert event.rationale == 'Synthetic correction'
 
 
 def test_api_rejects_duplicate_json_before_framework_decoding_loses_it():
-    raw = json.dumps(alpine_request().model_dump())
-    raw = raw.replace('"amount": 500000.0', '"amount": 1, "amount": 500000.0')
+    raw = json.dumps(alpine_request().model_dump(mode="json"))
+    raw = raw.replace('"amount": "500000"', '"amount": 1, "amount": "500000"')
     assert raw.count('"amount":') == 2
     response = TestClient(app).post('/commercial/decision', content=raw, headers={'Content-Type': 'application/json'})
     assert response.status_code == 422
@@ -168,7 +167,7 @@ def test_api_rejects_duplicate_json_before_framework_decoding_loses_it():
 
 
 def test_api_rejects_blank_override_rationale():
-    payload = alpine_request().model_dump()
+    payload = alpine_request().model_dump(mode="json")
     payload['overrides'] = [dict(field='gross_receipts', new_value=1, source='human_override', rationale='  ')]
     response = TestClient(app).post('/commercial/decision', json=payload)
     assert response.status_code == 422
@@ -190,8 +189,8 @@ def test_api_duplicate_rejection_covers_json_media_types(media_type):
 
 
 def test_api_rejects_overflowing_json_number_before_error_serialization():
-    raw = json.dumps(alpine_request().model_dump()).replace('"amount": 500000.0', '"amount": 1e400')
+    raw = json.dumps(alpine_request().model_dump(mode="json")).replace('"amount": "500000"', '"amount": 1e400')
     response = TestClient(app, raise_server_exceptions=False).post('/commercial/decision', content=raw,
         headers={'Content-Type': 'application/json'})
     assert response.status_code == 422
-    assert 'Non-finite JSON' in response.json()['detail']
+    assert 'finite' in str(response.json()['detail'])

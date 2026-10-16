@@ -1,11 +1,14 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import {
   guardSavedCase,
   guardCasePage,
   guardRevisionPage,
   guardReplay,
+  object,
+  type CaseSnapshot,
 } from "../src/caseContracts";
 import { writeCase, fetchCase } from "../src/caseApi";
 import {
@@ -25,45 +28,46 @@ const dated = JSON.parse(
     "utf8",
   ),
 );
-let original: any, changed: any, etag: string, changedEtag: string;
+let original: CaseSnapshot, changed: CaseSnapshot, etag: string, changedEtag: string;
 test.beforeAll(async ({ request }) => {
   const response = await request.post("http://127.0.0.1:8000/cases", {
     headers: { "Idempotency-Key": randomUUID() },
     data: { input: dated, rationale: "Synthetic stored contract" },
   });
   expect(response.status()).toBe(201);
-  original = await response.json();
   etag = response.headers().etag;
+  original = guardSavedCase(await response.json(), etag).snapshot;
   const edit = await request.post(
     `http://127.0.0.1:8000/cases/${original.case_id}/revisions`,
     {
       headers: { "Idempotency-Key": randomUUID(), "If-Match": etag },
       data: {
         field_path: "/proposed_loan/annual_rate",
-        new_value: 0.125,
+        new_value: "0.125",
         rationale: "Synthetic rate",
       },
     },
   );
   expect(edit.status()).toBe(201);
-  changed = await edit.json();
   changedEtag = edit.headers().etag;
+  changed = guardSavedCase(await edit.json(), changedEtag).snapshot;
 });
 test("real stored receipts retain original assessment and event identity", () => {
   const view = guardSavedCase(original, etag);
-  expect(view.assessment?.current_facts.ebitda.raw_value).toBe(630000);
+  expect(view.assessment?.current_facts.ebitda.raw_value).toBe("630000");
+  expect(view.assessment?.current_facts.ebitda.reported_value).toBe("630000.00");
   expect(view.snapshot.event.kind).toBe("creation");
   expect(guardSavedCase(changed, changedEtag).snapshot.event.before).toBe(
-    0.105,
+    "0.105",
   );
 });
 for (const [name, mutate] of [
-  ["event identity", (b: any) => (b.event.run_id = randomUUID())],
-  ["parent linkage", (b: any) => (b.parent_revision = 4)],
-  ["outer input", (b: any) => (b.normalized_input.proposed_loan.amount += 1)],
-  ["recording metadata", (b: any) => delete b.recording.packages.fastapi],
-  ["finite event", (b: any) => (b.event.before = Infinity)],
-  ["required policy", (b: any) => delete b.assessment.policy_snapshot],
+  ["event identity", (b: CaseSnapshot) => (b.event.run_id = randomUUID())],
+  ["parent linkage", (b: CaseSnapshot) => (b.parent_revision = 4)],
+  ["outer input", (b: CaseSnapshot) => (object(b.normalized_input.proposed_loan, "test loan").amount = "500001")],
+  ["recording metadata", (b: CaseSnapshot) => Reflect.deleteProperty(b.recording.packages, "fastapi")],
+  ["finite event", (b: CaseSnapshot) => (b.event.before = Infinity)],
+  ["required policy", (b: CaseSnapshot) => Reflect.deleteProperty(b.assessment, "policy_snapshot")],
 ] as const)
   test(`stored guard rejects ${name}`, () => {
     const copy = structuredClone(changed);
@@ -87,6 +91,45 @@ test("unknown assessment definitions remain readable without becoming a typed re
   expect(view.snapshot.assessment.policy_snapshot).toEqual(
     original.assessment.policy_snapshot,
   );
+});
+test("frozen v1 receipts retain reviewed hashes and stay opaque and read-only", () => {
+  const fixture = new URL("../../backend/tests/fixtures/schema_v1/", import.meta.url);
+  const sql = readFileSync(new URL("store.sql", fixture));
+  const provenance = object(JSON.parse(readFileSync(new URL("provenance.json", fixture), "utf8")), "frozen provenance");
+  expect(createHash("sha256").update(sql).digest("hex")).toBe(provenance.sql_sha256);
+  const reviewed = provenance.receipts;
+  expect(Array.isArray(reviewed)).toBe(true);
+  if (!Array.isArray(reviewed)) throw new Error("Missing reviewed receipt evidence");
+  const extracted: unknown = JSON.parse(execFileSync("python3", ["-c", [
+    "import json, sqlite3, sys",
+    "connection = sqlite3.connect(':memory:')",
+    "connection.executescript(sys.stdin.read())",
+    "rows = connection.execute('SELECT operation_id,etag,receipt_json FROM successful_operations ORDER BY revision').fetchall()",
+    "print(json.dumps(rows))",
+  ].join("\n")], {input: sql, encoding: "utf8"}));
+  expect(Array.isArray(extracted)).toBe(true);
+  if (!Array.isArray(extracted)) throw new Error("Missing frozen receipts");
+  expect(extracted).toHaveLength(reviewed.length);
+  extracted.forEach((row: unknown, index) => {
+    if (!Array.isArray(row) || row.length !== 3 || !row.every(value => typeof value === "string")) {
+      throw new Error("Malformed frozen receipt row");
+    }
+    const [operation, originalEtag, receipt] = row as [string, string, string];
+    const evidence = object(reviewed[index], "reviewed receipt");
+    expect(operation).toBe(evidence.operation_id);
+    expect(originalEtag).toBe(evidence.etag);
+    expect(createHash("sha256").update(receipt).digest("hex")).toBe(evidence.receipt_sha256);
+    const parsed = object(JSON.parse(receipt), "original receipt");
+    const view = guardSavedCase(parsed, originalEtag);
+    expect(view.snapshot).toBe(parsed);
+    expect(view.assessment).toBeNull();
+    expect(view.compatibility).toContain("commercial-assessment-v1");
+    expect(view.snapshot.assessment.schema_version).toBe("commercial-assessment-v1");
+    expect(view.snapshot.normalized_input.schema_version).toBe("commercial-assessment-v1");
+    expect(() => makeEdit(view, {
+      path: field.path, prior: "0.105", next: "0.125", rationale: "Refused archive edit", at: "unverified",
+    }, field)).toThrow();
+  });
 });
 test("pages and replay reject cross-case identities and malformed results", () => {
   expect(() =>
@@ -128,10 +171,10 @@ const field = {
   path: "/proposed_loan/annual_rate",
   label: "Annual nominal rate",
   period: "Assumption as of 2026-01-15",
-  value: 0.105,
+  value: "0.105",
   unit: "%" as const,
-  min: 0,
-  max: 1,
+  min: "0",
+  max: "1",
 };
 function memoryStorage(): Storage {
   const values = new Map<string, string>();
@@ -155,8 +198,8 @@ test("reload recovery retains the exact serialized command, UUID and old ETag", 
     guardSavedCase(original, etag),
     {
       path: field.path,
-      prior: 0.105,
-      next: 0.125,
+      prior: "0.105",
+      next: "0.125",
       rationale: "Synthetic rate",
       at: "unverified local",
     },
@@ -170,7 +213,7 @@ test("reload recovery retains the exact serialized command, UUID and old ETag", 
   expect(restored.kind === "edit" && restored.etag).toBe(etag);
   expect(JSON.parse(restored.body)).toEqual({
     field_path: field.path,
-    new_value: 0.125,
+    new_value: "0.125",
     rationale: "Synthetic rate",
   });
 });
@@ -220,7 +263,10 @@ test("read verifies the requested case instead of installing another case", asyn
   ).rejects.toThrow();
 });
 test("write retries send an identical command and accept the original historical receipt", async () => {
-  const operation = makeCreate(dated, "Synthetic stored contract");
+  const assessment = guardSavedCase(original, etag).assessment;
+  expect(assessment).not.toBeNull();
+  if (!assessment) throw new Error("Expected the active assessment contract");
+  const operation = makeCreate(assessment.normalized_input, "Synthetic stored contract");
   const sent: RequestInit[] = [];
   const transport = (async (_url, init) => {
     sent.push(init!);
@@ -292,8 +338,8 @@ test("invalid review dates in a recovery journal are refused before retry", () =
     guardSavedCase(original, etag),
     {
       path: field.path,
-      prior: 0.105,
-      next: 0.125,
+      prior: "0.105",
+      next: "0.125",
       rationale: "Synthetic rate",
       at: "unverified",
     },

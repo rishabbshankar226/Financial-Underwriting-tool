@@ -1,31 +1,52 @@
+from collections.abc import Awaitable, Callable
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.responses import Response
+
 from .assessment import assess_commercial
 from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest
-from .case_routes import router as case_router, owns_case_json, install_case_openapi
-from .scenario_routes import router as scenario_router, owns_scenario_json, install_scenario_openapi
-from .comparison_routes import router as comparison_router, owns_comparison_json, install_comparison_openapi
+from .authentication import OperatorAuthenticationMiddleware
+from .case_routes import install_case_openapi, owns_case_json
+from .case_routes import router as case_router
 from .cases import CaseStoreError
-from .json_transport import read_contract
-from .schemas import CommercialRequest, ConsumerRequest, Decision, DISCLAIMER, SBACase
+from .comparison_routes import install_comparison_openapi, owns_comparison_json
+from .comparison_routes import router as comparison_router
 from .decision import decide_commercial, decide_consumer
-from .sba import load_size_table, evaluate_sba
 from .ingestion import parse_structured
+from .json_transport import install_contract_openapi, read_contract
+from .json_values import JsonObject, canonical_json
+from .request_limits import RequestBodyLimitMiddleware
+from .sba import evaluate_sba, load_size_table
+from .scenario_routes import install_scenario_openapi, owns_scenario_json
+from .scenario_routes import router as scenario_router
+from .schemas import DISCLAIMER, CommercialRequest, ConsumerRequest, Decision, SBACase, SBAScreenResult
 
 app = FastAPI(title="Spreadline", version="0.1.0", description=DISCLAIMER)
 
 
 @app.middleware("http")
-async def validate_raw_json(request: Request, call_next):
-    if (request.url.path.rstrip("/") == "/commercial/assessment" or owns_case_json(request.url.path)
-            or owns_scenario_json(request.url.path) or owns_comparison_json(request.url.path)):
+async def validate_raw_json(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    if (
+        request.url.path.rstrip("/")
+        in ("/commercial/assessment", "/commercial/decision", "/consumer/decision", "/sba/evaluate")
+        or owns_case_json(request.url.path)
+        or owns_scenario_json(request.url.path)
+        or owns_comparison_json(request.url.path)
+    ):
         # This route owns a bounded stream read, before any JSON buffering.
         return await call_next(request)
     # Validate before framework JSON decoding can discard duplicate object keys.
     media_type = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
-    if request.method == "POST" and (not media_type or media_type == "application/json"
-                                    or media_type.startswith("application/") and media_type.endswith("+json")):
+    if request.method == "POST" and (
+        not media_type
+        or media_type == "application/json"
+        or media_type.startswith("application/")
+        and media_type.endswith("+json")
+    ):
         try:
             parse_structured((await request.body()).decode("utf-8"), "json")
         except (ValueError, UnicodeDecodeError) as exc:
@@ -33,8 +54,18 @@ async def validate_raw_json(request: Request, call_next):
     return await call_next(request)
 
 
-# CORS must wrap validation so a rejected JSON request remains readable by the UI.
-app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],allow_credentials=False,allow_methods=["*"],allow_headers=["*"],expose_headers=["ETag", "Idempotency-Replayed", "Retry-After", "Location"])
+app.add_middleware(RequestBodyLimitMiddleware)
+app.add_middleware(OperatorAuthenticationMiddleware)
+
+# CORS wraps body limits and validation so rejected requests remain readable.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["ETag", "Idempotency-Replayed", "Retry-After", "Location"],
+)
 
 app.include_router(case_router)
 app.include_router(scenario_router)
@@ -42,24 +73,35 @@ app.include_router(comparison_router)
 install_case_openapi(app)
 install_scenario_openapi(app)
 install_comparison_openapi(app)
+install_contract_openapi(app, (CommercialAssessmentRequest, CommercialRequest, ConsumerRequest, SBACase))
 
 
 @app.exception_handler(CaseStoreError)
-async def case_store_error(request: Request, exc: CaseStoreError):
+async def case_store_error(request: Request, exc: CaseStoreError) -> JSONResponse:
     headers = {"Retry-After": "1"} if exc.code == "storage_busy" else None
-    return JSONResponse(status_code=exc.status, content={"detail": {"code": exc.code, "message": str(exc)}}, headers=headers)
+    return JSONResponse(
+        status_code=exc.status, content={"detail": {"code": exc.code, "message": str(exc)}}, headers=headers
+    )
+
 
 @app.get("/health")
-def health() -> dict:
-    return {"status":"ok","prototype":True,"disclaimer":DISCLAIMER}
+def health() -> JsonObject:
+    return {"status": "ok"}
 
 
 @app.post("/commercial/assessment/", response_model=CommercialAssessment, include_in_schema=False)
-@app.post("/commercial/assessment", response_model=CommercialAssessment, openapi_extra={
-    "requestBody": {"required": True, "content": {"application/json": {
-        "schema": {"$ref": "#/components/schemas/CommercialAssessmentRequest"}
-    }}}
-})
+@app.post(
+    "/commercial/assessment",
+    response_model=CommercialAssessment,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {
+                "application/json": {"schema": {"$ref": "#/components/schemas/CommercialAssessmentRequest"}}
+            },
+        }
+    },
+)
 async def commercial_assessment(request: Request) -> CommercialAssessment:
     validated = await read_contract(request, CommercialAssessmentRequest)
     try:
@@ -67,17 +109,56 @@ async def commercial_assessment(request: Request) -> CommercialAssessment:
     except (ValueError, OverflowError, RecursionError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
-@app.post("/commercial/decision",response_model=Decision)
-def commercial_decision(req: CommercialRequest) -> Decision:
-    try: return decide_commercial(req)
-    except ValueError as exc: raise HTTPException(status_code=422, detail=str(exc)) from exc
 
-@app.post("/consumer/decision",response_model=Decision)
-def consumer_decision(req: ConsumerRequest) -> Decision:
-    try: return decide_consumer(req)
-    except ValueError as exc: raise HTTPException(status_code=422, detail=str(exc)) from exc
+@app.post(
+    "/commercial/decision",
+    response_model=Decision,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/CommercialRequest"}}},
+        }
+    },
+)
+async def commercial_decision(request: Request) -> Decision:
+    req = await read_contract(request, CommercialRequest, "Commercial")
+    try:
+        return decide_commercial(req)
+    except (ValueError, OverflowError, RecursionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
-@app.post("/sba/evaluate")
-def sba_evaluate(req: SBACase) -> dict:
-    try: return evaluate_sba(req,load_size_table())
-    except ValueError as exc: raise HTTPException(status_code=422,detail=str(exc)) from exc
+
+@app.post(
+    "/consumer/decision",
+    response_model=Decision,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ConsumerRequest"}}},
+        }
+    },
+)
+async def consumer_decision(request: Request) -> Decision:
+    req = await read_contract(request, ConsumerRequest, "Consumer")
+    try:
+        return decide_consumer(req)
+    except (ValueError, OverflowError, RecursionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.post(
+    "/sba/evaluate",
+    response_model=SBAScreenResult,
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SBACase"}}},
+        }
+    },
+)
+async def sba_evaluate(request: Request) -> SBAScreenResult:
+    req = await read_contract(request, SBACase, "SBA")
+    try:
+        return SBAScreenResult.model_validate_json(canonical_json(evaluate_sba(req, load_size_table())))
+    except (ValueError, OverflowError, RecursionError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
