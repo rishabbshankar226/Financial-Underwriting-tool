@@ -95,6 +95,11 @@ implemented. See [model documentation](docs/MODEL_DOCUMENTATION.md).
 
 ## Setup
 
+For a temporary private Streamlit deployment, see the
+[Streamlit testing host](docs/STREAMLIT_TESTING.md). It packages the same React
+workspace and invokes the existing backend in-process. It is disabled by
+default, uses synthetic data, and labels local testing records as temporary.
+
 Prerequisites: Python 3.12, Node.js 22.12 or later in the supported Node 22 line,
 SQLite from Python 3.12, and free ports 8000/5173 for browser tests. CI uses
 Python 3.12 and Node 22.

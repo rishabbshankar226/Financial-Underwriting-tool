@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { validateEdit, type EditableField, type EditEvent } from "./workspace";
 import { restoreDialogFocus } from "./CaseDialogs";
 import { rationale as savedRationale } from "./caseContracts";
+import { activeWorkspaceElement } from "./workspaceDom";
 export default function EditDialog({
   field,
   onCancel,
@@ -49,10 +50,10 @@ export default function EditDialog({
         );
         const first = nodes[0],
           last = nodes[nodes.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
+        if (event.shiftKey && activeWorkspaceElement(event.currentTarget) === first) {
           event.preventDefault();
           last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
+        } else if (!event.shiftKey && activeWorkspaceElement(event.currentTarget) === last) {
           event.preventDefault();
           first.focus();
         }

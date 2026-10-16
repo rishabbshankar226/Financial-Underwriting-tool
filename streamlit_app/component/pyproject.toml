@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=77.0.3,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spreadline-workspace"
+version = "0.1.0"
+description = "The Spreadline analyst workspace packaged for Streamlit testing"
+requires-python = ">=3.12"
+dependencies = ["streamlit==1.66.0"]
+
+[tool.setuptools.packages.find]
+include = ["spreadline_workspace*"]
+
+[tool.setuptools.package-data]
+spreadline_workspace = ["py.typed", "pyproject.toml", "frontend/build/*"]

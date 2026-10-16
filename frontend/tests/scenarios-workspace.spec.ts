@@ -1,6 +1,6 @@
 import { connectWorkspace, TEST_OPERATOR_ID } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
-import type { Page, APIRequestContext } from "@playwright/test";
+import type { Page, APIRequestContext, Response } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { RECOVERY_KEY } from "../src/caseRecovery";
@@ -40,6 +40,19 @@ async function preview(page: Page) {
     await page.getByRole("button", { name: "Preview scenarios", exact: true }).click();
     await expect(page.getByRole("button", { name: "Save reviewed comparison", exact: true })).toBeEnabled();
 }
+async function retainedOriginal(page: Page, request: APIRequestContext, caseId: string, receipt: Response) {
+    expect(receipt.status()).toBe(201);
+    await expect(page.locator(".comparisonContext")).toContainText("Saved comparison");
+    const id = await page.locator(".comparisonContext > code").innerText();
+    const path = `/cases/${caseId}/scenario-comparisons/${id}`;
+    expect(receipt.headers().location).toBe(path);
+    // Read the immutable original rather than depending on Chromium retaining
+    // its POST body after the application consumes that streamed response.
+    const stored = await request.get(`http://127.0.0.1:8000${path}`);
+    expect(stored.status()).toBe(200);
+    expect(stored.headers().etag).toBe(receipt.headers().etag);
+    return guardComparison(await stored.json(), stored.headers().etag).record;
+}
 test("preview and one retained batch preserve the original assessment and reopen without recalculation", async ({ page, request }) => {
     const original = await baseline(page);
     await preview(page);
@@ -49,7 +62,7 @@ test("preview and one retained batch preserve the original assessment and reopen
     await expect(page.locator(".decision strong")).toHaveText("APPROVE");
     const saved = page.waitForResponse(r => r.url().endsWith("/scenario-comparisons") && r.request().method() === "POST" && r.status() === 201);
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
-    const record = await (await saved).json();
+    const record = await retainedOriginal(page, request, original.case_id, await saved);
     await expect(page.locator(".comparisonContext")).toContainText(record.comparison_id);
     await expect(page.locator(".originalComparison")).toContainText(`Recorded actor: ${TEST_OPERATOR_ID}`);
     await expect(page.getByRole("button", { name: "Save reviewed comparison", exact: true })).toBeDisabled();
@@ -198,7 +211,7 @@ test("a historical revision stays the explicit baseline after the case head adva
     await preview(page);
     const written = page.waitForResponse(r => r.request().method() === "POST" && r.url().endsWith("/scenario-comparisons"));
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
-    const record = await (await written).json();
+    const record = await retainedOriginal(page, request, original.case_id, await written);
     expect(record.baseline_revision).toBe(1);
     expect(record.baseline_run_id).toBe(original.run_id);
     await page.getByRole("button", { name: "Open baseline revision", exact: true }).click();
