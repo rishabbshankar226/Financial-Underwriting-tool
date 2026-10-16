@@ -1,9 +1,10 @@
-import { test, expect, type APIRequestContext, type Page } from "@playwright/test";
+import { connectWorkspace, TEST_API_ORIGIN } from "./testCredentials";
+import { test, expect } from "./authenticatedTest";
+import type { APIRequestContext, Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { LOCATOR_KEY, RECOVERY_KEY, makeCreate } from "../src/caseRecovery";
 import { COMPARISON_LOCATOR_KEY } from "../src/scenarioSelection";
-import { apiBase } from "../src/api";
 const input = JSON.parse(readFileSync(new URL("../../backend/fixtures/alpine_dated.json", import.meta.url), "utf8"));
 async function create(request: APIRequestContext) {
   const r = await request.post("http://127.0.0.1:8000/cases", { headers: { "Idempotency-Key": randomUUID() }, data: { input, rationale: "Synthetic review case" } });
@@ -12,17 +13,17 @@ async function create(request: APIRequestContext) {
 }
 async function retain(request: APIRequestContext, s: any) {
   const path = `http://127.0.0.1:8000/cases/${s.case_id}/revisions/${s.revision}`;
-  const command = { schema_version: "commercial-scenario-preview-v1", baseline_run_id: s.run_id, scenarios: [{ scenario_key: "revenue", name: "Revenue −10%", rationale: "Synthetic downside", assumptions: { revenue_change: -0.1, cogs_change: 0, operating_expense_change: 0, proposed_rate_change_bps: 0 } }] };
+  const command = { schema_version: "commercial-scenario-preview-v2", baseline_run_id: s.run_id, scenarios: [{ scenario_key: "revenue", name: "Revenue −10%", rationale: "Synthetic downside", assumptions: { revenue_change: "-0.1", cogs_change: "0", operating_expense_change: "0", proposed_rate_change_bps: "0" } }] };
   const p = await request.post(`${path}/scenarios/preview`, { data: command }); expect(p.status()).toBe(200);
-  const r = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v1", expected_preview_fingerprint: (await p.json()).fingerprint.value } }); expect(r.status()).toBe(201);
+  const r = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v2", expected_preview_fingerprint: (await p.json()).fingerprint.value } }); expect(r.status()).toBe(201);
   return { record: await r.json(), etag: r.headers().etag };
 }
 async function open(page: Page, s: any, record?: any, pending = false) {
   await page.addInitScript(({ s, record, key, comparisonKey, base }) => {
     sessionStorage.setItem(key, JSON.stringify({ version: "case-selection-v1", apiBase: base, caseId: s.case_id, revision: s.revision }));
     if (record) sessionStorage.setItem(comparisonKey, JSON.stringify({ version: "comparison-selection-v1", apiBase: base, caseId: s.case_id, comparisonId: record.comparison_id }));
-  }, { s, record, key: LOCATOR_KEY, comparisonKey: COMPARISON_LOCATOR_KEY, base: apiBase });
-  await page.goto("/");
+  }, { s, record, key: LOCATOR_KEY, comparisonKey: COMPARISON_LOCATOR_KEY, base: TEST_API_ORIGIN });
+  await page.goto("/"); await connectWorkspace(page);
   if (pending) {
     await page.getByRole("button", { name: "Saved cases", exact: true }).click();
     await page.getByRole("button", { name: `Open ${s.normalized_input.borrower_name} case ${s.case_id}`, exact: true }).click();
@@ -39,7 +40,7 @@ async function download(page: Page) {
   return { text: Buffer.concat(chunks).toString("utf8"), name: file.suggestedFilename() };
 }
 test("Review explains the saved-original requirement for unsaved dated input", async ({ page }) => {
-  await page.goto("/"); await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await page.goto("/"); await connectWorkspace(page); await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Review", exact: true }).click();
   await expect(page.locator(".reviewWorkspace")).toContainText("Save or open a dated commercial revision");
   await expect(page.getByRole("button", { name: "Download JSON review package", exact: true })).toBeDisabled();
@@ -97,13 +98,13 @@ test("known storage with unsupported financial definitions exports the original 
 test("pending recovery remains byte-identical while a current original is exported", async ({ page, request }) => {
   const original = await create(request), pending = JSON.stringify(makeCreate(input, "Pending synthetic other case"));
   await page.addInitScript(({ key, pending }) => sessionStorage.setItem(key, pending), { key: RECOVERY_KEY, pending });
-  let posts = 0; page.on("request", r => { if (r.method() === "POST") posts++; });
+  let posts: string[] = []; page.on("request", r => { if (r.method() === "POST") posts.push(new URL(r.url()).pathname); });
   await open(page, original.snapshot, undefined, true);
   await expect(page.locator(".reviewWorkspace")).toContainText("Pending work is excluded");
   const parsed = JSON.parse((await download(page)).text);
   expect(parsed.case).toEqual(original);
   expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBe(pending);
-  expect(posts).toBe(0);
+  expect(posts).toEqual([]);
 });
 test("keyboard and mobile review/download remain readable with a clean console", async ({ page, request }, info) => {
   const errors: string[] = []; page.on("pageerror", e => errors.push(e.message)); page.on("console", m => { if (["warning", "error"].includes(m.type())) errors.push(m.text()); });
@@ -126,7 +127,7 @@ test("failed read with a stale saved object disables export until an original is
   await expect(page.getByRole("link", { name: "Download prepared JSON", exact: true })).toHaveCount(0);
 });
 test("legacy input has no saved-original JSON export", async ({ page }) => {
-  await page.goto("/"); await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await page.goto("/"); await connectWorkspace(page); await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Legacy Alpine demo", exact: true }).click();
   await expect(page.locator("header")).toContainText("Legacy");
   await page.getByRole("button", { name: "Review", exact: true }).click();
@@ -258,7 +259,7 @@ test("initial evaluation has no export source", async ({ page }) => {
   let release!: () => void, entered!: () => void;
   const held = new Promise<void>(r => release = r), started = new Promise<void>(r => entered = r);
   await page.route("**/commercial/assessment", async route => { const response = await route.fetch(); entered(); await held; await route.fulfill({ response }); });
-  await page.goto("/"); await started;
+  await page.goto("/"); await connectWorkspace(page); await started;
   await page.getByRole("button", { name: "Review", exact: true }).click();
   await expect(page.getByRole("button", { name: "Download JSON review package", exact: true })).toBeDisabled();
   await expect(page.locator(".reviewMetrics")).toHaveCount(0);

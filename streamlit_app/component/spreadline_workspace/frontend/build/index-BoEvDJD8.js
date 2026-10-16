@@ -574,23 +574,23 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		(i === null ? r || !(2 < t.length) || t[0] !== "o" && t[0] !== "O" || t[1] !== "n" && t[1] !== "N" : i.type !== 0) && (_(t, n, i, r) && (n = null), r || i === null ? h(t) && (n === null ? e.removeAttribute(t) : e.setAttribute(t, "" + n)) : i.mustUseProperty ? e[i.propertyName] = n === null ? i.type !== 3 && "" : n : (t = i.attributeName, r = i.attributeNamespace, n === null ? e.removeAttribute(t) : (i = i.type, n = i === 3 || i === 4 && !0 === n ? "" : "" + n, r ? e.setAttributeNS(r, t, n) : e.setAttribute(t, n))));
 	}
 	var C = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED, w = Symbol.for("react.element"), T = Symbol.for("react.portal"), E = Symbol.for("react.fragment"), D = Symbol.for("react.strict_mode"), O = Symbol.for("react.profiler"), k = Symbol.for("react.provider"), ee = Symbol.for("react.context"), te = Symbol.for("react.forward_ref"), A = Symbol.for("react.suspense"), j = Symbol.for("react.suspense_list"), M = Symbol.for("react.memo"), ne = Symbol.for("react.lazy"), re = Symbol.for("react.offscreen"), ie = Symbol.iterator;
-	function N(e) {
+	function ae(e) {
 		return typeof e != "object" || !e ? null : (e = ie && e[ie] || e["@@iterator"], typeof e == "function" ? e : null);
 	}
-	var P = Object.assign, ae;
-	function oe(e) {
-		if (ae === void 0) try {
+	var N = Object.assign, oe;
+	function se(e) {
+		if (oe === void 0) try {
 			throw Error();
 		} catch (e) {
 			var t = e.stack.trim().match(/\n( *(at )?)/);
-			ae = t && t[1] || "";
+			oe = t && t[1] || "";
 		}
-		return "\n" + ae + e;
+		return "\n" + oe + e;
 	}
-	var se = !1;
-	function ce(e, t) {
-		if (!e || se) return "";
-		se = !0;
+	var ce = !1;
+	function le(e, t) {
+		if (!e || ce) return "";
+		ce = !0;
 		var n = Error.prepareStackTrace;
 		Error.prepareStackTrace = void 0;
 		try {
@@ -636,25 +636,25 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 				}
 			}
 		} finally {
-			se = !1, Error.prepareStackTrace = n;
+			ce = !1, Error.prepareStackTrace = n;
 		}
-		return (e = e ? e.displayName || e.name : "") ? oe(e) : "";
+		return (e = e ? e.displayName || e.name : "") ? se(e) : "";
 	}
-	function F(e) {
+	function P(e) {
 		switch (e.tag) {
-			case 5: return oe(e.type);
-			case 16: return oe("Lazy");
-			case 13: return oe("Suspense");
-			case 19: return oe("SuspenseList");
+			case 5: return se(e.type);
+			case 16: return se("Lazy");
+			case 13: return se("Suspense");
+			case 19: return se("SuspenseList");
 			case 0:
 			case 2:
-			case 15: return e = ce(e.type, !1), e;
-			case 11: return e = ce(e.type.render, !1), e;
-			case 1: return e = ce(e.type, !0), e;
+			case 15: return e = le(e.type, !1), e;
+			case 11: return e = le(e.type.render, !1), e;
+			case 1: return e = le(e.type, !0), e;
 			default: return "";
 		}
 	}
-	function I(e) {
+	function F(e) {
 		if (e == null) return null;
 		if (typeof e == "function") return e.displayName || e.name || null;
 		if (typeof e == "string") return e;
@@ -672,16 +672,16 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			case te:
 				var t = e.render;
 				return e = e.displayName, e ||= (e = t.displayName || t.name || "", e === "" ? "ForwardRef" : "ForwardRef(" + e + ")"), e;
-			case M: return t = e.displayName || null, t === null ? I(e.type) || "Memo" : t;
+			case M: return t = e.displayName || null, t === null ? F(e.type) || "Memo" : t;
 			case ne:
 				t = e._payload, e = e._init;
 				try {
-					return I(e(t));
+					return F(e(t));
 				} catch {}
 		}
 		return null;
 	}
-	function le(e) {
+	function ue(e) {
 		var t = e.type;
 		switch (e.tag) {
 			case 24: return "Cache";
@@ -694,7 +694,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			case 4: return "Portal";
 			case 3: return "Root";
 			case 6: return "Text";
-			case 16: return I(t);
+			case 16: return F(t);
 			case 8: return t === D ? "StrictMode" : "Mode";
 			case 22: return "Offscreen";
 			case 12: return "Profiler";
@@ -713,7 +713,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		}
 		return null;
 	}
-	function L(e) {
+	function I(e) {
 		switch (typeof e) {
 			case "boolean":
 			case "number":
@@ -723,12 +723,12 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			default: return "";
 		}
 	}
-	function ue(e) {
+	function de(e) {
 		var t = e.type;
 		return (e = e.nodeName) && e.toLowerCase() === "input" && (t === "checkbox" || t === "radio");
 	}
-	function de(e) {
-		var t = ue(e) ? "checked" : "value", n = Object.getOwnPropertyDescriptor(e.constructor.prototype, t), r = "" + e[t];
+	function L(e) {
+		var t = de(e) ? "checked" : "value", n = Object.getOwnPropertyDescriptor(e.constructor.prototype, t), r = "" + e[t];
 		if (!e.hasOwnProperty(t) && n !== void 0 && typeof n.get == "function" && typeof n.set == "function") {
 			var i = n.get, a = n.set;
 			return Object.defineProperty(e, t, {
@@ -753,14 +753,14 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		}
 	}
 	function fe(e) {
-		e._valueTracker ||= de(e);
+		e._valueTracker ||= L(e);
 	}
 	function pe(e) {
 		if (!e) return !1;
 		var t = e._valueTracker;
 		if (!t) return !0;
 		var n = t.getValue(), r = "";
-		return e && (r = ue(e) ? e.checked ? "true" : "false" : e.value), e = r, e !== n && (t.setValue(e), !0);
+		return e && (r = de(e) ? e.checked ? "true" : "false" : e.value), e = r, e !== n && (t.setValue(e), !0);
 	}
 	function R(e) {
 		if (e ||= typeof document < "u" ? document : void 0, e === void 0) return null;
@@ -772,7 +772,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 	}
 	function me(e, t) {
 		var n = t.checked;
-		return P({}, t, {
+		return N({}, t, {
 			defaultChecked: void 0,
 			defaultValue: void 0,
 			value: void 0,
@@ -781,7 +781,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 	}
 	function he(e, t) {
 		var n = t.defaultValue == null ? "" : t.defaultValue, r = t.checked == null ? t.defaultChecked : t.checked;
-		n = L(t.value == null ? n : t.value), e._wrapperState = {
+		n = I(t.value == null ? n : t.value), e._wrapperState = {
 			initialChecked: r,
 			initialValue: n,
 			controlled: t.type === "checkbox" || t.type === "radio" ? t.checked != null : t.value != null
@@ -792,13 +792,13 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 	}
 	function ge(e, t) {
 		z(e, t);
-		var n = L(t.value), r = t.type;
+		var n = I(t.value), r = t.type;
 		if (n != null) r === "number" ? (n === 0 && e.value === "" || e.value != n) && (e.value = "" + n) : e.value !== "" + n && (e.value = "" + n);
 		else if (r === "submit" || r === "reset") {
 			e.removeAttribute("value");
 			return;
 		}
-		t.hasOwnProperty("value") ? ve(e, t.type, n) : t.hasOwnProperty("defaultValue") && ve(e, t.type, L(t.defaultValue)), t.checked == null && t.defaultChecked != null && (e.defaultChecked = !!t.defaultChecked);
+		t.hasOwnProperty("value") ? ve(e, t.type, n) : t.hasOwnProperty("defaultValue") && ve(e, t.type, I(t.defaultValue)), t.checked == null && t.defaultChecked != null && (e.defaultChecked = !!t.defaultChecked);
 	}
 	function _e(e, t, n) {
 		if (t.hasOwnProperty("value") || t.hasOwnProperty("defaultValue")) {
@@ -818,7 +818,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			for (var i = 0; i < n.length; i++) t["$" + n[i]] = !0;
 			for (n = 0; n < e.length; n++) i = t.hasOwnProperty("$" + e[n].value), e[n].selected !== i && (e[n].selected = i), i && r && (e[n].defaultSelected = !0);
 		} else {
-			for (n = "" + L(n), t = null, i = 0; i < e.length; i++) {
+			for (n = "" + I(n), t = null, i = 0; i < e.length; i++) {
 				if (e[i].value === n) {
 					e[i].selected = !0, r && (e[i].defaultSelected = !0);
 					return;
@@ -830,7 +830,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 	}
 	function xe(e, t) {
 		if (t.dangerouslySetInnerHTML != null) throw Error(a(91));
-		return P({}, t, {
+		return N({}, t, {
 			value: void 0,
 			defaultValue: void 0,
 			children: "" + e._wrapperState.initialValue
@@ -849,10 +849,10 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			}
 			t ??= "", n = t;
 		}
-		e._wrapperState = { initialValue: L(n) };
+		e._wrapperState = { initialValue: I(n) };
 	}
 	function Ce(e, t) {
-		var n = L(t.value), r = L(t.defaultValue);
+		var n = I(t.value), r = I(t.defaultValue);
 		n != null && (n = "" + n, n !== e.value && (e.value = n), t.defaultValue == null && e.defaultValue !== n && (e.defaultValue = n)), r != null && (e.defaultValue = "" + r);
 	}
 	function we(e) {
@@ -956,7 +956,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			n === "float" && (n = "cssFloat"), r ? e.setProperty(n, i) : e[n] = i;
 		}
 	}
-	var Pe = P({ menuitem: !0 }, {
+	var Pe = N({ menuitem: !0 }, {
 		area: !0,
 		base: !0,
 		br: !0,
@@ -1572,7 +1572,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			for (var o in this._reactName = t, this._targetInst = r, this.type = n, this.nativeEvent = i, this.target = a, this.currentTarget = null, e) e.hasOwnProperty(o) && (t = e[o], this[o] = t ? t(i) : i[o]);
 			return this.isDefaultPrevented = (i.defaultPrevented == null ? !1 === i.returnValue : i.defaultPrevented) ? wn : Tn, this.isPropagationStopped = Tn, this;
 		}
-		return P(t.prototype, {
+		return N(t.prototype, {
 			preventDefault: function() {
 				this.defaultPrevented = !0;
 				var e = this.nativeEvent;
@@ -1595,10 +1595,10 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		},
 		defaultPrevented: 0,
 		isTrusted: 0
-	}, On = En(Dn), kn = P({}, Dn, {
+	}, On = En(Dn), kn = N({}, Dn, {
 		view: 0,
 		detail: 0
-	}), An = En(kn), jn, Mn, Nn, Pn = P({}, kn, {
+	}), An = En(kn), jn, Mn, Nn, Pn = N({}, kn, {
 		screenX: 0,
 		screenY: 0,
 		clientX: 0,
@@ -1621,13 +1621,13 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		movementY: function(e) {
 			return "movementY" in e ? e.movementY : Mn;
 		}
-	}), Fn = En(Pn), In = En(P({}, Pn, { dataTransfer: 0 })), Ln = En(P({}, kn, { relatedTarget: 0 })), Rn = En(P({}, Dn, {
+	}), Fn = En(Pn), In = En(N({}, Pn, { dataTransfer: 0 })), Ln = En(N({}, kn, { relatedTarget: 0 })), Rn = En(N({}, Dn, {
 		animationName: 0,
 		elapsedTime: 0,
 		pseudoElement: 0
-	})), zn = En(P({}, Dn, { clipboardData: function(e) {
+	})), zn = En(N({}, Dn, { clipboardData: function(e) {
 		return "clipboardData" in e ? e.clipboardData : window.clipboardData;
-	} })), Bn = En(P({}, Dn, { data: 0 })), Vn = {
+	} })), Bn = En(N({}, Dn, { data: 0 })), Vn = {
 		Esc: "Escape",
 		Spacebar: " ",
 		Left: "ArrowLeft",
@@ -1690,7 +1690,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 	function Gn() {
 		return Wn;
 	}
-	var Kn = En(P({}, kn, {
+	var Kn = En(N({}, kn, {
 		key: function(e) {
 			if (e.key) {
 				var t = Vn[e.key] || e.key;
@@ -1716,7 +1716,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		which: function(e) {
 			return e.type === "keypress" ? Cn(e) : e.type === "keydown" || e.type === "keyup" ? e.keyCode : 0;
 		}
-	})), qn = En(P({}, Pn, {
+	})), qn = En(N({}, Pn, {
 		pointerId: 0,
 		width: 0,
 		height: 0,
@@ -1727,7 +1727,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		twist: 0,
 		pointerType: 0,
 		isPrimary: 0
-	})), Jn = En(P({}, kn, {
+	})), Jn = En(N({}, kn, {
 		touches: 0,
 		targetTouches: 0,
 		changedTouches: 0,
@@ -1736,11 +1736,11 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		ctrlKey: 0,
 		shiftKey: 0,
 		getModifierState: Gn
-	})), Yn = En(P({}, Dn, {
+	})), Yn = En(N({}, Dn, {
 		propertyName: 0,
 		elapsedTime: 0,
 		pseudoElement: 0
-	})), Xn = En(P({}, Pn, {
+	})), Xn = En(N({}, Pn, {
 		deltaX: function(e) {
 			return "deltaX" in e ? e.deltaX : "wheelDeltaX" in e ? -e.wheelDeltaX : 0;
 		},
@@ -2404,8 +2404,8 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 	function $i(e, t, n) {
 		var r = e.stateNode;
 		if (t = t.childContextTypes, typeof r.getChildContext != "function") return n;
-		for (var i in r = r.getChildContext(), r) if (!(i in t)) throw Error(a(108, le(e) || "Unknown", i));
-		return P({}, n, r);
+		for (var i in r = r.getChildContext(), r) if (!(i in t)) throw Error(a(108, ue(e) || "Unknown", i));
+		return N({}, n, r);
 	}
 	function ea(e) {
 		return e = (e = e.stateNode) && e.__reactInternalMemoizedMergedChildContext || Gi, Ji = Ki.current, G(Ki, e), G(qi, qi.current), !0;
@@ -2625,7 +2625,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 						var r = t._init;
 						return f(e, r(t._payload), n);
 				}
-				if (ye(t) || N(t)) return t = Zl(t, e.mode, n, null), t.return = e, t;
+				if (ye(t) || ae(t)) return t = Zl(t, e.mode, n, null), t.return = e, t;
 				Fa(e, t);
 			}
 			return null;
@@ -2639,7 +2639,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 					case T: return n.key === i ? u(e, t, n, r) : null;
 					case ne: return i = n._init, p(e, t, i(n._payload), r);
 				}
-				if (ye(n) || N(n)) return i === null ? d(e, t, n, r, null) : null;
+				if (ye(n) || ae(n)) return i === null ? d(e, t, n, r, null) : null;
 				Fa(e, n);
 			}
 			return null;
@@ -2654,7 +2654,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 						var a = r._init;
 						return m(e, t, n, a(r._payload), i);
 				}
-				if (ye(r) || N(r)) return e = e.get(n) || null, d(t, e, r, i, null);
+				if (ye(r) || ae(r)) return e = e.get(n) || null, d(t, e, r, i, null);
 				Fa(t, r);
 			}
 			return null;
@@ -2680,7 +2680,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 			}), K && _a(i, h), l;
 		}
 		function g(i, s, c, l) {
-			var u = N(c);
+			var u = ae(c);
 			if (typeof u != "function") throw Error(a(150));
 			if (c = u.call(c), c == null) throw Error(a(151));
 			for (var d = u = null, h = s, g = s = 0, _ = null, v = c.next(); h !== null && !v.done; g++, v = c.next()) {
@@ -2745,7 +2745,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 					case ne: return l = a._init, _(e, r, l(a._payload), o);
 				}
 				if (ye(a)) return h(e, r, a, o);
-				if (N(a)) return g(e, r, a, o);
+				if (ae(a)) return g(e, r, a, o);
 				Fa(e, a);
 			}
 			return typeof a == "string" && a !== "" || typeof a == "number" ? (a = "" + a, r !== null && r.tag === 6 ? (n(e, r.sibling), r = i(r, a), r.return = e, e = r) : (n(e, r), r = $l(a, e.mode, o), r.return = e, e = r), s(e)) : n(e, r);
@@ -2916,7 +2916,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 							case 3: m.flags = m.flags & -65537 | 128;
 							case 0:
 								if (m = h.payload, f = typeof m == "function" ? m.call(p, d, f) : m, f == null) break a;
-								d = P({}, d, f);
+								d = N({}, d, f);
 								break a;
 							case 2: $a = !0;
 						}
@@ -3452,13 +3452,13 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 	};
 	function _s(e, t) {
 		if (e && e.defaultProps) {
-			for (var n in t = P({}, t), e = e.defaultProps, e) t[n] === void 0 && (t[n] = e[n]);
+			for (var n in t = N({}, t), e = e.defaultProps, e) t[n] === void 0 && (t[n] = e[n]);
 			return t;
 		}
 		return t;
 	}
 	function vs(e, t, n, r) {
-		t = e.memoizedState, n = n(r, t), n = n == null ? t : P({}, t, n), e.memoizedState = n, e.lanes === 0 && (e.updateQueue.baseState = n);
+		t = e.memoizedState, n = n(r, t), n = n == null ? t : N({}, t, n), e.memoizedState = n, e.lanes === 0 && (e.updateQueue.baseState = n);
 	}
 	var ys = {
 		isMounted: function(e) {
@@ -3500,7 +3500,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 		try {
 			var n = "", r = t;
 			do
-				n += F(r), r = r.return;
+				n += P(r), r = r.return;
 			while (r);
 			var i = n;
 		} catch (e) {
@@ -3903,7 +3903,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 					i = me(e, i), r = me(e, r), a = [];
 					break;
 				case "select":
-					i = P({}, i, { value: void 0 }), r = P({}, r, { value: void 0 }), a = [];
+					i = N({}, i, { value: void 0 }), r = N({}, r, { value: void 0 }), a = [];
 					break;
 				case "textarea":
 					i = xe(e, i), r = xe(e, r), a = [];
@@ -4065,7 +4065,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 									i = r;
 									break;
 								case "select":
-									e._wrapperState = { wasMultiple: !!r.multiple }, i = P({}, r, { value: void 0 }), U("invalid", e);
+									e._wrapperState = { wasMultiple: !!r.multiple }, i = N({}, r, { value: void 0 }), U("invalid", e);
 									break;
 								case "textarea":
 									Se(e, r), i = xe(e, r), U("invalid", e);
@@ -4084,7 +4084,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t
 									fe(e), we(e);
 									break;
 								case "option":
-									r.value != null && e.setAttribute("value", "" + L(r.value));
+									r.value != null && e.setAttribute("value", "" + I(r.value));
 									break;
 								case "select":
 									e.multiple = !!r.multiple, o = r.value, o == null ? r.defaultValue != null && be(e, !!r.multiple, r.defaultValue, !0) : be(e, !!r.multiple, o, !1);
@@ -6183,11 +6183,11 @@ function ie(e) {
 	]).name), "guarantor name");
 	return t;
 }
-function N(e) {
+function ae(e) {
 	let t = E(e, "metric");
 	return T(O(t.fact_id) && O(t.unit) && (t.display_precision === null || Number.isInteger(t.display_precision) && Number(t.display_precision) >= 0 && Number(t.display_precision) <= 30) && (t.explanation === null || O(t.explanation)), "metric fields"), T(t.status === "available" ? p(t.raw_value) || t.unit === "category" && O(t.raw_value) : t.status === "not_applicable" && t.raw_value === null && O(t.explanation), "metric status/value"), T(t.status === "not_applicable" ? t.reported_value === null : t.unit === "category" ? t.reported_value === t.raw_value : p(t.reported_value), "reported metric value"), t;
 }
-function P(e) {
+function N(e) {
 	let t = E(e, "assessment");
 	T(t.schema_version === "commercial-assessment-v2" && t.calculation_version === "commercial-calculation-v2" && t.serialization_version === "assessment-json-v2" && t.coverage_basis === "current_pro_forma" && O(t.disclaimer), "versions");
 	let n = ie(t.normalized_input), r = n.years[n.years.length - 1];
@@ -6208,11 +6208,11 @@ function P(e) {
 			"ordinary_business_income",
 			"ebitda",
 			"k1_distribution_ratio"
-		]) a.push(N(r[e]));
+		]) a.push(ae(r[e]));
 	});
 	let o = E(t.current_facts, "facts");
 	for (let e of C) {
-		let t = N(o[e]), r = ["ordinary_business_income", "ebitda"].includes(e) ? `years.${n.years.length - 1}.${e}` : `current.${e}`;
+		let t = ae(o[e]), r = ["ordinary_business_income", "ebitda"].includes(e) ? `years.${n.years.length - 1}.${e}` : `current.${e}`;
 		T(t.fact_id === r, "fact identity"), T(e === "k1_history" ? t.status === "available" && [
 			"stable",
 			"unstable",
@@ -6227,7 +6227,7 @@ function P(e) {
 			"business_ebitda",
 			"outside_income",
 			"personal_debt"
-		]) a.push(N(r[e]));
+		]) a.push(ae(r[e]));
 	});
 	let c = D(t.k1_history_periods, "history periods").map(A);
 	T(c.length >= 1 && c.length <= 2 && j(c[c.length - 1], r) && c.every((e) => n.years.some((t) => j(e, t))), "history periods");
@@ -6241,7 +6241,7 @@ function P(e) {
 	T(d.length > 0, "trace rows");
 	let f = /* @__PURE__ */ new Map();
 	for (let e of d) {
-		let t = E(e, "trace row"), n = N(t);
+		let t = E(e, "trace row"), n = ae(t);
 		T(O(t.definition_id) && O(t.expression) && !f.has(n.fact_id), "trace identity"), f.set(n.fact_id, n);
 		for (let e of D(t.operands, "operands")) {
 			let t = E(e, "operand");
@@ -6272,14 +6272,14 @@ function P(e) {
 	}
 	for (let e of u.factors) {
 		let t = e.name === "uca_positive" ? "uca_cash_flow" : e.name;
-		T(e.raw_value === N(o[t]).raw_value, "factor/fact correspondence");
+		T(e.raw_value === ae(o[t]).raw_value, "factor/fact correspondence");
 	}
 	let m = E(t.fingerprint, "fingerprint");
 	return T(m.algorithm === "sha256" && typeof m.value == "string" && /^[0-9a-f]{64}$/.test(m.value) && m.content === "normalized_input+policy_snapshot+calculation_version+schema_version+serialization_version", "fingerprint"), t;
 }
 //#endregion
 //#region src/workspace.ts
-var ae = {
+var oe = {
 	id: 0,
 	accepted: null,
 	draft: null,
@@ -6291,7 +6291,7 @@ var ae = {
 	action: "evaluate",
 	resetPeriod: !0
 };
-function oe(e, t) {
+function se(e, t) {
 	if (t.type === "head") return e.id !== t.id || e.status !== "ready" || e.saved?.view.snapshot.case_id !== t.caseId || e.saved.view.snapshot.revision !== t.revision || t.headRevision < t.revision ? e : {
 		...e,
 		saved: {
@@ -6350,12 +6350,12 @@ function oe(e, t) {
 		resetPeriod: !!e.draft?.resetHistory
 	};
 }
-function se(e, t) {
+function ce(e, t) {
 	let n = t.path.split("/").slice(1), r = JSON.parse(JSON.stringify(e)), i = r;
 	for (let e of n.slice(0, -1)) i = i[e];
 	return i[n[n.length - 1]] = t.next, r;
 }
-function ce(e, t, n) {
+function le(e, t, n) {
 	if (!/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(t.trim())) throw Error("Enter a valid finite number.");
 	let r = v(t.trim().replace(/,/g, "")), i = v(e.unit === "%" ? h(r, -2) : r), a = i;
 	if (e.integer) {
@@ -6369,20 +6369,20 @@ function ce(e, t, n) {
 }
 //#endregion
 //#region src/caseContracts.ts
-function F(e, t) {
+function P(e, t) {
 	if (!e) throw Error(`Invalid saved-case response or command: ${t}.`);
 }
-function I(e, t) {
-	return F(typeof e == "object" && !!e && !Array.isArray(e), t), e;
+function F(e, t) {
+	return P(typeof e == "object" && !!e && !Array.isArray(e), t), e;
 }
-var le = (e) => typeof e == "number" && Number.isFinite(e), L = (e) => typeof e == "string", ue = (e) => L(e) && /^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/.test(e), de = (e) => L(e) && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(e), fe = (e) => Number.isSafeInteger(e) && Number(e) >= 1, pe = (e) => L(e) && /^[0-9a-f]{64}$/.test(e), R = (e) => L(e) && /^\d{4}-\d{2}-\d{2}$/.test(e) && Number.isFinite(Date.parse(e)) && new Date(e).toISOString().slice(0, 10) === e, me = (e) => L(e) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|\+00:00)$/.test(e) && R(e.slice(0, 10)) && Number.isFinite(Date.parse(e));
+var ue = (e) => typeof e == "number" && Number.isFinite(e), I = (e) => typeof e == "string", de = (e) => I(e) && /^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/.test(e), L = (e) => I(e) && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(e), fe = (e) => Number.isSafeInteger(e) && Number(e) >= 1, pe = (e) => I(e) && /^[0-9a-f]{64}$/.test(e), R = (e) => I(e) && /^\d{4}-\d{2}-\d{2}$/.test(e) && Number.isFinite(Date.parse(e)) && new Date(e).toISOString().slice(0, 10) === e, me = (e) => I(e) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|\+00:00)$/.test(e) && R(e.slice(0, 10)) && Number.isFinite(Date.parse(e));
 function he(e, t = 0, n = 64) {
-	if (F(t < n, "JSON depth"), !(e === null || L(e) || typeof e == "boolean")) {
+	if (P(t < n, "JSON depth"), !(e === null || I(e) || typeof e == "boolean")) {
 		if (typeof e == "number") {
-			F(le(e), "finite JSON number");
+			P(ue(e), "finite JSON number");
 			return;
 		}
-		F(typeof e == "object", "JSON value");
+		P(typeof e == "object", "JSON value");
 		for (let r of Object.values(e)) he(r, t + 1, n);
 	}
 }
@@ -6393,10 +6393,10 @@ function z(e, t) {
 	return n.length === r.length && n.every((n) => Object.prototype.hasOwnProperty.call(t, n) && z(e[n], t[n]));
 }
 function ge(e, t) {
-	F(Object.keys(e).length === t.length && t.every((t) => Object.prototype.hasOwnProperty.call(e, t)), "command fields");
+	P(Object.keys(e).length === t.length && t.every((t) => Object.prototype.hasOwnProperty.call(e, t)), "command fields");
 }
 function _e(e) {
-	return F(L(e) && [...e].length <= 2e3 && e.trim().length > 0, "nonblank rationale, at most 2,000 characters"), e.trim();
+	return P(I(e) && [...e].length <= 2e3 && e.trim().length > 0, "nonblank rationale, at most 2,000 characters"), e.trim();
 }
 var ve = {
 	years: S,
@@ -6422,9 +6422,9 @@ var ve = {
 	]
 };
 function ye(e) {
-	F(L(e) && e.length <= 160 && e.startsWith("/"), "numeric field path");
+	P(I(e) && e.length <= 160 && e.startsWith("/"), "numeric field path");
 	let t = e.slice(1).split("/"), n = t[0], r = t[t.length - 1];
-	return F(Object.prototype.hasOwnProperty.call(ve, n) && ve[n].includes(r), "numeric field allowlist"), F(["years", "guarantors"].includes(n) ? t.length === 3 && /^(?:0|[1-9][0-9]{0,8})$/.test(t[1]) : t.length === 2, "field index"), t;
+	return P(Object.prototype.hasOwnProperty.call(ve, n) && ve[n].includes(r), "numeric field allowlist"), P(["years", "guarantors"].includes(n) ? t.length === 3 && /^(?:0|[1-9][0-9]{0,8})$/.test(t[1]) : t.length === 2, "field index"), t;
 }
 function be(e, t) {
 	let n = ye(t), r = n[0], i = n[n.length - 1], a = e, o, s = {
@@ -6438,23 +6438,23 @@ function be(e, t) {
 	};
 	if (n.length === 3) {
 		let e = a[r];
-		F(Array.isArray(e) && Number(n[1]) < e.length, "existing input index"), o = I(e[Number(n[1])], "input row"), r === "guarantors" ? (s.guarantor_index = Number(n[1]), s.guarantor_name = String(o.name)) : s.basis = "annual_financials";
-	} else o = I(a[r], "input group"), r === "working_capital" && (s.basis = "working_capital");
-	["annual_financials", "working_capital"].includes(s.basis) && (F(R(o.period_start) && R(o.period_end), "input dates"), s.period_start = o.period_start, s.period_end = o.period_end), ["annual_rate", "ownership_percentage"].includes(i) && (s.unit = "decimal fraction"), i === "term_months" && (s.unit = "months");
+		P(Array.isArray(e) && Number(n[1]) < e.length, "existing input index"), o = F(e[Number(n[1])], "input row"), r === "guarantors" ? (s.guarantor_index = Number(n[1]), s.guarantor_name = String(o.name)) : s.basis = "annual_financials";
+	} else o = F(a[r], "input group"), r === "working_capital" && (s.basis = "working_capital");
+	["annual_financials", "working_capital"].includes(s.basis) && (P(R(o.period_start) && R(o.period_end), "input dates"), s.period_start = o.period_start, s.period_end = o.period_end), ["annual_rate", "ownership_percentage"].includes(i) && (s.unit = "decimal fraction"), i === "term_months" && (s.unit = "months");
 	let c = o[i];
-	return F(i === "term_months" ? Number.isSafeInteger(c) : p(c) || le(c), "numeric input"), {
+	return P(i === "term_months" ? Number.isSafeInteger(c) : p(c) || ue(c), "numeric input"), {
 		value: c,
 		context: s
 	};
 }
 function xe(e) {
-	let t = I(e, "create command");
+	let t = F(e, "create command");
 	ge(t, ["input", "rationale"]);
-	let n = I(t.input, "create input"), r = n.schema_version === "commercial-assessment-v1";
+	let n = F(t.input, "create input"), r = n.schema_version === "commercial-assessment-v1";
 	if (r) {
 		let e = (t, n = "") => typeof t == "number" ? n === "term_months" ? t : m(t) : Array.isArray(t) ? t.map((t) => e(t)) : t && typeof t == "object" ? Object.fromEntries(Object.entries(t).map(([t, n]) => [t, e(n, t)])) : t;
 		ie({
-			...I(e(n), "archived input"),
+			...F(e(n), "archived input"),
 			schema_version: "commercial-assessment-v2"
 		});
 	}
@@ -6494,23 +6494,23 @@ function xe(e) {
 	]), he(t), _e(t.rationale), t;
 }
 function Se(e) {
-	let t = I(e, "edit command");
+	let t = F(e, "edit command");
 	return ge(t, [
 		"field_path",
 		"new_value",
 		"rationale"
-	]), ye(t.field_path), F(p(t.new_value) || le(t.new_value), "finite edit value"), _e(t.rationale), t.field_path === "/proposed_loan/term_months" && F(le(t.new_value) && Number.isSafeInteger(t.new_value) && t.new_value >= 12 && t.new_value <= 12e3, "whole term months"), t;
+	]), ye(t.field_path), P(p(t.new_value) || ue(t.new_value), "finite edit value"), _e(t.rationale), t.field_path === "/proposed_loan/term_months" && P(ue(t.new_value) && Number.isSafeInteger(t.new_value) && t.new_value >= 12 && t.new_value <= 12e3, "whole term months"), t;
 }
 function Ce(e, t) {
-	let n = I(e, "snapshot");
-	he(n), F(n.storage_serialization_version === "case-json-v1" && de(n.case_id) && de(n.run_id) && fe(n.revision), "snapshot identity"), F(n.parent_revision === (n.revision === 1 ? null : n.revision - 1) && me(n.recorded_at), "snapshot parent/time"), F(pe(n.input_hash) && pe(n.payload_hash), "snapshot hashes"), F(t === `"case-json-v1:${n.case_id}:${n.revision}:${n.payload_hash}"`, "strong ETag");
-	let r = I(n.normalized_input, "stored input"), i = I(n.assessment, "stored assessment");
-	F(L(i.schema_version) && L(i.calculation_version) && L(i.serialization_version), "assessment versions");
-	let a = i.schema_version === "commercial-assessment-v2" && i.calculation_version === "commercial-calculation-v2" && i.serialization_version === "assessment-json-v2", o = a ? P(i) : null;
-	o && F(z(r, o.normalized_input), "outer normalized input");
-	let s = I(n.event, "event"), c = I(s.context, "event context");
-	if (F(s.case_id === n.case_id && s.revision === n.revision && s.run_id === n.run_id && s.recorded_at === n.recorded_at && ue(s.actor), "event identity"), _e(s.rationale), F(R(c.assessment_as_of), "event as-of"), F(c.period_start === null && c.period_end === null || R(c.period_start) && R(c.period_end) && c.period_start <= c.period_end, "event period"), F(c.guarantor_index === null && c.guarantor_name === null || Number.isSafeInteger(c.guarantor_index) && Number(c.guarantor_index) >= 0 && L(c.guarantor_name), "event guarantor"), n.revision === 1) F(s.kind === "creation" && s.field_path === null && s.before === null && s.after === null && c.basis === "case_creation" && c.unit === null && c.period_start === null && c.guarantor_index === null, "creation event");
-	else if (F(s.kind === "edit" && (p(s.before) || le(s.before)) && (p(s.after) || le(s.after)) && !_(s.before, s.after) && L(s.field_path), "edit event"), ye(s.field_path), F([
+	let n = F(e, "snapshot");
+	he(n), P(n.storage_serialization_version === "case-json-v1" && L(n.case_id) && L(n.run_id) && fe(n.revision), "snapshot identity"), P(n.parent_revision === (n.revision === 1 ? null : n.revision - 1) && me(n.recorded_at), "snapshot parent/time"), P(pe(n.input_hash) && pe(n.payload_hash), "snapshot hashes"), P(t === `"case-json-v1:${n.case_id}:${n.revision}:${n.payload_hash}"`, "strong ETag");
+	let r = F(n.normalized_input, "stored input"), i = F(n.assessment, "stored assessment");
+	P(I(i.schema_version) && I(i.calculation_version) && I(i.serialization_version), "assessment versions");
+	let a = i.schema_version === "commercial-assessment-v2" && i.calculation_version === "commercial-calculation-v2" && i.serialization_version === "assessment-json-v2", o = a ? N(i) : null;
+	o && P(z(r, o.normalized_input), "outer normalized input");
+	let s = F(n.event, "event"), c = F(s.context, "event context");
+	if (P(s.case_id === n.case_id && s.revision === n.revision && s.run_id === n.run_id && s.recorded_at === n.recorded_at && de(s.actor), "event identity"), _e(s.rationale), P(R(c.assessment_as_of), "event as-of"), P(c.period_start === null && c.period_end === null || R(c.period_start) && R(c.period_end) && c.period_start <= c.period_end, "event period"), P(c.guarantor_index === null && c.guarantor_name === null || Number.isSafeInteger(c.guarantor_index) && Number(c.guarantor_index) >= 0 && I(c.guarantor_name), "event guarantor"), n.revision === 1) P(s.kind === "creation" && s.field_path === null && s.before === null && s.after === null && c.basis === "case_creation" && c.unit === null && c.period_start === null && c.guarantor_index === null, "creation event");
+	else if (P(s.kind === "edit" && (p(s.before) || ue(s.before)) && (p(s.after) || ue(s.after)) && !_(s.before, s.after) && I(s.field_path), "edit event"), ye(s.field_path), P([
 		"annual_financials",
 		"working_capital",
 		"current_assumptions"
@@ -6520,9 +6520,9 @@ function Ce(e, t) {
 		"months"
 	].includes(String(c.unit)), "edit context"), o) {
 		let e = be(o.normalized_input, s.field_path);
-		F(e.value === s.after && z(e.context, c), "server-derived edit context");
+		P(e.value === s.after && z(e.context, c), "server-derived edit context");
 	}
-	return o && F(c.assessment_as_of === o.normalized_input.assessment_as_of, "event assumptions date"), we(n.recording), {
+	return o && P(c.assessment_as_of === o.normalized_input.assessment_as_of, "event assumptions date"), we(n.recording), {
 		snapshot: n,
 		etag: t,
 		assessment: o,
@@ -6530,29 +6530,29 @@ function Ce(e, t) {
 	};
 }
 function we(e) {
-	let t = I(e, "recording metadata"), n = I(t.packages, "installed packages");
-	F(L(t.python_version) && L(t.sqlite_version) && pe(t.dependency_baseline_sha256), "recording versions");
+	let t = F(e, "recording metadata"), n = F(t.packages, "installed packages");
+	P(I(t.python_version) && I(t.sqlite_version) && pe(t.dependency_baseline_sha256), "recording versions");
 	for (let e of [
 		"fastapi",
 		"pydantic",
 		"starlette",
 		"uvicorn"
-	]) F(L(n[e]) && n[e].length > 0, `installed ${e}`);
-	return F(t.source_status === "development_unverified" ? t.source_revision === null : t.source_status === "build_reported" && L(t.source_revision) && /^[0-9a-f]{40}$/.test(t.source_revision), "recorded source"), t;
+	]) P(I(n[e]) && n[e].length > 0, `installed ${e}`);
+	return P(t.source_status === "development_unverified" ? t.source_revision === null : t.source_status === "build_reported" && I(t.source_revision) && /^[0-9a-f]{40}$/.test(t.source_revision), "recorded source"), t;
 }
 function Te(e) {
-	let t = I(e, "page");
-	return F(Array.isArray(t.items) && t.items.length <= 25, "bounded page items"), F(t.next_cursor === null || L(t.next_cursor) && /^[A-Za-z0-9_-]{1,512}$/.test(t.next_cursor), "page cursor"), t;
+	let t = F(e, "page");
+	return P(Array.isArray(t.items) && t.items.length <= 25, "bounded page items"), P(t.next_cursor === null || I(t.next_cursor) && /^[A-Za-z0-9_-]{1,512}$/.test(t.next_cursor), "page cursor"), t;
 }
 function Ee(e) {
-	let t = I(e, "summary");
-	return F(de(t.case_id) && de(t.run_id) && fe(t.revision) && me(t.recorded_at), "summary identity"), t;
+	let t = F(e, "summary");
+	return P(L(t.case_id) && L(t.run_id) && fe(t.revision) && me(t.recorded_at), "summary identity"), t;
 }
 function De(e) {
 	let t = Te(e), n = /* @__PURE__ */ new Set();
 	for (let e of t.items) {
 		let t = Ee(e);
-		F(L(t.borrower_name) && me(t.created_at) && !n.has(t.case_id), "case summary"), n.add(t.case_id);
+		P(I(t.borrower_name) && me(t.created_at) && !n.has(t.case_id), "case summary"), n.add(t.case_id);
 	}
 	return t;
 }
@@ -6560,17 +6560,17 @@ function Oe(e, t) {
 	let n = Te(e), r = Infinity;
 	for (let e of n.items) {
 		let n = Ee(e);
-		F(n.case_id === t && n.parent_revision === (n.revision === 1 ? null : Number(n.revision) - 1) && Number(n.revision) < r, "revision summary"), _e(n.rationale), r = Number(n.revision);
+		P(n.case_id === t && n.parent_revision === (n.revision === 1 ? null : Number(n.revision) - 1) && Number(n.revision) < r, "revision summary"), _e(n.rationale), r = Number(n.revision);
 	}
 	return n;
 }
 function ke(e, t) {
-	let n = I(e, "replay"), r = t.snapshot;
-	return F(n.case_id === r.case_id && n.revision === r.revision && n.run_id === r.run_id && [
+	let n = F(e, "replay"), r = t.snapshot;
+	return P(n.case_id === r.case_id && n.revision === r.revision && n.run_id === r.run_id && [
 		"matched",
 		"mismatch",
 		"replay_unavailable"
-	].includes(String(n.status)), "replay identity/status"), F(Array.isArray(n.differences) && n.differences.every(L) && L(n.explanation), "replay details"), F(n.status !== "matched" || n.differences.length === 0, "matched replay differences"), n;
+	].includes(String(n.status)), "replay identity/status"), P(Array.isArray(n.differences) && n.differences.every(I) && I(n.explanation), "replay details"), P(n.status !== "matched" || n.differences.length === 0, "matched replay differences"), n;
 }
 //#endregion
 //#region src/workspaceDom.ts
@@ -6748,7 +6748,7 @@ function ze({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 			onSubmit: (t) => {
 				t.preventDefault();
 				try {
-					let t = ce(e, s, l);
+					let t = le(e, s, l);
 					i && _e(l), n({
 						path: e.path,
 						prior: e.value,
@@ -6967,7 +6967,7 @@ async function nt(e, t, n = fetch) {
 		throw Error(t);
 	}
 	return e.mode === "dated" ? (() => {
-		let t = P(i);
+		let t = N(i);
 		return {
 			mode: "dated",
 			input: t.normalized_input,
@@ -6990,23 +6990,23 @@ var rt = [
 	"proposed_rate_change_bps"
 ], it = "commercial-scenario-preview-v2", at = "scenario-preview-json-v2";
 function ot(e, t) {
-	F(Object.keys(e).length === t.length && t.every((t) => Object.prototype.hasOwnProperty.call(e, t)), "scenario fields");
+	P(Object.keys(e).length === t.length && t.every((t) => Object.prototype.hasOwnProperty.call(e, t)), "scenario fields");
 }
 function st(e, t) {
-	F(L(e), "scenario text");
+	P(I(e), "scenario text");
 	let n = e.replace(/^[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+|[\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+$/gu, "");
-	return F(n.length > 0 && [...n].length <= t, `nonblank scenario text, at most ${t} characters`), n;
+	return P(n.length > 0 && [...n].length <= t, `nonblank scenario text, at most ${t} characters`), n;
 }
 function ct(e, t) {
 	let n = e.trim();
-	F(/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(n), "Enter a finite decimal change");
+	P(/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(n), "Enter a finite decimal change");
 	let r = v(h(n.replace(/,/g, ""), t ? -2 : 0));
-	return F(p(r) && (!t || g(r, "-1") >= 0), "Percentage changes must be at least -100%; all changes must be finite"), r;
+	return P(p(r) && (!t || g(r, "-1") >= 0), "Percentage changes must be at least -100%; all changes must be finite"), r;
 }
 function lt(e, t = !1) {
-	let n = I(e, "scenario"), r = I(n.assumptions, "shocks");
-	F(L(n.scenario_key) && /^[A-Za-z0-9_-]{1,64}$/.test(n.scenario_key), "scenario key"), ot(r, rt);
-	for (let e of rt) F((p(r[e]) || t && le(r[e])) && (e === "proposed_rate_change_bps" || g(m(r[e]), "-1") >= 0), "finite explicit shock");
+	let n = F(e, "scenario"), r = F(n.assumptions, "shocks");
+	P(I(n.scenario_key) && /^[A-Za-z0-9_-]{1,64}$/.test(n.scenario_key), "scenario key"), ot(r, rt);
+	for (let e of rt) P((p(r[e]) || t && ue(r[e])) && (e === "proposed_rate_change_bps" || g(m(r[e]), "-1") >= 0), "finite explicit shock");
 	return {
 		scenario_key: n.scenario_key,
 		name: st(n.name, 120),
@@ -7015,76 +7015,76 @@ function lt(e, t = !1) {
 	};
 }
 function ut(e) {
-	let t = I(e, "scenario command"), n = ["commercial-scenario-comparison-create-v1", "commercial-scenario-comparison-create-v2"].includes(String(t.schema_version)), r = String(t.schema_version).endsWith("-v1");
-	F(n || t.schema_version === it || t.schema_version === "commercial-scenario-preview-v1", "scenario command version"), ot(t, [
+	let t = F(e, "scenario command"), n = ["commercial-scenario-comparison-create-v1", "commercial-scenario-comparison-create-v2"].includes(String(t.schema_version)), r = String(t.schema_version).endsWith("-v1");
+	P(n || t.schema_version === it || t.schema_version === "commercial-scenario-preview-v1", "scenario command version"), ot(t, [
 		"schema_version",
 		"baseline_run_id",
 		"scenarios",
 		...n ? ["expected_preview_fingerprint"] : []
-	]), F(de(t.baseline_run_id) && String(t.baseline_run_id).toLowerCase() === t.baseline_run_id, "canonical baseline run"), n && F(pe(t.expected_preview_fingerprint), "reviewed preview fingerprint"), F(Array.isArray(t.scenarios) && t.scenarios.length >= 1 && t.scenarios.length <= 10, "1–10 scenarios");
+	]), P(L(t.baseline_run_id) && String(t.baseline_run_id).toLowerCase() === t.baseline_run_id, "canonical baseline run"), n && P(pe(t.expected_preview_fingerprint), "reviewed preview fingerprint"), P(Array.isArray(t.scenarios) && t.scenarios.length >= 1 && t.scenarios.length <= 10, "1–10 scenarios");
 	let i = /* @__PURE__ */ new Set();
 	for (let e of t.scenarios) {
-		ot(I(e, "scenario command row"), [
+		ot(F(e, "scenario command row"), [
 			"scenario_key",
 			"name",
 			"rationale",
 			"assumptions"
 		]);
 		let t = lt(e, r);
-		F(z(t, e) && !i.has(t.scenario_key), "normalized unique scenario command"), i.add(t.scenario_key);
+		P(z(t, e) && !i.has(t.scenario_key), "normalized unique scenario command"), i.add(t.scenario_key);
 	}
 	return t;
 }
 function dt(e) {
-	let t = I(e.baseline, "preview baseline");
-	return F(Array.isArray(e.scenarios), "preview scenarios"), ut({
+	let t = F(e.baseline, "preview baseline");
+	return P(Array.isArray(e.scenarios), "preview scenarios"), ut({
 		schema_version: e.schema_version,
 		baseline_run_id: t.run_id,
 		scenarios: e.scenarios.map((t) => lt(t, e.schema_version === "commercial-scenario-preview-v1"))
 	});
 }
 function ft(e, t) {
-	return F(Array.isArray(e), t), e;
+	return P(Array.isArray(e), t), e;
 }
 function pt(e) {
 	return e === null || p(e);
 }
 function mt(e) {
-	return de(e) && e.toLowerCase() === e;
+	return L(e) && e.toLowerCase() === e;
 }
 function V(e) {
-	F((e.schema_version === it && e.serialization_version === at || e.schema_version === "commercial-scenario-preview-v1" && e.serialization_version === "scenario-preview-json-v1") && e.persisted === !1 && L(e.scenario_definition_version) && L(e.calculation_version), "preview envelope versions");
-	let t = I(e.baseline, "baseline evidence");
-	F(mt(t.case_id) && mt(t.run_id) && fe(t.revision) && pe(t.input_hash) && pe(t.payload_hash), "baseline evidence identity");
-	let n = I(t.assessment, "original assessment"), r = I(e.fingerprint, "preview fingerprint");
-	F(r.algorithm === "sha256" && pe(r.value) && r.content === "baseline_identity+payload_hash+normalized_command+policy_snapshot+versions", "preview fingerprint");
-	let i = I(e.selected_period, "selected operating period");
-	F(R(i.period_start) && R(i.period_end) && i.period_start <= i.period_end && R(e.assumptions_as_of) && i.period_end <= e.assumptions_as_of, "preview dates"), F(z(e.selected_period, n.selected_period) && e.assumptions_as_of === n.assumptions_as_of && z(e.policy_snapshot, n.policy_snapshot), "baseline period and retained policy");
-	let a = I(n.normalized_input, "baseline input");
-	return F(z(e.units, a.units), "baseline units"), F(ft(e.held_fixed_assumptions, "held fixed assumptions").length > 0 && e.held_fixed_assumptions.every(L) && L(e.disclaimer), "preview explanation"), dt(e), {
+	P((e.schema_version === it && e.serialization_version === at || e.schema_version === "commercial-scenario-preview-v1" && e.serialization_version === "scenario-preview-json-v1") && e.persisted === !1 && I(e.scenario_definition_version) && I(e.calculation_version), "preview envelope versions");
+	let t = F(e.baseline, "baseline evidence");
+	P(mt(t.case_id) && mt(t.run_id) && fe(t.revision) && pe(t.input_hash) && pe(t.payload_hash), "baseline evidence identity");
+	let n = F(t.assessment, "original assessment"), r = F(e.fingerprint, "preview fingerprint");
+	P(r.algorithm === "sha256" && pe(r.value) && r.content === "baseline_identity+payload_hash+normalized_command+policy_snapshot+versions", "preview fingerprint");
+	let i = F(e.selected_period, "selected operating period");
+	P(R(i.period_start) && R(i.period_end) && i.period_start <= i.period_end && R(e.assumptions_as_of) && i.period_end <= e.assumptions_as_of, "preview dates"), P(z(e.selected_period, n.selected_period) && e.assumptions_as_of === n.assumptions_as_of && z(e.policy_snapshot, n.policy_snapshot), "baseline period and retained policy");
+	let a = F(n.normalized_input, "baseline input");
+	return P(z(e.units, a.units), "baseline units"), P(ft(e.held_fixed_assumptions, "held fixed assumptions").length > 0 && e.held_fixed_assumptions.every(I) && I(e.disclaimer), "preview explanation"), dt(e), {
 		b: t,
 		a: n
 	};
 }
 function ht(e, t, n) {
-	let r = I(e, "scenario preview");
+	let r = F(e, "scenario preview");
 	he(r, 0, 100);
 	let { b: i, a } = V(r);
-	F(r.schema_version === it && r.scenario_definition_version === "commercial-scenario-definition-v2" && r.calculation_version === "commercial-calculation-v2", "supported live scenario definition");
-	let o = P(a);
-	t && F(i.case_id === t.snapshot.case_id && i.revision === t.snapshot.revision && i.run_id === t.snapshot.run_id && i.input_hash === t.snapshot.input_hash && i.payload_hash === t.snapshot.payload_hash && z(o, t.snapshot.assessment), "selected original baseline"), n && F(z(dt(r), ut(n)), "reviewed normalized command");
+	P(r.schema_version === it && r.scenario_definition_version === "commercial-scenario-definition-v2" && r.calculation_version === "commercial-calculation-v2", "supported live scenario definition");
+	let o = N(a);
+	t && P(i.case_id === t.snapshot.case_id && i.revision === t.snapshot.revision && i.run_id === t.snapshot.run_id && i.input_hash === t.snapshot.input_hash && i.payload_hash === t.snapshot.payload_hash && z(o, t.snapshot.assessment), "selected original baseline"), n && P(z(dt(r), ut(n)), "reviewed normalized command");
 	for (let e of r.scenarios) gt(e, r, o);
 	return r;
 }
 function gt(e, t, n) {
-	let r = I(e, "scenario result"), i = lt(r);
-	F(z({
+	let r = F(e, "scenario result"), i = lt(r);
+	P(z({
 		scenario_key: r.scenario_key,
 		name: r.name,
 		rationale: r.rationale,
 		assumptions: r.assumptions
 	}, i) && r.coverage_basis === "stressed_latest_period_current_pro_forma", "normalized projection command/basis");
-	let a = I(r.projection_inputs, "projected inputs"), o = n.normalized_input;
+	let a = F(r.projection_inputs, "projected inputs"), o = n.normalized_input;
 	ie({
 		...o,
 		years: [...o.years.slice(0, -1), a.operating],
@@ -7097,42 +7097,42 @@ function gt(e, t, n) {
 		"existing_debt",
 		"guarantors",
 		"working_capital"
-	]) F(z(a[e], o[e]), "held-fixed projected inputs");
-	let s = I(a.operating, "projected operating"), c = I(a.proposed_loan, "projected loan"), l = o.years[o.years.length - 1];
+	]) P(z(a[e], o[e]), "held-fixed projected inputs");
+	let s = F(a.operating, "projected operating"), c = F(a.proposed_loan, "projected loan"), l = o.years[o.years.length - 1];
 	for (let e of S) [
 		"gross_receipts",
 		"cogs",
 		"operating_expense_excl_dna_interest_comp"
-	].includes(e) || F(s[e] === l[e], "held-fixed financial lines");
-	F(s.period_start === l.period_start && s.period_end === l.period_end, "projected period");
-	for (let e of Object.keys(o.proposed_loan)) e !== "annual_rate" && F(c[e] === o.proposed_loan[e], "held-fixed loan");
-	let u = I(r.current_facts, "projected facts"), d = [];
+	].includes(e) || P(s[e] === l[e], "held-fixed financial lines");
+	P(s.period_start === l.period_start && s.period_end === l.period_end, "projected period");
+	for (let e of Object.keys(o.proposed_loan)) e !== "annual_rate" && P(c[e] === o.proposed_loan[e], "held-fixed loan");
+	let u = F(r.current_facts, "projected facts"), d = [];
 	for (let e of C) {
-		let t = N(u[e]), r = e === "k1_history" || e === "k1_ratio_difference", i = r ? "baseline." + n.current_facts[e].fact_id : ["ordinary_business_income", "ebitda"].includes(e) ? `projection.operating.${e}` : `projection.current.${e}`;
-		F(t.fact_id === i && (r ? z(t, {
+		let t = ae(u[e]), r = e === "k1_history" || e === "k1_ratio_difference", i = r ? "baseline." + n.current_facts[e].fact_id : ["ordinary_business_income", "ebitda"].includes(e) ? `projection.operating.${e}` : `projection.current.${e}`;
+		P(t.fact_id === i && (r ? z(t, {
 			...n.current_facts[e],
 			fact_id: i
 		}) : pt(t.raw_value)), "projected fact identity/type/observed history"), d.push(t);
 	}
 	let f = ft(r.guarantor_contributions, "projected guarantors");
-	F(f.length === o.guarantors.length, "guarantor count"), f.forEach((e, t) => {
-		let n = I(e, "guarantor contribution");
-		F(n.guarantor_index === t && n.name === o.guarantors[t].name, "guarantor identity");
+	P(f.length === o.guarantors.length, "guarantor count"), f.forEach((e, t) => {
+		let n = F(e, "guarantor contribution");
+		P(n.guarantor_index === t && n.name === o.guarantors[t].name, "guarantor identity");
 		for (let e of [
 			"business_ebitda",
 			"outside_income",
 			"personal_debt"
 		]) {
-			let r = N(n[e]);
-			F(r.fact_id === `projection.current.guarantors.${t}.${e}` && pt(r.raw_value), "projected guarantor fact"), d.push(r);
+			let r = ae(n[e]);
+			P(r.fact_id === `projection.current.guarantors.${t}.${e}` && pt(r.raw_value), "projected guarantor fact"), d.push(r);
 		}
 	});
 	let m = ne(r.decision);
-	F(m.policy_version === n.policy_snapshot.version, "retained decision policy");
+	P(m.policy_version === n.policy_snapshot.version, "retained decision policy");
 	let h = ft(r.calculation_trace, "projection trace"), g = /* @__PURE__ */ new Map();
 	for (let e of h) {
-		let t = I(e, "trace row"), n = N(t);
-		F(L(t.definition_id) && L(t.expression) && !g.has(n.fact_id), "trace identity"), g.set(n.fact_id, n), ft(t.operands, "trace operands");
+		let t = F(e, "trace row"), n = ae(t);
+		P(I(t.definition_id) && I(t.expression) && !g.has(n.fact_id), "trace identity"), g.set(n.fact_id, n), ft(t.operands, "trace operands");
 	}
 	for (let e of n.calculation_trace) {
 		let t = {
@@ -7143,15 +7143,15 @@ function gt(e, t, n) {
 				reference: e.reference_type === "fact" ? "baseline." + e.reference : e.reference_type === "input" ? "/baseline/assessment/normalized_input" + e.reference : e.reference
 			}))
 		};
-		F(z(g.get(t.fact_id), t), "retained observed trace identity");
+		P(z(g.get(t.fact_id), t), "retained observed trace identity");
 	}
-	for (let e of h) for (let n of I(e, "trace row").operands) {
-		let e = I(n, "operand");
-		if (F(L(e.reference) && L(e.unit) && (e.raw_value === null || le(e.raw_value) || L(e.raw_value)), "operand value"), e.reference_type === "fact") {
+	for (let e of h) for (let n of F(e, "trace row").operands) {
+		let e = F(n, "operand");
+		if (P(I(e.reference) && I(e.unit) && (e.raw_value === null || ue(e.raw_value) || I(e.raw_value)), "operand value"), e.reference_type === "fact") {
 			let t = g.get(e.reference);
-			F(t && t.raw_value === e.raw_value && t.unit === e.unit, "referenced scenario fact");
+			P(t && t.raw_value === e.raw_value && t.unit === e.unit, "referenced scenario fact");
 		} else {
-			F(["input", "policy"].includes(String(e.reference_type)) && e.reference.startsWith("/"), "operand reference");
+			P(["input", "policy"].includes(String(e.reference_type)) && e.reference.startsWith("/"), "operand reference");
 			let n = {
 				...r,
 				baseline: t.baseline,
@@ -7159,14 +7159,14 @@ function gt(e, t, n) {
 			};
 			for (let t of e.reference.slice(1).split("/")) {
 				let e = _t(n);
-				F(Object.prototype.hasOwnProperty.call(e, t), "scenario operand path"), n = e[t];
+				P(Object.prototype.hasOwnProperty.call(e, t), "scenario operand path"), n = e[t];
 			}
-			F(n === e.raw_value, "scenario operand value");
+			P(n === e.raw_value, "scenario operand value");
 		}
 	}
 	for (let e of d) {
 		let t = g.get(e.fact_id);
-		F(t && [
+		P(t && [
 			"fact_id",
 			"raw_value",
 			"reported_value",
@@ -7177,13 +7177,13 @@ function gt(e, t, n) {
 		].every((n) => t[n] === e[n]), "fact/trace fields");
 	}
 	let _ = ft(r.comparisons, "metric comparisons");
-	F(_.length === C.length - 1, "comparison count");
+	P(_.length === C.length - 1, "comparison count");
 	let v = /* @__PURE__ */ new Set();
 	for (let e of _) {
-		let t = I(e, "metric comparison");
-		F(L(t.metric) && C.includes(t.metric) && t.metric !== "k1_history" && !v.has(t.metric), "compared metric identity"), v.add(t.metric);
-		let r = n.current_facts[t.metric], i = N(u[t.metric]);
-		F(t.baseline_fact_id === "baseline." + r.fact_id && t.projected_fact_id === i.fact_id && t.baseline_value === r.raw_value && t.projected_value === i.raw_value && t.unit === i.unit && pt(t.delta), "comparison fact links"), F(r.raw_value === null || i.raw_value === null ? t.delta === null && L(t.delta_explanation) : p(t.delta) && t.delta_explanation === null, "comparison availability");
+		let t = F(e, "metric comparison");
+		P(I(t.metric) && C.includes(t.metric) && t.metric !== "k1_history" && !v.has(t.metric), "compared metric identity"), v.add(t.metric);
+		let r = n.current_facts[t.metric], i = ae(u[t.metric]);
+		P(t.baseline_fact_id === "baseline." + r.fact_id && t.projected_fact_id === i.fact_id && t.baseline_value === r.raw_value && t.projected_value === i.raw_value && t.unit === i.unit && pt(t.delta), "comparison fact links"), P(r.raw_value === null || i.raw_value === null ? t.delta === null && I(t.delta_explanation) : p(t.delta) && t.delta_explanation === null, "comparison availability");
 		let a = m.factors.find((e) => e.name === (t.metric === "uca_cash_flow" ? "uca_positive" : t.metric));
 		if ([
 			"dscr",
@@ -7191,51 +7191,51 @@ function gt(e, t, n) {
 			"global_dscr",
 			"uca_cash_flow"
 		].includes(t.metric)) {
-			let e = I(t.policy_headroom, "policy headroom");
-			F(a && e.comparison_operator === a.comparison_operator && e.approval_threshold === a.threshold && e.decline_threshold === a.decline_threshold, "headroom policy");
+			let e = F(t.policy_headroom, "policy headroom");
+			P(a && e.comparison_operator === a.comparison_operator && e.approval_threshold === a.threshold && e.decline_threshold === a.decline_threshold, "headroom policy");
 			for (let t of [
 				"baseline_approval",
 				"projected_approval",
 				"baseline_decline",
 				"projected_decline"
-			]) F(pt(e[t]), "finite headroom");
-		} else F(t.policy_headroom === null, "non-policy headroom");
+			]) P(pt(e[t]), "finite headroom");
+		} else P(t.policy_headroom === null, "non-policy headroom");
 	}
 	for (let e of m.factors) {
 		let t = e.name === "uca_positive" ? "uca_cash_flow" : e.name, r = n.decision.factors.find((t) => t.name === e.name);
-		F(e.raw_value === N(u[t]).raw_value && r && [
+		P(e.raw_value === ae(u[t]).raw_value && r && [
 			"threshold",
 			"decline_threshold",
 			"comparison_operator",
 			"weight",
 			"source"
-		].every((t) => e[t] === r[t]), "scenario factor fact and retained policy"), t === "k1_history" && F(z(e, r), "held-fixed observed K-1 factor");
+		].every((t) => e[t] === r[t]), "scenario factor fact and retained policy"), t === "k1_history" && P(z(e, r), "held-fixed observed K-1 factor");
 	}
 	let y = ft(r.factor_changes, "factor changes");
-	F(y.length === m.factors.length, "factor change count");
+	P(y.length === m.factors.length, "factor change count");
 	let b = /* @__PURE__ */ new Set();
 	for (let e of y) {
-		let t = I(e, "factor change"), r = n.decision.factors.find((e) => e.name === t.name), i = m.factors.find((e) => e.name === t.name);
-		F(L(t.name) && !b.has(t.name) && r && i && z(t.baseline, r) && z(t.projected, i) && t.changed === !z(r, i) && t.basis === (t.name === "k1_history" ? "observed_history" : "projected_current"), "factor change links"), b.add(t.name), F(t.projected_fact_id === N(u[t.name === "uca_positive" ? "uca_cash_flow" : t.name]).fact_id, "factor projected reference");
+		let t = F(e, "factor change"), r = n.decision.factors.find((e) => e.name === t.name), i = m.factors.find((e) => e.name === t.name);
+		P(I(t.name) && !b.has(t.name) && r && i && z(t.baseline, r) && z(t.projected, i) && t.changed === !z(r, i) && t.basis === (t.name === "k1_history" ? "observed_history" : "projected_current"), "factor change links"), b.add(t.name), P(t.projected_fact_id === ae(u[t.name === "uca_positive" ? "uca_cash_flow" : t.name]).fact_id, "factor projected reference");
 	}
-	let x = I(r.outcome_change, "outcome change");
-	F(x.baseline === n.decision.outcome && x.projected === m.outcome && x.changed === (x.baseline !== x.projected), "outcome change links");
+	let x = F(r.outcome_change, "outcome change");
+	P(x.baseline === n.decision.outcome && x.projected === m.outcome && x.changed === (x.baseline !== x.projected), "outcome change links");
 	let w = ft(r.reason_changes, "reason changes"), T = Array.from(new Set([...n.decision.reasons, ...m.reasons].map((e) => e.code))).filter((e) => !z(n.decision.reasons.find((t) => t.code === e) ?? null, m.reasons.find((t) => t.code === e) ?? null));
-	F(w.length === T.length, "reason changes count");
+	P(w.length === T.length, "reason changes count");
 	let E = /* @__PURE__ */ new Set();
 	for (let e of w) {
-		let t = I(e, "reason change"), r = n.decision.reasons.find((e) => e.code === t.code) ?? null, i = m.reasons.find((e) => e.code === t.code) ?? null;
-		F(L(t.code) && T.includes(t.code) && !E.has(t.code) && z(t.baseline, r) && z(t.projected, i) && t.change === (r === null ? "added" : i === null ? "removed" : "changed"), "reason change links"), E.add(t.code);
+		let t = F(e, "reason change"), r = n.decision.reasons.find((e) => e.code === t.code) ?? null, i = m.reasons.find((e) => e.code === t.code) ?? null;
+		P(I(t.code) && T.includes(t.code) && !E.has(t.code) && z(t.baseline, r) && z(t.projected, i) && t.change === (r === null ? "added" : i === null ? "removed" : "changed"), "reason change links"), E.add(t.code);
 	}
 }
 function _t(e) {
-	return F(typeof e == "object" && !!e, "operand path object"), e;
+	return P(typeof e == "object" && !!e, "operand path object"), e;
 }
 function vt(e, t) {
-	let n = I(e, "original comparison");
-	he(n, 0, 100), F(["commercial-scenario-comparison-v1", "commercial-scenario-comparison-v2"].includes(String(n.schema_version)) && n.storage_serialization_version === "scenario-comparison-json-v1" && n.persisted === !0 && mt(n.comparison_id) && mt(n.case_id) && mt(n.baseline_run_id) && fe(n.baseline_revision) && pe(n.payload_hash), "comparison storage identity"), F(me(n.recorded_at) && /^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{6}\+00:00$/.test(n.recorded_at) && ue(n.actor), "comparison recording time/actor"), we(n.recording), F(t === `"scenario-comparison-json-v1:${n.case_id}:${n.comparison_id}:${n.payload_hash}"`, "comparison ETag");
-	let r = I(n.preview, "original preview"), { b: i, a } = V(r);
-	F(i.case_id === n.case_id && i.revision === n.baseline_revision && i.run_id === n.baseline_run_id, "inner/outer original baseline");
+	let n = F(e, "original comparison");
+	he(n, 0, 100), P(["commercial-scenario-comparison-v1", "commercial-scenario-comparison-v2"].includes(String(n.schema_version)) && n.storage_serialization_version === "scenario-comparison-json-v1" && n.persisted === !0 && mt(n.comparison_id) && mt(n.case_id) && mt(n.baseline_run_id) && fe(n.baseline_revision) && pe(n.payload_hash), "comparison storage identity"), P(me(n.recorded_at) && /^\d{4}-\d\d-\d\dT(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{6}\+00:00$/.test(n.recorded_at) && de(n.actor), "comparison recording time/actor"), we(n.recording), P(t === `"scenario-comparison-json-v1:${n.case_id}:${n.comparison_id}:${n.payload_hash}"`, "comparison ETag");
+	let r = F(n.preview, "original preview"), { b: i, a } = V(r);
+	P(i.case_id === n.case_id && i.revision === n.baseline_revision && i.run_id === n.baseline_run_id, "inner/outer original baseline");
 	let o = r.schema_version === it && r.scenario_definition_version === "commercial-scenario-definition-v2" && r.calculation_version === "commercial-calculation-v2" && a.schema_version === "commercial-assessment-v2" && a.calculation_version === "commercial-calculation-v2" && a.serialization_version === "assessment-json-v2";
 	return {
 		record: n,
@@ -7245,19 +7245,19 @@ function vt(e, t) {
 	};
 }
 function yt(e, t) {
-	let n = I(e, "comparison page");
+	let n = F(e, "comparison page");
 	he(n, 0, 100);
 	let r = ft(n.items, "comparison summaries");
-	F(r.length <= 25 && (n.next_cursor === null || L(n.next_cursor) && /^[A-Za-z0-9_-]{1,512}$/.test(n.next_cursor)), "bounded comparison page/cursor");
+	P(r.length <= 25 && (n.next_cursor === null || I(n.next_cursor) && /^[A-Za-z0-9_-]{1,512}$/.test(n.next_cursor)), "bounded comparison page/cursor");
 	let i = /* @__PURE__ */ new Set();
 	for (let e of r) {
-		let n = I(e, "comparison summary");
-		F(n.case_id === t && mt(n.comparison_id) && mt(n.baseline_run_id) && fe(n.baseline_revision) && me(n.recorded_at) && pe(n.preview_fingerprint) && !i.has(String(n.comparison_id)), "summary identity"), i.add(String(n.comparison_id)), F(["commercial-scenario-comparison-v1", "commercial-scenario-comparison-v2"].includes(String(n.schema_version)) && n.storage_serialization_version === "scenario-comparison-json-v1" && (n.preview_schema_version === it && n.preview_serialization_version === at || n.preview_schema_version === "commercial-scenario-preview-v1" && n.preview_serialization_version === "scenario-preview-json-v1") && L(n.policy_version) && L(n.scenario_definition_version) && L(n.calculation_version), "summary versions");
+		let n = F(e, "comparison summary");
+		P(n.case_id === t && mt(n.comparison_id) && mt(n.baseline_run_id) && fe(n.baseline_revision) && me(n.recorded_at) && pe(n.preview_fingerprint) && !i.has(String(n.comparison_id)), "summary identity"), i.add(String(n.comparison_id)), P(["commercial-scenario-comparison-v1", "commercial-scenario-comparison-v2"].includes(String(n.schema_version)) && n.storage_serialization_version === "scenario-comparison-json-v1" && (n.preview_schema_version === it && n.preview_serialization_version === at || n.preview_schema_version === "commercial-scenario-preview-v1" && n.preview_serialization_version === "scenario-preview-json-v1") && I(n.policy_version) && I(n.scenario_definition_version) && I(n.calculation_version), "summary versions");
 		let r = ft(n.scenarios, "scenario summaries"), a = /* @__PURE__ */ new Set();
-		F(r.length >= 1 && r.length <= 10 && n.scenario_count === r.length, "scenario count");
+		P(r.length >= 1 && r.length <= 10 && n.scenario_count === r.length, "scenario count");
 		for (let e of r) {
-			let t = I(e, "scenario summary");
-			F(L(t.scenario_key) && /^[A-Za-z0-9_-]{1,64}$/.test(t.scenario_key) && !a.has(t.scenario_key) && st(t.name, 120) === t.name, "summary command"), a.add(t.scenario_key);
+			let t = F(e, "scenario summary");
+			P(I(t.scenario_key) && /^[A-Za-z0-9_-]{1,64}$/.test(t.scenario_key) && !a.has(t.scenario_key) && st(t.name, 120) === t.name, "summary command"), a.add(t.scenario_key);
 		}
 	}
 	return n;
@@ -7266,13 +7266,13 @@ function yt(e, t) {
 //#region src/caseRecovery.ts
 var bt = "spreadline.pending-write.v1", xt = "spreadline.case-selection.v1", St = 1e6, Ct = 21e5;
 function wt(e, t = Xe) {
-	let n = I(e, "pending write");
+	let n = F(e, "pending write");
 	if (n.version !== "scenario-comparison-write-v1") return Ot(e, t);
-	F(n.kind === "comparison" && de(n.id) && n.apiBase === t && L(n.body) && Dt(n.body) <= St, "comparison recovery envelope");
+	P(n.kind === "comparison" && L(n.id) && n.apiBase === t && I(n.body) && Dt(n.body) <= St, "comparison recovery envelope");
 	let r = ut(JSON.parse(n.body));
-	F(["commercial-scenario-comparison-create-v1", "commercial-scenario-comparison-create-v2"].includes(r.schema_version) && JSON.stringify(r) === n.body && de(n.caseId) && fe(n.baselineRevision) && n.baselineRunId === r.baseline_run_id && pe(n.baselinePayloadHash), "comparison recovery identity/command");
-	let i = I(n.context, "comparison recovery context");
-	return F(R(i.period_start) && R(i.period_end) && R(i.assessment_as_of) && i.period_start <= i.period_end && i.period_end <= i.assessment_as_of && L(i.policy_version) && L(i.scenario_definition_version) && L(i.calculation_version), "comparison recovery dates/versions"), F(Object.keys(n).length === 10 && [
+	P(["commercial-scenario-comparison-create-v1", "commercial-scenario-comparison-create-v2"].includes(r.schema_version) && JSON.stringify(r) === n.body && L(n.caseId) && fe(n.baselineRevision) && n.baselineRunId === r.baseline_run_id && pe(n.baselinePayloadHash), "comparison recovery identity/command");
+	let i = F(n.context, "comparison recovery context");
+	return P(R(i.period_start) && R(i.period_end) && R(i.assessment_as_of) && i.period_start <= i.period_end && i.period_end <= i.assessment_as_of && I(i.policy_version) && I(i.scenario_definition_version) && I(i.calculation_version), "comparison recovery dates/versions"), P(Object.keys(n).length === 10 && [
 		"version",
 		"kind",
 		"id",
@@ -7283,7 +7283,7 @@ function wt(e, t = Xe) {
 		"baselineRunId",
 		"baselinePayloadHash",
 		"context"
-	].every((e) => e in n), "comparison recovery fields"), F(Object.keys(i).length === 6 && [
+	].every((e) => e in n), "comparison recovery fields"), P(Object.keys(i).length === 6 && [
 		"period_start",
 		"period_end",
 		"assessment_as_of",
@@ -7324,10 +7324,10 @@ function Dt(e) {
 	return new TextEncoder().encode(e).length;
 }
 function Ot(e, t = Xe) {
-	let n = I(e, "recovery operation");
-	F(n.version === "case-write-v1" && de(n.id) && n.apiBase === t && L(n.body) && Dt(n.body) <= St, "recovery version, backend or size");
+	let n = F(e, "recovery operation");
+	P(n.version === "case-write-v1" && L(n.id) && n.apiBase === t && I(n.body) && Dt(n.body) <= St, "recovery version, backend or size");
 	let r = JSON.parse(n.body);
-	F(JSON.stringify(r) === n.body, "unchanged canonical browser command");
+	P(JSON.stringify(r) === n.body, "unchanged canonical browser command");
 	let i = [
 		"version",
 		"id",
@@ -7337,15 +7337,15 @@ function Ot(e, t = Xe) {
 	];
 	if (n.kind === "create") xe(r);
 	else {
-		F(n.kind === "edit" && de(n.caseId) && fe(n.baseRevision), "edit recovery identity"), F(L(n.etag) && RegExp(`^"case-json-v1:${n.caseId}:${n.baseRevision}:[0-9a-f]{64}"$`).test(n.etag), "edit recovery ETag");
-		let e = Se(r), t = I(n.review, "review field"), a = I(n.context, "review context");
-		F(t.path === e.field_path && L(t.label) && L(t.period) && (p(t.value) || typeof t.value == "number" && Number.isFinite(t.value)) && [
+		P(n.kind === "edit" && L(n.caseId) && fe(n.baseRevision), "edit recovery identity"), P(I(n.etag) && RegExp(`^"case-json-v1:${n.caseId}:${n.baseRevision}:[0-9a-f]{64}"$`).test(n.etag), "edit recovery ETag");
+		let e = Se(r), t = F(n.review, "review field"), a = F(n.context, "review context");
+		P(t.path === e.field_path && I(t.label) && I(t.period) && (p(t.value) || typeof t.value == "number" && Number.isFinite(t.value)) && [
 			"USD",
 			"%",
 			"months"
 		].includes(String(t.unit)), "recovery review");
-		for (let e of ["min", "max"]) F(t[e] === void 0 || p(t[e]) || typeof t[e] == "number" && Number.isFinite(t[e]), "field range");
-		F(t.integer === void 0 || typeof t.integer == "boolean", "field integer"), F(Object.keys(t).every((e) => [
+		for (let e of ["min", "max"]) P(t[e] === void 0 || p(t[e]) || typeof t[e] == "number" && Number.isFinite(t[e]), "field range");
+		P(t.integer === void 0 || typeof t.integer == "boolean", "field integer"), P(Object.keys(t).every((e) => [
 			"path",
 			"label",
 			"period",
@@ -7356,7 +7356,7 @@ function Ot(e, t = Xe) {
 			"integer"
 		].includes(e)), "review fields");
 		let o = ye(e.field_path), s = o[0], c = o[o.length - 1], l = ["annual_rate", "ownership_percentage"].includes(c) ? "decimal fraction" : c === "term_months" ? "months" : "USD dollars";
-		F(R(a.assessment_as_of) && a.basis === (s === "years" ? "annual_financials" : s === "working_capital" ? "working_capital" : "current_assumptions") && a.unit === l && t.unit === (l === "decimal fraction" ? "%" : l === "months" ? "months" : "USD"), "recovery context"), F(["years", "working_capital"].includes(s) ? R(a.period_start) && R(a.period_end) && a.period_start <= a.period_end && a.period_end <= a.assessment_as_of : a.period_start === null && a.period_end === null, "recovery period"), F(s === "guarantors" ? a.guarantor_index === Number(o[1]) && L(a.guarantor_name) : a.guarantor_index === null && a.guarantor_name === null, "recovery guarantor"), F(Object.keys(a).length === 7 && [
+		P(R(a.assessment_as_of) && a.basis === (s === "years" ? "annual_financials" : s === "working_capital" ? "working_capital" : "current_assumptions") && a.unit === l && t.unit === (l === "decimal fraction" ? "%" : l === "months" ? "months" : "USD"), "recovery context"), P(["years", "working_capital"].includes(s) ? R(a.period_start) && R(a.period_end) && a.period_start <= a.period_end && a.period_end <= a.assessment_as_of : a.period_start === null && a.period_end === null, "recovery period"), P(s === "guarantors" ? a.guarantor_index === Number(o[1]) && I(a.guarantor_name) : a.guarantor_index === null && a.guarantor_name === null, "recovery guarantor"), P(Object.keys(a).length === 7 && [
 			"basis",
 			"assessment_as_of",
 			"period_start",
@@ -7366,7 +7366,7 @@ function Ot(e, t = Xe) {
 			"unit"
 		].every((e) => e in a), "recovery context fields"), i.push("caseId", "baseRevision", "etag", "review", "context");
 	}
-	F(Object.keys(n).length === i.length && Object.keys(n).every((e) => i.includes(e)), "recovery fields");
+	P(Object.keys(n).length === i.length && Object.keys(n).every((e) => i.includes(e)), "recovery fields");
 	let a = n;
 	return a.kind === "edit" && (Object.freeze(a.review), Object.freeze(a.context)), Object.freeze(a);
 }
@@ -7384,9 +7384,9 @@ function kt(e, t) {
 	});
 }
 function At(e, t, n) {
-	F(e.assessment, "supported saved assessment");
+	P(e.assessment, "supported saved assessment");
 	let r = be(e.assessment.normalized_input, t.path);
-	F(_(r.value, t.prior) && _(n.value, t.prior) && n.path === t.path && !_(t.next, t.prior), "reviewed base input");
+	P(_(r.value, t.prior) && _(n.value, t.prior) && n.path === t.path && !_(t.next, t.prior), "reviewed base input");
 	let i = Se({
 		field_path: t.path,
 		new_value: t.next,
@@ -7407,11 +7407,11 @@ function At(e, t, n) {
 }
 function jt(e, t) {
 	try {
-		F(e, "browser recovery storage");
+		P(e, "browser recovery storage");
 		let n = wt(t), r = e.getItem(bt);
-		r && F(z(wt(JSON.parse(r)), n), "another unresolved operation");
+		r && P(z(wt(JSON.parse(r)), n), "another unresolved operation");
 		let i = JSON.stringify(n);
-		F(Dt(i) <= Ct, "recovery journal size"), e.setItem(bt, i), F(e.getItem(bt) === i, "persisted recovery record");
+		P(Dt(i) <= Ct, "recovery journal size"), e.setItem(bt, i), P(e.getItem(bt) === i, "persisted recovery record");
 	} catch {
 		throw Error("This tab could not keep the write for recovery. Nothing was sent. Resolve its pending record or enable browser session storage before saving.");
 	}
@@ -7423,7 +7423,7 @@ function Mt(e, t = Xe) {
 			error: "This browser cannot keep a saved write for recovery. Saved reads and unsaved assessment remain available."
 		};
 		let n = e.getItem(bt);
-		return n ? (F(Dt(n) <= Ct, "recovery size"), {
+		return n ? (P(Dt(n) <= Ct, "recovery size"), {
 			operation: wt(JSON.parse(n), t),
 			error: ""
 		}) : {
@@ -7438,19 +7438,19 @@ function Mt(e, t = Xe) {
 	}
 }
 function Nt(e, t) {
-	F(e, "browser recovery storage");
+	P(e, "browser recovery storage");
 	let n = e.getItem(bt);
-	n && F(wt(JSON.parse(n)).id === t, "matching recovery record"), e.removeItem(bt), F(e.getItem(bt) === null, "cleared recovery record");
+	n && P(wt(JSON.parse(n)).id === t, "matching recovery record"), e.removeItem(bt), P(e.getItem(bt) === null, "cleared recovery record");
 }
 function Pt(e) {
-	F(e, "browser recovery storage"), e.removeItem(bt), F(e.getItem(bt) === null, "discarded recovery record");
+	P(e, "browser recovery storage"), e.removeItem(bt), P(e.getItem(bt) === null, "discarded recovery record");
 }
 function Ft(e) {
 	try {
 		let t = e?.getItem(xt);
 		if (!t || t.length > 500) return null;
-		let n = I(JSON.parse(t), "saved selection");
-		return F(n.version === "case-selection-v1" && n.apiBase === Xe && de(n.caseId) && (n.revision === "latest" || fe(n.revision)), "saved selection identity"), F(Object.keys(n).length === 4, "saved selection fields"), {
+		let n = F(JSON.parse(t), "saved selection");
+		return P(n.version === "case-selection-v1" && n.apiBase === Xe && L(n.caseId) && (n.revision === "latest" || fe(n.revision)), "saved selection identity"), P(Object.keys(n).length === 4, "saved selection fields"), {
 			caseId: n.caseId,
 			revision: n.revision
 		};
@@ -7511,11 +7511,11 @@ async function zt(e, t, n) {
 	};
 }
 function H(e, t) {
-	return F(de(e) && (t === "latest" || fe(t)), "requested case/revision"), `/cases/${encodeURIComponent(e)}${t === "latest" ? "" : `/revisions/${t}`}`;
+	return P(L(e) && (t === "latest" || fe(t)), "requested case/revision"), `/cases/${encodeURIComponent(e)}${t === "latest" ? "" : `/revisions/${t}`}`;
 }
 async function Bt(e, t, n, r = fetch) {
 	let { response: i, body: a } = await zt(H(e, t), { signal: n }, r), o = Ce(a, i.headers.get("ETag"));
-	return F(o.snapshot.case_id === e && (t === "latest" || o.snapshot.revision === t), "requested snapshot identity"), o;
+	return P(o.snapshot.case_id === e && (t === "latest" || o.snapshot.revision === t), "requested snapshot identity"), o;
 }
 async function Vt(e, t, n = fetch) {
 	let r = Ot(e), i = {
@@ -7530,14 +7530,14 @@ async function Vt(e, t, n = fetch) {
 		signal: t
 	}, n);
 	try {
-		F(a.status === 201 && ["true", "false"].includes(a.headers.get("Idempotency-Replayed") ?? ""), "accepted receipt status/replay header");
+		P(a.status === 201 && ["true", "false"].includes(a.headers.get("Idempotency-Replayed") ?? ""), "accepted receipt status/replay header");
 		let e = Ce(o, a.headers.get("ETag")), t = e.snapshot;
 		if (r.kind === "create") {
 			let e = xe(JSON.parse(r.body));
-			F(t.revision === 1 && t.event.kind === "creation" && t.event.rationale === e.rationale && z(t.normalized_input, e.input), "creation receipt command");
+			P(t.revision === 1 && t.event.kind === "creation" && t.event.rationale === e.rationale && z(t.normalized_input, e.input), "creation receipt command");
 		} else {
 			let e = Se(JSON.parse(r.body));
-			F(t.case_id === r.caseId && t.parent_revision === r.baseRevision && t.revision === r.baseRevision + 1 && t.event.field_path === e.field_path && t.event.after === e.new_value && t.event.before === r.review.value && t.event.rationale === e.rationale && z(t.event.context, r.context), "edit receipt command"), F(be(t.normalized_input, e.field_path).value === e.new_value, "accepted edited input");
+			P(t.case_id === r.caseId && t.parent_revision === r.baseRevision && t.revision === r.baseRevision + 1 && t.event.field_path === e.field_path && t.event.after === e.new_value && t.event.before === r.review.value && t.event.rationale === e.rationale && z(t.event.context, r.context), "edit receipt command"), P(be(t.normalized_input, e.field_path).value === e.new_value, "accepted edited input");
 		}
 		return {
 			view: e,
@@ -8112,10 +8112,10 @@ var $t = /* @__PURE__ */ new Set([
 	"baseline_replay_unavailable"
 ]);
 function en(e) {
-	return F(de(e), "comparison case locator"), `/cases/${encodeURIComponent(e)}`;
+	return P(L(e), "comparison case locator"), `/cases/${encodeURIComponent(e)}`;
 }
 function tn(e, t) {
-	return F(fe(t), "comparison revision locator"), `${en(e)}/revisions/${t}`;
+	return P(fe(t), "comparison revision locator"), `${en(e)}/revisions/${t}`;
 }
 async function nn(e) {
 	let t = e.body?.getReader();
@@ -8168,21 +8168,21 @@ async function rn(e, t, n) {
 }
 function an(e) {
 	let t = ut(e), n = JSON.stringify(t);
-	return F(new TextEncoder().encode(n).length <= 1e6, "scenario request byte limit"), n;
+	return P(new TextEncoder().encode(n).length <= 1e6, "scenario request byte limit"), n;
 }
 async function on(e, t, n, r = fetch) {
-	F(t.schema_version === "commercial-scenario-preview-v2", "preview command version");
+	P(t.schema_version === "commercial-scenario-preview-v2", "preview command version");
 	let { response: i, body: a } = await rn(`${tn(e.snapshot.case_id, e.snapshot.revision)}/scenarios/preview`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: an(t),
 		signal: n
 	}, r);
-	return F(i.status === 200, "preview status"), ht(a, e, t);
+	return P(i.status === 200, "preview status"), ht(a, e, t);
 }
 async function sn(e, t, n = fetch) {
 	let r = wt(e);
-	F(r.kind === "comparison", "comparison operation kind");
+	P(r.kind === "comparison", "comparison operation kind");
 	let { response: i, body: a } = await rn(`${tn(r.caseId, r.baselineRevision)}/scenario-comparisons`, {
 		method: "POST",
 		headers: {
@@ -8193,11 +8193,11 @@ async function sn(e, t, n = fetch) {
 		signal: t
 	}, n);
 	try {
-		F(i.status === 201 && ["true", "false"].includes(i.headers.get("Idempotency-Replayed") ?? ""), "retained receipt status/replay");
+		P(i.status === 201 && ["true", "false"].includes(i.headers.get("Idempotency-Replayed") ?? ""), "retained receipt status/replay");
 		let e = vt(a, i.headers.get("ETag")), t = e.record, n = t.preview, o = ut(JSON.parse(r.body));
-		F(t.case_id === r.caseId && t.baseline_revision === r.baselineRevision && t.baseline_run_id === r.baselineRunId && z(dt(n).scenarios, o.scenarios), "original receipt command/baseline");
+		P(t.case_id === r.caseId && t.baseline_revision === r.baselineRevision && t.baseline_run_id === r.baselineRunId && z(dt(n).scenarios, o.scenarios), "original receipt command/baseline");
 		let s = n.baseline, c = n.fingerprint;
-		return F(s.payload_hash === r.baselinePayloadHash && c.value === o.expected_preview_fingerprint && i.headers.get("Location") === `${en(t.case_id)}/scenario-comparisons/${t.comparison_id}`, "original receipt fingerprint/location"), {
+		return P(s.payload_hash === r.baselinePayloadHash && c.value === o.expected_preview_fingerprint && i.headers.get("Location") === `${en(t.case_id)}/scenario-comparisons/${t.comparison_id}`, "original receipt fingerprint/location"), {
 			view: e,
 			replayed: i.headers.get("Idempotency-Replayed") === "true"
 		};
@@ -8206,19 +8206,19 @@ async function sn(e, t, n = fetch) {
 	}
 }
 async function cn(e, t, n, r = fetch) {
-	F(de(t), "comparison locator");
+	P(L(t), "comparison locator");
 	let { response: i, body: a } = await rn(`${en(e)}/scenario-comparisons/${encodeURIComponent(t)}`, { signal: n }, r);
-	F(i.status === 200, "original comparison status");
+	P(i.status === 200, "original comparison status");
 	let o = vt(a, i.headers.get("ETag"));
-	return F(o.record.case_id === e && o.record.comparison_id === t, "requested original comparison"), o;
+	return P(o.record.case_id === e && o.record.comparison_id === t, "requested original comparison"), o;
 }
 async function ln(e, t, n, r = fetch) {
-	F(t === null || /^[A-Za-z0-9_-]{1,512}$/.test(t), "comparison cursor");
+	P(t === null || /^[A-Za-z0-9_-]{1,512}$/.test(t), "comparison cursor");
 	let i = new URLSearchParams({
 		limit: "25",
 		...t ? { after: t } : {}
 	}), { response: a, body: o } = await rn(`${en(e)}/scenario-comparisons?${i}`, { signal: n }, r);
-	return F(a.status === 200, "comparison page status"), yt(o, e);
+	return P(a.status === 200, "comparison page status"), yt(o, e);
 }
 //#endregion
 //#region src/scenarioSelection.ts
@@ -8228,7 +8228,7 @@ function dn(e) {
 		let t = Et()?.getItem(un);
 		if (!t || t.length > 500) return null;
 		let n = JSON.parse(t);
-		return Object.keys(n).length !== 4 || n.version !== "comparison-selection-v1" || n.apiBase !== Xe || n.caseId !== e || !de(n.comparisonId) ? null : n.comparisonId;
+		return Object.keys(n).length !== 4 || n.version !== "comparison-selection-v1" || n.apiBase !== Xe || n.caseId !== e || !L(n.comparisonId) ? null : n.comparisonId;
 	} catch {
 		return null;
 	}
@@ -8236,7 +8236,7 @@ function dn(e) {
 function fn(e, t) {
 	try {
 		let n = Et();
-		t === null ? n?.removeItem(un) : de(e) && de(t) && n?.setItem(un, JSON.stringify({
+		t === null ? n?.removeItem(un) : L(e) && L(t) && n?.setItem(un, JSON.stringify({
 			version: "comparison-selection-v1",
 			apiBase: Xe,
 			caseId: e,
@@ -8350,7 +8350,7 @@ function hn(e) {
 			rows: D.filter((t) => t.key !== e)
 		}));
 	}
-	function N(e, t) {
+	function ae(e, t) {
 		ne(e, (e) => {
 			let n = pn[t];
 			return n ? {
@@ -8364,7 +8364,7 @@ function hn(e) {
 			};
 		});
 	}
-	async function P() {
+	async function N() {
 		if (!n || !ee || j) return;
 		M();
 		let e = o.current, t = i, r = new AbortController();
@@ -8396,7 +8396,7 @@ function hn(e) {
 			s.current === r && (s.current = null, g(!1));
 		}
 	}
-	function ae() {
+	function oe() {
 		let t = m.current;
 		if (!(!t || t.context !== a.current || t.generation !== o.current || t.consumed || te)) try {
 			e.retainComparison(t.preview), T.current = t.generation;
@@ -8409,7 +8409,7 @@ function hn(e) {
 			v(Rt(e).message);
 		}
 	}
-	function oe() {
+	function se() {
 		A || (M(), d({
 			context: i,
 			rows: [mn(1)]
@@ -8420,7 +8420,7 @@ function hn(e) {
 			view: null
 		}), r && fn(r.case_id, null));
 	}
-	async function se(e) {
+	async function ce(e) {
 		if (!r) return;
 		M(), c.current?.abort();
 		let t = new AbortController();
@@ -8463,7 +8463,7 @@ function hn(e) {
 			view: null
 		});
 		let e = r && dn(r.case_id);
-		return e && se(e), () => {
+		return e && ce(e), () => {
 			o.current++, s.current?.abort(), l.current++, c.current?.abort();
 		};
 	}, [i]), (0, x.useEffect)(() => {
@@ -8481,7 +8481,7 @@ function hn(e) {
 			}), fn(r.case_id, n.view.record.comparison_id), C((e) => e + 1);
 		}
 	}, [e.comparisonAck]);
-	let ce = e.comparisonError?.scope === t.id ? e.comparisonError : null;
+	let le = e.comparisonError?.scope === t.id ? e.comparisonError : null;
 	return {
 		context: i,
 		baseline: r,
@@ -8489,8 +8489,8 @@ function hn(e) {
 		supported: ee,
 		rows: D,
 		busy: h,
-		error: _ || ce?.message || "",
-		errorCode: ce?.code,
+		error: _ || le?.message || "",
+		errorCode: le?.code,
 		canSaveBaseline: e.canSave,
 		previewConsumed: !!O?.consumed,
 		frozen: A,
@@ -8503,11 +8503,11 @@ function hn(e) {
 		change: ne,
 		add: re,
 		remove: ie,
-		preset: N,
-		preview: P,
-		retain: ae,
-		newDraft: oe,
-		open: se
+		preset: ae,
+		preview: N,
+		retain: oe,
+		newDraft: se,
+		open: ce
 	};
 }
 //#endregion
@@ -9248,7 +9248,344 @@ function On({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 		]
 	});
 }
-var kn = {
+//#endregion
+//#region src/prototypeDisclaimer.ts
+var kn = "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.";
+function An(e, t) {
+	return `spreadline-case-${e.case_id}-r${e.revision}-${e.run_id}${t ? `-comparison-${t.comparison_id}` : ""}.json`;
+}
+function jn(e, t) {
+	let n = e.snapshot, r = t.record, i = F(r.preview.baseline, "export comparison baseline");
+	P(r.case_id === n.case_id && r.baseline_revision === n.revision && r.baseline_run_id === n.run_id && i.case_id === n.case_id && i.revision === n.revision && i.run_id === n.run_id && i.input_hash === n.input_hash && i.payload_hash === n.payload_hash && z(i.assessment, n.assessment), "retained comparison must match the selected original case, revision, run, hashes and full baseline assessment");
+}
+//#endregion
+//#region src/reviewPackage.worker.ts?worker&inline
+var Mn = "(function(){let e=/^([+-]?)(?:(\\d+)(?:\\.(\\d*))?|\\.(\\d+))(?:[eE]([+-]?\\d+))?$/,t=10n;function n(t){if(t.length>256)throw Error(`Decimal exceeds the supported range.`);let n=e.exec(t);if(!n)throw Error(`Enter a finite decimal value.`);let r=Number(n[5]??`0`);if(!Number.isSafeInteger(r)||Math.abs(r)>128)throw Error(`Decimal exponent exceeds the supported range.`);let i=n[3]??n[4]??``;return{coefficient:BigInt(`${n[1]===`-`?`-`:``}${n[2]??`0`}${i}`),scale:i.length-r}}function r({coefficient:e,scale:t}){if(e===0n)return`0`;let n=e<0n?`-`:``,r=(e<0n?-e:e).toString();return t<=0?n+r+`0`.repeat(-t):(r=r.padStart(t+1,`0`),(n+r.slice(0,-t)+`.`+r.slice(-t)).replace(/0+$/,``).replace(/\\.$/,``))}function i(e){return r(n(e))}function a(e){if(typeof e!=`string`)return!1;try{return n(e),!0}catch{return!1}}function o(e){if(typeof e==`number`&&Number.isFinite(e))return i(String(e));if(typeof e==`string`)return i(e);throw Error(`Financial values must be finite decimals.`)}function s(e,r){let i=n(e),a=n(r),o=Math.max(i.scale,a.scale),s=i.coefficient*t**BigInt(o-i.scale),c=a.coefficient*t**BigInt(o-a.scale);return s<c?-1:+(s>c)}function c(e,t){try{return s(o(e),o(t))===0}catch{return!1}}let l=[`gross_receipts`,`cogs`,`operating_expense_excl_dna_interest_comp`,`officer_compensation`,`depreciation`,`amortization`,`interest_expense`,`section_179`,`k1_distribution`],u=[`ordinary_business_income`,`ebitda`,`proposed_monthly_payment`,`proposed_annual_payment`,`debt_service`,`fixed_charge_service`,`global_business_ebitda`,`global_outside_income`,`global_personal_debt`,`global_cash_flow`,`global_debt_service`,`dscr`,`fccr`,`global_dscr`,`net_working_capital_increase`,`uca_cash_flow`,`k1_ratio_difference`,`k1_history`],d=[`commercial_min_dscr`,`commercial_min_fccr`,`commercial_min_global_dscr`,`commercial_decline_dscr`,`commercial_decline_fccr`,`commercial_decline_global_dscr`,`commercial_min_uca_cash_flow`,`consumer_review_dti`,`consumer_decline_dti`,`consumer_min_credit_score`,`extraction_confidence_threshold`,`k1_stability_band`,`sba_global_dscr_floor_expansion`,`sba_global_dscr_floor_acquisition`];function f(e,t){if(!e)throw Error(`Incomplete or invalid assessment: ${t}`)}function p(e,t){return f(typeof e==`object`&&!!e&&!Array.isArray(e),t),e}function m(e,t){return f(Array.isArray(e),t),e}function h(e){return typeof e==`string`&&e.length>0}function g(e){return typeof e==`number`&&Number.isFinite(e)}function _(e){return typeof e==`string`||typeof e==`boolean`}function v(e){return typeof e==`string`&&/^\\d{4}-\\d{2}-\\d{2}$/.test(e)&&Number.isFinite(Date.parse(e))&&new Date(e).toISOString().slice(0,10)===e}function y(e){let t=p(e,`period`);return f(v(t.period_start)&&v(t.period_end)&&t.period_start<=t.period_end,`period dates`),t}let b=(e,t)=>e.period_start===t.period_start&&e.period_end===t.period_end;function x(e){let t=p(e,`decision`);f(t.vertical===`commercial`&&[`approve`,`review`,`decline`].includes(String(t.outcome))&&a(t.score)&&h(t.policy_version)&&h(t.disclaimer),`decision identity`);let n=m(t.factors,`factors`);f(n.length===5,`commercial factors`);let r=[`dscr`,`fccr`,`global_dscr`,`uca_positive`,`k1_history`];for(let e of n){let t=p(e,`factor`);f(h(t.name)&&r.includes(t.name)&&_(t.value)&&(t.raw_value===null||_(t.raw_value))&&a(t.weight)&&(t.threshold===null||_(t.threshold))&&(t.passed===null||typeof t.passed==`boolean`)&&h(t.source)&&[null,`>=`,`>`,`<`,`==`].includes(t.comparison_operator)&&(t.decline_threshold===null||a(t.decline_threshold))&&(t.decline_triggered===null||typeof t.decline_triggered==`boolean`),`factor fields`)}f(new Set(n.map(e=>p(e,`factor`).name)).size===5,`unique factors`);for(let e of m(t.reasons,`reasons`)){let t=p(e,`reason`);f(h(t.code)&&h(t.factor)&&h(t.message)&&_(t.value),`reason fields`)}return t}function S(e){let t=p(e,`normalized input`);f(t.schema_version===`commercial-assessment-v2`&&v(t.assessment_as_of)&&h(t.borrower_name)&&h(t.geography),`dated identity`);let n=p(t.units,`units`);f(n.currency===`USD`&&n.monetary_unit===`dollars`&&n.annual_rate_unit===`decimal_nominal`,`units`);let r=m(t.years,`years`);f(r.length>=1&&r.length<=10,`year count`);let i=``;for(let e of r){let n=p(e,`year`),r=y(n);f(r.period_start>i&&r.period_end<=t.assessment_as_of,`year order`),i=r.period_end;for(let e of l)f(a(n[e]),`year ${e}`)}let o=(e,t)=>{let n=p(e,`assumption`);for(let e of t)f(a(n[e]),e);return n};o(t.existing_debt,[`cpltd_annual`,`operating_lease_annual`]);let s=o(t.proposed_loan,[`amount`,`annual_rate`]);f(Number.isSafeInteger(s.term_months)&&s.rate_type===`fixed`&&s.repayment_type===`fully_amortizing`&&s.payment_frequency===`monthly`,`loan convention`);let c=o(t.working_capital,[`ar_increase`,`inventory_increase`,`ap_increase`,`cash_taxes_paid`]);f(b(y(c),y(r[r.length-1])),`working capital period`);for(let e of m(t.guarantors,`guarantors`))f(h(o(e,[`ownership_percentage`,`wages`,`interest_dividend_income`,`mortgage_pi_annual`,`auto_loan_annual`,`credit_card_min_annual`]).name),`guarantor name`);return t}function C(e){let t=p(e,`metric`);return f(h(t.fact_id)&&h(t.unit)&&(t.display_precision===null||Number.isInteger(t.display_precision)&&Number(t.display_precision)>=0&&Number(t.display_precision)<=30)&&(t.explanation===null||h(t.explanation)),`metric fields`),f(t.status===`available`?a(t.raw_value)||t.unit===`category`&&h(t.raw_value):t.status===`not_applicable`&&t.raw_value===null&&h(t.explanation),`metric status/value`),f(t.status===`not_applicable`?t.reported_value===null:t.unit===`category`?t.reported_value===t.raw_value:a(t.reported_value),`reported metric value`),t}function w(e){let t=p(e,`assessment`);f(t.schema_version===`commercial-assessment-v2`&&t.calculation_version===`commercial-calculation-v2`&&t.serialization_version===`assessment-json-v2`&&t.coverage_basis===`current_pro_forma`&&h(t.disclaimer),`versions`);let n=S(t.normalized_input),r=n.years[n.years.length-1];f(b(y(t.selected_period),r)&&t.assumptions_as_of===n.assessment_as_of,`selected period`);let i=m(t.historical_spread,`spread`);f(i.length===n.years.length,`spread length`);let o=[];i.forEach((e,t)=>{let r=p(e,`historical period`);f(b(y(r),n.years[t])&&b(y(r.financials),n.years[t]),`historical period correspondence`);let i=p(r.financials,`historical financials`);for(let e of l)f(i[e]===n.years[t][e],`historical inputs`);let s=p(r.reported_financials,`reported financials`);f(b(y(s),n.years[t]),`reported period`);for(let e of l)f(a(s[e])&&/^-?\\d+\\.\\d{2}$/.test(s[e]),`reported source amount`);for(let e of[`gross_profit`,`ordinary_business_income`,`ebitda`,`k1_distribution_ratio`])o.push(C(r[e]))});let s=p(t.current_facts,`facts`);for(let e of u){let t=C(s[e]),r=[`ordinary_business_income`,`ebitda`].includes(e)?`years.${n.years.length-1}.${e}`:`current.${e}`;f(t.fact_id===r,`fact identity`),f(e===`k1_history`?t.status===`available`&&[`stable`,`unstable`,`insufficient_history`].includes(String(t.raw_value)):t.raw_value===null||a(t.raw_value),`fact type`),o.push(t)}let c=m(t.guarantor_contributions,`contributions`);f(c.length===n.guarantors.length,`contributions length`),c.forEach((e,t)=>{let r=p(e,`contribution`);f(r.guarantor_index===t&&r.name===n.guarantors[t].name,`contribution identity`);for(let e of[`business_ebitda`,`outside_income`,`personal_debt`])o.push(C(r[e]))});let _=m(t.k1_history_periods,`history periods`).map(y);f(_.length>=1&&_.length<=2&&b(_[_.length-1],r)&&_.every(e=>n.years.some(t=>b(e,t))),`history periods`);let w=p(t.policy_snapshot,`policy`);f(h(w.version)&&v(w.sba_sop_8_effective)&&v(w.sba_sop_8_1_effective),`policy identity`);for(let e of d)f(e===`consumer_min_credit_score`?Number.isSafeInteger(w[e]):a(w[e]),`policy ${e}`);f(m(w.consumer_required_atr_fields,`ATR fields`).every(h),`ATR fields`);let T=x(t.decision);f(T.policy_version===w.version,`decision policy`);let E=m(t.calculation_trace,`trace`);f(E.length>0,`trace rows`);let D=/* @__PURE__ */ new Map;for(let e of E){let t=p(e,`trace row`),n=C(t);f(h(t.definition_id)&&h(t.expression)&&!D.has(n.fact_id),`trace identity`),D.set(n.fact_id,n);for(let e of m(t.operands,`operands`)){let t=p(e,`operand`);f([`input`,`fact`,`policy`].includes(String(t.reference_type))&&h(t.reference)&&h(t.unit)&&(t.raw_value===null||g(t.raw_value)||typeof t.raw_value==`string`),`operand fields`),f(t.reported_value===null||a(t.reported_value)||Number.isSafeInteger(t.reported_value),`reported operand`)}}for(let e of E){let t=p(e,`trace row`);for(let e of m(t.operands,`operands`)){let t=p(e,`operand`);if(t.reference_type===`fact`){let e=D.get(String(t.reference));f(e&&e.raw_value===t.raw_value&&e.unit===t.unit,`referenced fact`)}else{let e=String(t.reference).split(`/`).slice(1),r=t.reference_type===`policy`?{policy_snapshot:w}:n;for(let t of e)f(typeof r==`object`&&!!r&&Object.prototype.hasOwnProperty.call(r,t),`operand input path`),r=r[t];f(r===t.raw_value,`operand input value`)}}}for(let e of o){let t=D.get(e.fact_id);f(t&&t.raw_value===e.raw_value&&t.reported_value===e.reported_value&&t.status===e.status&&t.unit===e.unit,`fact/trace correspondence`)}for(let e of T.factors){let t=e.name===`uca_positive`?`uca_cash_flow`:e.name;f(e.raw_value===C(s[t]).raw_value,`factor/fact correspondence`)}let O=p(t.fingerprint,`fingerprint`);return f(O.algorithm===`sha256`&&typeof O.value==`string`&&/^[0-9a-f]{64}$/.test(O.value)&&O.content===`normalized_input+policy_snapshot+calculation_version+schema_version+serialization_version`,`fingerprint`),t}function T(e,t){if(!e)throw Error(`Invalid saved-case response or command: ${t}.`)}function E(e,t){return T(typeof e==`object`&&!!e&&!Array.isArray(e),t),e}let D=e=>typeof e==`number`&&Number.isFinite(e),O=e=>typeof e==`string`,k=e=>O(e)&&/^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/.test(e),A=e=>O(e)&&/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(e),j=e=>Number.isSafeInteger(e)&&Number(e)>=1,M=e=>O(e)&&/^[0-9a-f]{64}$/.test(e),N=e=>O(e)&&/^\\d{4}-\\d{2}-\\d{2}$/.test(e)&&Number.isFinite(Date.parse(e))&&new Date(e).toISOString().slice(0,10)===e,P=e=>O(e)&&/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?(?:Z|\\+00:00)$/.test(e)&&N(e.slice(0,10))&&Number.isFinite(Date.parse(e));function F(e,t=0,n=64){if(T(t<n,`JSON depth`),!(e===null||O(e)||typeof e==`boolean`)){if(typeof e==`number`){T(D(e),`finite JSON number`);return}T(typeof e==`object`,`JSON value`);for(let r of Object.values(e))F(r,t+1,n)}}function I(e,t){if(e===t)return!0;if(!e||!t||typeof e!=`object`||typeof t!=`object`||Array.isArray(e)!==Array.isArray(t))return!1;let n=Object.keys(e),r=Object.keys(t);return n.length===r.length&&n.every(n=>Object.prototype.hasOwnProperty.call(t,n)&&I(e[n],t[n]))}function ee(e){return T(O(e)&&[...e].length<=2e3&&e.trim().length>0,`nonblank rationale, at most 2,000 characters`),e.trim()}let L={years:l,existing_debt:[`cpltd_annual`,`operating_lease_annual`],proposed_loan:[`amount`,`annual_rate`,`term_months`],guarantors:[`ownership_percentage`,`wages`,`interest_dividend_income`,`mortgage_pi_annual`,`auto_loan_annual`,`credit_card_min_annual`],working_capital:[`ar_increase`,`inventory_increase`,`ap_increase`,`cash_taxes_paid`]};function R(e){T(O(e)&&e.length<=160&&e.startsWith(`/`),`numeric field path`);let t=e.slice(1).split(`/`),n=t[0],r=t[t.length-1];return T(Object.prototype.hasOwnProperty.call(L,n)&&L[n].includes(r),`numeric field allowlist`),T([`years`,`guarantors`].includes(n)?t.length===3&&/^(?:0|[1-9][0-9]{0,8})$/.test(t[1]):t.length===2,`field index`),t}function te(e,t){let n=R(t),r=n[0],i=n[n.length-1],o=e,s,c={basis:`current_assumptions`,assessment_as_of:String(o.assessment_as_of),period_start:null,period_end:null,guarantor_index:null,guarantor_name:null,unit:`USD dollars`};if(n.length===3){let e=o[r];T(Array.isArray(e)&&Number(n[1])<e.length,`existing input index`),s=E(e[Number(n[1])],`input row`),r===`guarantors`?(c.guarantor_index=Number(n[1]),c.guarantor_name=String(s.name)):c.basis=`annual_financials`}else s=E(o[r],`input group`),r===`working_capital`&&(c.basis=`working_capital`);[`annual_financials`,`working_capital`].includes(c.basis)&&(T(N(s.period_start)&&N(s.period_end),`input dates`),c.period_start=s.period_start,c.period_end=s.period_end),[`annual_rate`,`ownership_percentage`].includes(i)&&(c.unit=`decimal fraction`),i===`term_months`&&(c.unit=`months`);let l=s[i];return T(i===`term_months`?Number.isSafeInteger(l):a(l)||D(l),`numeric input`),{value:l,context:c}}function ne(e,t){let n=E(e,`snapshot`);F(n),T(n.storage_serialization_version===`case-json-v1`&&A(n.case_id)&&A(n.run_id)&&j(n.revision),`snapshot identity`),T(n.parent_revision===(n.revision===1?null:n.revision-1)&&P(n.recorded_at),`snapshot parent/time`),T(M(n.input_hash)&&M(n.payload_hash),`snapshot hashes`),T(t===`\"case-json-v1:${n.case_id}:${n.revision}:${n.payload_hash}\"`,`strong ETag`);let r=E(n.normalized_input,`stored input`),i=E(n.assessment,`stored assessment`);T(O(i.schema_version)&&O(i.calculation_version)&&O(i.serialization_version),`assessment versions`);let o=i.schema_version===`commercial-assessment-v2`&&i.calculation_version===`commercial-calculation-v2`&&i.serialization_version===`assessment-json-v2`,s=o?w(i):null;s&&T(I(r,s.normalized_input),`outer normalized input`);let l=E(n.event,`event`),u=E(l.context,`event context`);if(T(l.case_id===n.case_id&&l.revision===n.revision&&l.run_id===n.run_id&&l.recorded_at===n.recorded_at&&k(l.actor),`event identity`),ee(l.rationale),T(N(u.assessment_as_of),`event as-of`),T(u.period_start===null&&u.period_end===null||N(u.period_start)&&N(u.period_end)&&u.period_start<=u.period_end,`event period`),T(u.guarantor_index===null&&u.guarantor_name===null||Number.isSafeInteger(u.guarantor_index)&&Number(u.guarantor_index)>=0&&O(u.guarantor_name),`event guarantor`),n.revision===1)T(l.kind===`creation`&&l.field_path===null&&l.before===null&&l.after===null&&u.basis===`case_creation`&&u.unit===null&&u.period_start===null&&u.guarantor_index===null,`creation event`);else if(T(l.kind===`edit`&&(a(l.before)||D(l.before))&&(a(l.after)||D(l.after))&&!c(l.before,l.after)&&O(l.field_path),`edit event`),R(l.field_path),T([`annual_financials`,`working_capital`,`current_assumptions`].includes(String(u.basis))&&[`USD dollars`,`decimal fraction`,`months`].includes(String(u.unit)),`edit context`),s){let e=te(s.normalized_input,l.field_path);T(e.value===l.after&&I(e.context,u),`server-derived edit context`)}return s&&T(u.assessment_as_of===s.normalized_input.assessment_as_of,`event assumptions date`),z(n.recording),{snapshot:n,etag:t,assessment:s,compatibility:o?null:`Stored assessment definition: ${i.schema_version} / ${i.calculation_version} / ${i.serialization_version}. Original JSON is available; typed display and editing are unavailable.`}}function z(e){let t=E(e,`recording metadata`),n=E(t.packages,`installed packages`);T(O(t.python_version)&&O(t.sqlite_version)&&M(t.dependency_baseline_sha256),`recording versions`);for(let e of[`fastapi`,`pydantic`,`starlette`,`uvicorn`])T(O(n[e])&&n[e].length>0,`installed ${e}`);return T(t.source_status===`development_unverified`?t.source_revision===null:t.source_status===`build_reported`&&O(t.source_revision)&&/^[0-9a-f]{40}$/.test(t.source_revision),`recorded source`),t}let B=[`revenue_change`,`cogs_change`,`operating_expense_change`,`proposed_rate_change_bps`],V=`commercial-scenario-preview-v2`;function H(e,t){T(Object.keys(e).length===t.length&&t.every(t=>Object.prototype.hasOwnProperty.call(e,t)),`scenario fields`)}function U(e,t){T(O(e),`scenario text`);let n=e.replace(/^[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+|[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+$/gu,``);return T(n.length>0&&[...n].length<=t,`nonblank scenario text, at most ${t} characters`),n}function W(e,t=!1){let n=E(e,`scenario`),r=E(n.assumptions,`shocks`);T(O(n.scenario_key)&&/^[A-Za-z0-9_-]{1,64}$/.test(n.scenario_key),`scenario key`),H(r,B);for(let e of B)T((a(r[e])||t&&D(r[e]))&&(e===`proposed_rate_change_bps`||s(o(r[e]),`-1`)>=0),`finite explicit shock`);return{scenario_key:n.scenario_key,name:U(n.name,120),rationale:U(n.rationale,2e3),assumptions:r}}function G(e){let t=E(e,`scenario command`),n=[`commercial-scenario-comparison-create-v1`,`commercial-scenario-comparison-create-v2`].includes(String(t.schema_version)),r=String(t.schema_version).endsWith(`-v1`);T(n||t.schema_version===V||t.schema_version===`commercial-scenario-preview-v1`,`scenario command version`),H(t,[`schema_version`,`baseline_run_id`,`scenarios`,...n?[`expected_preview_fingerprint`]:[]]),T(A(t.baseline_run_id)&&String(t.baseline_run_id).toLowerCase()===t.baseline_run_id,`canonical baseline run`),n&&T(M(t.expected_preview_fingerprint),`reviewed preview fingerprint`),T(Array.isArray(t.scenarios)&&t.scenarios.length>=1&&t.scenarios.length<=10,`1–10 scenarios`);let i=/* @__PURE__ */ new Set;for(let e of t.scenarios){H(E(e,`scenario command row`),[`scenario_key`,`name`,`rationale`,`assumptions`]);let t=W(e,r);T(I(t,e)&&!i.has(t.scenario_key),`normalized unique scenario command`),i.add(t.scenario_key)}return t}function K(e){let t=E(e.baseline,`preview baseline`);return T(Array.isArray(e.scenarios),`preview scenarios`),G({schema_version:e.schema_version,baseline_run_id:t.run_id,scenarios:e.scenarios.map(t=>W(t,e.schema_version===`commercial-scenario-preview-v1`))})}function q(e,t){return T(Array.isArray(e),t),e}function J(e){return e===null||a(e)}function Y(e){return A(e)&&e.toLowerCase()===e}function X(e){T((e.schema_version===V&&e.serialization_version===`scenario-preview-json-v2`||e.schema_version===`commercial-scenario-preview-v1`&&e.serialization_version===`scenario-preview-json-v1`)&&e.persisted===!1&&O(e.scenario_definition_version)&&O(e.calculation_version),`preview envelope versions`);let t=E(e.baseline,`baseline evidence`);T(Y(t.case_id)&&Y(t.run_id)&&j(t.revision)&&M(t.input_hash)&&M(t.payload_hash),`baseline evidence identity`);let n=E(t.assessment,`original assessment`),r=E(e.fingerprint,`preview fingerprint`);T(r.algorithm===`sha256`&&M(r.value)&&r.content===`baseline_identity+payload_hash+normalized_command+policy_snapshot+versions`,`preview fingerprint`);let i=E(e.selected_period,`selected operating period`);T(N(i.period_start)&&N(i.period_end)&&i.period_start<=i.period_end&&N(e.assumptions_as_of)&&i.period_end<=e.assumptions_as_of,`preview dates`),T(I(e.selected_period,n.selected_period)&&e.assumptions_as_of===n.assumptions_as_of&&I(e.policy_snapshot,n.policy_snapshot),`baseline period and retained policy`);let a=E(n.normalized_input,`baseline input`);return T(I(e.units,a.units),`baseline units`),T(q(e.held_fixed_assumptions,`held fixed assumptions`).length>0&&e.held_fixed_assumptions.every(O)&&O(e.disclaimer),`preview explanation`),K(e),{b:t,a:n}}function re(e,t,n){let r=E(e,`scenario preview`);F(r,0,100);let{b:i,a}=X(r);T(r.schema_version===V&&r.scenario_definition_version===`commercial-scenario-definition-v2`&&r.calculation_version===`commercial-calculation-v2`,`supported live scenario definition`);let o=w(a);t&&T(i.case_id===t.snapshot.case_id&&i.revision===t.snapshot.revision&&i.run_id===t.snapshot.run_id&&i.input_hash===t.snapshot.input_hash&&i.payload_hash===t.snapshot.payload_hash&&I(o,t.snapshot.assessment),`selected original baseline`),n&&T(I(K(r),G(n)),`reviewed normalized command`);for(let e of r.scenarios)ie(e,r,o);return r}function ie(e,t,n){let r=E(e,`scenario result`),i=W(r);T(I({scenario_key:r.scenario_key,name:r.name,rationale:r.rationale,assumptions:r.assumptions},i)&&r.coverage_basis===`stressed_latest_period_current_pro_forma`,`normalized projection command/basis`);let o=E(r.projection_inputs,`projected inputs`),s=n.normalized_input;S({...s,years:[...s.years.slice(0,-1),o.operating],proposed_loan:o.proposed_loan,existing_debt:o.existing_debt,guarantors:o.guarantors,working_capital:o.working_capital});for(let e of[`existing_debt`,`guarantors`,`working_capital`])T(I(o[e],s[e]),`held-fixed projected inputs`);let c=E(o.operating,`projected operating`),d=E(o.proposed_loan,`projected loan`),f=s.years[s.years.length-1];for(let e of l)[`gross_receipts`,`cogs`,`operating_expense_excl_dna_interest_comp`].includes(e)||T(c[e]===f[e],`held-fixed financial lines`);T(c.period_start===f.period_start&&c.period_end===f.period_end,`projected period`);for(let e of Object.keys(s.proposed_loan))e!==`annual_rate`&&T(d[e]===s.proposed_loan[e],`held-fixed loan`);let p=E(r.current_facts,`projected facts`),m=[];for(let e of u){let t=C(p[e]),r=e===`k1_history`||e===`k1_ratio_difference`,i=r?`baseline.`+n.current_facts[e].fact_id:[`ordinary_business_income`,`ebitda`].includes(e)?`projection.operating.${e}`:`projection.current.${e}`;T(t.fact_id===i&&(r?I(t,{...n.current_facts[e],fact_id:i}):J(t.raw_value)),`projected fact identity/type/observed history`),m.push(t)}let h=q(r.guarantor_contributions,`projected guarantors`);T(h.length===s.guarantors.length,`guarantor count`),h.forEach((e,t)=>{let n=E(e,`guarantor contribution`);T(n.guarantor_index===t&&n.name===s.guarantors[t].name,`guarantor identity`);for(let e of[`business_ebitda`,`outside_income`,`personal_debt`]){let r=C(n[e]);T(r.fact_id===`projection.current.guarantors.${t}.${e}`&&J(r.raw_value),`projected guarantor fact`),m.push(r)}});let g=x(r.decision);T(g.policy_version===n.policy_snapshot.version,`retained decision policy`);let _=q(r.calculation_trace,`projection trace`),v=/* @__PURE__ */ new Map;for(let e of _){let t=E(e,`trace row`),n=C(t);T(O(t.definition_id)&&O(t.expression)&&!v.has(n.fact_id),`trace identity`),v.set(n.fact_id,n),q(t.operands,`trace operands`)}for(let e of n.calculation_trace){let t={...e,fact_id:`baseline.`+e.fact_id,operands:e.operands.map(e=>({...e,reference:e.reference_type===`fact`?`baseline.`+e.reference:e.reference_type===`input`?`/baseline/assessment/normalized_input`+e.reference:e.reference}))};T(I(v.get(t.fact_id),t),`retained observed trace identity`)}for(let e of _)for(let n of E(e,`trace row`).operands){let e=E(n,`operand`);if(T(O(e.reference)&&O(e.unit)&&(e.raw_value===null||D(e.raw_value)||O(e.raw_value)),`operand value`),e.reference_type===`fact`){let t=v.get(e.reference);T(t&&t.raw_value===e.raw_value&&t.unit===e.unit,`referenced scenario fact`)}else{T([`input`,`policy`].includes(String(e.reference_type))&&e.reference.startsWith(`/`),`operand reference`);let n={...r,baseline:t.baseline,policy_snapshot:t.policy_snapshot};for(let t of e.reference.slice(1).split(`/`)){let e=ae(n);T(Object.prototype.hasOwnProperty.call(e,t),`scenario operand path`),n=e[t]}T(n===e.raw_value,`scenario operand value`)}}for(let e of m){let t=v.get(e.fact_id);T(t&&[`fact_id`,`raw_value`,`reported_value`,`unit`,`display_precision`,`status`,`explanation`].every(n=>t[n]===e[n]),`fact/trace fields`)}let y=q(r.comparisons,`metric comparisons`);T(y.length===u.length-1,`comparison count`);let b=/* @__PURE__ */ new Set;for(let e of y){let t=E(e,`metric comparison`);T(O(t.metric)&&u.includes(t.metric)&&t.metric!==`k1_history`&&!b.has(t.metric),`compared metric identity`),b.add(t.metric);let r=n.current_facts[t.metric],i=C(p[t.metric]);T(t.baseline_fact_id===`baseline.`+r.fact_id&&t.projected_fact_id===i.fact_id&&t.baseline_value===r.raw_value&&t.projected_value===i.raw_value&&t.unit===i.unit&&J(t.delta),`comparison fact links`),T(r.raw_value===null||i.raw_value===null?t.delta===null&&O(t.delta_explanation):a(t.delta)&&t.delta_explanation===null,`comparison availability`);let o=g.factors.find(e=>e.name===(t.metric===`uca_cash_flow`?`uca_positive`:t.metric));if([`dscr`,`fccr`,`global_dscr`,`uca_cash_flow`].includes(t.metric)){let e=E(t.policy_headroom,`policy headroom`);T(o&&e.comparison_operator===o.comparison_operator&&e.approval_threshold===o.threshold&&e.decline_threshold===o.decline_threshold,`headroom policy`);for(let t of[`baseline_approval`,`projected_approval`,`baseline_decline`,`projected_decline`])T(J(e[t]),`finite headroom`)}else T(t.policy_headroom===null,`non-policy headroom`)}for(let e of g.factors){let t=e.name===`uca_positive`?`uca_cash_flow`:e.name,r=n.decision.factors.find(t=>t.name===e.name);T(e.raw_value===C(p[t]).raw_value&&r&&[`threshold`,`decline_threshold`,`comparison_operator`,`weight`,`source`].every(t=>e[t]===r[t]),`scenario factor fact and retained policy`),t===`k1_history`&&T(I(e,r),`held-fixed observed K-1 factor`)}let w=q(r.factor_changes,`factor changes`);T(w.length===g.factors.length,`factor change count`);let k=/* @__PURE__ */ new Set;for(let e of w){let t=E(e,`factor change`),r=n.decision.factors.find(e=>e.name===t.name),i=g.factors.find(e=>e.name===t.name);T(O(t.name)&&!k.has(t.name)&&r&&i&&I(t.baseline,r)&&I(t.projected,i)&&t.changed===!I(r,i)&&t.basis===(t.name===`k1_history`?`observed_history`:`projected_current`),`factor change links`),k.add(t.name),T(t.projected_fact_id===C(p[t.name===`uca_positive`?`uca_cash_flow`:t.name]).fact_id,`factor projected reference`)}let A=E(r.outcome_change,`outcome change`);T(A.baseline===n.decision.outcome&&A.projected===g.outcome&&A.changed===(A.baseline!==A.projected),`outcome change links`);let j=q(r.reason_changes,`reason changes`),M=Array.from(new Set([...n.decision.reasons,...g.reasons].map(e=>e.code))).filter(e=>!I(n.decision.reasons.find(t=>t.code===e)??null,g.reasons.find(t=>t.code===e)??null));T(j.length===M.length,`reason changes count`);let N=/* @__PURE__ */ new Set;for(let e of j){let t=E(e,`reason change`),r=n.decision.reasons.find(e=>e.code===t.code)??null,i=g.reasons.find(e=>e.code===t.code)??null;T(O(t.code)&&M.includes(t.code)&&!N.has(t.code)&&I(t.baseline,r)&&I(t.projected,i)&&t.change===(r===null?`added`:i===null?`removed`:`changed`),`reason change links`),N.add(t.code)}}function ae(e){return T(typeof e==`object`&&!!e,`operand path object`),e}function oe(e,t){let n=E(e,`original comparison`);F(n,0,100),T([`commercial-scenario-comparison-v1`,`commercial-scenario-comparison-v2`].includes(String(n.schema_version))&&n.storage_serialization_version===`scenario-comparison-json-v1`&&n.persisted===!0&&Y(n.comparison_id)&&Y(n.case_id)&&Y(n.baseline_run_id)&&j(n.baseline_revision)&&M(n.payload_hash),`comparison storage identity`),T(P(n.recorded_at)&&/^\\d{4}-\\d\\d-\\d\\dT(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{6}\\+00:00$/.test(n.recorded_at)&&k(n.actor),`comparison recording time/actor`),z(n.recording),T(t===`\"scenario-comparison-json-v1:${n.case_id}:${n.comparison_id}:${n.payload_hash}\"`,`comparison ETag`);let r=E(n.preview,`original preview`),{b:i,a}=X(r);T(i.case_id===n.case_id&&i.revision===n.baseline_revision&&i.run_id===n.baseline_run_id,`inner/outer original baseline`);let o=r.schema_version===V&&r.scenario_definition_version===`commercial-scenario-definition-v2`&&r.calculation_version===`commercial-calculation-v2`&&a.schema_version===`commercial-assessment-v2`&&a.calculation_version===`commercial-calculation-v2`&&a.serialization_version===`assessment-json-v2`;return{record:n,etag:t,preview:o?re(r):null,compatibility:o?null:`Original definition: ${r.scenario_definition_version} / ${r.calculation_version}; baseline ${a.schema_version} / ${a.calculation_version} / ${a.serialization_version}. Original JSON remains available; typed projection and new preview are unavailable.`}}function se(e,t){return`spreadline-case-${e.case_id}-r${e.revision}-${e.run_id}${t?`-comparison-${t.comparison_id}`:``}.json`}function Z(e,t){let n=/* @__PURE__ */ new Set;function r(e,i){if(T(i<t,`export source JSON depth`),e===null||typeof e==`string`||typeof e==`boolean`)return e;if(typeof e==`number`)return T(Number.isFinite(e),`export finite number`),e;T(typeof e==`object`&&!!e,`export JSON value`);let a=e;T(!n.has(a),`export JSON cycle`),T(Object.getOwnPropertySymbols(a).length===0,`export JSON symbol keys`);let o=Array.isArray(a);T(o||Object.getPrototypeOf(a)===Object.prototype||Object.getPrototypeOf(a)===null,`export plain JSON object`);let s=Object.getOwnPropertyNames(a).filter(e=>!o||e!==`length`);o&&T(s.length===a.length&&s.every((e,t)=>e===String(t)),`export dense JSON array`),n.add(a);let c=o?[]:Object.create(null);for(let e of s){let t=Object.getOwnPropertyDescriptor(a,e);T(t.enumerable&&`value`in t,`export plain JSON property`),c[e]=r(t.value,i+1)}return n.delete(a),Object.freeze(c)}return r(e,0)}function ce(e,t){let n=e.snapshot,r=t.record,i=E(r.preview.baseline,`export comparison baseline`);T(r.case_id===n.case_id&&r.baseline_revision===n.revision&&r.baseline_run_id===n.run_id&&i.case_id===n.case_id&&i.revision===n.revision&&i.run_id===n.run_id&&i.input_hash===n.input_hash&&i.payload_hash===n.payload_hash&&I(i.assessment,n.assessment),`retained comparison must match the selected original case, revision, run, hashes and full baseline assessment`)}function le(e,t){let n=Z(e.snapshot,64),r=ne(n,e.etag),i=t===null?null:oe(Z(t.record,100),t.etag);i&&ce(r,i);let a=se(n,i?.record??null);return{package:Object.freeze({schema_version:`spreadline-review-package-v1`,serialization_version:`review-package-json-v1`,scope:`saved_case_revision`,case:Object.freeze({etag:r.etag,snapshot:n}),comparison:i?Object.freeze({etag:i.etag,record:i.record}):null,provenance:Object.freeze({representation:`browser_parsed_json`,actor_status:`prototype_unverified`,integrity_status:`recorded_hashes_not_verified_by_export`}),disclaimer:`Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.`}),filename:a,view:r,comparison:i}}function*Q(e){yield`\"`;for(let t=0;t<e.length;){let n=Math.min(t+4096,e.length);n<e.length&&e.charCodeAt(n-1)>=55296&&e.charCodeAt(n-1)<=56319&&e.charCodeAt(n)>=56320&&e.charCodeAt(n)<=57343&&n--,yield JSON.stringify(e.slice(t,n)).slice(1,-1),t=n}yield`\"`}function*$(e,t=0,n=/* @__PURE__ */ new Set){if(T(t<104,`export envelope JSON depth`),typeof e==`string`){yield*Q(e);return}if(e===null||typeof e==`boolean`){yield String(e);return}if(typeof e==`number`){T(Number.isFinite(e),`export finite number`),yield JSON.stringify(e);return}T(typeof e==`object`&&!!e,`export JSON value`);let r=e,i=Array.isArray(r);T(!n.has(r),`export JSON cycle`),T(Object.getOwnPropertySymbols(r).length===0&&(i||Object.getPrototypeOf(r)===Object.prototype||Object.getPrototypeOf(r)===null),`export plain JSON object`);let a=Object.getOwnPropertyNames(r).filter(e=>!i||e!==`length`);i?T(a.length===r.length&&a.every((e,t)=>e===String(t)),`export dense JSON array`):a.sort(),n.add(r),yield i?`[`:`{`;for(let e=0;e<a.length;e++){let o=a[e],s=Object.getOwnPropertyDescriptor(r,o);T(s.enumerable&&`value`in s,`export plain JSON property`),yield`${e?`,`:``}\\n${`  `.repeat(t+1)}`,i||(yield*Q(o),yield`: `),yield*$(s.value,t+1,n)}a.length&&(yield`\\n${`  `.repeat(t)}`),yield i?`]`:`}`,n.delete(r)}async function ue(e,t){let n=new TextEncoder,r=[],i=0,a=``,o=0;function s(){if(t?.aborted)throw Error(`Export preparation cancelled.`)}function c(){s();let e=n.encode(a);if(i+e.byteLength>16777216)throw Error(`The complete review package exceeds 16 MiB. No file was prepared. Choose a case-only package explicitly, or a smaller original.`);i+=e.byteLength,o+=e.byteLength,r.push(e),a=``}s();for(let t of $(e))a+=t,a.length>=8192&&c(),o>=131072&&(await new Promise(e=>setTimeout(e,0)),o=0,s());return a+=`\n`,c(),s(),{chunks:r,size:i}}self.onmessage=async e=>{try{let t=le(e.data.view,e.data.comparison),{chunks:n,size:r}=await ue(t.package),i=n.map(e=>e.buffer);self.postMessage({filename:t.filename,buffers:i,size:r},{transfer:i})}catch(e){self.postMessage({error:e instanceof Error?e.message:`Unable to prepare the original review package.`})}}})();", Nn = typeof self < "u" && self.Blob && new Blob(["(self.URL || self.webkitURL).revokeObjectURL(self.location.href);", Mn], { type: "text/javascript;charset=utf-8" });
+function Pn(e) {
+	let t;
+	try {
+		if (t = Nn && (self.URL || self.webkitURL).createObjectURL(Nn), !t) throw "";
+		let n = new Worker(t, { name: e?.name });
+		return n.addEventListener("error", () => {
+			(self.URL || self.webkitURL).revokeObjectURL(t);
+		}), n;
+	} catch {
+		return new Worker("data:text/javascript;charset=utf-8," + encodeURIComponent(Mn), { name: e?.name });
+	}
+}
+//#endregion
+//#region src/useReviewDownload.ts
+function Fn(e) {
+	let t = (0, x.useRef)(e);
+	t.current = e;
+	let n = (0, x.useRef)(null), r = (0, x.useRef)(null), i = (0, x.useRef)(!0), [a, o] = (0, x.useState)({
+		scope: e,
+		busy: !1,
+		error: "",
+		file: null
+	});
+	function s(e) {
+		n.current && (e === void 0 || n.current.scope === e) && (n.current.worker.terminate(), n.current = null), r.current && (e === void 0 || r.current.scope === e) && (URL.revokeObjectURL(r.current.url), r.current = null);
+	}
+	(0, x.useEffect)(() => () => s(e), [e]), (0, x.useEffect)(() => (i.current = !0, () => {
+		i.current = !1, s();
+	}), []);
+	function c(a, c) {
+		if (n.current?.scope === e) return;
+		s(), o({
+			scope: e,
+			busy: !0,
+			error: "",
+			file: null
+		});
+		let l, u = An(a.snapshot, c?.record ?? null);
+		function d() {
+			return i.current && t.current === e && n.current === l;
+		}
+		function f(t) {
+			d() && (l.worker.terminate(), n.current = null, o({
+				scope: e,
+				busy: !1,
+				error: t,
+				file: null
+			}));
+		}
+		try {
+			l = {
+				scope: e,
+				worker: new Pn()
+			}, n.current = l, l.worker.onmessage = (t) => {
+				if (!d()) return;
+				if (!t.data || typeof t.data != "object" || Array.isArray(t.data)) {
+					f("Export preparation returned an invalid file. No download was offered.");
+					return;
+				}
+				let i = t.data;
+				if ("error" in i) {
+					f(typeof i.error == "string" ? i.error : "Export preparation returned an invalid file. No download was offered.");
+					return;
+				}
+				if (i.filename !== u || typeof i.size != "number" || !Number.isSafeInteger(i.size) || i.size < 1 || i.size > 16777216 || !Array.isArray(i.buffers) || !i.buffers.every((e) => e instanceof ArrayBuffer) || i.buffers.reduce((e, t) => e + t.byteLength, 0) !== i.size) {
+					f("Export preparation returned an invalid file. No download was offered.");
+					return;
+				}
+				try {
+					let t = URL.createObjectURL(new Blob(i.buffers, { type: "application/json;charset=utf-8" })), a = {
+						scope: e,
+						url: t,
+						filename: i.filename,
+						size: i.size
+					};
+					r.current = a, l.worker.terminate(), n.current = null, o({
+						scope: e,
+						busy: !1,
+						error: "",
+						file: a
+					});
+					let s = document.createElement("a");
+					s.href = t, s.download = a.filename, document.body.appendChild(s), s.click(), s.remove();
+				} catch {
+					s(), o({
+						scope: e,
+						busy: !1,
+						error: "The browser could not offer the prepared file. Try an explicit download again.",
+						file: null
+					});
+				}
+			}, l.worker.onerror = (e) => {
+				e.preventDefault(), f("The browser could not prepare this review package. No file was offered.");
+			}, l.worker.onmessageerror = (e) => {
+				e.preventDefault(), f("Export preparation returned an invalid file. No download was offered.");
+			}, l.worker.postMessage({
+				view: {
+					snapshot: a.snapshot,
+					etag: a.etag
+				},
+				comparison: c ? {
+					record: c.record,
+					etag: c.etag
+				} : null
+			});
+		} catch {
+			s(), o({
+				scope: e,
+				busy: !1,
+				error: "The browser could not start export preparation. No file was offered.",
+				file: null
+			});
+		}
+	}
+	return {
+		...a.scope === e ? a : {
+			busy: !1,
+			error: "",
+			file: null
+		},
+		prepare: c
+	};
+}
+//#endregion
+//#region src/Review.tsx
+function In(e) {
+	return typeof e == "string" ? e.length > 240 ? `${e.slice(0, 240)}…` : e : "Unavailable";
+}
+function Ln({ view: e, selection: t, headRevision: n, sourceScope: r, original: i, pending: a, onOpenBaseline: o }) {
+	let s = i.loading || i.error ? null : i.view, c = `${r}:${e?.etag ?? ""}:${i.context}:${i.loading}:${s?.etag ?? ""}:${i.error}`, [l, u] = (0, x.useState)({
+		source: c,
+		included: !1
+	}), d = l.source === c && l.included, f = Fn(`${c}:${d}`), p = !1;
+	if (e && s) try {
+		jn(e, s), p = !0;
+	} catch {}
+	let m = e?.assessment, h = e?.snapshot, g = s?.record, _ = s?.preview?.scenarios.length ?? (Array.isArray(g?.preview.scenarios) ? g.preview.scenarios.length : 0);
+	return /* @__PURE__ */ (0, B.jsxs)("div", {
+		className: "reviewWorkspace",
+		children: [
+			/* @__PURE__ */ (0, B.jsxs)("section", {
+				className: "panel reviewIdentity",
+				children: [
+					/* @__PURE__ */ (0, B.jsx)("p", {
+						className: "eyebrow",
+						children: "ORIGINAL RECORD · REVIEW PACKAGE"
+					}),
+					/* @__PURE__ */ (0, B.jsx)("h2", { children: "Saved-run review" }),
+					h ? /* @__PURE__ */ (0, B.jsxs)(B.Fragment, { children: [
+						/* @__PURE__ */ (0, B.jsx)("h3", { children: In(h.normalized_input.borrower_name) }),
+						/* @__PURE__ */ (0, B.jsxs)("dl", {
+							className: "reviewFacts",
+							children: [
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Case" }), /* @__PURE__ */ (0, B.jsx)("dd", { children: h.case_id })] }),
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Selected revision / run" }), /* @__PURE__ */ (0, B.jsxs)("dd", { children: [
+									h.revision,
+									" / ",
+									h.run_id
+								] })] }),
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Recorded at" }), /* @__PURE__ */ (0, B.jsx)("dd", { children: h.recorded_at })] }),
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Selection" }), /* @__PURE__ */ (0, B.jsxs)("dd", { children: [t === "latest" ? "Latest when fetched" : "Original selected revision", n === null ? " · current head not confirmed" : ` · known head ${n}`] })] }),
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Financial definitions" }), /* @__PURE__ */ (0, B.jsxs)("dd", { children: [
+									In(h.assessment.schema_version),
+									" / ",
+									In(h.assessment.calculation_version),
+									" / ",
+									In(h.assessment.serialization_version)
+								] })] }),
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Recording" }), /* @__PURE__ */ (0, B.jsxs)("dd", { children: ["Actor: prototype demo, unverified · ", h.recording.source_status === "build_reported" ? "build revision reported, unverified" : "development build, unverified"] })] })
+							]
+						}),
+						m ? /* @__PURE__ */ (0, B.jsxs)(B.Fragment, { children: [
+							/* @__PURE__ */ (0, B.jsxs)("p", { children: [
+								"Operating period: ",
+								m.selected_period.period_start,
+								" – ",
+								m.selected_period.period_end,
+								" · assumptions as of ",
+								m.assumptions_as_of,
+								" · USD dollars."
+							] }),
+							/* @__PURE__ */ (0, B.jsxs)("p", { children: [
+								"Original outcome: ",
+								/* @__PURE__ */ (0, B.jsx)("strong", { children: m.decision.outcome.toUpperCase() }),
+								" · policy ",
+								In(m.policy_snapshot.version),
+								". Current pro forma coverage; observed history remains separate."
+							] }),
+							/* @__PURE__ */ (0, B.jsx)("div", {
+								className: "reviewMetrics",
+								children: [
+									["EBITDA", m.current_facts.ebitda],
+									["UCA cash flow", m.current_facts.uca_cash_flow],
+									["DSCR", m.current_facts.dscr],
+									["FCCR", m.current_facts.fccr],
+									["Global DSCR", m.current_facts.global_dscr],
+									["Observed K-1 history", m.current_facts.k1_history]
+								].map(([e, t]) => /* @__PURE__ */ (0, B.jsxs)("div", { children: [
+									/* @__PURE__ */ (0, B.jsx)("span", { children: e }),
+									/* @__PURE__ */ (0, B.jsx)("strong", { children: Be(t) }),
+									t.explanation && /* @__PURE__ */ (0, B.jsx)("small", { children: In(t.explanation) })
+								] }, e))
+							}),
+							/* @__PURE__ */ (0, B.jsxs)("p", { children: [
+								"Recorded reasons: ",
+								m.decision.reasons.length,
+								". Inspect factors and calculations in the existing Details and Memo views."
+							] })
+						] }) : /* @__PURE__ */ (0, B.jsx)("p", {
+							className: "warning",
+							children: "Original JSON only. These financial definitions are not supported for typed conclusions. The guarded original can still be downloaded."
+						})
+					] }) : /* @__PURE__ */ (0, B.jsx)("p", { children: "Save or open a dated commercial revision to review and export its original evidence. Unsaved inputs, legacy decisions and incomplete case transitions cannot supply this package." })
+				]
+			}),
+			/* @__PURE__ */ (0, B.jsxs)("section", {
+				className: "panel reviewComparison",
+				children: [
+					/* @__PURE__ */ (0, B.jsx)("h2", { children: "Retained comparison" }),
+					i.loading ? /* @__PURE__ */ (0, B.jsx)("p", {
+						role: "status",
+						children: "Loading the selected original comparison…"
+					}) : i.error ? /* @__PURE__ */ (0, B.jsx)("p", {
+						role: "alert",
+						children: i.error
+					}) : g ? /* @__PURE__ */ (0, B.jsxs)(B.Fragment, { children: [
+						/* @__PURE__ */ (0, B.jsxs)("dl", {
+							className: "reviewFacts",
+							children: [
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Comparison" }), /* @__PURE__ */ (0, B.jsx)("dd", { children: g.comparison_id })] }),
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Baseline revision / run" }), /* @__PURE__ */ (0, B.jsxs)("dd", { children: [
+									g.baseline_revision,
+									" / ",
+									g.baseline_run_id
+								] })] }),
+								/* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("dt", { children: "Recorded at" }), /* @__PURE__ */ (0, B.jsx)("dd", { children: g.recorded_at })] })
+							]
+						}),
+						/* @__PURE__ */ (0, B.jsxs)("p", { children: [
+							"Full retained batch: ",
+							_,
+							" ",
+							_ === 1 ? "scenario" : "scenarios",
+							" in original order."
+						] }),
+						/* @__PURE__ */ (0, B.jsx)("ul", { children: (s?.preview?.scenarios ?? g.preview.scenarios).map((e, t) => /* @__PURE__ */ (0, B.jsx)("li", { children: In(e.name) }, t)) }),
+						/* @__PURE__ */ (0, B.jsxs)("p", {
+							className: "reviewHash",
+							children: ["Preview fingerprint: ", In(g.preview.fingerprint?.value)]
+						}),
+						s?.compatibility && /* @__PURE__ */ (0, B.jsx)("p", {
+							className: "warning",
+							children: "Original JSON only for this comparison; typed projections are unavailable."
+						}),
+						!p && /* @__PURE__ */ (0, B.jsx)("p", {
+							className: "warning",
+							children: "This retained comparison has a different original baseline. Open that explicit revision to match its evidence before inclusion."
+						}),
+						!p && h && g.case_id === h.case_id && /* @__PURE__ */ (0, B.jsx)("button", {
+							onClick: () => o({
+								caseId: g.case_id,
+								revision: g.baseline_revision
+							}),
+							children: "Open comparison baseline revision"
+						})
+					] }) : /* @__PURE__ */ (0, B.jsx)("p", { children: "Open a retained original in Scenarios to include its full batch. A live preview or pending save is excluded." }),
+					/* @__PURE__ */ (0, B.jsxs)("label", {
+						className: "reviewInclude",
+						children: [/* @__PURE__ */ (0, B.jsx)("input", {
+							type: "checkbox",
+							checked: d,
+							disabled: !e || !p || i.loading,
+							onChange: (e) => u({
+								source: c,
+								included: e.target.checked
+							})
+						}), "Include this retained comparison"]
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, B.jsxs)("section", {
+				className: "panel reviewExport",
+				children: [
+					/* @__PURE__ */ (0, B.jsx)("h2", { children: "JSON review package" }),
+					/* @__PURE__ */ (0, B.jsxs)("p", { children: [
+						"Includes the full selected original: financial inputs, guarantor details, assessment, policy, trace, reasons, its revision event and recording metadata",
+						d ? ", plus the full matching retained comparison batch" : "",
+						". This is one revision event, not the entire case history."
+					] }),
+					/* @__PURE__ */ (0, B.jsx)("p", { children: "Browser-parsed JSON representation; formatting and numeric spellings can differ from server bytes. Recorded hashes are carried unchanged, not verified by this export or calculated over the downloaded file." }),
+					a && /* @__PURE__ */ (0, B.jsx)("p", {
+						className: "warning",
+						children: "Pending work is excluded. Downloading this original leaves recovery tracking unchanged."
+					}),
+					/* @__PURE__ */ (0, B.jsx)("button", {
+						disabled: !e || f.busy || d && !p,
+						onClick: () => {
+							e && f.prepare(e, d ? s : null);
+						},
+						children: "Download JSON review package"
+					}),
+					/* @__PURE__ */ (0, B.jsx)("p", {
+						role: "status",
+						children: f.busy && h ? `Preparing ${An(h, d ? g ?? null : null)}…` : f.file ? `Prepared ${f.file.filename} (${f.file.size.toLocaleString("en-US")} bytes). The browser handles saving.` : "Maximum complete file: 16 MiB. No evidence is truncated."
+					}),
+					f.error && /* @__PURE__ */ (0, B.jsx)("p", {
+						role: "alert",
+						children: f.error
+					}),
+					f.file && /* @__PURE__ */ (0, B.jsx)("a", {
+						className: "reviewDownload",
+						href: f.file.url,
+						download: f.file.filename,
+						children: "Download prepared JSON"
+					}),
+					/* @__PURE__ */ (0, B.jsx)("p", {
+						className: "fine",
+						children: kn
+					})
+				]
+			})
+		]
+	});
+}
+var Rn = {
 	borrower_name: "Alpine Fabrication",
 	geography: "60601",
 	years: [{
@@ -9297,7 +9634,7 @@ var kn = {
 		cash_taxes_paid: 95e3
 	},
 	overrides: []
-}, An = {
+}, zn = {
 	schema_version: "commercial-assessment-v2",
 	assessment_as_of: "2026-10-06",
 	borrower_name: "Alpine Fabrication",
@@ -9361,7 +9698,7 @@ var kn = {
 		ap_increase: "50000",
 		cash_taxes_paid: "95000"
 	}
-}, jn = class {
+}, Bn = class {
 	storage;
 	transport;
 	state;
@@ -9459,8 +9796,8 @@ var kn = {
 		this.request?.abort();
 	}
 };
-function Mn() {
-	let [e] = (0, x.useState)(() => new jn(Et())), t = (0, x.useSyncExternalStore)(e.subscribe, e.snapshot);
+function Vn() {
+	let [e] = (0, x.useState)(() => new Bn(Et())), t = (0, x.useSyncExternalStore)(e.subscribe, e.snapshot);
 	return (0, x.useEffect)(() => () => e.abort(), [e]), {
 		...t,
 		controller: e
@@ -9468,10 +9805,10 @@ function Mn() {
 }
 //#endregion
 //#region src/useAnalystWorkspace.ts
-function Nn() {
-	let [e, t] = (0, x.useReducer)(oe, ae), n = (0, x.useRef)(e);
+function Hn() {
+	let [e, t] = (0, x.useReducer)(se, oe), n = (0, x.useRef)(e);
 	n.current = e;
-	let r = (0, x.useRef)(0), i = (0, x.useRef)(null), a = (0, x.useRef)(null), o = (0, x.useRef)(null), s = (0, x.useRef)(!1), c = Mn(), { operation: l, recoveryError: u, inFlight: d, writeError: f } = c, [p, m] = (0, x.useState)(null), [h, g] = (0, x.useState)(null), _ = (0, x.useRef)(0), [v, y] = (0, x.useState)(""), [S, C] = (0, x.useState)(null), [w, T] = (0, x.useState)(null), [E, D] = (0, x.useState)(null), O = (0, x.useRef)(E);
+	let r = (0, x.useRef)(0), i = (0, x.useRef)(null), a = (0, x.useRef)(null), o = (0, x.useRef)(null), s = (0, x.useRef)(!1), c = Vn(), { operation: l, recoveryError: u, inFlight: d, writeError: f } = c, [p, m] = (0, x.useState)(null), [h, g] = (0, x.useState)(null), _ = (0, x.useRef)(0), [v, y] = (0, x.useState)(""), [S, C] = (0, x.useState)(null), [w, T] = (0, x.useState)(null), [E, D] = (0, x.useState)(null), O = (0, x.useRef)(E);
 	O.current = E;
 	function k(e, n, o = "evaluate") {
 		let s = ++r.current;
@@ -9511,7 +9848,7 @@ function Nn() {
 	function te(e) {
 		It(Et(), null), ee({
 			mode: e,
-			payload: e === "dated" ? An : re(kn),
+			payload: e === "dated" ? zn : re(Rn),
 			filename: e === "dated" ? "alpine_dated_v2.json" : "alpine.json",
 			resetHistory: !0
 		});
@@ -9601,7 +9938,7 @@ function Nn() {
 			} : t);
 		}
 	}
-	async function N(e, n, i, a) {
+	async function ae(e, n, i, a) {
 		y("");
 		try {
 			let e = await a;
@@ -9631,43 +9968,43 @@ function Nn() {
 			});
 		}
 	}
-	function P(e, t) {
+	function N(e, t) {
 		if (c.controller.snapshot().inFlight || c.controller.snapshot().operation || u || O.current) throw Error("Resolve this tab's existing saved write or proposal first.");
 		let n = c.controller.start(e);
-		T(null), C(null), N(e, k(e.kind === "create" ? "Saving dated case" : `Saved case ${e.caseId}`, null, "write"), t, n);
+		T(null), C(null), ae(e, k(e.kind === "create" ? "Saving dated case" : `Saved case ${e.caseId}`, null, "write"), t, n);
 	}
-	function ce(e) {
+	function le(e) {
 		let t = n.current;
 		if (t.status !== "ready" || t.accepted?.mode !== "dated" || t.saved) throw Error("Open an accepted unsaved dated input before saving.");
-		P(kt(t.accepted.input, e), !0);
+		N(kt(t.accepted.input, e), !0);
 	}
-	function F(e = n.current) {
+	function P(e = n.current) {
 		return e.status === "ready" && !!e.accepted && (!e.saved || !c.controller.snapshot().operation && !u && !O.current && !!e.saved.view.assessment && e.saved.selection === "latest" && e.saved.headRevision === e.saved.view.snapshot.revision);
 	}
-	function I(e, t) {
+	function F(e, t) {
 		let r = n.current;
-		if (!F(r) || !r.accepted) throw Error("Open a supported latest revision and resolve pending work before editing.");
-		r.saved ? P(At(r.saved.view, e, t), !1) : ee({
+		if (!P(r) || !r.accepted) throw Error("Open a supported latest revision and resolve pending work before editing.");
+		r.saved ? N(At(r.saved.view, e, t), !1) : ee({
 			mode: r.accepted.mode,
-			payload: se(r.accepted.input, e),
+			payload: ce(r.accepted.input, e),
 			filename: r.accepted.filename,
 			edit: e
 		});
 	}
-	function le() {
+	function ue() {
 		let e = c.controller.snapshot().operation;
 		if (!e || d || f?.status === 409 && !f.certain) return;
 		let t = c.controller.retry();
 		if (e.kind === "comparison") {
-			ue(e, r.current, t);
+			de(e, r.current, t);
 			return;
 		}
-		N(e, k(e.kind === "create" ? "Recovering saved case" : `Saved case ${e.caseId}`, null, "write"), e.kind === "create", t);
+		ae(e, k(e.kind === "create" ? "Recovering saved case" : `Saved case ${e.caseId}`, null, "write"), e.kind === "create", t);
 	}
-	function L() {
+	function I() {
 		c.controller.discard(), y("Local recovery tracking discarded. This does not undo a write that might already be saved.");
 	}
-	async function ue(e, t, n) {
+	async function de(e, t, n) {
 		g(null), y("");
 		try {
 			let r = await n;
@@ -9690,11 +10027,11 @@ function Nn() {
 			}
 		}
 	}
-	function de(e) {
+	function L(e) {
 		let t = n.current, i = e.baseline;
 		if (t.status !== "ready" || !t.saved || O.current || t.saved.view.snapshot.case_id !== i.case_id || t.saved.view.snapshot.revision !== i.revision || t.saved.view.snapshot.run_id !== i.run_id || t.saved.view.snapshot.payload_hash !== i.payload_hash) throw Error("Review the currently selected original baseline before saving.");
 		let a = Tt(e), o = c.controller.start(a);
-		ue(a, r.current, o);
+		de(a, r.current, o);
 	}
 	function fe(e) {
 		let n = k(`Saved case ${e.snapshot.case_id}`, null, "open");
@@ -9755,13 +10092,13 @@ function Nn() {
 		submit: ee,
 		upload: A,
 		demo: te,
-		save: ce,
-		edit: I,
+		save: le,
+		edit: F,
 		openSaved: j,
 		operation: l,
 		comparisonAck: p,
 		comparisonError: h,
-		retainComparison: de,
+		retainComparison: L,
 		inFlight: d,
 		writeError: f,
 		recoveryError: u,
@@ -9769,10 +10106,10 @@ function Nn() {
 		offer: S,
 		rejected: w,
 		conflict: E,
-		canEdit: F(e),
+		canEdit: P(e),
 		canSave: e.status === "ready" && e.accepted?.mode === "dated" && !e.saved && !l && !u && !E,
-		retryWrite: le,
-		discardTracking: L,
+		retryWrite: ue,
+		discardTracking: I,
 		reviewConflict: pe,
 		cancelConflict: R,
 		refreshConflict: () => {
@@ -9790,7 +10127,7 @@ function Nn() {
 }
 //#endregion
 //#region src/App.tsx
-var Pn = "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.", Fn = {
+var Un = kn, Wn = {
 	gross_receipts: "Gross receipts",
 	gross_profit: "Gross profit",
 	cogs: "COGS",
@@ -9823,12 +10160,12 @@ var Pn = "Prototype demonstration only. This output has not been validated for u
 	inventory_increase: "Inventory increase",
 	ap_increase: "AP increase",
 	cash_taxes_paid: "Cash taxes paid"
-}, In = (e) => y(e, 2), Ln = (e, t) => e.period_start && e.period_end ? `${e.period_start} – ${e.period_end}` : `Supplied period ${t + 1}`;
-function Rn(e) {
+}, Gn = (e) => y(e, 2), Kn = (e, t) => e.period_start && e.period_end ? `${e.period_start} – ${e.period_end}` : `Supplied period ${t + 1}`;
+function qn(e) {
 	let t = e.raw_value;
-	return t === null ? "Not applicable" : p(t) ? e.name === "uca_positive" ? `$${In(t)}` : `${y(t, 4)}x` : String(t);
+	return t === null ? "Not applicable" : p(t) ? e.name === "uca_positive" ? `$${Gn(t)}` : `${y(t, 4)}x` : String(t);
 }
-function zn({ metric: e, assessment: t }) {
+function Jn({ metric: e, assessment: t }) {
 	let n = t.calculation_trace.find((t) => t.fact_id === e.fact_id);
 	return n ? /* @__PURE__ */ (0, B.jsxs)("details", { children: [
 		/* @__PURE__ */ (0, B.jsxs)("summary", { children: [
@@ -9863,8 +10200,8 @@ function zn({ metric: e, assessment: t }) {
 		n.explanation && /* @__PURE__ */ (0, B.jsx)("p", { children: n.explanation })
 	] }) : null;
 }
-function Bn() {
-	let e = Nn(), t = hn(e), { state: n, submit: r, demo: i, upload: a } = e, [o, s] = (0, x.useState)("spread"), [c, l] = (0, x.useState)(1), [u, d] = (0, x.useState)(null), [f, p] = (0, x.useState)(), [m, g] = (0, x.useState)(!1), [_, v] = (0, x.useState)(!1), [y, b] = (0, x.useState)(!1), C = (0, x.useRef)(null), w = n.status === "ready", T = n.accepted, E = T?.input, D = w && T?.mode === "dated" ? T.result : null, O = w && T ? T.mode === "dated" ? T.result.decision : T.result : null, k = E ? Math.min(c, E.years.length - 1) : 0;
+function Yn() {
+	let e = Hn(), t = hn(e), { state: n, submit: r, demo: i, upload: a } = e, [o, s] = (0, x.useState)("spread"), [c, l] = (0, x.useState)(1), [u, d] = (0, x.useState)(null), [f, p] = (0, x.useState)(), [m, g] = (0, x.useState)(!1), [_, v] = (0, x.useState)(!1), [y, b] = (0, x.useState)(!1), C = (0, x.useRef)(null), w = n.status === "ready", T = n.accepted, E = T?.input, D = w && T?.mode === "dated" ? T.result : null, O = w && T ? T.mode === "dated" ? T.result.decision : T.result : null, k = E ? Math.min(c, E.years.length - 1) : 0;
 	(0, x.useEffect)(() => {
 		n.status === "evaluating" && (d(null), g(!1)), n.status === "ready" && n.resetPeriod && n.accepted && l(n.accepted.input.years.length - 1), n.status === "ready" && n.saved?.view.compatibility && s("history");
 	}, [
@@ -9911,7 +10248,7 @@ function Bn() {
 				].includes(e);
 				return /* @__PURE__ */ (0, B.jsxs)("div", {
 					className: "assumption",
-					children: [te(`${t}/${e}`, Fn[e] ?? e, n, i ? "%" : a ? "months" : "USD", a ? T?.mode === "dated" ? 12 : 1 : o ? 0 : void 0, e === "ownership_percentage" || e === "annual_rate" && T?.mode === "dated" ? 1 : void 0, a, r), /* @__PURE__ */ (0, B.jsx)("strong", { children: i ? `${In(h(String(n), 2))}%` : a ? `${n} months` : `$${In(String(n))}` })]
+					children: [te(`${t}/${e}`, Wn[e] ?? e, n, i ? "%" : a ? "months" : "USD", a ? T?.mode === "dated" ? 12 : 1 : o ? 0 : void 0, e === "ownership_percentage" || e === "annual_rate" && T?.mode === "dated" ? 1 : void 0, a, r), /* @__PURE__ */ (0, B.jsx)("strong", { children: i ? `${Gn(h(String(n), 2))}%` : a ? `${n} months` : `$${Gn(String(n))}` })]
 				}, e);
 			})]
 		}, t);
@@ -9957,7 +10294,7 @@ function Bn() {
 			})] }),
 			/* @__PURE__ */ (0, B.jsxs)("div", {
 				className: "warning environmentWarning",
-				children: [/* @__PURE__ */ (0, B.jsx)("span", { children: "Prototype use" }), /* @__PURE__ */ (0, B.jsx)("p", { children: Pn })]
+				children: [/* @__PURE__ */ (0, B.jsx)("span", { children: "Prototype use" }), /* @__PURE__ */ (0, B.jsx)("p", { children: Un })]
 			}),
 			/* @__PURE__ */ (0, B.jsxs)("div", {
 				className: "uploadbar",
@@ -10088,7 +10425,7 @@ function Bn() {
 					})
 				]
 			}),
-			w && n.saved?.view.compatibility && /* @__PURE__ */ (0, B.jsxs)("section", {
+			w && n.saved?.view.compatibility && o !== "review" && /* @__PURE__ */ (0, B.jsxs)("section", {
 				className: "panel compatibility",
 				children: [
 					/* @__PURE__ */ (0, B.jsx)("h2", { children: "Original stored assessment" }),
@@ -10104,7 +10441,7 @@ function Bn() {
 						D.assumptions_as_of,
 						" · USD · dollars · nominal annual rate"
 					] }),
-					/* @__PURE__ */ (0, B.jsxs)("span", { children: ["Coverage period: ", Ln(D.selected_period, 0)] }),
+					/* @__PURE__ */ (0, B.jsxs)("span", { children: ["Coverage period: ", Kn(D.selected_period, 0)] }),
 					/* @__PURE__ */ (0, B.jsx)("span", { children: "Current pro forma coverage · fixed rate · fully amortizing · monthly payments" })
 				]
 			}),
@@ -10118,13 +10455,14 @@ function Bn() {
 					"details",
 					"memo",
 					"history",
-					"scenarios"
+					"scenarios",
+					"review"
 				].map((e) => /* @__PURE__ */ (0, B.jsx)("button", {
 					className: o === e ? "active" : "",
 					"aria-pressed": o === e,
 					"aria-current": o === e ? "page" : void 0,
 					onClick: () => s(e),
-					children: e === "scenarios" ? "Scenarios" : e
+					children: e === "scenarios" ? "Scenarios" : e === "review" ? "Review" : e
 				}, e))
 			}),
 			o === "scenarios" && /* @__PURE__ */ (0, B.jsx)(On, {
@@ -10132,6 +10470,15 @@ function Bn() {
 				onSaveBaseline: (t) => {
 					e.canSave && (C.current = t, g(!0));
 				},
+				onOpenBaseline: (t) => void e.openSaved(t)
+			}),
+			o === "review" && /* @__PURE__ */ (0, B.jsx)(Ln, {
+				view: w ? n.saved?.view ?? null : null,
+				selection: n.saved?.selection ?? null,
+				headRevision: n.saved?.headRevision ?? null,
+				sourceScope: `${n.id}:${n.status}`,
+				original: t.original,
+				pending: !!(e.operation || e.recoveryError || e.conflict || e.inFlight),
 				onOpenBaseline: (t) => void e.openSaved(t)
 			}),
 			o === "spread" && /* @__PURE__ */ (0, B.jsxs)("section", {
@@ -10149,27 +10496,27 @@ function Bn() {
 								"aria-pressed": k === t,
 								className: k === t ? "period active" : "period",
 								onClick: () => l(t),
-								children: Ln(e, t)
+								children: Kn(e, t)
 							}) }, t))] }) }), /* @__PURE__ */ (0, B.jsxs)("tbody", { children: [S.map((t) => /* @__PURE__ */ (0, B.jsxs)("tr", { children: [/* @__PURE__ */ (0, B.jsx)("th", {
 								scope: "row",
-								children: Fn[t]
+								children: Wn[t]
 							}), E.years.map((n, r) => /* @__PURE__ */ (0, B.jsx)("td", {
 								className: "num",
 								children: /* @__PURE__ */ (0, B.jsxs)("button", {
 									className: "rowEdit",
-									"aria-label": `Edit ${Fn[t]} for ${Ln(n, r)}`,
+									"aria-label": `Edit ${Wn[t]} for ${Kn(n, r)}`,
 									disabled: !e.canEdit,
 									onClick: (e) => {
 										C.current = e.currentTarget, d({
 											path: `/years/${r}/${t}`,
-											label: Fn[t],
+											label: Wn[t],
 											value: n[t],
 											unit: "USD",
 											min: t === "interest_expense" ? "0" : void 0,
-											period: Ln(n, r)
+											period: Kn(n, r)
 										});
 									},
-									children: ["$", In(D?.historical_spread[r].reported_financials[t] ?? n[t])]
+									children: ["$", Gn(D?.historical_spread[r].reported_financials[t] ?? n[t])]
 								})
 							}, r))] }, t)), D && [
 								"gross_profit",
@@ -10182,7 +10529,7 @@ function Bn() {
 								children: [/* @__PURE__ */ (0, B.jsxs)("th", {
 									scope: "row",
 									children: [
-										Fn[e] ?? "K-1 distribution ratio",
+										Wn[e] ?? "K-1 distribution ratio",
 										" ",
 										/* @__PURE__ */ (0, B.jsx)("small", { children: "Calculated" })
 									]
@@ -10207,10 +10554,10 @@ function Bn() {
 						className: "metric",
 						"data-state": e.passed === null ? "review" : e.passed ? "pass" : "fail",
 						children: [
-							/* @__PURE__ */ (0, B.jsx)("span", { children: Fn[e.name] ?? e.name }),
-							/* @__PURE__ */ (0, B.jsx)("strong", { children: Rn(e) }),
+							/* @__PURE__ */ (0, B.jsx)("span", { children: Wn[e.name] ?? e.name }),
+							/* @__PURE__ */ (0, B.jsx)("strong", { children: qn(e) }),
 							/* @__PURE__ */ (0, B.jsxs)("small", { children: [
-								e.name === "uca_positive" ? `Must exceed $${In(String(e.threshold))}` : `Policy: ${e.comparison_operator ?? "comparison unavailable"} ${String(e.threshold)}`,
+								e.name === "uca_positive" ? `Must exceed $${Gn(String(e.threshold))}` : `Policy: ${e.comparison_operator ?? "comparison unavailable"} ${String(e.threshold)}`,
 								" ",
 								"·",
 								" ",
@@ -10235,7 +10582,7 @@ function Bn() {
 						inventory_increase: E.working_capital.inventory_increase,
 						ap_increase: E.working_capital.ap_increase,
 						cash_taxes_paid: E.working_capital.cash_taxes_paid
-					}, `Working capital for ${Ln(E.years[E.years.length - 1], E.years.length - 1)}`),
+					}, `Working capital for ${Kn(E.years[E.years.length - 1], E.years.length - 1)}`),
 					E.guarantors.map((e, t) => A(e.name, `/guarantors/${t}`, {
 						ownership_percentage: e.ownership_percentage,
 						wages: e.wages,
@@ -10264,24 +10611,24 @@ function Bn() {
 						/* @__PURE__ */ (0, B.jsxs)("p", { children: [
 							"K-1 comparison periods:",
 							" ",
-							D.k1_history_periods.map((e, t) => Ln(e, t)).join(" / ")
+							D.k1_history_periods.map((e, t) => Kn(e, t)).join(" / ")
 						] }),
 						/* @__PURE__ */ (0, B.jsx)("h3", { children: "Current facts" }),
-						Object.values(D.current_facts).map((e) => /* @__PURE__ */ (0, B.jsx)(zn, {
+						Object.values(D.current_facts).map((e) => /* @__PURE__ */ (0, B.jsx)(Jn, {
 							metric: e,
 							assessment: D
 						}, e.fact_id)),
 						/* @__PURE__ */ (0, B.jsxs)("h3", { children: [
 							"Selected historical period:",
 							" ",
-							Ln(E.years[k], k)
+							Kn(E.years[k], k)
 						] }),
 						[
 							"gross_profit",
 							"ordinary_business_income",
 							"ebitda",
 							"k1_distribution_ratio"
-						].map((e) => /* @__PURE__ */ (0, B.jsx)(zn, {
+						].map((e) => /* @__PURE__ */ (0, B.jsx)(Jn, {
 							metric: D.historical_spread[k][e],
 							assessment: D
 						}, e)),
@@ -10290,7 +10637,7 @@ function Bn() {
 							e.business_ebitda,
 							e.outside_income,
 							e.personal_debt
-						].map((e) => /* @__PURE__ */ (0, B.jsx)(zn, {
+						].map((e) => /* @__PURE__ */ (0, B.jsx)(Jn, {
 							metric: e,
 							assessment: D
 						}, e.fact_id))] }, e.guarantor_index)) : /* @__PURE__ */ (0, B.jsx)("p", { children: "Business-only fallback; no guarantor contributions." }),
@@ -10313,7 +10660,7 @@ function Bn() {
 					O && /* @__PURE__ */ (0, B.jsxs)("div", { children: [/* @__PURE__ */ (0, B.jsx)("h3", { children: "Raw policy comparisons" }), O.factors.map((e) => /* @__PURE__ */ (0, B.jsxs)("div", {
 						className: "operand",
 						children: [
-							/* @__PURE__ */ (0, B.jsx)("strong", { children: Fn[e.name] }),
+							/* @__PURE__ */ (0, B.jsx)("strong", { children: Wn[e.name] }),
 							/* @__PURE__ */ (0, B.jsxs)("span", { children: [
 								"Raw: ",
 								String(e.raw_value),
@@ -10343,9 +10690,9 @@ function Bn() {
 						] }),
 						/* @__PURE__ */ (0, B.jsx)("h3", { children: "Primary factors considered" }),
 						/* @__PURE__ */ (0, B.jsx)("ul", { children: O.factors.map((e) => /* @__PURE__ */ (0, B.jsxs)("li", { children: [
-							Fn[e.name],
+							Wn[e.name],
 							": ",
-							Rn(e),
+							qn(e),
 							" —",
 							" ",
 							e.passed === null ? "manual review required" : e.passed ? "meets configured policy" : "does not meet configured policy"
@@ -10355,7 +10702,7 @@ function Bn() {
 					] }) : /* @__PURE__ */ (0, B.jsx)("p", { children: "No current decision is available." }),
 					/* @__PURE__ */ (0, B.jsx)("p", {
 						className: "fine",
-						children: Pn
+						children: Un
 					})
 				]
 			}),
@@ -10435,7 +10782,7 @@ function Bn() {
 }
 //#endregion
 //#region src/embeddedTransport.ts
-var Vn = 16777216, Hn = class {
+var Xn = 16777216, Zn = class {
 	generation;
 	publish;
 	pending = /* @__PURE__ */ new Map();
@@ -10492,7 +10839,7 @@ var Vn = 16777216, Hn = class {
 				this.pending.delete(n.id), e.clean(), t = !0;
 				try {
 					if (typeof n.error == "string") throw Error(n.error);
-					if (!Number.isInteger(n.status) || n.status < 200 || n.status > 599 || typeof n.body != "string" || new TextEncoder().encode(n.body).length > Vn || !n.headers || typeof n.headers != "object" || Object.values(n.headers).some((e) => typeof e != "string")) throw Error("Unreadable embedded response. Review any pending write before retrying.");
+					if (!Number.isInteger(n.status) || n.status < 200 || n.status > 599 || typeof n.body != "string" || new TextEncoder().encode(n.body).length > Xn || !n.headers || typeof n.headers != "object" || Object.values(n.headers).some((e) => typeof e != "string")) throw Error("Unreadable embedded response. Review any pending write before retrying.");
 					e.resolve(new Response(n.body, {
 						status: n.status,
 						headers: n.headers
@@ -10509,31 +10856,31 @@ var Vn = 16777216, Hn = class {
 		for (let e of this.pending.values()) e.clean(), e.reject(/* @__PURE__ */ Error("The embedded workspace disconnected. Review pending writes after reconnecting."));
 		this.pending.clear();
 	}
-}, Un = ":root,:host{color:#eef1f4;font-synthesis:none;font-variant-numeric:tabular-nums;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--surface:#101419;--border:#303b46;--accent:#8de0bb;--muted:#b5bfc9;background:#0b0d10;font-family:Inter,ui-sans-serif,system-ui}*{box-sizing:border-box}body{background:#0b0d10;margin:0}main{max-width:1480px;margin:auto;padding:28px}.workspaceBrand{border-bottom:1px solid var(--border);justify-content:space-between;align-items:center;gap:20px;margin-bottom:28px;padding-bottom:20px;display:flex}.wordmark{letter-spacing:-.03em;align-items:center;gap:10px;font-size:20px;font-weight:650;display:flex}.wordmark svg{color:var(--accent);flex-shrink:0}.workspaceType{color:var(--muted);letter-spacing:.12em;align-items:center;gap:16px;font-size:10px;display:flex}.workspaceType>span{border:1px solid var(--border);letter-spacing:.04em;border-radius:4px;padding:5px 7px}.hostingNotice{color:#c6d8cf;background:#112018;border-bottom:1px solid #284435;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;max-width:1480px;margin:auto;padding:12px 28px;font-size:11px;line-height:1.6;display:flex}.hostingNotice>span:first-child{letter-spacing:.09em;font-weight:600}.embeddedWorkspace{color:#eef1f4;font-variant-numeric:tabular-nums;background:#0b0d10;font-family:Inter,ui-sans-serif,system-ui}header{justify-content:space-between;align-items:center;gap:28px;display:flex}header>div:first-child{flex:1;min-width:0}h1{letter-spacing:-.025em;overflow-wrap:anywhere;margin:6px 0;font-size:32px}p{color:#b5bfc9;line-height:1.6}.eyebrow{letter-spacing:.14em;color:#8de0bb;font-size:10px}.decision{overflow-wrap:anywhere;background:#111d18;border:1px solid #375447;border-radius:8px;width:280px;max-width:100%;padding:16px 20px}.decision span,.decision small{color:#b1bdc7;display:block}.decision strong{color:#8de0bb;font-size:25px;display:block}.decision span{margin-bottom:5px;font-size:12px}.decision small{margin-top:5px;font-size:11px;line-height:1.6}.decision[data-outcome=decline]{background:#211716;border-color:#69473e}.decision[data-outcome=decline] strong{color:#ffb5a7}.decision[data-outcome=review]{background:#211e14;border-color:#6a6038}.decision[data-outcome=review] strong{color:#e0d5a1}.decision[data-outcome=unavailable]{background:#141b23;border-color:#3c4f60}.decision[data-outcome=unavailable] strong{color:#b5c9df}.warning{color:#e0d5a1;overflow-wrap:anywhere;background:#18170f;border:1px solid #716539;border-radius:10px;margin:20px 0 16px;padding:12px 14px;font-size:13px}.environmentWarning{background:#161a1b;border-color:#394039 #394039 #394039 #a89c66;border-left-style:solid;border-left-width:3px;border-radius:4px;align-items:baseline;gap:14px;padding:12px 14px;display:flex}.environmentWarning>span{color:#e0d5a1;white-space:nowrap;font-size:11px;font-weight:600}.environmentWarning p{color:#c1c7c8;margin:0;font-size:11px;line-height:1.7}.uploadbar{color:#b5bfc9;background:#101419;border:1px solid #303b46;border-radius:8px;flex-wrap:wrap;align-items:center;gap:14px;margin:14px 0;padding:14px;font-size:12px;display:flex}.uploadbar>label{border-left:1px solid var(--border);margin-left:auto;padding-left:18px}.uploadbar>span{color:#a5b2bd;flex-basis:100%;font-size:11px}.uploadbar input::file-selector-button{font:inherit;color:#d4dee7;cursor:pointer;background:#18212a;border:1px solid #40515f;border-radius:4px;margin-right:8px;padding:6px 9px}.uploadbar input{max-width:100%;margin-top:8px;display:block}.uploadbar label{max-width:100%}.uploadbar span{overflow-wrap:anywhere}.actions{flex-wrap:wrap;gap:8px;display:flex}button{font:inherit;color:#d4dee7;cursor:pointer;background:#18212a;border:1px solid #40515f;border-radius:8px;padding:9px 14px}button:hover{background:#22313c}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline-offset:3px;outline:2px solid #8de0bb}button:disabled{opacity:.5;cursor:not-allowed}.primary{color:#10291f;background:#8de0bb;border-color:#8de0bb;font-weight:600}.primary:hover{color:#10291f;background:#a2e8c9}.primary:disabled{color:#b8c9bf;opacity:1;background:#25382e;border-color:#3c5143}nav{flex-wrap:wrap;gap:8px;margin:20px 0;display:flex}nav button{text-transform:capitalize}.active{color:#8de0bb;border-color:#8de0bb}.workspaceNav{border-bottom:1px solid var(--border);gap:24px;margin:24px 0}.workspaceNav button{color:#aebbc7;background:0 0;border:0;border-bottom:2px solid #0000;border-radius:0;padding:12px 0;font-size:13px}.workspaceNav button:hover{color:#eef1f4;background:0 0}.workspaceNav button.active{color:var(--accent);border-bottom-color:var(--accent)}.summaryGrid{border:1px solid var(--border);background:var(--surface);border-radius:8px;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:20px;display:grid;overflow:hidden}.summaryCard{flex-direction:column;gap:10px;min-width:0;padding:20px;display:flex}.summaryCard+.summaryCard{border-left:1px solid var(--border)}.summaryCard>span{color:var(--muted);font-size:12px}.summaryCard strong{letter-spacing:-.025em;overflow-wrap:anywhere;font-size:clamp(20px,2vw,27px);font-weight:600}.summaryCard small{color:#a5b2bd;font-size:10px;line-height:1.6}.grid{grid-template-columns:minmax(0,2.8fr) minmax(260px,1fr);gap:16px;display:grid}.panel{background:#101419;border:1px solid #303b46;border-radius:8px;min-width:0;padding:24px}.panelTitle{justify-content:space-between;align-items:start;gap:20px;display:flex}.accessGate{max-width:620px;padding-top:12vh}.accessGate form{gap:14px;display:grid}.accessGate input{box-sizing:border-box;color:#eef1f4;width:100%;font:inherit;background:#18212a;border:1px solid #556f82;border-radius:6px;padding:12px}.accessBar{color:#b5bfc9;border-bottom:1px solid #303b46;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:12px;padding:12px 32px;font-size:12px;display:flex}.panelTitle span{color:#a5b2bd;font-size:12px;line-height:1.5}h2{margin:0 0 14px;font-size:16px}h3{color:#8de0bb;margin-top:24px;font-size:15px}h4{font-size:14px}.tableScroll{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;border-bottom:1px solid #29333d;padding:13px 10px;font-size:13px}thead th{color:#a5b2bd;font-weight:500}tbody th{z-index:1;background:#101419;min-width:170px;font-weight:500;position:sticky;left:0}.num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}.rowEdit{font:inherit;text-align:inherit;color:inherit;text-underline-offset:4px;background:0 0;border:0;padding:3px 0;-webkit-text-decoration:underline #586c7c;text-decoration:underline #586c7c}.period{white-space:nowrap;padding:7px;font-size:12px}.derived,.derived th{background:#12191c}.derived[data-fact=ebitda],.derived[data-fact=ebitda] th{color:#bce8d2;background:#14221b}.derived small{color:#98bdaa;margin-top:4px;font-size:11px;display:block}.metric{border-bottom:1px solid #29333d;grid-template-columns:1fr auto;gap:8px;padding:16px 0;font-size:13px;display:grid}.metric strong{overflow-wrap:anywhere;font-size:19px}.metric>span:before{content:\"\";vertical-align:middle;background:#99a9ba;border-radius:50%;width:5px;height:5px;margin-right:8px;display:inline-block}.metric[data-state=pass]>span:before{background:#8de0bb}.metric[data-state=fail]>span:before{background:#ffb5a7}.metric[data-state=review]>span:before{background:#e0d5a1}.metric small{color:#b1bdc7;grid-column:1/-1;line-height:1.7}.memo{min-height:300px}.fine{overflow-wrap:anywhere;border-top:1px solid #303b46;margin-top:24px;padding-top:16px;font-size:12px}.audit{overflow-wrap:anywhere;border-bottom:1px solid #303b46;grid-template-columns:1fr auto;gap:8px;padding:16px 0;display:grid}.audit small{color:#b1bdc7;grid-column:1/-1}.pending{overflow-wrap:anywhere;background:#15222c;border:1px solid #556f82;border-radius:10px;margin:16px 0;padding:16px}.pending p{margin-bottom:0;font-size:13px}.context{color:#b5bfc9;flex-wrap:wrap;gap:8px 24px;margin-top:18px;font-size:11px;display:flex}.context>span{flex:240px;line-height:1.7}.assumptionsGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;display:grid}.assumption{border-bottom:1px solid #29333d;justify-content:space-between;align-items:start;gap:14px;padding:13px 0;font-size:13px;display:flex}.assumption strong{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}details{overflow-wrap:anywhere;border:1px solid #303b46;border-radius:8px;margin:10px 0;padding:12px;font-size:13px}summary{cursor:pointer;color:#d4dee7;line-height:1.5}.operand{overflow-wrap:anywhere;border-bottom:1px solid #303b46;grid-template-columns:1fr auto;gap:8px;margin:12px 0;padding:10px;font-size:12px;display:grid}.operand small{color:#a5b2bd;grid-column:1/-1}code{overflow-wrap:anywhere;font-family:ui-monospace,monospace}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}.expression{font-family:ui-monospace,monospace;font-size:12px}dialog{color:#eef1f4;overflow-wrap:anywhere;background:#101419;border:1px solid #556f82;border-radius:16px;width:480px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);padding:26px;overflow-y:auto}dialog::backdrop{background:#000b}dialog label{margin:18px 0;font-size:14px;display:block}dialog input,dialog textarea{color:#eef1f4;width:100%;font:inherit;background:#18212a;border:1px solid #556f82;border-radius:7px;margin-top:9px;padding:10px;display:block}dialog [role=alert]{color:#ffb5a7;font-size:13px}footer{color:#a5b2bd;padding-top:26px;font-size:11px}.savedContext{overflow-wrap:anywhere;background:#13241c;border:1px solid #437c63;border-radius:12px;flex-direction:column;align-items:flex-start;gap:10px;margin:16px 0;padding:16px;font-size:12px;display:flex}.caseList{margin:16px 0}.caseRow{overflow-wrap:anywhere;border-bottom:1px solid #303b46;flex-wrap:wrap;align-items:center;gap:16px;padding:16px 0;display:flex}.caseRow>div{flex:1;min-width:180px}.caseRow h3{margin:0 0 8px}.caseRow p,.savedEvent p{font-size:12px}.savedEvent{overflow-wrap:anywhere;border-top:1px solid #303b46;margin:20px 0}.writeNotice{overflow-wrap:anywhere;border-left:3px solid #8de0bb;padding:10px 14px;font-size:13px}.compatibility{margin:16px 0}.scenariosWorkspace{gap:18px;min-width:0;display:grid}.scenariosWorkspace p,.scenariosWorkspace small{font-size:13px}.scenarioComposer,.originalComparison,.comparisonArchive,.scenarioResult{overflow-wrap:anywhere}.scenarioRow{border:1px solid #40515f;border-radius:10px;min-width:0;margin:20px 0;padding:16px}.scenarioRow legend{color:#8de0bb;padding:0 8px}.scenarioFields{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px;display:grid}.scenarioFields label,.scenarioSelect{min-width:0;font-size:13px;display:block}.scenarioFields input,.scenarioFields textarea,.scenarioFields select,.scenarioSelect select{color:#eef1f4;width:100%;min-width:0;font:inherit;background:#18212a;border:1px solid #556f82;border-radius:7px;margin:8px 0;padding:10px;display:block}.scenarioFields small{color:#a5b2bd;line-height:1.5}.scenarioRationale{grid-column:1/-1}.scenarioOutcome strong{color:#8de0bb}.scenarioOutcome [data-outcome=review]{color:#e0d5a1}.scenarioOutcome [data-outcome=decline]{color:#ffb5a7}.scenarioFact{border-bottom:1px solid #303b46;padding:8px 0}.scenarioFact h4{margin:10px 0}.scenarioResult td small{white-space:normal;max-width:200px;display:block}.scenarioResult caption{text-align:left;color:#b1bdc7;padding:12px 0;font-size:13px}.scenariosWorkspace [role=alert]{color:#ffb5a7}.originalComparisonJson pre{max-height:600px;overflow-y:auto}@media (width<=900px){.summaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.summaryCard:nth-child(3){border-left:0}.summaryCard:nth-child(n+3){border-top:1px solid var(--border)}main{padding:20px}.grid{grid-template-columns:1fr}.panelTitle{flex-direction:column;gap:4px}}@media (width<=600px){.workspaceBrand{align-items:flex-start;gap:12px}.workspaceType{max-width:120px;font-size:9px;line-height:1.6}.workspaceType>span{display:none}.workspaceNav{gap:12px 20px}.workspaceNav button{padding:10px 0}.summaryCard{padding:16px}.summaryCard strong{font-size:20px}.environmentWarning{display:block}.environmentWarning>span{margin-bottom:5px;display:block}.uploadbar>label{border-left:0;margin-left:0;padding-left:0}.hostingNotice{padding:12px 20px}.decision{width:100%}.scenarioFields{grid-template-columns:1fr}.caseRow>div{flex-basis:100%;min-width:0}header{display:block}h1{font-size:29px}.decision{margin-top:18px}.panel{padding:16px}.assumptionsGrid,.operand,.audit{grid-template-columns:1fr}.operand small,.audit small{grid-column:1}.assumption{gap:10px}.assumption strong{white-space:normal}.uploadbar{align-items:start}.panelTitle span{margin-bottom:12px}}", Wn = /* @__PURE__ */ new WeakMap(), Gn = ({ parentElement: e, data: t, setStateValue: n }) => {
-	let r = Wn.get(e);
-	if (r && r.transport.generation !== t.generation && (r.root.unmount(), r.transport.dispose(), Wn.delete(e), r = void 0), !r) {
+}, Qn = ":root,:host{color:#eef1f4;font-synthesis:none;font-variant-numeric:tabular-nums;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--surface:#101419;--border:#303b46;--accent:#8de0bb;--muted:#b5bfc9;background:#0b0d10;font-family:Inter,ui-sans-serif,system-ui}.reviewWorkspace{gap:18px;display:grid}.reviewWorkspace .panel{overflow-wrap:anywhere;min-width:0;margin-top:0}.reviewFacts{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px 24px;display:grid}.reviewFacts div{min-width:0}.reviewFacts dt,.reviewMetrics span{color:#b5bfc9;font-size:12px}.reviewFacts dd{margin:5px 0 0;font-size:13px}.reviewMetrics{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px;display:grid}.reviewMetrics>div{background:#101419;border:1px solid #34424e;border-radius:10px;padding:14px}.reviewMetrics strong,.reviewMetrics small{margin-top:6px;display:block}.reviewMetrics small{color:#b5bfc9}.reviewInclude{align-items:center;gap:10px;margin-top:18px;display:flex}.reviewInclude input{flex:none;width:18px;height:18px}.reviewDownload{color:#8de0bb;overflow-wrap:anywhere;margin-bottom:12px;display:inline-block}.reviewWorkspace button{white-space:normal;max-width:100%}*{box-sizing:border-box}body{background:#0b0d10;margin:0}main{max-width:1480px;margin:auto;padding:28px}.workspaceBrand{border-bottom:1px solid var(--border);justify-content:space-between;align-items:center;gap:20px;margin-bottom:28px;padding-bottom:20px;display:flex}.wordmark{letter-spacing:-.03em;align-items:center;gap:10px;font-size:20px;font-weight:650;display:flex}.wordmark svg{color:var(--accent);flex-shrink:0}.workspaceType{color:var(--muted);letter-spacing:.12em;align-items:center;gap:16px;font-size:10px;display:flex}.workspaceType>span{border:1px solid var(--border);letter-spacing:.04em;border-radius:4px;padding:5px 7px}.hostingNotice{color:#c6d8cf;background:#112018;border-bottom:1px solid #284435;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;max-width:1480px;margin:auto;padding:12px 28px;font-size:11px;line-height:1.6;display:flex}.hostingNotice>span:first-child{letter-spacing:.09em;font-weight:600}.embeddedWorkspace{color:#eef1f4;font-variant-numeric:tabular-nums;background:#0b0d10;font-family:Inter,ui-sans-serif,system-ui}header{justify-content:space-between;align-items:center;gap:28px;display:flex}header>div:first-child{flex:1;min-width:0}h1{letter-spacing:-.025em;overflow-wrap:anywhere;margin:6px 0;font-size:32px}p{color:#b5bfc9;line-height:1.6}.eyebrow{letter-spacing:.14em;color:#8de0bb;font-size:10px}.decision{overflow-wrap:anywhere;background:#111d18;border:1px solid #375447;border-radius:8px;width:280px;max-width:100%;padding:16px 20px}.decision span,.decision small{color:#b1bdc7;display:block}.decision strong{color:#8de0bb;font-size:25px;display:block}.decision span{margin-bottom:5px;font-size:12px}.decision small{margin-top:5px;font-size:11px;line-height:1.6}.decision[data-outcome=decline]{background:#211716;border-color:#69473e}.decision[data-outcome=decline] strong{color:#ffb5a7}.decision[data-outcome=review]{background:#211e14;border-color:#6a6038}.decision[data-outcome=review] strong{color:#e0d5a1}.decision[data-outcome=unavailable]{background:#141b23;border-color:#3c4f60}.decision[data-outcome=unavailable] strong{color:#b5c9df}.warning{color:#e0d5a1;overflow-wrap:anywhere;background:#18170f;border:1px solid #716539;border-radius:10px;margin:20px 0 16px;padding:12px 14px;font-size:13px}.environmentWarning{background:#161a1b;border-color:#394039 #394039 #394039 #a89c66;border-left-style:solid;border-left-width:3px;border-radius:4px;align-items:baseline;gap:14px;padding:12px 14px;display:flex}.environmentWarning>span{color:#e0d5a1;white-space:nowrap;font-size:11px;font-weight:600}.environmentWarning p{color:#c1c7c8;margin:0;font-size:11px;line-height:1.7}.uploadbar{color:#b5bfc9;background:#101419;border:1px solid #303b46;border-radius:8px;flex-wrap:wrap;align-items:center;gap:14px;margin:14px 0;padding:14px;font-size:12px;display:flex}.uploadbar>label{border-left:1px solid var(--border);margin-left:auto;padding-left:18px}.uploadbar>span{color:#a5b2bd;flex-basis:100%;font-size:11px}.uploadbar input::file-selector-button{font:inherit;color:#d4dee7;cursor:pointer;background:#18212a;border:1px solid #40515f;border-radius:4px;margin-right:8px;padding:6px 9px}.uploadbar input{max-width:100%;margin-top:8px;display:block}.uploadbar label{max-width:100%}.uploadbar span{overflow-wrap:anywhere}.actions{flex-wrap:wrap;gap:8px;display:flex}button{font:inherit;color:#d4dee7;cursor:pointer;background:#18212a;border:1px solid #40515f;border-radius:8px;padding:9px 14px}button:hover{background:#22313c}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline-offset:3px;outline:2px solid #8de0bb}button:disabled{opacity:.5;cursor:not-allowed}.primary{color:#10291f;background:#8de0bb;border-color:#8de0bb;font-weight:600}.primary:hover{color:#10291f;background:#a2e8c9}.primary:disabled{color:#b8c9bf;opacity:1;background:#25382e;border-color:#3c5143}nav{flex-wrap:wrap;gap:8px;margin:20px 0;display:flex}nav button{text-transform:capitalize}.active{color:#8de0bb;border-color:#8de0bb}.workspaceNav{border-bottom:1px solid var(--border);gap:24px;margin:24px 0}.workspaceNav button{color:#aebbc7;background:0 0;border:0;border-bottom:2px solid #0000;border-radius:0;padding:12px 0;font-size:13px}.workspaceNav button:hover{color:#eef1f4;background:0 0}.workspaceNav button.active{color:var(--accent);border-bottom-color:var(--accent)}.summaryGrid{border:1px solid var(--border);background:var(--surface);border-radius:8px;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:20px;display:grid;overflow:hidden}.summaryCard{flex-direction:column;gap:10px;min-width:0;padding:20px;display:flex}.summaryCard+.summaryCard{border-left:1px solid var(--border)}.summaryCard>span{color:var(--muted);font-size:12px}.summaryCard strong{letter-spacing:-.025em;overflow-wrap:anywhere;font-size:clamp(20px,2vw,27px);font-weight:600}.summaryCard small{color:#a5b2bd;font-size:10px;line-height:1.6}.grid{grid-template-columns:minmax(0,2.8fr) minmax(260px,1fr);gap:16px;display:grid}.panel{background:#101419;border:1px solid #303b46;border-radius:8px;min-width:0;padding:24px}.panelTitle{justify-content:space-between;align-items:start;gap:20px;display:flex}.accessGate{max-width:620px;padding-top:12vh}.accessGate form{gap:14px;display:grid}.accessGate input{box-sizing:border-box;color:#eef1f4;width:100%;font:inherit;background:#18212a;border:1px solid #556f82;border-radius:6px;padding:12px}.accessBar{color:#b5bfc9;border-bottom:1px solid #303b46;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:12px;padding:12px 32px;font-size:12px;display:flex}.panelTitle span{color:#a5b2bd;font-size:12px;line-height:1.5}h2{margin:0 0 14px;font-size:16px}h3{color:#8de0bb;margin-top:24px;font-size:15px}h4{font-size:14px}.tableScroll{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;border-bottom:1px solid #29333d;padding:13px 10px;font-size:13px}thead th{color:#a5b2bd;font-weight:500}tbody th{z-index:1;background:#101419;min-width:170px;font-weight:500;position:sticky;left:0}.num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}.rowEdit{font:inherit;text-align:inherit;color:inherit;text-underline-offset:4px;background:0 0;border:0;padding:3px 0;-webkit-text-decoration:underline #586c7c;text-decoration:underline #586c7c}.period{white-space:nowrap;padding:7px;font-size:12px}.derived,.derived th{background:#12191c}.derived[data-fact=ebitda],.derived[data-fact=ebitda] th{color:#bce8d2;background:#14221b}.derived small{color:#98bdaa;margin-top:4px;font-size:11px;display:block}.metric{border-bottom:1px solid #29333d;grid-template-columns:1fr auto;gap:8px;padding:16px 0;font-size:13px;display:grid}.metric strong{overflow-wrap:anywhere;font-size:19px}.metric>span:before{content:\"\";vertical-align:middle;background:#99a9ba;border-radius:50%;width:5px;height:5px;margin-right:8px;display:inline-block}.metric[data-state=pass]>span:before{background:#8de0bb}.metric[data-state=fail]>span:before{background:#ffb5a7}.metric[data-state=review]>span:before{background:#e0d5a1}.metric small{color:#b1bdc7;grid-column:1/-1;line-height:1.7}.memo{min-height:300px}.fine{overflow-wrap:anywhere;border-top:1px solid #303b46;margin-top:24px;padding-top:16px;font-size:12px}.audit{overflow-wrap:anywhere;border-bottom:1px solid #303b46;grid-template-columns:1fr auto;gap:8px;padding:16px 0;display:grid}.audit small{color:#b1bdc7;grid-column:1/-1}.pending{overflow-wrap:anywhere;background:#15222c;border:1px solid #556f82;border-radius:10px;margin:16px 0;padding:16px}.pending p{margin-bottom:0;font-size:13px}.context{color:#b5bfc9;flex-wrap:wrap;gap:8px 24px;margin-top:18px;font-size:11px;display:flex}.context>span{flex:240px;line-height:1.7}.assumptionsGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;display:grid}.assumption{border-bottom:1px solid #29333d;justify-content:space-between;align-items:start;gap:14px;padding:13px 0;font-size:13px;display:flex}.assumption strong{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}details{overflow-wrap:anywhere;border:1px solid #303b46;border-radius:8px;margin:10px 0;padding:12px;font-size:13px}summary{cursor:pointer;color:#d4dee7;line-height:1.5}.operand{overflow-wrap:anywhere;border-bottom:1px solid #303b46;grid-template-columns:1fr auto;gap:8px;margin:12px 0;padding:10px;font-size:12px;display:grid}.operand small{color:#a5b2bd;grid-column:1/-1}code{overflow-wrap:anywhere;font-family:ui-monospace,monospace}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}.expression{font-family:ui-monospace,monospace;font-size:12px}dialog{color:#eef1f4;overflow-wrap:anywhere;background:#101419;border:1px solid #556f82;border-radius:16px;width:480px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);padding:26px;overflow-y:auto}dialog::backdrop{background:#000b}dialog label{margin:18px 0;font-size:14px;display:block}dialog input,dialog textarea{color:#eef1f4;width:100%;font:inherit;background:#18212a;border:1px solid #556f82;border-radius:7px;margin-top:9px;padding:10px;display:block}dialog [role=alert]{color:#ffb5a7;font-size:13px}footer{color:#a5b2bd;padding-top:26px;font-size:11px}.savedContext{overflow-wrap:anywhere;background:#13241c;border:1px solid #437c63;border-radius:12px;flex-direction:column;align-items:flex-start;gap:10px;margin:16px 0;padding:16px;font-size:12px;display:flex}.caseList{margin:16px 0}.caseRow{overflow-wrap:anywhere;border-bottom:1px solid #303b46;flex-wrap:wrap;align-items:center;gap:16px;padding:16px 0;display:flex}.caseRow>div{flex:1;min-width:180px}.caseRow h3{margin:0 0 8px}.caseRow p,.savedEvent p{font-size:12px}.savedEvent{overflow-wrap:anywhere;border-top:1px solid #303b46;margin:20px 0}.writeNotice{overflow-wrap:anywhere;border-left:3px solid #8de0bb;padding:10px 14px;font-size:13px}.compatibility{margin:16px 0}.scenariosWorkspace{gap:18px;min-width:0;display:grid}.scenariosWorkspace p,.scenariosWorkspace small{font-size:13px}.scenarioComposer,.originalComparison,.comparisonArchive,.scenarioResult{overflow-wrap:anywhere}.scenarioRow{border:1px solid #40515f;border-radius:10px;min-width:0;margin:20px 0;padding:16px}.scenarioRow legend{color:#8de0bb;padding:0 8px}.scenarioFields{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px;display:grid}.scenarioFields label,.scenarioSelect{min-width:0;font-size:13px;display:block}.scenarioFields input,.scenarioFields textarea,.scenarioFields select,.scenarioSelect select{color:#eef1f4;width:100%;min-width:0;font:inherit;background:#18212a;border:1px solid #556f82;border-radius:7px;margin:8px 0;padding:10px;display:block}.scenarioFields small{color:#a5b2bd;line-height:1.5}.scenarioRationale{grid-column:1/-1}.scenarioOutcome strong{color:#8de0bb}.scenarioOutcome [data-outcome=review]{color:#e0d5a1}.scenarioOutcome [data-outcome=decline]{color:#ffb5a7}.scenarioFact{border-bottom:1px solid #303b46;padding:8px 0}.scenarioFact h4{margin:10px 0}.scenarioResult td small{white-space:normal;max-width:200px;display:block}.scenarioResult caption{text-align:left;color:#b1bdc7;padding:12px 0;font-size:13px}.scenariosWorkspace [role=alert]{color:#ffb5a7}.originalComparisonJson pre{max-height:600px;overflow-y:auto}@media (width<=900px){.summaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.summaryCard:nth-child(3){border-left:0}.summaryCard:nth-child(n+3){border-top:1px solid var(--border)}main{padding:20px}.grid{grid-template-columns:1fr}.panelTitle{flex-direction:column;gap:4px}}@media (width<=600px){.workspaceBrand{align-items:flex-start;gap:12px}.workspaceType{max-width:120px;font-size:9px;line-height:1.6}.workspaceType>span{display:none}.workspaceNav{gap:12px 20px}.workspaceNav button{padding:10px 0}.summaryCard{padding:16px}.summaryCard strong{font-size:20px}.environmentWarning{display:block}.environmentWarning>span{margin-bottom:5px;display:block}.uploadbar>label{border-left:0;margin-left:0;padding-left:0}.hostingNotice{padding:12px 20px}.decision{width:100%}.scenarioFields{grid-template-columns:1fr}.caseRow>div{flex-basis:100%;min-width:0}header{display:block}h1{font-size:29px}.decision{margin-top:18px}.panel{padding:16px}.assumptionsGrid,.operand,.audit{grid-template-columns:1fr}.operand small,.audit small{grid-column:1}.assumption{gap:10px}.assumption strong{white-space:normal}.uploadbar{align-items:start}.panelTitle span{margin-bottom:12px}}", $n = /* @__PURE__ */ new WeakMap(), er = ({ parentElement: e, data: t, setStateValue: n }) => {
+	let r = $n.get(e);
+	if (r && r.transport.generation !== t.generation && (r.root.unmount(), r.transport.dispose(), $n.delete(e), r = void 0), !r) {
 		let i = e.querySelector(".react-root");
 		if (!i) throw Error("Workspace mount unavailable");
 		let a = document.createElement("style");
-		a.textContent = Un, e.prepend(a), je(e);
-		let o = new Hn(t.generation, (e) => n("requests", e));
+		a.textContent = Qn, e.prepend(a), je(e);
+		let o = new Zn(t.generation, (e) => n("requests", e));
 		Qe(t.generation, o.request);
 		let c = (0, s.createRoot)(i);
 		r = {
 			root: c,
 			transport: o
-		}, Wn.set(e, r), c.render(/* @__PURE__ */ (0, B.jsxs)("div", {
+		}, $n.set(e, r), c.render(/* @__PURE__ */ (0, B.jsxs)("div", {
 			className: "embeddedWorkspace",
 			children: [/* @__PURE__ */ (0, B.jsxs)("div", {
 				className: "hostingNotice",
 				children: [/* @__PURE__ */ (0, B.jsx)("span", { children: "TESTING WORKSPACE" }), /* @__PURE__ */ (0, B.jsx)("span", { children: "Synthetic data only · saved test cases may reset when the host restarts" })]
-			}), /* @__PURE__ */ (0, B.jsx)(Bn, {})]
+			}), /* @__PURE__ */ (0, B.jsx)(Yn, {})]
 		}));
 	}
 	return r.transport.publish = (e) => n("requests", e), r.transport.accept(t.responses), () => {
-		let t = Wn.get(e);
-		t?.root.unmount(), t?.transport.dispose(), Wn.delete(e);
+		let t = $n.get(e);
+		t?.root.unmount(), t?.transport.dispose(), $n.delete(e);
 	};
 };
 //#endregion
-export { Gn as default };
+export { er as default };

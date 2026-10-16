@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { guardSavedCase, type StoredCase } from "../src/caseContracts";
@@ -17,12 +17,12 @@ test.beforeAll(async ({ request }) => {
   expect(created.status()).toBe(201);
   view = guardSavedCase(await created.json(), created.headers().etag);
   const path = `http://127.0.0.1:8000/cases/${view.snapshot.case_id}/revisions/1`;
-  const command = { schema_version: "commercial-scenario-preview-v1", baseline_run_id: view.snapshot.run_id,
+  const command = { schema_version: "commercial-scenario-preview-v2", baseline_run_id: view.snapshot.run_id,
     scenarios: Array.from({ length: 10 }, (_, i) => ({ scenario_key: `s${i}`, name: `Scenario ${i}`, rationale: "Synthetic downside",
-      assumptions: { revenue_change: i === 0 ? -0.1 : 0, cogs_change: 0, operating_expense_change: 0, proposed_rate_change_bps: 0 } })) };
+      assumptions: { revenue_change: i === 0 ? "-0.1" : "0", cogs_change: "0", operating_expense_change: "0", proposed_rate_change_bps: "0" } })) };
   const preview = await request.post(`${path}/scenarios/preview`, { data: command });
   expect(preview.status()).toBe(200);
-  const retained = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v1", expected_preview_fingerprint: (await preview.json()).fingerprint.value } });
+  const retained = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v2", expected_preview_fingerprint: (await preview.json()).fingerprint.value } });
   expect(retained.status()).toBe(201);
   comparison = guardComparison(await retained.json(), retained.headers().etag);
 });
@@ -35,9 +35,9 @@ test("download package reconciles the complete real original and raw pinned fact
   expect(parsed.schema_version).toBe("spreadline-review-package-v1");
   expect(parsed.serialization_version).toBe("review-package-json-v1");
   expect(parsed.provenance).toEqual({ representation: "browser_parsed_json", actor_status: "prototype_unverified", integrity_status: "recorded_hashes_not_verified_by_export" });
-  expect(parsed.case.snapshot.assessment.current_facts.ordinary_business_income.raw_value).toBe(423000);
-  expect(parsed.case.snapshot.assessment.current_facts.ebitda.raw_value).toBe(630000);
-  expect(parsed.case.snapshot.assessment.current_facts.uca_cash_flow.raw_value).toBe(385000);
+  expect(parsed.case.snapshot.assessment.current_facts.ordinary_business_income.raw_value).toBe("423000");
+  expect(parsed.case.snapshot.assessment.current_facts.ebitda.raw_value).toBe("630000");
+  expect(parsed.case.snapshot.assessment.current_facts.uca_cash_flow.raw_value).toBe("385000");
   expect(source.filename).toBe(`spreadline-case-${view.snapshot.case_id}-r1-${view.snapshot.run_id}.json`);
 });
 test("matching retained batch keeps all ten ordered scenarios and observed history", async () => {
@@ -46,7 +46,7 @@ test("matching retained batch keeps all ten ordered scenarios and observed histo
   expect(parsed.comparison).toEqual({ etag: comparison.etag, record: comparison.record });
   expect(parsed.comparison.record.preview.scenarios.map((s: any) => s.scenario_key)).toEqual(Array.from({ length: 10 }, (_, i) => `s${i}`));
   const facts = parsed.comparison.record.preview.scenarios[0].current_facts;
-  expect([facts.ordinary_business_income.raw_value, facts.ebitda.raw_value, facts.uca_cash_flow.raw_value]).toEqual([3000, 210000, -35000]);
+  expect([facts.ordinary_business_income.raw_value, facts.ebitda.raw_value, facts.uca_cash_flow.raw_value]).toEqual(["3000", "210000", "-35000"]);
   expect(facts.k1_history.raw_value).toBe("stable");
   expect(source.filename).toContain(`-comparison-${comparison.record.comparison_id}.json`);
 });

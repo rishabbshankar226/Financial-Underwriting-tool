@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { StoredCase } from "./caseContracts";
 import type { StoredComparison } from "./scenarioContracts";
 import { MAX_EXPORT_BYTES, reviewFilename } from "./reviewPackage";
+// Inline so the packaged Streamlit component remains a single public bundle.
+import ReviewPackageWorker from "./reviewPackage.worker.ts?worker&inline";
 
 type File = { scope: string; url: string; filename: string; size: number };
 type Job = { scope: string; worker: Worker };
@@ -36,7 +38,7 @@ export function useReviewDownload(scope: string) {
       setState({ scope, busy: false, error: message, file: null });
     }
     try {
-      active = { scope, worker: new Worker(new URL("./reviewPackage.worker.ts", import.meta.url), { type: "module" }) };
+      active = { scope, worker: new ReviewPackageWorker() };
       job.current = active;
       active.worker.onmessage = (event: MessageEvent<unknown>) => {
         if (!isCurrent()) return;
