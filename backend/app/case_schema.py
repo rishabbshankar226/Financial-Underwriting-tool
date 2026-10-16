@@ -1,11 +1,12 @@
 """Exact supported schemas. V1 is frozen; opening a store never upgrades it."""
-from hashlib import sha256
+
 import json
 import re
+from hashlib import sha256
 
 SCHEMA_VERSION = 2
 MAX_COMPARISON_BYTES = 16_777_216
-SCHEMA_STATEMENTS = (
+SCHEMA_STATEMENTS: tuple[str, ...] = (
     """CREATE TABLE schema_metadata (
         singleton INTEGER PRIMARY KEY CHECK(singleton=1),
         identity TEXT NOT NULL, serialization_version TEXT NOT NULL
@@ -57,7 +58,7 @@ SCHEMA_STATEMENTS += tuple(
     for verb in ("UPDATE", "DELETE")
 )
 V1_STATEMENTS = SCHEMA_STATEMENTS
-COMPARISON_STATEMENTS = (
+COMPARISON_STATEMENTS: tuple[str, ...] = (
     f"""CREATE TABLE scenario_comparisons (
         comparison_id TEXT PRIMARY KEY, case_id TEXT NOT NULL,
         baseline_revision INTEGER NOT NULL CHECK(baseline_revision>=1), baseline_run_id TEXT NOT NULL,
@@ -83,19 +84,26 @@ COMPARISON_STATEMENTS += tuple(
     f"CREATE TRIGGER {table}_global_operation BEFORE INSERT ON {table} "
     f"WHEN EXISTS(SELECT 1 FROM {other} WHERE operation_id=NEW.operation_id) "
     "BEGIN SELECT RAISE(ABORT, 'operation ID already used'); END"
-    for table, other in (("successful_operations", "scenario_comparison_operations"),
-                         ("scenario_comparison_operations", "successful_operations"))
+    for table, other in (
+        ("successful_operations", "scenario_comparison_operations"),
+        ("scenario_comparison_operations", "successful_operations"),
+    )
 )
 SCHEMA_STATEMENTS = V1_STATEMENTS + COMPARISON_STATEMENTS
-SCHEMAS = {number: (statements, sha256(json.dumps(statements, separators=(",", ":")).encode()).hexdigest())
-           for number, statements in ((1, V1_STATEMENTS), (2, SCHEMA_STATEMENTS))}
+SCHEMAS = {
+    number: (statements, sha256(json.dumps(statements, separators=(",", ":")).encode()).hexdigest())
+    for number, statements in ((1, V1_STATEMENTS), (2, SCHEMA_STATEMENTS))
+}
 SCHEMA_IDENTITY = SCHEMAS[SCHEMA_VERSION][1]
 
 
-def schema_objects(version=SCHEMA_VERSION):
+def schema_objects(version: int = SCHEMA_VERSION) -> dict[tuple[str, str], str]:
     """Expected DDL also detects missing/changed constraints and immutability triggers."""
     result = {}
     for sql in SCHEMAS[version][0]:
-        kind, name = re.match(r"CREATE (TABLE|INDEX|TRIGGER) (\w+)", sql).groups()
+        matched = re.match(r"CREATE (TABLE|INDEX|TRIGGER) (\w+)", sql)
+        if matched is None:
+            raise ValueError("Unsupported schema definition")
+        kind, name = matched.groups()
         result[(kind.lower(), name)] = " ".join(sql.split())
     return result

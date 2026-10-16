@@ -15,10 +15,16 @@ jobs:
           python-version: '3.12'
       - name: Install backend dependencies
         run: |
-          python -m pip install -r backend/requirements.txt -c backend/constraints-py312.txt
+          python -m pip install -r backend/requirements-dev.txt -c backend/constraints-dev-py312.txt
           python -m pip check
+      - name: Python lint and strict types
+        run: |
+          python -m ruff check backend/app backend/tools backend/tests gate
+          python -m mypy --strict backend/app backend/tools gate/reference_calculator.py
       - name: Reference calculator self-test
-        run: python gate/reference_calculator.py --selftest
+        run: |
+          python gate/reference_calculator.py --selftest
+          python docs/precision_probe.py
       - name: Backend tests
         run: cd backend && python -m pytest -q
 
@@ -33,6 +39,8 @@ jobs:
         run: cd frontend && npm ci
       - name: Audit high-severity dependencies
         run: cd frontend && npm audit --audit-level=high
+      - name: Exact decimal presentation tests
+        run: cd frontend && npm run test:decimal
       - name: Build
         run: cd frontend && npm run build
 
@@ -41,9 +49,40 @@ jobs:
           python-version: '3.12'
       - name: Install backend for browser tests
         run: |
-          python -m pip install -r backend/requirements.txt -c backend/constraints-py312.txt
+          python -m pip install -r backend/requirements-dev.txt -c backend/constraints-dev-py312.txt
           python -m pip check
       - name: Install test browser
         run: cd frontend && npx playwright install --with-deps chromium
       - name: Browser regression tests
         run: cd frontend && npm run test:e2e
+
+  streamlit-workspace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build and verify public component assets
+        run: |
+          npm --prefix frontend ci
+          npm --prefix frontend run build:streamlit
+          python scripts/streamlit_assets.py check
+          git diff --exit-code -- streamlit_app/component/spreadline_workspace/frontend/build
+      - name: Install pinned testing host
+        run: |
+          python -m pip install -r backend/requirements-dev.txt -c backend/constraints-dev-py312.txt
+          python -m pip install -r streamlit_app/requirements.txt
+          python -m pip check
+      - name: Host lint, strict types and regressions
+        run: |
+          python -m ruff check streamlit_app scripts/streamlit_assets.py frontend/tests/start_streamlit.py
+          python -m mypy --strict streamlit_app/app.py streamlit_app/bridge.py streamlit_app/runtime.py scripts/streamlit_assets.py
+          python -m pytest -q streamlit_app/tests
+      - name: Install test browser
+        run: cd frontend && npx playwright install --with-deps chromium
+      - name: Packaged Streamlit browser workflows
+        run: npm --prefix frontend run test:e2e:streamlit

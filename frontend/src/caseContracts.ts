@@ -1,3 +1,4 @@
+import { decimalEqual, isDecimal, legacyDecimal } from "./decimal";
 import {
   annualFields,
   guardAssessment,
@@ -10,7 +11,7 @@ type Obj = Record<string, unknown>;
 export type CaseCreate = { input: DatedRequest; rationale: string };
 export type CaseEdit = {
   field_path: string;
-  new_value: number;
+  new_value: string | number;
   rationale: string;
 };
 export type EventContext = {
@@ -32,11 +33,11 @@ export type CaseEvent = {
   revision: number;
   run_id: string;
   field_path: string | null;
-  before: number | null;
-  after: number | null;
+  before: string | number | null;
+  after: string | number | null;
   context: EventContext;
   rationale: string;
-  actor: "prototype-demo-unverified";
+  actor: string;
   recorded_at: string;
 };
 export type Recording = {
@@ -106,6 +107,8 @@ export function object(value: unknown, field: string): Obj {
 export const finite = (v: unknown): v is number =>
   typeof v === "number" && Number.isFinite(v);
 export const text = (v: unknown): v is string => typeof v === "string";
+export const actor = (v: unknown): v is string =>
+  text(v) && /^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/.test(v);
 export const uuid = (v: unknown): v is string =>
   text(v) && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(v);
 export const revision = (v: unknown): v is number =>
@@ -209,7 +212,7 @@ export function editPath(path: unknown): string[] {
 export function inputField(
   input: Obj | DatedRequest,
   path: string,
-): { value: number; context: EventContext } {
+): { value: string | number; context: EventContext } {
   const parts = editPath(path),
     group = parts[0],
     field = parts[parts.length - 1];
@@ -250,13 +253,25 @@ export function inputField(
   if (["annual_rate", "ownership_percentage"].includes(field))
     context.unit = "decimal fraction";
   if (field === "term_months") context.unit = "months";
-  requireCase(finite(target[field]), "numeric input");
-  return { value: target[field], context };
+  const value = target[field];
+  requireCase(field === "term_months" ? Number.isSafeInteger(value) : isDecimal(value) || finite(value), "numeric input");
+  return { value: value as string | number, context };
 }
 export function guardCreate(value: unknown): CaseCreate {
   const command = object(value, "create command");
   exact(command, ["input", "rationale"]);
-  const input = guardDatedInput(command.input);
+  const rawInput = object(command.input, "create input");
+  const legacy = rawInput.schema_version === "commercial-assessment-v1";
+  if (legacy) {
+    const convert = (value: unknown, key = ""): unknown => {
+      if (typeof value === "number") return key === "term_months" ? value : legacyDecimal(value);
+      if (Array.isArray(value)) return value.map(item => convert(item));
+      if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([name, item]) => [name, convert(item, name)]));
+      return value;
+    };
+    guardDatedInput({ ...object(convert(rawInput), "archived input"), schema_version: "commercial-assessment-v2" });
+  }
+  const input = legacy ? rawInput as unknown as DatedRequest : guardDatedInput(rawInput);
   exact(input as unknown as Obj, [
     "schema_version",
     "assessment_as_of",
@@ -294,11 +309,11 @@ export function guardEdit(value: unknown): CaseEdit {
   const command = object(value, "edit command");
   exact(command, ["field_path", "new_value", "rationale"]);
   editPath(command.field_path);
-  requireCase(finite(command.new_value), "finite edit value");
+  requireCase(isDecimal(command.new_value) || finite(command.new_value), "finite edit value");
   rationale(command.rationale);
   if (command.field_path === "/proposed_loan/term_months")
     requireCase(
-      Number.isSafeInteger(command.new_value) && command.new_value >= 12,
+      finite(command.new_value) && Number.isSafeInteger(command.new_value) && command.new_value >= 12 && command.new_value <= 12000,
       "whole term months",
     );
   return command as CaseEdit;
@@ -335,9 +350,9 @@ export function guardSavedCase(
     "assessment versions",
   );
   const known =
-    a.schema_version === "commercial-assessment-v1" &&
-    a.calculation_version === "commercial-calculation-v1" &&
-    a.serialization_version === "assessment-json-v1";
+    a.schema_version === "commercial-assessment-v2" &&
+    a.calculation_version === "commercial-calculation-v2" &&
+    a.serialization_version === "assessment-json-v2";
   const assessment = known ? guardAssessment(a) : null;
   if (assessment)
     requireCase(
@@ -351,7 +366,7 @@ export function guardSavedCase(
       e.revision === s.revision &&
       e.run_id === s.run_id &&
       e.recorded_at === s.recorded_at &&
-      e.actor === "prototype-demo-unverified",
+      actor(e.actor),
     "event identity",
   );
   rationale(e.rationale);
@@ -385,9 +400,9 @@ export function guardSavedCase(
   } else {
     requireCase(
       e.kind === "edit" &&
-        finite(e.before) &&
-        finite(e.after) &&
-        e.before !== e.after &&
+        (isDecimal(e.before) || finite(e.before)) &&
+        (isDecimal(e.after) || finite(e.after)) &&
+        !decimalEqual(e.before, e.after) &&
         text(e.field_path),
       "edit event",
     );

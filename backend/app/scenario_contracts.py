@@ -1,27 +1,40 @@
 """A preview is a hypothetical context linked to observed evidence, never a saved run."""
+
 from datetime import date
-from typing import Literal
+from typing import Literal, Self
 
 from pydantic import Field, field_validator, model_validator
 
 from .assessment_contracts import (
-    AssessmentExistingDebt, AssessmentGuarantor, AssessmentLoan, AssessmentUnits,
-    AssessmentWorkingCapital, CommercialAssessment, ContractModel, CurrentFacts,
-    DatedFinancialYear, GuarantorContribution, Period, TraceRow,
+    AssessmentExistingDebt,
+    AssessmentGuarantor,
+    AssessmentLoan,
+    AssessmentUnits,
+    AssessmentWorkingCapital,
+    CommercialAssessment,
+    ContractModel,
+    CurrentFacts,
+    DatedFinancialYear,
+    GuarantorContribution,
+    Period,
+    TraceRow,
 )
 from .config import PolicyConfig
-from .schemas import Decision, DecisionFactor, ReasonCode, DISCLAIMER
+from .finance import ExactFinancialDecimal, ResultDecimal, legacy_decimal_values
+from .schemas import DISCLAIMER, Decision, DecisionFactor, ReasonCode
 
-SCENARIO_SCHEMA_VERSION = "commercial-scenario-preview-v1"
-SCENARIO_SERIALIZATION_VERSION = "scenario-preview-json-v1"
-SCENARIO_DEFINITION_VERSION = "commercial-scenario-definition-v1"
+SCENARIO_SCHEMA_VERSION: Literal["commercial-scenario-preview-v2"] = "commercial-scenario-preview-v2"
+SCENARIO_SERIALIZATION_VERSION: Literal["scenario-preview-json-v2"] = "scenario-preview-json-v2"
+SCENARIO_DEFINITION_VERSION: Literal["commercial-scenario-definition-v2"] = (
+    "commercial-scenario-definition-v2"
+)
 
 
 class ScenarioAssumptions(ContractModel):
-    revenue_change: float = Field(ge=-1)
-    cogs_change: float = Field(ge=-1)
-    operating_expense_change: float = Field(ge=-1)
-    proposed_rate_change_bps: float
+    revenue_change: ExactFinancialDecimal = Field(ge=-1)
+    cogs_change: ExactFinancialDecimal = Field(ge=-1)
+    operating_expense_change: ExactFinancialDecimal = Field(ge=-1)
+    proposed_rate_change_bps: ExactFinancialDecimal
 
 
 class ScenarioCommand(ContractModel):
@@ -32,7 +45,7 @@ class ScenarioCommand(ContractModel):
 
     @field_validator("name", "rationale", mode="before")
     @classmethod
-    def nonblank_text(cls, value):
+    def nonblank_text(cls, value: object) -> object:
         if type(value) is not str:
             return value
         value = value.strip()
@@ -41,16 +54,28 @@ class ScenarioCommand(ContractModel):
         return value
 
 
-class ScenarioPreviewCommand(ContractModel):
-    schema_version: Literal["commercial-scenario-preview-v1"]
+class ScenarioBatchCommand(ContractModel):
     baseline_run_id: str
     scenarios: list[ScenarioCommand] = Field(min_length=1, max_length=10)
 
     @model_validator(mode="after")
-    def unique_keys(self):
+    def unique_keys(self) -> Self:
         if len({s.scenario_key for s in self.scenarios}) != len(self.scenarios):
             raise ValueError("Scenario keys must be unique within the request")
         return self
+
+
+class ScenarioPreviewCommand(ScenarioBatchCommand):
+    schema_version: Literal["commercial-scenario-preview-v2"]
+
+    @model_validator(mode="before")
+    @classmethod
+    def legacy_version(cls, value: object) -> object:
+        if isinstance(value, dict) and value.get("schema_version") == "commercial-scenario-preview-v1":
+            converted = legacy_decimal_values(value)
+            if isinstance(converted, dict):
+                return {**converted, "schema_version": SCENARIO_SCHEMA_VERSION}
+        return value
 
 
 class ProjectionInputs(ContractModel):
@@ -63,12 +88,12 @@ class ProjectionInputs(ContractModel):
 
 class PolicyHeadroom(ContractModel):
     comparison_operator: Literal[">=", ">"]
-    approval_threshold: float
-    decline_threshold: float | None
-    baseline_approval: float | None
-    projected_approval: float | None
-    baseline_decline: float | None
-    projected_decline: float | None
+    approval_threshold: ResultDecimal
+    decline_threshold: ResultDecimal | None
+    baseline_approval: ResultDecimal | None
+    projected_approval: ResultDecimal | None
+    baseline_decline: ResultDecimal | None
+    projected_decline: ResultDecimal | None
 
 
 class MetricComparison(ContractModel):
@@ -76,9 +101,9 @@ class MetricComparison(ContractModel):
     baseline_fact_id: str
     projected_fact_id: str
     unit: str
-    baseline_value: float | None
-    projected_value: float | None
-    delta: float | None
+    baseline_value: ResultDecimal | None
+    projected_value: ResultDecimal | None
+    delta: ResultDecimal | None
     delta_explanation: str | None
     policy_headroom: PolicyHeadroom | None
 
@@ -136,9 +161,9 @@ class PreviewFingerprint(ContractModel):
 
 
 class ScenarioPreview(ContractModel):
-    schema_version: Literal["commercial-scenario-preview-v1"] = SCENARIO_SCHEMA_VERSION
-    serialization_version: Literal["scenario-preview-json-v1"] = SCENARIO_SERIALIZATION_VERSION
-    scenario_definition_version: Literal["commercial-scenario-definition-v1"] = SCENARIO_DEFINITION_VERSION
+    schema_version: Literal["commercial-scenario-preview-v2"] = SCENARIO_SCHEMA_VERSION
+    serialization_version: Literal["scenario-preview-json-v2"] = SCENARIO_SERIALIZATION_VERSION
+    scenario_definition_version: Literal["commercial-scenario-definition-v2"] = SCENARIO_DEFINITION_VERSION
     calculation_version: str
     persisted: Literal[False] = False
     baseline: BaselineEvidence

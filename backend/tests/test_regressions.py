@@ -1,10 +1,9 @@
 import math
 
 import pytest
-from fastapi.testclient import TestClient
-
+from api_client import TestClient
 from app.core import amortized_annual_debt_service
-from app.ingestion import extract_synthetic_text, confirmed_payload
+from app.ingestion import confirmed_payload, extract_synthetic_text
 from app.main import app
 from fixtures import alpine_request
 
@@ -30,7 +29,7 @@ def consumer_payload():
     (('proposed_loan', 'amount'), 'Infinity'),
 ])
 def test_invalid_commercial_inputs_return_422(path, value):
-    payload = alpine_request().model_dump()
+    payload = alpine_request().model_dump(mode="json")
     node = payload
     for key in path[:-1]:
         node = node[key]
@@ -52,7 +51,7 @@ def test_invalid_consumer_inputs_return_422(field, value):
 
 
 def test_zero_debt_service_is_explicit_and_serializable():
-    payload = alpine_request().model_dump()
+    payload = alpine_request().model_dump(mode="json")
     payload['years'][-1]['interest_expense'] = 0
     payload['existing_debt'] = {'cpltd_annual': 0, 'operating_lease_annual': 0}
     payload['proposed_loan']['amount'] = 0
@@ -66,7 +65,7 @@ def test_zero_debt_service_is_explicit_and_serializable():
 
 
 def test_ownership_cannot_count_more_than_the_whole_business():
-    payload = alpine_request().model_dump()
+    payload = alpine_request().model_dump(mode="json")
     payload['guarantors'].append(dict(payload['guarantors'][0], name='Second owner'))
     response = client.post('/commercial/decision', json=payload)
     assert response.status_code == 422, response.text
@@ -111,7 +110,8 @@ def test_partial_atr_checklist_is_not_complete():
 def test_invalid_sba_inputs_rejected_before_evaluation(field, value):
     from app.schemas import SBACase
     from pydantic import ValidationError
-    payload = dict(borrower_name='Synthetic', naics='999999', requested_loan=100000, global_dscr=1.2, sop_version='8')
+    from test_sba_evidence import evidence_case
+    payload = evidence_case().model_dump()
     payload[field] = value
     with pytest.raises(ValidationError):
         SBACase(**payload)
@@ -119,7 +119,7 @@ def test_invalid_sba_inputs_rejected_before_evaluation(field, value):
 
 @pytest.mark.parametrize('endpoint,payload', [
     ('/consumer/decision', dict(consumer_payload(), proposed_housing_pi=1e308, proposed_housing_tax_ins=1e308)),
-    ('/commercial/decision', dict(alpine_request().model_dump(), proposed_loan=dict(amount=1e308, annual_rate=1e308, term_months=120))),
+    ('/commercial/decision', dict(alpine_request().model_dump(mode="json"), proposed_loan=dict(amount=1e308, annual_rate=1e308, term_months=120))),
 ])
 def test_overflow_cannot_produce_a_decision(endpoint, payload):
     response = client.post(endpoint, json=payload)

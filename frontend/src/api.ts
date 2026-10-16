@@ -5,22 +5,24 @@ import {
   type Accepted,
 } from "./contracts";
 import type { Draft } from "./workspace";
-export const apiBase = (
-  import.meta.env?.VITE_API_URL || "http://localhost:8000"
-).replace(/\/$/, "");
+import { dispatchRequest } from "./transport";
+export { apiBase } from "./transport";
+export const apiRequest = (path: string, init: RequestInit, transport: typeof fetch = fetch): Promise<Response> =>
+  dispatchRequest(path, init, transport);
 export async function evaluate(
   draft: Draft,
   signal: AbortSignal,
   transport: typeof fetch = fetch,
 ): Promise<Accepted> {
-  const response = await transport(
-    `${apiBase}/commercial/${draft.mode === "dated" ? "assessment" : "decision"}`,
+  const response = await apiRequest(
+    `/commercial/${draft.mode === "dated" ? "assessment" : "decision"}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: draft.rawJson ?? JSON.stringify(draft.payload),
       signal,
     },
+    transport,
   );
   let body: unknown;
   try {

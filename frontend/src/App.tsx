@@ -1,3 +1,4 @@
+import { formatDecimal, isDecimal, shiftDecimal } from "./decimal";
 import { useEffect, useRef, useState } from "react";
 import {
   annualFields,
@@ -9,6 +10,8 @@ import {
 import type { EditableField, EditEvent } from "./workspace";
 import EditDialog from "./EditDialog";
 import { metricText } from "./metricDisplay";
+import { queryWorkspace } from "./workspaceDom";
+import AssessmentSummary from "./AssessmentSummary";
 import { Scenarios } from "./Scenarios";
 import { Review } from "./Review";
 import { prototypeDisclaimer } from "./prototypeDisclaimer";
@@ -26,6 +29,7 @@ import {
 const disclaimer = prototypeDisclaimer;
 const labels: Record<string, string> = {
   gross_receipts: "Gross receipts",
+  gross_profit: "Gross profit",
   cogs: "COGS",
   operating_expense_excl_dna_interest_comp: "Operating expenses",
   officer_compensation: "Officer compensation",
@@ -57,8 +61,7 @@ const labels: Record<string, string> = {
   ap_increase: "AP increase",
   cash_taxes_paid: "Cash taxes paid",
 };
-const money = (value: number) =>
-  value.toLocaleString("en-US", { maximumFractionDigits: 2 });
+const money = (value: string) => formatDecimal(value, 2);
 const periodLabel = (year: Partial<Period>, index: number) =>
   year.period_start && year.period_end
     ? `${year.period_start} – ${year.period_end}`
@@ -66,8 +69,8 @@ const periodLabel = (year: Partial<Period>, index: number) =>
 function factorText(f: Factor): string {
   const v = f.raw_value;
   if (v === null) return "Not applicable";
-  if (typeof v !== "number") return String(v);
-  return f.name === "uca_positive" ? `$${money(v)}` : `${v.toFixed(3)}x`;
+  if (!isDecimal(v)) return String(v);
+  return f.name === "uca_positive" ? `$${money(v)}` : `${formatDecimal(v, 4)}x`;
 }
 function TraceDetail({
   metric,
@@ -96,7 +99,7 @@ function TraceDetail({
             {o.raw_value === null ? "Not applicable" : String(o.raw_value)}{" "}
             {o.unit}
           </span>
-          <small>{o.reference_type}</small>
+          <small>{o.reference_type}{o.reported_value !== null && ` · Reported component: ${formatDecimal(String(o.reported_value), 2)} ${o.unit}`}</small>
         </div>
       ))}
       <p>
@@ -151,10 +154,10 @@ export default function App() {
   function field(
     path: string,
     label: string,
-    value: number,
+    value: string | number,
     unit: EditableField["unit"] = "USD",
-    min?: number,
-    max?: number,
+    min?: string | number,
+    max?: string | number,
     integer = false,
     period?: string,
   ) {
@@ -187,7 +190,7 @@ export default function App() {
   function assumptionGroup(
     title: string,
     prefix: string,
-    values: Record<string, number>,
+    values: Record<string, string | number>,
     period?: string,
   ) {
     return (
@@ -229,10 +232,10 @@ export default function App() {
               )}
               <strong>
                 {percent
-                  ? `${money(value * 100)}%`
+                  ? `${money(shiftDecimal(String(value), 2))}%`
                   : integer
                     ? `${value} months`
-                    : `$${money(value)}`}
+                    : `$${money(String(value))}`}
               </strong>
             </div>
           );
@@ -241,7 +244,18 @@ export default function App() {
     );
   }
   return (
-    <main>
+    <main className="analystWorkspace">
+      <div className="workspaceBrand">
+        <div className="wordmark">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+            <path d="M2 5h13v4H2zm7 5h13v4H9zM2 15h13v4H2z" fill="currentColor" />
+          </svg>
+          <span>Spreadline</span>
+        </div>
+        <span className="workspaceType">
+          COMMERCIAL UNDERWRITING <span>USD</span>
+        </span>
+      </div>
       <header>
         <div>
           <div className="eyebrow">SPREADLINE / CREDIT WORKSPACE</div>
@@ -270,7 +284,11 @@ export default function App() {
                 : "Selected input unavailable"}
           </p>
         </div>
-        <div className="decision" aria-live="polite">
+        <div
+          className="decision"
+          data-outcome={decision?.outcome ?? "unavailable"}
+          aria-live="polite"
+        >
           <span>Illustrative decision</span>
           <strong>
             {decision
@@ -290,7 +308,10 @@ export default function App() {
           </small>
         </div>
       </header>
-      <div className="warning">{disclaimer}</div>
+      <div className="warning environmentWarning">
+        <span>Prototype use</span>
+        <p>{disclaimer}</p>
+      </div>
       <div className="uploadbar">
         <div className="actions">
           <button onClick={() => demo("dated")}>Dated Alpine demo</button>
@@ -303,6 +324,7 @@ export default function App() {
             Saved cases
           </button>
           <button
+            className="primary"
             disabled={!workspace.canSave}
             onClick={(event) => {
               opener.current = event.currentTarget;
@@ -339,8 +361,7 @@ export default function App() {
           }}
           onClose={() => {
             setShowCases(false);
-            document
-              .querySelector<HTMLButtonElement>("[data-focus-fallback]")
+            queryWorkspace<HTMLButtonElement>("[data-focus-fallback]")
               ?.focus();
           }}
         />
@@ -467,12 +488,14 @@ export default function App() {
           </span>
         </div>
       )}
-      <nav aria-label="Workspace views">
+      {assessment && <AssessmentSummary assessment={assessment} />}
+      <nav className="workspaceNav" aria-label="Workspace views">
         {(["spread", "assumptions", "details", "memo", "history", "scenarios", "review"] as const).map(
           (value) => (
             <button
               className={tab === value ? "active" : ""}
               aria-pressed={tab === value}
+              aria-current={tab === value ? "page" : undefined}
               onClick={() => setTab(value)}
               key={value}
             >
@@ -539,12 +562,12 @@ export default function App() {
                                   value: y[key],
                                   unit: "USD",
                                   min:
-                                    key === "interest_expense" ? 0 : undefined,
+                                    key === "interest_expense" ? "0" : undefined,
                                   period: periodLabel(y, i),
                                 });
                               }}
                             >
-                              ${money(y[key])}
+                              ${money(assessment?.historical_spread[i].reported_financials[key] ?? y[key])}
                             </button>
                           </td>
                         ))}
@@ -553,12 +576,13 @@ export default function App() {
                     {assessment &&
                       (
                         [
+                          "gross_profit",
                           "ordinary_business_income",
                           "ebitda",
                           "k1_distribution_ratio",
                         ] as const
                       ).map((key) => (
-                        <tr className="derived" key={key}>
+                        <tr className="derived" data-fact={key} key={key}>
                           <th scope="row">
                             {labels[key] ?? "K-1 distribution ratio"}{" "}
                             <small>Calculated</small>
@@ -576,6 +600,7 @@ export default function App() {
             ) : (
               <p>No accepted inputs yet.</p>
             )}
+            {assessment && <p className="fine">Report amounts reconcile to income totals in cents. Editing opens the original unrounded input.</p>}
             {accepted?.mode === "legacy" && (
               <p className="fine">
                 Legacy inputs have no verified dates or dated calculation trace.
@@ -587,12 +612,12 @@ export default function App() {
             <h2>Current coverage</h2>
             {decision ? (
               decision.factors.map((f) => (
-                <div className="metric" key={f.name}>
+                <div className="metric" data-state={f.passed === null ? "review" : f.passed ? "pass" : "fail"} key={f.name}>
                   <span>{labels[f.name] ?? f.name}</span>
                   <strong>{factorText(f)}</strong>
                   <small>
                     {f.name === "uca_positive"
-                      ? `Must exceed $${money(Number(f.threshold))}`
+                      ? `Must exceed $${money(String(f.threshold))}`
                       : `Policy: ${f.comparison_operator ?? "comparison unavailable"} ${String(f.threshold)}`}{" "}
                     ·{" "}
                     {f.passed === null
@@ -698,6 +723,7 @@ export default function App() {
               </h3>
               {(
                 [
+                  "gross_profit",
                   "ordinary_business_income",
                   "ebitda",
                   "k1_distribution_ratio",
@@ -884,7 +910,7 @@ export default function App() {
       <footer>
         Spreadline · Synthetic analyst demonstration ·{" "}
         {state.saved
-          ? "Local saved revisions · unverified demonstration actor"
+          ? `Saved revisions · recorded credential ${state.saved.view.snapshot.event.actor}`
           : "Unsaved session workspace"}
       </footer>
     </main>

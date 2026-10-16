@@ -1,33 +1,41 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { guardSavedCase, type StoredCase } from "../src/caseContracts";
-import { guardPreview, guardComparison, guardComparisonPage, guardScenarioCommand, parseShock, scenarioText } from "../src/scenarioContracts";
+import { guardSavedCase, object, type Page, type StoredCase } from "../src/caseContracts";
+import { guardPreview, guardComparison, guardComparisonPage, guardScenarioCommand, parseShock, scenarioText, type Assumptions, type ComparisonRecord, type ComparisonSummary, type PreviewCommand, type ScenarioPreview } from "../src/scenarioContracts";
 import { previewScenarios, writeComparison, fetchComparison, fetchComparisons, MAX_RESPONSE } from "../src/scenarioApi";
 import { makeComparison, makeCreate, saveRecovery, readRecovery, clearRecovery, RECOVERY_KEY } from "../src/caseRecovery";
+import { compareDecimal } from "../src/decimal";
 const input = JSON.parse(readFileSync(new URL("../../backend/fixtures/alpine_dated.json", import.meta.url), "utf8"));
-const zero = { revenue_change: 0, cogs_change: 0, operating_expense_change: 0, proposed_rate_change_bps: 0 };
-const commands = [
+const zero = { revenue_change: "0", cogs_change: "0", operating_expense_change: "0", proposed_rate_change_bps: "0" };
+const definitions: [string, Assumptions][] = [
     ["zero", zero],
-    ["revenue", { ...zero, revenue_change: -0.1 }],
-    ["cogs", { ...zero, cogs_change: 0.1 }],
-    ["opex", { ...zero, operating_expense_change: 0.1 }],
-    ["combined", { ...zero, revenue_change: -0.1, cogs_change: 0.1, operating_expense_change: 0.1 }],
-    ["rate", { ...zero, proposed_rate_change_bps: 200 }],
-].map(([name, assumptions]) => ({ scenario_key: name, name, rationale: "Synthetic contract example", assumptions }));
-let view: StoredCase, command: any, preview: any, record: any, etag: string, location: string;
+    ["revenue", { ...zero, revenue_change: "-0.1" }],
+    ["cogs", { ...zero, cogs_change: "0.1" }],
+    ["opex", { ...zero, operating_expense_change: "0.1" }],
+    ["combined", { ...zero, revenue_change: "-0.1", cogs_change: "0.1", operating_expense_change: "0.1" }],
+    ["rate", { ...zero, proposed_rate_change_bps: "200" }],
+];
+const commands = definitions.map(([name, assumptions]) => ({ scenario_key: name, name, rationale: "Synthetic contract example", assumptions }));
+let view: StoredCase, command: PreviewCommand, preview: ScenarioPreview, record: ComparisonRecord, etag: string, location: string;
+function required<T>(value: T | undefined | null): T {
+    expect(value).not.toBeNull();
+    expect(value).toBeDefined();
+    if (value === null || value === undefined) throw new Error("Missing required fixture value");
+    return value;
+}
 test.beforeAll(async ({ request }) => {
     const created = await request.post("http://127.0.0.1:8000/cases", { headers: { "Idempotency-Key": randomUUID() }, data: { input, rationale: "Scenario contract baseline" } });
     expect(created.status()).toBe(201);
     view = guardSavedCase(await created.json(), created.headers().etag);
-    command = { schema_version: "commercial-scenario-preview-v1", baseline_run_id: view.snapshot.run_id, scenarios: commands };
+    command = { schema_version: "commercial-scenario-preview-v2", baseline_run_id: view.snapshot.run_id, scenarios: commands };
     const response = await request.post(`http://127.0.0.1:8000/cases/${view.snapshot.case_id}/revisions/1/scenarios/preview`, { data: command });
     expect(response.status()).toBe(200);
-    preview = await response.json();
-    const retained = await request.post(`http://127.0.0.1:8000/cases/${view.snapshot.case_id}/revisions/1/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v1", expected_preview_fingerprint: preview.fingerprint.value } });
+    preview = guardPreview(await response.json(), view, command);
+    const retained = await request.post(`http://127.0.0.1:8000/cases/${view.snapshot.case_id}/revisions/1/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v2", expected_preview_fingerprint: preview.fingerprint.value } });
     expect(retained.status()).toBe(201);
-    record = await retained.json();
     etag = retained.headers().etag;
+    record = guardComparison(await retained.json(), etag).record;
     location = retained.headers().location;
 });
 test("real preview preserves the selected original baseline and known financial examples", () => {
@@ -35,32 +43,38 @@ test("real preview preserves the selected original baseline and known financial 
     expect(result.baseline.assessment).toEqual(view.assessment);
     const expected = [[423000, 630000, 385000], [3000, 210000, -35000], [148000, 355000, 110000], [359000, 566000, 321000], [-336000, -129000, -374000], [423000, 630000, 385000]];
     result.scenarios.forEach((s, i) => {
-        ["ordinary_business_income", "ebitda", "uca_cash_flow"].forEach((key, j) => expect(s.current_facts[key].raw_value).toBeCloseTo(expected[i][j], 7));
+        (["ordinary_business_income", "ebitda", "uca_cash_flow"] as const).forEach((key, j) => expect(s.current_facts[key].raw_value).toBe(String(expected[i][j])));
         expect(s.current_facts.k1_history.raw_value).toBe("stable");
     });
-    expect(result.scenarios[5].current_facts.proposed_annual_payment.raw_value).toBeCloseTo(87825.70120380491, 7);
+    const annualPayment = result.scenarios[5].current_facts.proposed_annual_payment;
+    expect(typeof annualPayment.raw_value).toBe("string");
+    expect(compareDecimal(String(annualPayment.raw_value), "87825.70120375491")).toBeGreaterThan(0);
+    expect(compareDecimal(String(annualPayment.raw_value), "87825.70120385491")).toBeLessThan(0);
+    expect(annualPayment.reported_value).toBe("87825.70");
 });
 for (const [label, mutate] of [
-    ["wrong run", (p: any) => p.baseline.run_id = randomUUID()],
-    ["wrong payload hash", (p: any) => p.baseline.payload_hash = "a".repeat(64)],
-    ["different policy", (p: any) => p.policy_snapshot.commercial_min_dscr += 0.1],
-    ["changed original baseline", (p: any) => p.baseline.assessment.normalized_input.years[1].gross_receipts += 1],
-    ["reordered command", (p: any) => p.scenarios.reverse()],
-    ["changed rationale", (p: any) => p.scenarios[0].rationale = "Different review"],
-    ["boolean shock", (p: any) => p.scenarios[0].assumptions.revenue_change = false],
-    ["missing fact", (p: any) => delete p.scenarios[0].current_facts.dscr],
-    ["changed comparison link", (p: any) => p.scenarios[0].comparisons[0].baseline_value += 1],
-    ["wrong factor link", (p: any) => p.scenarios[0].factor_changes[0].projected_fact_id = "wrong"],
-    ["unresolved trace", (p: any) => p.scenarios[0].calculation_trace.at(-1).operands[0].reference = "/missing"],
-    ["non-finite fact", (p: any) => p.scenarios[0].current_facts.ebitda.raw_value = Infinity],
-    ["unsupported live definition", (p: any) => p.scenario_definition_version = "future"],
-    ["renamed retained trace", (p: any) => p.scenarios[0].calculation_trace.find((r: any) => r.fact_id === "baseline.years.0.ebitda").definition_id = "invented"],
-    ["renamed projected trace", (p: any) => { const s = p.scenarios[0], old = s.current_facts.ebitda.fact_id; s.current_facts.ebitda.fact_id = "invented.ebitda"; s.calculation_trace.forEach((r: any) => { if (r.fact_id === old)
-            r.fact_id = "invented.ebitda"; r.operands.forEach((o: any) => { if (o.reference === old)
-            o.reference = "invented.ebitda"; }); }); s.comparisons.find((c: any) => c.metric === "ebitda").projected_fact_id = "invented.ebitda"; }],
-    ["changed observed K-1 ratio difference", (p: any) => { const s = p.scenarios[0], fact = s.current_facts.k1_ratio_difference; fact.raw_value += 0.001; s.calculation_trace.find((r: any) => r.fact_id === fact.fact_id).raw_value = fact.raw_value; s.calculation_trace.forEach((r: any) => r.operands.forEach((o: any) => { if (o.reference === fact.fact_id)
-            o.raw_value = fact.raw_value; })); s.comparisons.find((c: any) => c.metric === "k1_ratio_difference").projected_value = fact.raw_value; }],
-    ["projection input and shock trace disagree", (p: any) => p.scenarios[0].projection_inputs.operating.gross_receipts += 1],
+    ["wrong run", (p: ScenarioPreview) => p.baseline.run_id = randomUUID()],
+    ["wrong payload hash", (p: ScenarioPreview) => p.baseline.payload_hash = "a".repeat(64)],
+    ["different policy", (p: ScenarioPreview) => p.policy_snapshot.commercial_min_dscr = "1.35"],
+    ["changed original baseline", (p: ScenarioPreview) => p.baseline.assessment.normalized_input.years[1].gross_receipts = "4200001"],
+    ["reordered command", (p: ScenarioPreview) => p.scenarios.reverse()],
+    ["changed rationale", (p: ScenarioPreview) => p.scenarios[0].rationale = "Different review"],
+    ["boolean shock", (p: ScenarioPreview) => Object.assign(p.scenarios[0].assumptions, {revenue_change: false})],
+    ["missing fact", (p: ScenarioPreview) => Reflect.deleteProperty(p.scenarios[0].current_facts, "dscr")],
+    ["changed comparison link", (p: ScenarioPreview) => p.scenarios[0].comparisons[0].baseline_value = "423001"],
+    ["wrong factor link", (p: ScenarioPreview) => p.scenarios[0].factor_changes[0].projected_fact_id = "wrong"],
+    ["unresolved trace", (p: ScenarioPreview) => required(p.scenarios[0].calculation_trace.at(-1)).operands[0].reference = "/missing"],
+    ["non-finite fact", (p: ScenarioPreview) => Object.assign(p.scenarios[0].current_facts.ebitda, {raw_value: Infinity})],
+    ["unsupported live definition", (p: ScenarioPreview) => p.scenario_definition_version = "future"],
+    ["renamed retained trace", (p: ScenarioPreview) => required(p.scenarios[0].calculation_trace.find(r => r.fact_id === "baseline.years.0.ebitda")).definition_id = "invented"],
+    ["renamed projected trace", (p: ScenarioPreview) => { const s = p.scenarios[0], old = s.current_facts.ebitda.fact_id; s.current_facts.ebitda.fact_id = "invented.ebitda"; s.calculation_trace.forEach(r => { if (r.fact_id === old)
+            r.fact_id = "invented.ebitda"; r.operands.forEach(o => { if (o.reference === old)
+            o.reference = "invented.ebitda"; }); }); required(s.comparisons.find(c => c.metric === "ebitda")).projected_fact_id = "invented.ebitda"; }],
+    ["changed observed K-1 ratio difference", (p: ScenarioPreview) => { const s = p.scenarios[0], fact = s.current_facts.k1_ratio_difference; fact.raw_value = "0.999"; required(s.calculation_trace.find(r => r.fact_id === fact.fact_id)).raw_value = fact.raw_value; s.calculation_trace.forEach(r => r.operands.forEach(o => { if (o.reference === fact.fact_id)
+            o.raw_value = fact.raw_value; })); required(s.comparisons.find(c => c.metric === "k1_ratio_difference")).projected_value = fact.raw_value; }],
+    ["projection input and shock trace disagree", (p: ScenarioPreview) => p.scenarios[0].projection_inputs.operating.gross_receipts = "4200001"],
+    ["numeric financial shock", (p: ScenarioPreview) => Object.assign(p.scenarios[0].assumptions, {revenue_change: 0})],
+    ["changed reported fact", (p: ScenarioPreview) => p.scenarios[0].current_facts.ebitda.reported_value = "630000.01"],
 ] as const)
     test(`live preview guard rejects ${label}`, () => {
         const copy = structuredClone(preview);
@@ -78,20 +92,20 @@ test("unsupported original definitions retain JSON while unknown storage fails c
     copy.preview.scenario_definition_version = "future";
     expect(guardComparison(copy, etag).preview).toBeNull();
     expect(guardComparison(copy, etag).compatibility).toContain("future");
-    copy.storage_serialization_version = "unknown";
+    Object.assign(copy, {storage_serialization_version: "unknown"});
     expect(() => guardComparison(copy, etag)).toThrow();
 });
 test("original inner baseline and ETag cannot point to a different record", () => {
     const copy = structuredClone(record);
-    copy.preview.baseline.revision = 2;
+    object(copy.preview.baseline, "fixture comparison baseline").revision = 2;
     expect(() => guardComparison(copy, etag)).toThrow();
     expect(() => guardComparison(record, `W/${etag}`)).toThrow();
 });
 test("comparison summaries verify requested case, counts, distinct keys and cursor", async ({ request }) => {
     const r = await request.get(`http://127.0.0.1:8000/cases/${view.snapshot.case_id}/scenario-comparisons?limit=25`);
-    const page = await r.json();
+    const page = guardComparisonPage(await r.json(), view.snapshot.case_id);
     expect(guardComparisonPage(page, view.snapshot.case_id).items[0].scenario_count).toBe(6);
-    for (const mutate of [(p: any) => p.items[0].case_id = randomUUID(), (p: any) => p.items[0].scenario_count = 1, (p: any) => p.items[0].scenarios[1].scenario_key = p.items[0].scenarios[0].scenario_key, (p: any) => p.next_cursor = "a".repeat(513)]) {
+    for (const mutate of [(p: Page<ComparisonSummary>) => p.items[0].case_id = randomUUID(), (p: Page<ComparisonSummary>) => p.items[0].scenario_count = 1, (p: Page<ComparisonSummary>) => p.items[0].scenarios[1].scenario_key = p.items[0].scenarios[0].scenario_key, (p: Page<ComparisonSummary>) => p.next_cursor = "a".repeat(513)]) {
         const copy = structuredClone(page);
         mutate(copy);
         expect(() => guardComparisonPage(copy, view.snapshot.case_id)).toThrow();
@@ -100,9 +114,9 @@ test("comparison summaries verify requested case, counts, distinct keys and curs
 for (const raw of ["", " ", "1,2", "NaN", "Infinity", "1e999", "--10"])
     test(`shock parser rejects ${JSON.stringify(raw)}`, () => expect(() => parseShock(raw, true)).toThrow());
 test("shock units, Unicode trim and code-point limits match the command", () => {
-    expect(parseShock("-10", true)).toBe(-0.1);
-    expect(parseShock("12.5", false)).toBe(12.5);
-    expect(parseShock("-100", true)).toBe(-1);
+    expect(parseShock("-10", true)).toBe("-0.1");
+    expect(parseShock("12.5", false)).toBe("12.5");
+    expect(parseShock("-100", true)).toBe("-1");
     expect(() => parseShock("-100.1", true)).toThrow();
     expect(scenarioText("\u0085 🦉 \u001f", 120)).toBe("🦉");
     expect(scenarioText("🦉".repeat(120), 120)).toHaveLength(240);
@@ -111,7 +125,7 @@ test("shock units, Unicode trim and code-point limits match the command", () => 
 test("command guard requires all four finite shocks and unique ordered rows", () => {
     expect(guardScenarioCommand(command)).toEqual(command);
     const copy = structuredClone(command);
-    delete copy.scenarios[0].assumptions.cogs_change;
+    Reflect.deleteProperty(copy.scenarios[0].assumptions, "cogs_change");
     expect(() => guardScenarioCommand(copy)).toThrow();
     copy.scenarios[0].assumptions = { ...zero };
     copy.scenarios[1].scenario_key = copy.scenarios[0].scenario_key;
@@ -186,10 +200,10 @@ test("the comparison transport accepts exactly 16 MiB and rejects larger preview
 });
 test("typed original guards preserve JSON depth bounds and retained factor policy", () => {
     const future = structuredClone(record); future.preview.calculation_version = "future";
-    let nested: any = {}; for (let i = 0; i < 101; i++) nested = { next: nested }; future.preview.extra = nested;
+    let nested: unknown = {}; for (let i = 0; i < 101; i++) nested = { next: nested }; future.preview.extra = nested;
     expect(() => guardComparison(future, etag)).toThrow("JSON depth");
-    const altered = structuredClone(preview), scenario = altered.scenarios[0], factor = scenario.decision.factors.find((f: any) => f.name === "dscr");
-    factor.threshold += 0.1; scenario.factor_changes.find((f: any) => f.name === "dscr").projected.threshold = factor.threshold;
-    scenario.comparisons.find((c: any) => c.metric === "dscr").policy_headroom.approval_threshold = factor.threshold;
+    const altered = structuredClone(preview), scenario = altered.scenarios[0], factor = required(scenario.decision.factors.find(f => f.name === "dscr"));
+    factor.threshold = "1.35"; required(scenario.factor_changes.find(f => f.name === "dscr")).projected.threshold = factor.threshold;
+    required(required(scenario.comparisons.find(c => c.metric === "dscr")).policy_headroom).approval_threshold = factor.threshold;
     expect(() => guardPreview(altered, view, command)).toThrow("retained policy");
 });

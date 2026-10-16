@@ -1,3 +1,4 @@
+import { compareDecimal, decimalEqual, inputDecimal, shiftDecimal } from "./decimal";
 import type { Accepted, Input, Mode } from "./contracts";
 import type { StoredCase } from "./caseContracts";
 export type StoredSelection = {
@@ -7,8 +8,8 @@ export type StoredSelection = {
 };
 export type EditEvent = {
   path: string;
-  prior: number;
-  next: number;
+  prior: string | number;
+  next: string | number;
   rationale: string;
   at: string;
 };
@@ -36,7 +37,7 @@ export const initialWorkspace: Workspace = {
   id: 0,
   accepted: null,
   draft: null,
-  filename: "alpine_dated.json",
+  filename: "alpine_dated_v2.json",
   status: "evaluating",
   error: "",
   history: [],
@@ -157,32 +158,31 @@ export type EditableField = {
   path: string;
   label: string;
   period: string;
-  value: number;
+  value: string | number;
   unit: "USD" | "%" | "months";
-  min?: number;
-  max?: number;
+  min?: string | number;
+  max?: string | number;
   integer?: boolean;
 };
 export function validateEdit(
   field: EditableField,
   raw: string,
   rationale: string,
-): number {
+): string | number {
   if (!/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(raw.trim()))
     throw new Error("Enter a valid finite number.");
-  const display = Number(raw.replace(/,/g, ""));
-  const next = field.unit === "%" ? display / 100 : display;
-  if (!Number.isFinite(next)) throw new Error("Enter a valid finite number.");
-  if (field.integer && !Number.isSafeInteger(next))
-    throw new Error("Enter a safe whole number of months.");
-  if (
-    (field.min !== undefined && next < field.min) ||
-    (field.max !== undefined && next > field.max)
-  )
-    throw new Error(
-      `Value is outside the supported range (${field.min ?? "no minimum"} to ${field.max ?? "no maximum"} in API units).`,
-    );
+  const display = inputDecimal(raw.trim().replace(/,/g, ""));
+  const decimal = inputDecimal(field.unit === "%" ? shiftDecimal(display, -2) : display);
+  let next: string | number = decimal;
+  if (field.integer) {
+    if (!/^-?\d+$/.test(decimal) || !Number.isSafeInteger(Number(decimal)))
+      throw new Error("Enter a safe whole number of months.");
+    next = Number(decimal);
+  }
+  if ((field.min !== undefined && compareDecimal(decimal, String(field.min)) < 0) ||
+      (field.max !== undefined && compareDecimal(decimal, String(field.max)) > 0))
+    throw new Error(`Value is outside the supported range (${field.min ?? "no minimum"} to ${field.max ?? "no maximum"} in API units).`);
   if (!rationale.trim()) throw new Error("A nonblank rationale is required.");
-  if (next === field.value) throw new Error("Enter a changed value or cancel.");
+  if (decimalEqual(next, field.value)) throw new Error("Enter a changed value or cancel.");
   return next;
 }

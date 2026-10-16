@@ -6,13 +6,17 @@ assessment, and server-derived event. The browser's **Save case**, **Saved cases
 and revision history controls use this contract. See [workspace behavior](WORKSPACE.md)
 for original-result reads, conflict review, and exact-write recovery.
 
-Only `commercial-assessment-v1` input is accepted. Legacy, consumer, and SBA
-requests remain stateless. Use synthetic data. The recording actor is the fixed
-`prototype-demo-unverified` demonstration identity, not a verified person.
+New accepted inputs normalize to `commercial-assessment-v2`. V1 intake remains
+explicitly compatible; archived numeric v1 assessments stay read-only. Legacy, consumer, and SBA
+requests remain stateless. All HTTP operations require the configured Bearer
+credential. New events record the server-derived operator ID; archived
+`prototype-demo-unverified` actors and original receipt bytes remain unchanged.
+That ID identifies a credential, not an independently verified person.
 
 ## Enable storage
 
-With the pinned Python 3.12 environment active, from `backend`:
+With the pinned Python 3.12 environment active and the operator environment
+variables configured as in the [README](../README.md#setup), from `backend`:
 
 ```bash
 mkdir -p .spreadline-data/backups
@@ -21,6 +25,8 @@ python -m uvicorn app.main:app --reload --port 8000
 ```
 
 The first configured case operation initializes schema v2 in a new/empty file.
+New files use private POSIX mode 0600 without changing the process umask. Existing
+files retain their permissions; opening a store never chmods or rewrites it.
 Existing exact schema-v1 stores remain supported without automatic migration.
 Module import does not create a database. Missing configuration returns
 `503 storage_not_configured` from case routes; stateless assessment remains
@@ -49,7 +55,7 @@ characters before trimming.
 | `GET /cases/{case_id}` | Latest immutable snapshot and its strong ETag, read consistently with the head. |
 | `GET /cases/{case_id}/revisions` | Bounded newest-first revision summaries; `limit`/`after` as above. Cursor is scoped to this case. |
 | `GET /cases/{case_id}/revisions/{number}` | The original selected input, assessment, recording metadata and event, plus its ETag. |
-| `POST /cases/{case_id}/revisions` | `{field_path: string, new_value: number, rationale: string}`, one UUID `Idempotency-Key`, and one strong `If-Match`. Returns 201 after atomic acceptance. |
+| `POST /cases/{case_id}/revisions` | `{field_path: string, new_value: decimal_string_or_integer_months, rationale: string}`, one UUID `Idempotency-Key`, and one strong `If-Match`. Returns 201 after atomic acceptance. |
 | `POST /cases/{case_id}/revisions/{number}/replay` | Empty body or `{}`; returns `matched`, `mismatch`, or `replay_unavailable`. Does not write a revision or run. |
 
 The accepted snapshot includes case/revision/run IDs, parent revision,
@@ -64,13 +70,15 @@ Creation example, from the repository root:
 python - <<'PY' > /tmp/spreadline-create.json
 import json
 from pathlib import Path
-print(json.dumps({"input": json.loads(Path("backend/fixtures/alpine_dated.json").read_text()),
+print(json.dumps({"input": json.loads(Path("backend/fixtures/alpine_dated_v2.json").read_text()),
                   "rationale": "Initial synthetic example"}))
 PY
 curl --fail-with-body -i http://localhost:8000/cases \
-  -H 'Content-Type: application/json' \
-  -H 'Idempotency-Key: 2aeb5db0-1662-46a4-8b4b-5f87e5ab5b59' \
-  --data-binary @/tmp/spreadline-create.json
+  --header @- --data-binary @/tmp/spreadline-create.json <<HEADERS
+Authorization: Bearer $SPREADLINE_API_TOKEN
+Content-Type: application/json
+Idempotency-Key: 2aeb5db0-1662-46a4-8b4b-5f87e5ab5b59
+HEADERS
 ```
 
 For a new write, generate a new UUID. To retry a lost response, retain that
@@ -92,6 +100,7 @@ return and expose their canonical `Location`.
 
 | Condition | Result |
 |---|---|
+| Missing/invalid/duplicate Bearer header | 401 before storage dependencies; invalid server authentication configuration returns 503. |
 | Missing edit `If-Match` | 428 `precondition_required`. |
 | Weak/wildcard/multiple/malformed `If-Match` or repeated header | 400. |
 | Stale ETag for a new operation | 412 `stale_revision`; no records added. |
@@ -120,7 +129,8 @@ Allowed paths use zero-based indexes resolved against the stored base revision:
 | `/working_capital/` | ar_increase, inventory_increase, ap_increase, cash_taxes_paid |
 
 Values are USD dollars, decimal rate/ownership fractions, and integer term
-months. Booleans, strings and non-finite values are rejected. The entire dated
+months. Amounts and rate fractions use decimal strings; term months remain integers.
+Booleans, malformed decimal text and non-finite values are rejected. The entire dated
 input is validated after an edit; combined ownership and every existing
 assessment constraint still apply. The server derives previous/accepted values,
 annual or working-capital period dates, as-of date, guarantor identity/index and
@@ -140,13 +150,15 @@ journal; this is a local-file prototype, not a shared multi-host database.
 ## Replay and content checks
 
 Reads return the stored result without recalculation. Supported replay dispatches
-the retained `commercial-assessment-v1` / `commercial-calculation-v1` /
-`assessment-json-v1` definition with **stored policy values**. An unsupported
+the retained `commercial-assessment-v2` / `commercial-calculation-v2` /
+`assessment-json-v2` definition with **stored policy values**. An unsupported
 definition remains readable and returns `replay_unavailable`.
 
 Decision, policy, normalized input, fingerprint and policy trace operands match
 exactly, including raw comparisons, threshold/operators, flags, reasons and score.
-Other numeric financial/trace values use `rel_tol=1e-12`, `abs_tol=1e-8`.
+V2 financial strings and reporting allocations compare exactly, without a
+numeric tolerance. Numeric v1 calculators are unsupported and return
+`replay_unavailable`; their original JSON and receipts remain unchanged.
 Structure, periods, units and references match exactly. Differences return paths
 without altering or replacing the original run.
 

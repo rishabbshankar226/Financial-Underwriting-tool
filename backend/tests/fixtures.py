@@ -1,4 +1,11 @@
-from app.schemas import FinancialYear, ExistingDebt, ProposedLoan, Guarantor, WorkingCapital, CommercialRequest
+from app.schemas import (
+    CommercialRequest,
+    ExistingDebt,
+    FinancialYear,
+    Guarantor,
+    ProposedLoan,
+    WorkingCapital,
+)
 
 ALPINE_2025 = FinancialYear(gross_receipts=4_200_000,cogs=2_750_000,operating_expense_excl_dna_interest_comp=640_000,officer_compensation=180_000,depreciation=95_000,amortization=10_000,interest_expense=62_000,section_179=40_000,k1_distribution=300_000)
 ALPINE_2024 = FinancialYear(gross_receipts=3_900_000,cogs=2_570_000,operating_expense_excl_dna_interest_comp=607_000,officer_compensation=175_000,depreciation=90_000,amortization=10_000,interest_expense=58_000,section_179=0,k1_distribution=280_000)

@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
-import { guardAssessment } from "../src/contracts";
+import { guardAssessment, type Assessment } from "../src/contracts";
 import { applyEdit, initialWorkspace, transition } from "../src/workspace";
 
 const dated = JSON.parse(
@@ -9,16 +9,19 @@ const dated = JSON.parse(
     "utf8",
   ),
 );
-let response: any;
+let response: Assessment;
 test.beforeAll(async ({ request }) => {
-  response = await (
+  response = guardAssessment(await (
     await request.post("http://127.0.0.1:8000/commercial/assessment", {
       data: dated,
     })
-  ).json();
+  ).json());
 });
 test("real assessment meets the display contract", () => {
-  expect(guardAssessment(response).current_facts.ebitda.raw_value).toBe(630000);
+  const assessment = guardAssessment(response);
+  expect(assessment.current_facts.ebitda.raw_value).toBe("630000");
+  expect(assessment.current_facts.ebitda.reported_value).toBe("630000.00");
+  expect(assessment.normalized_input.proposed_loan.term_months).toBe(120);
 });
 for (const part of [
   "normalized_input",
@@ -29,7 +32,7 @@ for (const part of [
 ]) {
   test(`rejects missing ${part}`, () => {
     const body = structuredClone(response);
-    delete body[part];
+    Reflect.deleteProperty(body, part);
     expect(() => guardAssessment(body)).toThrow();
   });
 }
@@ -55,8 +58,8 @@ test("only matching successful submissions change accepted input and history", (
   });
   const edit = {
     path: "/years/1/gross_receipts",
-    prior: 4200000,
-    next: 1,
+    prior: "4200000",
+    next: "1",
     rationale: "Synthetic decline",
     at: "2026-10-06T00:00:00Z",
   };
@@ -84,7 +87,7 @@ test("only matching successful submissions change accepted input and history", (
     error: "Offline",
   });
   expect(failed.history).toEqual([]);
-  expect(failed.draft?.payload.years[1].gross_receipts).toBe(1);
+  expect(failed.draft?.payload.years[1].gross_receipts).toBe("1");
   const done = transition(failed, { type: "success", id: 1, accepted });
   expect(done.history).toEqual([edit]);
   expect(
@@ -99,19 +102,23 @@ test("declared unknown schemas cannot silently route to legacy", () => {
   expect(detectMode(dated)).toBe("dated");
   expect(detectMode({})).toBe("legacy");
   expect(() =>
-    detectMode({ schema_version: "commercial-assessment-v2" }),
+    detectMode({ schema_version: "commercial-assessment-v3" }),
   ).toThrow("unsupported");
 });
 for (const [label, mutate] of [
-  ["non-finite fact", (b: any) => (b.current_facts.dscr.raw_value = Infinity)],
-  ["wrong version", (b: any) => (b.serialization_version = "unknown")],
-  ["missing metric", (b: any) => delete b.current_facts.ebitda],
-  ["missing operand", (b: any) => delete b.calculation_trace[0].operands],
+  ["non-finite fact", (b: Assessment) => Object.assign(b.current_facts.dscr, {raw_value: Infinity})],
+  ["wrong version", (b: Assessment) => Object.assign(b, {serialization_version: "unknown"})],
+  ["missing metric", (b: Assessment) => Reflect.deleteProperty(b.current_facts, "ebitda")],
+  ["missing operand", (b: Assessment) => Reflect.deleteProperty(b.calculation_trace[0], "operands")],
   [
     "missing policy number",
-    (b: any) => delete b.policy_snapshot.commercial_min_dscr,
+    (b: Assessment) => Reflect.deleteProperty(b.policy_snapshot, "commercial_min_dscr"),
   ],
-  ["wrong fact type", (b: any) => (b.current_facts.dscr.raw_value = "3.1")],
+  ["wrong fact type", (b: Assessment) => Object.assign(b.current_facts.dscr, {raw_value: 3.1})],
+  ["missing reported amount", (b: Assessment) => Reflect.deleteProperty(b.current_facts.ebitda, "reported_value")],
+  ["changed reported amount", (b: Assessment) => b.current_facts.ebitda.reported_value = "630000.01"],
+  ["numeric reported amount", (b: Assessment) => Object.assign(b.current_facts.ebitda, {reported_value: 630000})],
+  ["numeric normalized money", (b: Assessment) => Object.assign(b.normalized_input.proposed_loan, {amount: 500000})],
 ] as const)
   test(`guard rejects ${label}`, () => {
     const b = structuredClone(response);
@@ -124,12 +131,12 @@ test("percent edits convert once and validation uses field contract", () => {
     path: "/proposed_loan/annual_rate",
     label: "Rate",
     period: "Current",
-    value: 0.105,
+    value: "0.105",
     unit: "%" as const,
-    min: 0,
-    max: 1,
+    min: "0",
+    max: "1",
   };
-  expect(validateEdit(rate, "12.5", "Synthetic rate")).toBe(0.125);
+  expect(validateEdit(rate, "12.5", "Synthetic rate")).toBe("0.125");
   expect(() => validateEdit(rate, "101", "Synthetic rate")).toThrow("range");
   expect(() =>
     validateEdit(
@@ -143,7 +150,7 @@ test("percent edits convert once and validation uses field contract", () => {
   ).toThrow("range");
   expect(
     validateEdit({ ...rate, unit: "USD", min: undefined }, "-1", "test"),
-  ).toBe(-1);
+  ).toBe("-1");
   expect(() => validateEdit(rate, "10.5", "test")).toThrow("changed");
 });
 
@@ -154,14 +161,14 @@ test("legacy omitted defaults are filled only for presentation", () => {
   delete legacy.years[0].section_179;
   const normalized = guardLegacyInput(legacy);
   expect(normalized.guarantors).toEqual([]);
-  expect(normalized.years[0].section_179).toBe(0);
+  expect(normalized.years[0].section_179).toBe("0");
   expect(legacy.years[0].section_179).toBeUndefined();
 });
 
 test("trace references must resolve without inventing missing operands", () => {
   const body = structuredClone(response);
   body.calculation_trace = body.calculation_trace.filter(
-    (r: any) => r.fact_id !== "years.0.gross_profit",
+    r => r.fact_id !== "years.0.gross_profit",
   );
   expect(() => guardAssessment(body)).toThrow();
   const corrupt = structuredClone(response);
@@ -205,8 +212,8 @@ test("a replaced selection ignores stale failures and clears history only on acc
   };
   const event = {
     path: "/years/1/gross_receipts",
-    prior: 4200000,
-    next: 1,
+    prior: "4200000",
+    next: "1",
     rationale: "test",
     at: "test",
   };

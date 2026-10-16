@@ -1,18 +1,19 @@
 """Durable case guarantees use real files and independently owned connections."""
+import json
+import sqlite3
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
-import json
+from decimal import Decimal
 from pathlib import Path
-import sqlite3
 from threading import Barrier
 from uuid import uuid4
 
 import pytest
-
 from app.assessment import assess_commercial
 from app.case_contracts import CaseCreate, CaseEdit
 from app.cases import CaseStore, CaseStoreError
 from app.config import DEFAULT_POLICY
+from financial_assertions import wire_decimal
 
 
 @pytest.fixture
@@ -40,13 +41,14 @@ def test_restart_preserves_original_and_edited_snapshots(store, command):
     first = store.create(command, str(uuid4()))
     second = store.edit(first.snapshot.case_id, edit(), first.etag, str(uuid4()))
     restarted = CaseStore(store.path)
-    assert restarted.get(first.snapshot.case_id).model_dump() == second.snapshot.model_dump()
-    assert restarted.get(first.snapshot.case_id, 1).model_dump() == first.snapshot.model_dump()
+    assert restarted.get(first.snapshot.case_id).model_dump(mode="json") == second.snapshot.model_dump(mode="json")
+    assert restarted.get(first.snapshot.case_id, 1).model_dump(mode="json") == first.snapshot.model_dump(mode="json")
     assert first.snapshot.assessment == assess_commercial(command.input).model_dump(mode="json")
     assert second.snapshot.revision == 2 and second.snapshot.parent_revision == 1
     assert second.snapshot.run_id != first.snapshot.run_id
     event = second.snapshot.event
-    assert event.before == 4_200_000 and event.after == 4_300_000
+    assert wire_decimal(event.before) == Decimal("4200000")
+    assert wire_decimal(event.after) == Decimal("4300000")
     assert event.context.period_start == "2025-01-01"
     assert event.context.period_end == "2025-12-31"
     assert event.context.assessment_as_of == "2026-10-06"
@@ -63,14 +65,14 @@ def test_lost_response_returns_original_receipt_after_head_and_policy_change(sto
     retried = restarted.create(command, operation)
     assert retried.replayed and retried.status == first.status == 201
     assert retried.etag == first.etag
-    assert retried.snapshot.model_dump() == first.snapshot.model_dump()
+    assert retried.snapshot.model_dump(mode="json") == first.snapshot.model_dump(mode="json")
     assert restarted.get(first.snapshot.case_id).revision == changed.snapshot.revision
     edit_operation = str(uuid4())
     original_edit = restarted.edit(first.snapshot.case_id, edit(4_400_000), changed.etag, edit_operation)
     restarted.edit(first.snapshot.case_id, edit(4_500_000), original_edit.etag, str(uuid4()))
     retried_edit = restarted.edit(first.snapshot.case_id, edit(4_400_000), changed.etag, edit_operation)
     assert retried_edit.replayed and retried_edit.etag == original_edit.etag
-    assert retried_edit.snapshot.model_dump() == original_edit.snapshot.model_dump()
+    assert retried_edit.snapshot.model_dump(mode="json") == original_edit.snapshot.model_dump(mode="json")
     assert counts(store.path)["revisions"] == 4
 
 
@@ -90,7 +92,7 @@ def test_competing_connections_accept_exactly_one_edit(store, command):
     rejected = [item for item in results if isinstance(item, CaseStoreError)]
     assert len(accepted) == len(rejected) == 1
     assert rejected[0].status == 412
-    assert store.get(first.snapshot.case_id).model_dump() == accepted[0].snapshot.model_dump()
+    assert store.get(first.snapshot.case_id).model_dump(mode="json") == accepted[0].snapshot.model_dump(mode="json")
     assert counts(store.path)["revisions"] == 2
 
 
@@ -106,7 +108,7 @@ def test_simultaneous_identical_operations_create_one_revision(store, command, k
         return independent.create(command, operation)
     with ThreadPoolExecutor(max_workers=2) as executor:
         a, b = list(executor.map(submit, range(2)))
-    assert a.snapshot.model_dump() == b.snapshot.model_dump() and a.etag == b.etag
+    assert a.snapshot.model_dump(mode="json") == b.snapshot.model_dump(mode="json") and a.etag == b.etag
     assert sorted([a.replayed, b.replayed]) == [False, True]
     assert counts(store.path)["revisions"] == (2 if first else 1)
 
@@ -140,7 +142,7 @@ def test_failed_edit_has_no_records_or_reserved_operation(store, command, path, 
     with pytest.raises((CaseStoreError, ValueError)):
         store.edit(first.snapshot.case_id, edit(value, path), first.etag, operation)
     assert counts(store.path) == before
-    assert store.get(first.snapshot.case_id).model_dump() == first.snapshot.model_dump()
+    assert store.get(first.snapshot.case_id).model_dump(mode="json") == first.snapshot.model_dump(mode="json")
     assert store.edit(first.snapshot.case_id, edit(), first.etag, operation).snapshot.revision == 2
 
 
@@ -164,7 +166,7 @@ def test_insert_or_head_failure_rolls_back_every_record(store, command, table, m
         store.edit(first.snapshot.case_id, edit(), first.etag, str(uuid4()))
     assert reached == [table] and error.value.code == "storage_error"
     assert counts(store.path) == before
-    assert store.get(first.snapshot.case_id).model_dump() == first.snapshot.model_dump()
+    assert store.get(first.snapshot.case_id).model_dump(mode="json") == first.snapshot.model_dump(mode="json")
 
 
 def test_busy_commit_rolls_back_and_allows_same_operation_retry(store, command):
@@ -266,22 +268,22 @@ def test_unsupported_calculation_remains_readable_and_replay_unavailable(tmp_pat
     store = CaseStore(tmp_path / "future.sqlite3", assessment_operation=future)
     first = store.create(command, str(uuid4()))
     reopened = CaseStore(store.path)
-    assert reopened.get(first.snapshot.case_id).model_dump() == first.snapshot.model_dump()
+    assert reopened.get(first.snapshot.case_id).model_dump(mode="json") == first.snapshot.model_dump(mode="json")
     assert reopened.replay(first.snapshot.case_id, 1).status == "replay_unavailable"
 
 
-@pytest.mark.parametrize("kind,expected", [("financial_noise", "matched"), ("raw_comparison", "mismatch"),
+@pytest.mark.parametrize("kind,expected", [("financial_noise", "mismatch"), ("raw_comparison", "mismatch"),
                                           ("threshold", "mismatch"), ("outcome", "mismatch"), ("trace_reference", "mismatch")])
-def test_replay_tolerance_never_hides_decision_or_structure_changes(store, command, kind, expected):
+def test_decimal_replay_never_hides_financial_decision_or_structure_changes(store, command, kind, expected):
     first = store.create(command, str(uuid4()))
     def changed(request, policy):
         result = assess_commercial(request, policy)
         if kind == "financial_noise":
-            result.current_facts.dscr.raw_value += 1e-13
+            result.current_facts.dscr.raw_value += Decimal("1e-13")
         elif kind == "raw_comparison":
-            result.decision.factors[0].raw_value += 1e-13
+            result.decision.factors[0].raw_value += Decimal("1e-13")
         elif kind == "threshold":
-            result.decision.factors[0].threshold += 1e-13
+            result.decision.factors[0].threshold += Decimal("1e-13")
         elif kind == "outcome":
             result.decision.outcome = "review"
         else:
@@ -301,11 +303,11 @@ def test_backup_restore_preserves_reads_replay_and_retry_receipts(store, command
     assert store.backup(backup)["revisions"] == 2
     assert CaseStore.restore(backup, restored)["cases"] == 1
     reopened = CaseStore(restored)
-    assert reopened.get(first.snapshot.case_id).model_dump() == second.snapshot.model_dump()
-    assert reopened.get(first.snapshot.case_id, 1).model_dump() == first.snapshot.model_dump()
+    assert reopened.get(first.snapshot.case_id).model_dump(mode="json") == second.snapshot.model_dump(mode="json")
+    assert reopened.get(first.snapshot.case_id, 1).model_dump(mode="json") == first.snapshot.model_dump(mode="json")
     assert reopened.replay(first.snapshot.case_id, 1).status == "matched"
     assert reopened.create(command, operation).replayed
-    assert reopened.create(command, operation).snapshot.model_dump() == first.snapshot.model_dump()
+    assert reopened.create(command, operation).snapshot.model_dump(mode="json") == first.snapshot.model_dump(mode="json")
     store.edit(first.snapshot.case_id, edit(4_400_000), second.etag, str(uuid4()))
     assert reopened.get(first.snapshot.case_id).revision == 2
 
@@ -369,10 +371,10 @@ def test_listing_pages_are_bounded_stable_and_case_scoped(store, command):
     second = store.list_cases(limit=2, after=first.next_cursor)
     assert [row.case_id for row in second.items] == [created[0].snapshot.case_id]
     assert second.next_cursor is None
-    assert "assessment" not in first.items[0].model_dump()
+    assert "assessment" not in first.items[0].model_dump(mode="json")
     case = created[0]
     a = store.edit(case.snapshot.case_id, edit(), case.etag, str(uuid4()))
-    b = store.edit(case.snapshot.case_id, edit(4_400_000), a.etag, str(uuid4()))
+    store.edit(case.snapshot.case_id, edit(4_400_000), a.etag, str(uuid4()))
     page = store.list_revisions(case.snapshot.case_id, limit=2)
     assert [row.revision for row in page.items] == [3, 2]
     assert [row.revision for row in store.list_revisions(case.snapshot.case_id, after=page.next_cursor).items] == [1]
@@ -499,7 +501,11 @@ def test_edit_context_and_api_units_are_derived_from_base(store, command, path, 
     first = store.create(command, str(uuid4()))
     second = store.edit(first.snapshot.case_id, edit(value, path), first.etag, str(uuid4()))
     event = second.snapshot.event
-    assert event.context.basis == basis and event.context.unit == unit and event.after == value
+    assert event.context.basis == basis and event.context.unit == unit
+    if path == "/proposed_loan/term_months":
+        assert type(event.after) is int and event.after == value
+    else:
+        assert wire_decimal(event.after) == Decimal(str(value))
     if basis == "annual_financials":
         assert event.context.period_start == "2024-01-01"
     elif basis == "working_capital":

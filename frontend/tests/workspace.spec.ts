@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { connectWorkspace } from "./testCredentials";
+import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 const alpine = JSON.parse(
   readFileSync(
@@ -8,7 +9,7 @@ const alpine = JSON.parse(
 );
 
 async function gotoLegacy(page: import("@playwright/test").Page) {
-  await page.goto("/");
+  await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page
     .getByRole("button", { name: "Legacy Alpine demo", exact: true })
@@ -62,7 +63,7 @@ test("overrides recalculate decision, coverage, memo and audit", async ({
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(
     page.locator(".metric").filter({ hasText: /^DSCR/ }),
-  ).not.toContainText("3.135x");
+  ).not.toContainText("3.1349x");
   await page.getByRole("button", { name: "memo", exact: true }).click();
   await expect(page.locator(".memo")).toContainText("Decline");
   await expect(page.locator(".memo")).not.toContainText(
@@ -138,7 +139,7 @@ test("UCA card displays the configured cash-flow floor from the API", async ({
     const factor = body.factors.find(
       (item: { name: string }) => item.name === "uca_positive",
     );
-    factor.threshold = 400000;
+    factor.threshold = "400000";
     factor.passed = false;
     body.outcome = "review";
     await route.fulfill({ response, json: body });

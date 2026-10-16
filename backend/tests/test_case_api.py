@@ -4,9 +4,8 @@ import json
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi.testclient import TestClient
 import pytest
-
+from api_client import AUTHORIZATION_ASGI_HEADER, TestClient
 from app.main import app
 
 ORIGIN = "http://localhost:5173"
@@ -95,13 +94,26 @@ def test_client_cannot_supply_server_history_fields(client, command, field, valu
     assert response.status_code == 422
 
 
-@pytest.mark.parametrize("value", [True, "100", None])
-def test_edit_values_are_strict_json_numbers(client, command, value):
+@pytest.mark.parametrize("value", [True, "1O0", None])
+def test_edit_values_reject_booleans_malformed_decimals_and_missing_amounts(client, command, value):
     first = create(client, command)
     response = client.post(f'/cases/{first.json()["case_id"]}/revisions',
                            json={"field_path": "/proposed_loan/amount", "new_value": value, "rationale": "Test"},
                            headers={"Idempotency-Key": str(uuid4()), "If-Match": first.headers["etag"]})
     assert response.status_code == 422
+
+
+def test_exact_decimal_string_edit_preserves_unrounded_value_in_event_and_input(client, command):
+    first = create(client, command)
+    response = client.post(f'/cases/{first.json()["case_id"]}/revisions',
+                           json={"field_path": "/proposed_loan/amount", "new_value": "600000.015", "rationale": "Exact amount"},
+                           headers={"Idempotency-Key": str(uuid4()), "If-Match": first.headers["etag"]})
+    assert response.status_code == 201, response.text
+    result = response.json()
+    assert result["event"]["before"] == "500000"
+    assert result["event"]["after"] == "600000.015"
+    assert result["normalized_input"]["proposed_loan"]["amount"] == "600000.015"
+    assert result["assessment"]["schema_version"] == "commercial-assessment-v2"
 
 
 @pytest.mark.parametrize("body", [b'{"a":1,"a":2}', b'{"a":NaN}', b'{"a":1e999}', b'\xff', b'{'])
@@ -149,7 +161,7 @@ def test_streamed_body_stops_reading_at_limit(client, command):
                 return {"type": "http.disconnect"}
         async def send(message):
             sent.append(message)
-        headers = [(b"origin", ORIGIN.encode()), (b"content-length", b"1"),
+        headers = [AUTHORIZATION_ASGI_HEADER, (b"origin", ORIGIN.encode()), (b"content-length", b"1"),
                    (b"idempotency-key", str(uuid4()).encode()), (b"if-match", first.headers["etag"].encode())]
         scope = {"type": "http", "asgi": {"version": "3.0", "spec_version": "2.4"}, "http_version": "1.1",
                  "method": "POST", "scheme": "http", "path": path, "raw_path": path.encode(),
@@ -189,6 +201,7 @@ def test_invalid_identifiers_and_listing_parameters(client, path, status):
 def test_busy_storage_returns_retry_after_and_cors(client, command, monkeypatch):
     import os
     import sqlite3
+
     from app.case_routes import configured_store
     from app.cases import CaseStore
     create(client, command)
@@ -219,7 +232,8 @@ def test_new_application_process_reads_history_and_original_retry(client, comman
     # A separate interpreter imports a new app and opens only the persisted file.
     script = '''
 import json, sys
-from fastapi.testclient import TestClient
+sys.path.insert(0, sys.argv[1])
+from api_client import TestClient
 from app.main import app
 data = json.load(sys.stdin)
 with TestClient(app) as client:
@@ -231,7 +245,7 @@ with TestClient(app) as client:
                       'etag': retry.headers['etag'], 'replayed': retry.headers['idempotency-replayed'],
                       'replay_status': replay.json()['status']}))
 '''
-    result = subprocess.run([sys.executable, "-c", script], input=json.dumps({"case_id": case_id, "operation": first_operation, "command": command}),
+    result = subprocess.run([sys.executable, "-c", script, str(Path(__file__).resolve().parent)], input=json.dumps({"case_id": case_id, "operation": first_operation, "command": command}),
                             cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     output = json.loads(result.stdout)
