@@ -1,6 +1,8 @@
+import { useTheme } from "../ThemeRoot";
 import type { WorkspaceView } from "../workspaceSelectors";
 
 export function BrandBar() {
+  const { theme, setTheme } = useTheme();
   return (
     <div className="workspaceBrand">
       <div className="wordmark">
@@ -12,6 +14,13 @@ export function BrandBar() {
       <span className="workspaceType">
         COMMERCIAL UNDERWRITING <span>USD</span>
       </span>
+      <button
+        className="themeToggle"
+        aria-pressed={theme === "dark"}
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      >
+        Dark theme
+      </button>
     </div>
   );
 }
