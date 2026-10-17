@@ -87,6 +87,9 @@ const nonnegativeFields: readonly string[] = [
   "credit_card_min_annual",
 ];
 
+/** Calculated historical rows, in the order the spread and details views show them. */
+export const derivedSpreadFacts = ["gross_profit", "ordinary_business_income", "ebitda", "k1_distribution_ratio"] as const;
+
 export const periodLabel = (year: Partial<Period>, index: number) =>
   year.period_start && year.period_end
     ? `${year.period_start} – ${year.period_end}`
