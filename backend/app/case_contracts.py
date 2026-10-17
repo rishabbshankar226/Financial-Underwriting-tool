@@ -6,6 +6,7 @@ from pydantic import Field, JsonValue, field_validator, model_validator
 
 from .assessment_contracts import CommercialAssessmentRequest, ContractModel
 from .authentication import valid_actor
+from .field_errors import ContractValueError
 from .finance import FinancialDecimal, as_decimal
 
 STORAGE_VERSION: Literal["case-json-v1"] = "case-json-v1"
@@ -20,7 +21,7 @@ class CaseCreate(ContractModel):
     @classmethod
     def nonblank_rationale(cls, value: str) -> str:
         if not value.strip():
-            raise ValueError("A nonblank rationale is required")
+            raise ContractValueError("A nonblank rationale is required", "blank_text")
         return value.strip()
 
 
@@ -45,7 +46,7 @@ class CaseEdit(ContractModel):
     @model_validator(mode="after")
     def integer_term(self) -> Self:
         if self.field_path == "/proposed_loan/term_months" and type(self.new_value) is not int:
-            raise ValueError("Loan term edits require a JSON integer")
+            raise ContractValueError("Loan term edits require a JSON integer", "invalid_type", pointer="/new_value")
         return self
 
 

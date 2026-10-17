@@ -18,7 +18,7 @@ from time import monotonic
 from typing import TYPE_CHECKING, Literal
 from uuid import UUID, uuid4
 
-from pydantic import JsonValue
+from pydantic import JsonValue, ValidationError
 
 from .assessment import assess_commercial
 from .assessment_contracts import SCHEMA_VERSION as ASSESSMENT_SCHEMA_VERSION
@@ -40,6 +40,7 @@ from .case_contracts import (
 from .case_replay import replay_snapshot
 from .case_schema import SCHEMA_IDENTITY, SCHEMA_STATEMENTS, SCHEMA_VERSION, SCHEMAS, schema_objects
 from .config import DEFAULT_POLICY, PolicyConfig
+from .contract_errors import FieldErrors, validation_field_errors
 from .finance import as_decimal, decimal_text
 from .ingestion import parse_structured
 from .json_values import JsonObject, canonical_json, json_array, json_integer, json_object, json_string
@@ -87,9 +88,9 @@ EDIT_FIELDS = {
 
 
 class CaseStoreError(Exception):
-    def __init__(self, status: int, code: str, message: str) -> None:
+    def __init__(self, status: int, code: str, message: str, *, errors: FieldErrors | None = None) -> None:
         super().__init__(message)
-        self.status, self.code = status, code
+        self.status, self.code, self.errors = status, code, errors
 
 
 def _canonical(value: object) -> str:
@@ -641,6 +642,14 @@ class CaseStore:
         data, event = CaseStore._edit_data(base, command.field_path, value, command.rationale)
         try:
             request = CommercialAssessmentRequest.model_validate_json(_canonical(data))
+        except ValidationError as exc:
+            # Pointers address the case input, the same namespace as the command's field_path.
+            raise CaseStoreError(
+                422,
+                "invalid_edit_value",
+                "Edit violates the dated assessment contract",
+                errors=validation_field_errors(exc, data),
+            ) from exc
         except (ValueError, OverflowError, RecursionError) as exc:
             raise CaseStoreError(
                 422, "invalid_edit_value", "Edit violates the dated assessment contract"

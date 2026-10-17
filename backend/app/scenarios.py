@@ -20,6 +20,7 @@ from .assessment_contracts import (
 from .case_contracts import CaseSnapshot
 from .case_replay import replay_snapshot
 from .cases import AssessmentOperation, CaseStoreError, require_uuid
+from .contract_errors import scenario_field_errors
 from .core import CALCULATION_VERSION, Calculation, Operand, _finite, projected_commercial_facts
 from .decision import decision_from_commercial_facts
 from .finance import BASIS_POINTS_PER_UNIT, ONE, calculation, finite_result, quantize
@@ -357,6 +358,7 @@ def preview_commercial_scenarios(
                 422,
                 "scenario_invalid",
                 f"Scenario {index} ({scenario.scenario_key}) exceeds the supported calculation contract",
+                errors=scenario_field_errors(index),
             ) from exc
     normalized = command.model_dump(mode="json")
     normalized["baseline_run_id"] = expected_run

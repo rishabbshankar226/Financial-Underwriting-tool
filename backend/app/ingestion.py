@@ -13,6 +13,7 @@ from typing import NoReturn, cast
 from pydantic import JsonValue
 
 from .config import DEFAULT_POLICY, PolicyConfig
+from .field_errors import ContractValueError
 from .finance import ZERO, NumericInput, as_decimal, calculation, decimal_text, finite_result
 from .json_values import JsonObject
 from .schemas import ExtractionField, ExtractionResult
@@ -26,13 +27,13 @@ def _unique_json_object(pairs: list[tuple[str, JsonValue]]) -> JsonObject:
     out: JsonObject = {}
     for key, value in pairs:
         if key in out:
-            raise ValueError(f"Duplicate JSON key: {key}")
+            raise ContractValueError(f"Duplicate JSON key: {key}", "duplicate_key")
         out[key] = value
     return out
 
 
 def _reject_json_constant(value: str) -> NoReturn:
-    raise ValueError(f"Non-finite JSON value: {value}")
+    raise ContractValueError(f"Non-finite JSON value: {value}", "non_finite_number")
 
 
 def _finite_json_float(raw: str) -> float:
@@ -62,7 +63,7 @@ def _validate_json_depth(payload: object) -> None:
         else:
             continue
         if len(stack) > _MAX_JSON_DEPTH:
-            raise ValueError("JSON nesting exceeds the supported depth")
+            raise ContractValueError("JSON nesting exceeds the supported depth", "nesting_too_deep")
         stack.append(children)
 
 
@@ -76,9 +77,9 @@ def parse_structured(payload: str, kind: str, *, exact_numbers: bool = False) ->
                 parse_float=_exact_json_number if exact_numbers else _finite_json_float,
             )
         except RecursionError as exc:
-            raise ValueError("JSON nesting exceeds the supported depth") from exc
+            raise ContractValueError("JSON nesting exceeds the supported depth", "nesting_too_deep") from exc
         if not isinstance(out, dict):
-            raise ValueError("JSON root must be an object")
+            raise ContractValueError("JSON root must be an object", "invalid_json")
         _validate_json_depth(out)
         return cast(JsonObject, out)
     if kind == "csv":

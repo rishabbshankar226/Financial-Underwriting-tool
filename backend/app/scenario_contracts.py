@@ -20,6 +20,7 @@ from .assessment_contracts import (
     TraceRow,
 )
 from .config import PolicyConfig
+from .field_errors import ContractValueError
 from .finance import ExactFinancialDecimal, ResultDecimal, legacy_decimal_values
 from .schemas import DISCLAIMER, Decision, DecisionFactor, ReasonCode
 
@@ -50,7 +51,7 @@ class ScenarioCommand(ContractModel):
             return value
         value = value.strip()
         if not value:
-            raise ValueError("A nonblank name and rationale are required")
+            raise ContractValueError("A nonblank name and rationale are required", "blank_text")
         return value
 
 
@@ -60,8 +61,15 @@ class ScenarioBatchCommand(ContractModel):
 
     @model_validator(mode="after")
     def unique_keys(self) -> Self:
-        if len({s.scenario_key for s in self.scenarios}) != len(self.scenarios):
-            raise ValueError("Scenario keys must be unique within the request")
+        seen: set[str] = set()
+        for index, scenario in enumerate(self.scenarios):
+            if scenario.scenario_key in seen:
+                raise ContractValueError(
+                    "Scenario keys must be unique within the request",
+                    "duplicate_scenario_key",
+                    pointer=f"/scenarios/{index}/scenario_key",
+                )
+            seen.add(scenario.scenario_key)
         return self
 
 

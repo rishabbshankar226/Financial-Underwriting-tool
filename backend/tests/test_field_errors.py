@@ -292,3 +292,196 @@ def test_other_storage_rejections_have_no_field_errors(store_client, saved, fiel
     response = edit(store_client, saved, field_path, new_value)
     assert response.status_code == 422
     assert response.content == body
+
+
+INVALID_DECIMAL = "Enter a finite decimal number such as 3900000 or 3900000.50."
+INVALID_DATE = "Use a calendar date in YYYY-MM-DD format."
+
+
+def item(pointer, code, message, limit=None):
+    return {"pointer": pointer, "code": code, "message": message, "limit": limit}
+
+
+def envelope(*items, truncated=False):
+    return {"version": "field-errors-v1", "items": list(items), "truncated": truncated}
+
+
+EXPECTED_ERRORS = {
+    "missing_annual_field": [item("/years/0/section_179", "required", "This value is required.")],
+    "grouped_amount": [item("/years/0/gross_receipts", "invalid_decimal", INVALID_DECIMAL)],
+    "boolean_amount": [item("/years/1/cogs", "invalid_decimal", INVALID_DECIMAL)],
+    "too_many_digits": [
+        item("/years/1/cogs", "too_many_digits", "Financial input exceeds 34 significant digits.", "34")
+    ],
+    "out_of_range": [
+        item(
+            "/years/1/cogs",
+            "out_of_range",
+            "Financial input exceeds the supported finite range [1e-30, 1e30].",
+            "1e30",
+        )
+    ],
+    "negative_interest": [item("/years/1/interest_expense", "too_small", "Must be at least 0.", "0")],
+    "term_too_short": [item("/proposed_loan/term_months", "too_small", "Must be at least 12.", "12")],
+    "term_not_integer": [item("/proposed_loan/term_months", "invalid_type", "Must be a whole number.")],
+    "rate_too_large": [item("/proposed_loan/annual_rate", "too_large", "Must be at most 1.", "1")],
+    "currency_choice": [
+        item("/units/currency", "invalid_choice", "Must be one of the supported values: 'USD'.")
+    ],
+    "unknown_field": [item("/years/0/revenue", "unknown_field", "This field is not part of the contract.")],
+    "no_years": [item("/years", "too_few_items", "Must contain at least 1 item.", "1")],
+    "borrower_not_text": [item("/borrower_name", "invalid_type", "Must be text.")],
+    "invalid_month": [item("/assessment_as_of", "invalid_date", INVALID_DATE)],
+    "non_iso_date": [item("/assessment_as_of", "invalid_date", INVALID_DATE)],
+    "period_start_not_first": [
+        item(
+            "/years/0/period_start",
+            "period_shape",
+            "Annual periods must start on the first day of a month in a supported year.",
+        )
+    ],
+    "period_not_twelve_months": [
+        item(
+            "/years/0/period_end",
+            "period_shape",
+            "Financial periods must contain twelve complete calendar months.",
+        )
+    ],
+    "period_order": [
+        item(
+            "/years/1/period_start",
+            "period_order",
+            "Financial periods must be oldest first, unique, and non-overlapping.",
+        )
+    ],
+    "period_after_as_of": [
+        item(
+            "/years/1/period_end",
+            "period_after_as_of",
+            "Financial periods cannot end after the assessment date.",
+        )
+    ],
+    "working_capital_period": [
+        item(
+            "/working_capital/period_start",
+            "working_capital_period",
+            "Working-capital period must match the latest financial period.",
+        )
+    ],
+    "ownership_total": [
+        item("/guarantors", "ownership_total", "Total guarantor ownership cannot exceed 100%.", "1")
+    ],
+    "duplicate_key": [item("", "duplicate_key", "The JSON document repeats an object key.")],
+    "non_finite": [item("", "non_finite_number", "Numbers must be finite.")],
+    "invalid_json": [item("", "invalid_json", "The request body is not valid JSON.")],
+    "json_root_array": [item("", "invalid_json", "The request body is not valid JSON.")],
+    "invalid_utf8": [item("", "invalid_encoding", "The request body must be UTF-8 encoded JSON.")],
+    "nesting": [item("", "nesting_too_deep", "The JSON document is nested too deeply.")],
+    "huge_exponent_token": [
+        item("", "out_of_range", "Financial input exceeds the supported finite range [1e-30, 1e30].", "1e30")
+    ],
+}
+
+
+def test_every_pinned_rejection_has_a_field_mapping():
+    assert sorted(EXPECTED_ERRORS) == sorted(ASSESSMENT_DETAIL)
+
+
+@pytest.mark.parametrize("name", sorted(ASSESSMENT_DETAIL))
+def test_assessment_rejection_maps_each_error_to_its_field(name):
+    body, _ = ASSESSMENT_DETAIL[name]
+    response = client.post("/commercial/assessment", content=body, headers={"Content-Type": "application/json"})
+    assert response.status_code == 422
+    assert response.json()["errors"] == envelope(*EXPECTED_ERRORS[name])
+
+
+@pytest.mark.parametrize("path", ["/commercial/decision", "/consumer/decision", "/sba/evaluate"])
+def test_every_contract_route_adds_the_field_error_envelope(path):
+    response = client.post(path, json={"unexpected": 1})
+    assert response.status_code == 422
+    errors = response.json()["errors"]
+    assert errors["version"] == "field-errors-v1" and errors["items"]
+    assert all(set(entry) == {"pointer", "code", "message", "limit"} for entry in errors["items"])
+
+
+@pytest.mark.parametrize(
+    "body, private",
+    [
+        (variant(assign("assessment_as_of", value="09/30/2031")), "09/30/2031"),
+        (variant(assign("borrower_name", value=424242)), "424242"),
+        (b'{"zz_private_key": 1, "zz_private_key": 2}', "zz_private_key"),
+        (variant(assign("years", 0, "gross_receipts", value="98,765,431")), "98,765,431"),
+    ],
+)
+def test_field_error_messages_never_echo_submitted_values(body, private):
+    response = client.post("/commercial/assessment", content=body, headers={"Content-Type": "application/json"})
+    assert response.status_code == 422
+    assert private not in json.dumps(response.json()["errors"])
+
+
+def test_pointer_tokens_escape_slash_and_tilde():
+    response = client.post(
+        "/commercial/assessment",
+        content=variant(assign("years", 0, "a/b~c", value="1")),
+        headers={"Content-Type": "application/json"},
+    )
+    assert response.json()["errors"] == envelope(
+        item("/years/0/a~1b~0c", "unknown_field", "This field is not part of the contract.")
+    )
+
+
+def test_field_errors_are_capped_with_an_explicit_truncation_flag():
+    data = deepcopy(BASE)
+    data.update({f"extra_{index:03d}": index for index in range(201)})
+    response = client.post("/commercial/assessment", json=data)
+    errors = response.json()["errors"]
+    assert response.status_code == 422 and len(response.json()["detail"]) == 201
+    assert len(errors["items"]) == 200 and errors["truncated"] is True
+    assert errors["items"][0] == item("/extra_000", "unknown_field", "This field is not part of the contract.")
+
+
+def test_case_command_rejections_map_errors_to_their_fields(store_client, saved):
+    blank = store_client.post(
+        "/cases", json={"input": BASE, "rationale": "   "}, headers={"Idempotency-Key": str(uuid4())}
+    )
+    assert blank.json()["errors"] == envelope(item("/rationale", "blank_text", "A nonblank rationale is required."))
+    nested = json.loads(variant(assign("years", 0, "gross_receipts", value="3,900,000")))
+    invalid = store_client.post(
+        "/cases", json={"input": nested, "rationale": "x"}, headers={"Idempotency-Key": str(uuid4())}
+    )
+    assert invalid.json()["errors"] == envelope(
+        item("/input/years/0/gross_receipts", "invalid_decimal", INVALID_DECIMAL)
+    )
+    term = edit(store_client, saved, "/proposed_loan/term_months", "120.5")
+    assert term.json()["errors"] == envelope(
+        item("/new_value", "invalid_type", "Loan term edits require a JSON integer.")
+    )
+
+
+def test_saved_edit_rejection_names_the_violated_input_field(store_client, saved):
+    response = edit(store_client, saved, "/guarantors/0/ownership_percentage", "1.5")
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": {"code": "invalid_edit_value", "message": "Edit violates the dated assessment contract"},
+        "errors": envelope(item("/guarantors/0/ownership_percentage", "too_large", "Must be at most 1.", "1")),
+    }
+
+
+def test_scenario_rejections_map_errors_to_the_scenario(store_client, saved):
+    duplicate = preview(store_client, saved, [SCENARIO, {**SCENARIO, "name": "B"}])
+    assert duplicate.json()["errors"] == envelope(
+        item(
+            "/scenarios/1/scenario_key",
+            "duplicate_scenario_key",
+            "Scenario keys must be unique within the request.",
+        )
+    )
+    huge = {**SCENARIO, "scenario_key": "b", "assumptions": {**SCENARIO["assumptions"], "revenue_change": "1e29"}}
+    invalid = preview(store_client, saved, [SCENARIO, huge])
+    assert invalid.json()["errors"] == envelope(
+        item(
+            "/scenarios/1/assumptions",
+            "scenario_invalid",
+            "This scenario's projected values exceed the supported calculation contract.",
+        )
+    )

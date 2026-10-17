@@ -15,7 +15,7 @@ from .comparison_routes import install_comparison_openapi, owns_comparison_json
 from .comparison_routes import router as comparison_router
 from .decision import decide_commercial, decide_consumer
 from .ingestion import parse_structured
-from .json_transport import install_contract_openapi, read_contract
+from .json_transport import ContractValidationError, install_contract_openapi, read_contract
 from .json_values import JsonObject, canonical_json
 from .request_limits import RequestBodyLimitMiddleware
 from .sba import evaluate_sba, load_size_table
@@ -79,9 +79,17 @@ install_contract_openapi(app, (CommercialAssessmentRequest, CommercialRequest, C
 @app.exception_handler(CaseStoreError)
 async def case_store_error(request: Request, exc: CaseStoreError) -> JSONResponse:
     headers = {"Retry-After": "1"} if exc.code == "storage_busy" else None
-    return JSONResponse(
-        status_code=exc.status, content={"detail": {"code": exc.code, "message": str(exc)}}, headers=headers
-    )
+    content: JsonObject = {"detail": {"code": exc.code, "message": str(exc)}}
+    if exc.errors is not None:
+        content["errors"] = exc.errors.model_dump(mode="json")
+    return JSONResponse(status_code=exc.status, content=content, headers=headers)
+
+
+@app.exception_handler(ContractValidationError)
+async def contract_validation_error(request: Request, exc: ContractValidationError) -> JSONResponse:
+    # `detail` is serialized first and unchanged; `errors` is the additive field-errors-v1 envelope.
+    content = {"detail": exc.detail, "errors": exc.field_errors.model_dump(mode="json")}
+    return JSONResponse(status_code=exc.status_code, content=content, headers=exc.headers)
 
 
 @app.get("/health")

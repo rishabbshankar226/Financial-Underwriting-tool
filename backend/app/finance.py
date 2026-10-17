@@ -21,6 +21,8 @@ from typing import Annotated, ParamSpec, TypeVar
 
 from pydantic import BeforeValidator, PlainSerializer
 
+from .field_errors import ContractValueError
+
 ZERO = Decimal("0")
 ONE = Decimal("1")
 MONTHS_PER_YEAR = Decimal("12")
@@ -60,22 +62,28 @@ def calculation(function: Callable[P, T]) -> Callable[P, T]:
 
 def as_decimal(value: object) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (Decimal, str, int, float)):
-        raise ValueError("Financial values must be finite decimal values, not boolean")
+        raise ContractValueError(
+            "Financial values must be finite decimal values, not boolean", "invalid_decimal"
+        )
     text = str(value)
     if len(text) > 256 or not DECIMAL_PATTERN.fullmatch(text):
-        raise ValueError("Financial values must be finite decimal values")
+        raise ContractValueError("Financial values must be finite decimal values", "invalid_decimal")
     try:
         number = value if isinstance(value, Decimal) else Decimal(text)
         if not number.is_finite():
-            raise ValueError("Financial values must be finite")
+            raise ContractValueError("Financial values must be finite", "invalid_decimal")
         if len(number.as_tuple().digits) > INPUT_DIGITS:
-            raise ValueError("Financial input exceeds 34 significant digits")
+            raise ContractValueError(
+                "Financial input exceeds 34 significant digits", "too_many_digits", limit=str(INPUT_DIGITS)
+            )
         magnitude = number.copy_abs()
         if magnitude > MAX_INPUT or (number != ZERO and magnitude < MIN_INPUT):
-            raise ValueError("Financial input exceeds the supported finite range [1e-30, 1e30]")
+            raise ContractValueError(
+                "Financial input exceeds the supported finite range [1e-30, 1e30]", "out_of_range", limit="1e30"
+            )
         return ZERO if number == ZERO else number
     except DecimalException as exc:
-        raise ValueError("Financial values must be finite") from exc
+        raise ContractValueError("Financial values must be finite", "invalid_decimal") from exc
 
 
 def finite_result(value: object) -> Decimal:
@@ -114,7 +122,9 @@ def decimal_scalar(value: object) -> object:
 
 def exact_decimal(value: object) -> Decimal:
     if isinstance(value, float):
-        raise ValueError("V2 financial values require decimal strings, Decimal, or exact integers")
+        raise ContractValueError(
+            "V2 financial values require decimal strings, Decimal, or exact integers", "invalid_decimal"
+        )
     return as_decimal(value)
 
 

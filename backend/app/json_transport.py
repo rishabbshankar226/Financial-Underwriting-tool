@@ -7,10 +7,19 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, ValidationError
 
 from .assessment_contracts import MAX_REQUEST_BYTES
+from .contract_errors import FieldErrors, parse_field_errors, validation_field_errors
 from .ingestion import parse_structured
 from .json_values import JsonObject, canonical_json, json_object
 
 Model = TypeVar("Model", bound=BaseModel)
+
+
+class ContractValidationError(HTTPException):
+    """A 422 whose ``detail`` is unchanged; field-mapped errors are rendered beside it."""
+
+    def __init__(self, detail: object, field_errors: FieldErrors) -> None:
+        super().__init__(status_code=422, detail=detail)
+        self.field_errors = field_errors
 
 
 async def read_contract(
@@ -27,14 +36,17 @@ async def read_contract(
         body = b"{}"
     try:
         decoded = parse_structured(body.decode("utf-8"), "json", exact_numbers=True)
+    except (ValueError, OverflowError, RecursionError) as exc:
+        raise ContractValidationError(str(exc), parse_field_errors(exc)) from exc
+    try:
         return model.model_validate_json(canonical_json(decoded))
     except ValidationError as exc:
         errors = exc.errors(include_url=False, include_input=False, include_context=False)
         for error in errors:
             error["loc"] = ("body", *error["loc"])
-        raise HTTPException(status_code=422, detail=errors) from exc
+        raise ContractValidationError(errors, validation_field_errors(exc, decoded)) from exc
     except (ValueError, OverflowError, RecursionError) as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
+        raise ContractValidationError(str(exc), parse_field_errors(exc)) from exc
 
 
 def install_contract_openapi(app: "FastAPI", models: "Sequence[type[BaseModel]]") -> None:
