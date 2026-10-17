@@ -189,3 +189,27 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
     await context.close();
   }
 });
+
+test("the embedded theme choice is namespaced and leaves the Streamlit page untouched", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
+    timeout: 30_000,
+  });
+  await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "light");
+  await page.getByRole("button", { name: "Dark theme", exact: true }).click();
+  await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "dark");
+  expect(
+    await page.evaluate(() => [
+      localStorage.getItem("spreadline.embedded.spreadline.theme.v1"),
+      localStorage.getItem("spreadline.theme.v1"),
+      document.documentElement.dataset.theme ?? null,
+    ]),
+  ).toEqual(["dark", null, null]);
+  await page.reload();
+  await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
+    timeout: 30_000,
+  });
+  await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "dark");
+});
