@@ -32,6 +32,34 @@ development constraints. Node was 22.23.3, with 24.19.0 for the Streamlit build.
 | `python gate/reference_calculator.py --selftest` | 55 values and 4 flags pinned; all 19 named mutations killed (7 existing, 12 analysis). |
 | `bash scripts/run_streamlit_checks.sh` (Node 24) | Exit 0. Host Ruff and strict mypy passed; 29 host tests passed; the component rebuild was byte-identical and the asset check passed; 3 Streamlit browser workflows passed. |
 
+**Continuous integration.**
+[GitHub Actions run 38988452351](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38988452351)
+completed successfully on implementation commit
+`13a5c695f134e9c7c111cd09883fdb51427515d9`, October 17, 2026 UTC. As a pull
+request run it tested GitHub's merge commit
+`46364198559e7814539fab79f99fa5e87a7a46df` of that head into `main` `52c593a`;
+its tree is identical to the implementation commit's tree. All three job
+conclusions and complete decoded logs were retrieved and inspected.
+
+| Executed CI check | Observed result |
+| --- | --- |
+| Backend job `117265242675` | 1,501 tests passed in 46.19s on Python 3.12.15 |
+| Python quality in that job | pip consistency passed; Ruff passed; strict mypy found no issues in 36 source files |
+| Independent reference gate | 55 values and 4 flags pinned; all 19 named mutations killed |
+| Original precision probes | All 4 cases passed exact assertions |
+| Frontend job `117265242821` | Node 22.23.3 install, audit, decimal tests and strict TypeScript production build passed; 45 Vite modules transformed |
+| Dependency audit in that job | npm audit exited 0 and reported 0 vulnerabilities |
+| Node decimal suite | 5 tests passed, 0 failed |
+| Full Chromium Playwright suite | 237 passed in 1.2m |
+| Streamlit job `117265242847` | Node 24.21.0 component rebuild (43 modules) passed; assets match their source and manifest |
+| Bundle diff check in that job | `git diff --exit-code` on the committed component build exited 0 |
+| Testing host in that job | pip consistency passed; Ruff passed; strict mypy found no issues in 4 source files; 29 host tests passed in 2.00s |
+| Packaged Streamlit browser workflows | 3 passed in 11.8s |
+
+The follow-up commit that adds this block changes documentation only.
+Application code, tests, dependency pins and CI files remain identical to the
+verified commit.
+
 **New and changed backend tests** add 553 cases:
 - `test_field_errors.py` (73): golden pins of every pre-change 422 `detail` body, plus pointer, code and limit mapping.
 - `test_analysis.py` (412), covering:
