@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { fieldLabels as labels } from "./fieldCatalog";
-import { legacyFactorText as factorText } from "./format";
 import { selectWorkspaceView } from "./workspaceSelectors";
 import { useEditController } from "./useEditController";
 import EditDialog from "./EditDialog";
@@ -8,7 +6,6 @@ import { queryWorkspace } from "./workspaceDom";
 import AssessmentSummary from "./AssessmentSummary";
 import { Scenarios } from "./Scenarios";
 import { Review } from "./Review";
-import { prototypeDisclaimer } from "./prototypeDisclaimer";
 import { useScenarioWorkspace } from "./useScenarioWorkspace";
 import { writeComparisonLocator } from "./scenarioSelection";
 import { BrandBar, CaseHeader } from "./views/WorkspaceHeader";
@@ -19,15 +16,13 @@ import { ViewTabs, type WorkspaceTab } from "./views/ViewTabs";
 import { SpreadView } from "./views/SpreadView";
 import { AssumptionsView } from "./views/AssumptionsView";
 import { DetailsView } from "./views/DetailsView";
+import { MemoView } from "./views/MemoView";
+import { HistoryView } from "./views/HistoryView";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
-import {
-  SavedCaseList,
-  SavedContext,
-  SavedHistory,
-  RecoveryPanel,
-} from "./SavedCases";
-const disclaimer = prototypeDisclaimer;
+import { SavedCaseList, SavedContext, RecoveryPanel } from "./SavedCases";
+
+/** Composition root: owns the workspace hooks, view and dialog state, and wires views to them. */
 export default function App() {
   const workspace = useAnalystWorkspace();
   const scenarios = useScenarioWorkspace(workspace);
@@ -158,93 +153,16 @@ export default function App() {
           index={index}
         />
       )}
-      {tab === "memo" && (
-        <section className="panel memo">
-          <h2>Credit memo</h2>
-          {decision ? (
-            <>
-              <h3>Recommendation</h3>
-              <p>
-                {decision.outcome[0].toUpperCase() + decision.outcome.slice(1)}{" "}
-                for prototype demonstration based on the accepted inputs.
-              </p>
-              <h3>Primary factors considered</h3>
-              <ul>
-                {decision.factors.map((f) => (
-                  <li key={f.name}>
-                    {labels[f.name]}: {factorText(f)} —{" "}
-                    {f.passed === null
-                      ? "manual review required"
-                      : f.passed
-                        ? "meets configured policy"
-                        : "does not meet configured policy"}
-                  </li>
-                ))}
-              </ul>
-              <h3>Recorded reasons</h3>
-              {decision.reasons.length ? (
-                <ul>
-                  {decision.reasons.map((r, i) => (
-                    <li key={i}>{r.message}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No additional reasons returned.</p>
-              )}
-            </>
-          ) : (
-            <p>No current decision is available.</p>
-          )}
-          <p className="fine">{disclaimer}</p>
-        </section>
+      {tab === "memo" && <MemoView decision={decision} />}
+      {tab === "history" && (
+        <HistoryView
+          saved={state.saved}
+          ready={ready}
+          history={state.history}
+          input={input}
+          onOpen={(locator) => void workspace.openSaved(locator)}
+        />
       )}
-      {tab === "history" &&
-        (state.saved ? (
-          <SavedHistory
-            saved={state.saved}
-            active={ready}
-            onOpen={(locator) => void workspace.openSaved(locator)}
-          />
-        ) : (
-          <section className="panel memo">
-            <h2>Session edit history</h2>
-            <p>
-              Resets on reload. Actor: demonstration analyst; timestamps are
-              local and unverified.
-            </p>
-            {state.history.length === 0 ? (
-              <p>No applied edits this session.</p>
-            ) : (
-              state.history.map((e, i) => (
-                <div className="audit" key={i}>
-                  <strong>{e.path}</strong>
-                  <span>
-                    {e.prior} → {e.next}
-                  </span>
-                  <small>
-                    {e.rationale} · {e.at}
-                  </small>
-                </div>
-              ))
-            )}
-            {input && "overrides" in input && !!input.overrides?.length && (
-              <>
-                <h3>Unverified imported history</h3>
-                {input.overrides.map((e, i) => (
-                  <div className="audit imported" key={i}>
-                    <strong>{e.field}</strong>
-                    <span>
-                      {String(e.prior_value)} → {String(e.new_value)}
-                    </span>
-                    <small>
-                      {e.rationale} · supplied actor {e.actor} · {e.at}
-                    </small>
-                  </div>
-                ))}
-              </>
-            )}
-          </section>
-        ))}
       {edits.editing && (
         <EditDialog
           key={`${edits.editing.path}:${state.id}`}
