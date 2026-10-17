@@ -21,6 +21,8 @@ import { Review } from "./Review";
 import { prototypeDisclaimer } from "./prototypeDisclaimer";
 import { useScenarioWorkspace } from "./useScenarioWorkspace";
 import { writeComparisonLocator } from "./scenarioSelection";
+import { BrandBar, CaseHeader } from "./views/WorkspaceHeader";
+import { PrototypeNotice } from "./views/PrototypeNotice";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
 import {
@@ -135,37 +137,9 @@ export default function App() {
   }
   return (
     <main className="analystWorkspace">
-      <div className="workspaceBrand">
-        <div className="wordmark">
-          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-            <path d="M2 5h13v4H2zm7 5h13v4H9zM2 15h13v4H2z" fill="currentColor" />
-          </svg>
-          <span>Spreadline</span>
-        </div>
-        <span className="workspaceType">
-          COMMERCIAL UNDERWRITING <span>USD</span>
-        </span>
-      </div>
-      <header>
-        <div>
-          <div className="eyebrow">SPREADLINE / CREDIT WORKSPACE</div>
-          <h1>{view.title}</h1>
-          <p>{view.subtitle}</p>
-        </div>
-        <div
-          className="decision"
-          data-outcome={decision?.outcome ?? "unavailable"}
-          aria-live="polite"
-        >
-          <span>Illustrative decision</span>
-          <strong>{view.decisionWord}</strong>
-          <small>{view.decisionNote}</small>
-        </div>
-      </header>
-      <div className="warning environmentWarning">
-        <span>Prototype use</span>
-        <p>{disclaimer}</p>
-      </div>
+      <BrandBar />
+      <CaseHeader view={view} />
+      <PrototypeNotice />
       <div className="uploadbar">
         <div className="actions">
           <button onClick={() => demo("dated")}>Dated Alpine demo</button>
