@@ -23,6 +23,7 @@ from .cases import (
     CaseStore,
     CaseStoreError,
     WriteReceipt,
+    case_query,
     etag_for,
     require_etag,
     require_uuid,
@@ -101,8 +102,19 @@ def _limit(value: str) -> int:
 
 @router.get("/cases/", response_model=CasePage, include_in_schema=False)
 @router.get("/cases", response_model=CasePage)
-def list_cases(store: Store, limit: str = "25", after: str | None = None) -> CasePage:
-    return store.list_cases(_limit(limit), after)
+def list_cases(
+    request: Request,
+    store: Store,
+    limit: str = "25",
+    after: str | None = None,
+    q: str | None = None,
+    outcome: str | None = None,
+    sort: str | None = None,
+) -> CasePage:
+    for name in ("q", "outcome", "sort"):
+        if len(request.query_params.getlist(name)) > 1:
+            raise CaseStoreError(400, "invalid_query", f"Supply at most one {name} parameter")
+    return store.list_cases(_limit(limit), after, case_query(q, outcome, sort))
 
 
 @router.get("/cases/{case_id}/", response_model=CaseSnapshot, include_in_schema=False)

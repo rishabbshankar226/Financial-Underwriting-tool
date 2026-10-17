@@ -106,3 +106,39 @@ invalid UTF-8, non-finite tokens and excessive nesting are rejected. Canonical
 paths and their slash aliases share the handler. Errors are 413 for oversized
 bodies and 422 for invalid contracts/calculations. Configured local CORS origins
 can read both errors. OpenAPI describes the complete typed contracts.
+
+### Field-mapped errors (`field-errors-v1`)
+
+Every 422 contract rejection keeps its original `detail` byte-for-byte. It also
+adds an `errors` envelope: `{"version": "field-errors-v1", "items": [...],
+"truncated": bool}`.
+
+**Each item contains:**
+- `pointer`: an RFC 6901 JSON Pointer into the submitted document, for example
+  `/years/1/gross_receipts`. An empty pointer refers to the whole document, for
+  example malformed JSON.
+- `code`: a stable code (listed below).
+- `message`: a plain message that never repeats submitted values.
+- `limit`: the violated bound, as a decimal string, when one applies.
+
+**Codes:**
+
+| Group | Codes |
+| --- | --- |
+| Required, unknown or wrong type | `required`, `unknown_field`, `invalid_type`, `invalid_choice` |
+| Numbers and dates | `invalid_decimal`, `too_many_digits`, `out_of_range`, `too_small`, `too_large`, `invalid_date` |
+| Periods and assumptions | `period_shape`, `period_order`, `period_after_as_of`, `working_capital_period`, `ownership_total` |
+| Lists and text | `too_few_items`, `too_many_items`, `text_too_short`, `text_too_long`, `invalid_format`, `blank_text` |
+| Request body | `duplicate_key`, `non_finite_number`, `nesting_too_deep`, `invalid_json`, `invalid_encoding` |
+| Fallback | `invalid_value` |
+
+**Where errors point:**
+- Cross-field checks point at the most specific field, for example the first
+  out-of-order `period_start`. Ownership totals point at `/guarantors`.
+- Saved-case creation nests its pointers under `/input`.
+- Rejected saved edits point into the case input, the same namespace as
+  `field_path`.
+- Failing scenarios point at `/scenarios/{index}/assumptions`.
+
+**Limits:** the envelope holds at most 200 items and sets `truncated` when it
+omits any. Other storage error bodies are unchanged.

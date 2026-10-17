@@ -1,3 +1,4 @@
+import json
 import runpy
 from decimal import Decimal
 from pathlib import Path
@@ -83,3 +84,59 @@ def test_engine_matches_reviewed_independent_gate_reference_at_24_decimal_places
     for name, value in actual.items():
         assert isinstance(value, Decimal) and isinstance(expected[name], Decimal), name
         assert abs(value - expected[name]) <= Decimal("1e-24"), name
+
+
+def _engine_analysis_values(ownership):
+    from app.analysis import analyze_commercial
+    from app.assessment_contracts import CommercialAssessmentRequest
+
+    data = json.loads((Path(__file__).resolve().parents[1] / "fixtures/alpine_dated_v2.json").read_text())
+    data["guarantors"][0]["ownership_percentage"] = ownership
+    return analyze_commercial(CommercialAssessmentRequest.model_validate_json(json.dumps(data))).model_dump(mode="json")
+
+
+def test_analysis_matches_every_independent_gate_value():
+    reference = runpy.run_path(str(Path(__file__).resolve().parents[2] / "gate/reference_calculator.py"))
+    gate_values, gate_flags = reference["analysis_values"]()
+    full, partial = _engine_analysis_values("1"), _engine_analysis_values("0.6")
+
+    def value(metric):
+        assert metric["status"] == "available", metric
+        return Decimal(metric["raw_value"])
+
+    actual = {}
+    latest = full["periods"][1]
+    for line in ("cogs", "gross_profit", "ordinary_business_income", "ebitda"):
+        actual[f"alpine_common_size_{line}_2025"] = value(latest["common_size"][line])
+    for line in ("gross_receipts", "ordinary_business_income", "ebitda"):
+        actual[f"alpine_change_{line}_2025"] = value(latest["change_vs_prior"][line])
+    for label, result in (("alpine", full), ("alpine_partial_owner", partial)):
+        capacity = result["debt_capacity"]
+        for row in capacity["constraints"]:
+            actual[f"{label}_capacity_{row['constraint']}_payment"] = value(row["max_annual_payment"])
+        actual[f"{label}_max_principal"] = value(capacity["max_principal"])
+        for row in result["breakevens"]["rows"]:
+            kind = "approval" if row["threshold_kind"] == "approval_minimum" else "decline"
+            for metric in ("ebitda_cushion", "revenue_cushion"):
+                actual[f"{label}_{metric}_{row['constraint']}_{kind}"] = value(row[metric])
+            actual[f"{label}_breakeven_{row['constraint']}_{kind}"] = value(row["ebitda_breakeven"])
+    schedule = full["amortization"]
+    actual.update(
+        alpine_schedule_scheduled_payment=Decimal(schedule["scheduled_payment"]),
+        alpine_schedule_final_payment=Decimal(schedule["final_payment"]),
+        alpine_schedule_total_interest=Decimal(schedule["total_interest"]),
+        alpine_schedule_total_payments=Decimal(schedule["total_payments"]),
+        alpine_schedule_payment_count=Decimal(schedule["payment_count"]),
+    )
+    cells = {(cell["revenue_change"], cell["proposed_rate_change_bps"]): cell for cell in full["sensitivity"]["cells"]}
+    for suffix, key in (("revenue_minus_5", ("-0.05", "0")), ("revenue_minus_10", ("-0.1", "0")),
+                        ("revenue_minus_10_rate_200", ("-0.1", "200")), ("revenue_minus_20_rate_300", ("-0.2", "300"))):
+        for name in ("dscr", "fccr", "global_dscr"):
+            actual[f"alpine_stress_{name}_{suffix}"] = value(cells[key][name])
+
+    assert actual.keys() == gate_values.keys()
+    for name, expected in gate_values.items():
+        tolerance = Decimal("0") if name.startswith("alpine_schedule_") else Decimal("1e-24")
+        assert abs(actual[name] - expected) <= tolerance, name
+    assert full["debt_capacity"]["binding_constraint"] == gate_flags["alpine_binding_constraint"] == "fccr"
+    assert partial["debt_capacity"]["binding_constraint"] == gate_flags["alpine_partial_owner_binding_constraint"]

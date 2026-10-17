@@ -28,6 +28,8 @@ policy or certify regulatory compliance.
 | `schemas.py`, `assessment_contracts.py`, `scenario_contracts.py` | Strict runtime request and response contracts |
 | `core.py`, `decision.py`, `config.py` | Shared calculations, recorded operands, policy comparisons and grounded reasons |
 | `assessment.py`, `scenarios.py` | Dated financial reports, hypothetical projections and fingerprints |
+| `analysis.py`, `analysis_contracts.py`, `analysis_routes.py` | Read-only analysis: common-size and change spreads, debt capacity, breakevens, cent schedules, coverage grid and decision explanations |
+| `field_errors.py`, `contract_errors.py` | Field-mapped validation errors added beside the unchanged `detail` |
 | `cases.py`, `comparison_storage.py` | Atomic immutable records, original receipts, integrity verification and pagination |
 | `main.py`, route adapters, `request_limits.py` | Bounded HTTP intake, exact numeric-token decoding and error translation |
 | `authentication.py` | Environment-loaded Bearer verification and server-derived operator identity before request processing |
@@ -96,8 +98,17 @@ stability uses comparable adjacent periods and does not invent missing history.
 Scenario projections retain observed history and the saved policy.
 
 The weighted-rule score is not a probability of default. FCCR and UCA are
-simplified definitions. LTV, debt yield, IRR, NPV, and payment schedules are not
-implemented. See [model documentation](docs/MODEL_DOCUMENTATION.md).
+simplified definitions. LTV, debt yield, IRR and NPV are not implemented.
+
+The read-only analysis service adds the following; see the
+[analysis contract](docs/ANALYSIS_CONTRACT.md):
+- a cent-rounded proposed-loan schedule;
+- policy debt capacity;
+- breakevens;
+- a coverage grid.
+
+Capacity is policy arithmetic, not an approval. See
+[model documentation](docs/MODEL_DOCUMENTATION.md).
 
 ## Setup
 
@@ -189,9 +200,11 @@ for TLS, browser storage and host operating requirements.
 | --- | --- |
 | `POST /commercial/decision` | Undated commercial rules and reasons |
 | `POST /commercial/assessment` | Dated v2 spread, raw/reported facts, policy and trace |
+| `POST /commercial/analysis` | Read-only `commercial-analysis-v1` of a dated v2 request: spreads, debt capacity, breakevens, schedule, coverage grid and explanation |
 | `POST /consumer/decision` | DTI and configured policy/documentation checks |
 | `POST /sba/evaluate` | Dated `sba-screen-v2` input and strict `sba-screen-result-v2`; completed screens and unresolved eligibility requirements |
-| `/cases` | Dated case creation, original reads, revisions and replay |
+| `/cases` | Dated case creation, original reads, revisions, replay, and listing search (`q`, `outcome`, `sort`) |
+| `/cases/{id}/revisions/{revision}/analysis` | Read-only analysis of a stored revision under its retained policy after exact replay |
 | `/cases/{id}/revisions/{revision}/scenarios/preview` | Read-only shocks under the selected saved policy |
 | `/cases/{id}/revisions/{revision}/scenario-comparisons` | Immutable reviewed comparison retention |
 
@@ -200,6 +213,15 @@ buffering and store dependencies. JSON rejects duplicates, non-finite tokens,
 invalid UTF-8 and nesting above 128 containers. Unknown model fields and
 boolean-as-money values are rejected. Oversized requests return 413; invalid
 financial input returns 422. Storage errors use `{detail: {code, message}}`.
+
+Contract rejections and rejected saved edits keep that `detail` unchanged. They
+also add a `field-errors-v1` `errors` envelope, in which each item names:
+- the submitted field, as a JSON Pointer;
+- a stable code;
+- a plain message;
+- any violated limit.
+
+See the [assessment contract](docs/ASSESSMENT_CONTRACT.md#field-mapped-errors-field-errors-v1).
 
 The bundled SBA workbook is effective March 17, 2023 and was verified through
 October 15, 2026. Its bytes, URL, hash and row references are checked. The loader
@@ -212,8 +234,12 @@ Passing size and configured coverage screens returns `review_required` with
 `eligibility_status: incomplete`; owner-resource arithmetic never establishes
 credit elsewhere. See the complete [SBA methodology and example](docs/SBA_SCREENING.md).
 
-Current financial versions are `commercial-assessment-v2`,
-`commercial-calculation-v2`, `assessment-json-v2`, and the v2 scenario versions.
+Current financial versions are:
+- `commercial-assessment-v2`, `commercial-calculation-v2` and `assessment-json-v2`;
+- the v2 scenario versions;
+- the additive read-only `commercial-analysis-v1`, `field-errors-v1` and
+  `case-listing-v2` contracts, approved in the
+  [usability record](docs/ANALYST_USABILITY_APPROVAL.md).
 The SQL schema and storage wrappers remain unchanged. Archived numeric v1
 records, hashes, and original receipts are preserved. They remain readable as
 original JSON; their unsupported calculator returns `replay_unavailable`.

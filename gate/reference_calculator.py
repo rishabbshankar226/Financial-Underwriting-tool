@@ -13,6 +13,7 @@ import sys
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from decimal import (
+    ROUND_DOWN,
     ROUND_HALF_EVEN,
     Context,
     Decimal,
@@ -426,6 +427,273 @@ def run_flag_checks() -> list[FlagCheck]:
     ]
 
 
+# Analysis references: common-size, change versus prior, debt capacity, breakevens,
+# a cent schedule and stressed coverage. Policy literals restate the prototype policy.
+APPROVAL = {"dscr": Decimal("1.25"), "fccr": Decimal("1.20"), "global_dscr": Decimal("1.25")}
+DECLINE = {"dscr": Decimal("1.0"), "fccr": Decimal("1.0"), "global_dscr": Decimal("1.0")}
+CONSTRAINT_ORDER = ("dscr", "fccr", "global_dscr")
+CENT = Decimal("0.01")
+BASIS_POINTS = Decimal("10000")
+PERSONAL_DEBT = ("mortgage_pi_annual", "auto_loan_annual", "credit_card_min_annual")
+
+
+@reference
+def line_amount(year: Input, line: str) -> Decimal:
+    y = amounts(year)
+    if line == "gross_profit":
+        return y["gross_receipts"] - y["cogs"]
+    if line == "ordinary_business_income":
+        return ordinary_business_income(year)
+    if line == "ebitda":
+        return ebitda(year)
+    return y[line]
+
+
+@reference
+def common_size(year: Input, line: str) -> Decimal | None:
+    receipts = number(year["gross_receipts"])
+    return line_amount(year, line) / receipts if receipts > ZERO else None
+
+
+@reference
+def change_vs_prior(prior: Input, current: Input, line: str) -> Decimal | None:
+    before = line_amount(prior, line)
+    return (line_amount(current, line) - before) / before if before > ZERO else None
+
+
+def _existing_service(year: Input, existing_debt: Input) -> Decimal:
+    return number(year["interest_expense"]) + number(existing_debt["cpltd_annual"])
+
+
+@reference
+def capacity_payments(
+    year: Input, existing_debt: Input, guarantor: Input, ownership: Decimal | str
+) -> dict[str, Decimal]:
+    """Largest proposed annual payment each coverage ratio can carry at its approval minimum."""
+    g = amounts(guarantor)
+    operating = ebitda(year)
+    existing = _existing_service(year, existing_debt)
+    outside = g["wages"] + g["interest_dividend_income"]
+    personal = sum((g[key] for key in PERSONAL_DEBT), ZERO)
+    return {
+        "dscr": operating / APPROVAL["dscr"] - existing,
+        "fccr": operating / APPROVAL["fccr"] - existing - number(existing_debt["operating_lease_annual"]),
+        "global_dscr": (number(ownership) * operating + outside) / APPROVAL["global_dscr"] - existing - personal,
+    }
+
+
+def binding_constraint(payments: Mapping[str, Decimal]) -> str:
+    return min(CONSTRAINT_ORDER, key=lambda name: (payments[name], CONSTRAINT_ORDER.index(name)))
+
+
+@reference
+def present_value(annual_payment: Decimal, annual_rate: Decimal | str, term_months: int) -> Decimal:
+    """Principal a level monthly payment retires, written in accumulated-value form."""
+    monthly, rate = max(annual_payment, ZERO) / MONTHS, number(annual_rate) / MONTHS
+    if monthly == ZERO:
+        return ZERO
+    if rate == ZERO:
+        return monthly * Decimal(term_months)
+    accumulated = (ONE + rate) ** term_months
+    return monthly * (accumulated - ONE) / (rate * accumulated)
+
+
+@reference
+def ebitda_breakeven(
+    year: Input,
+    existing_debt: Input,
+    proposed_loan: Input,
+    guarantor: Input,
+    ownership: Decimal | str,
+    constraint: str,
+    threshold: Decimal,
+) -> Decimal | None:
+    g = amounts(guarantor)
+    service = _service(year, existing_debt, proposed_loan)
+    if constraint == "dscr":
+        return threshold * service if service > ZERO else None
+    if constraint == "fccr":
+        fixed = service + number(existing_debt["operating_lease_annual"])
+        return threshold * fixed if fixed > ZERO else None
+    weight = number(ownership)
+    total = service + sum((g[key] for key in PERSONAL_DEBT), ZERO)
+    if total == ZERO or weight == ZERO:
+        return None
+    return (threshold * total - g["wages"] - g["interest_dividend_income"]) / weight
+
+
+@reference
+def cushions(year: Input, breakeven: Decimal) -> tuple[Decimal, Decimal]:
+    """EBITDA cushion and the revenue decline (all costs fixed) that reach the breakeven."""
+    operating = ebitda(year)
+    return ONE - breakeven / operating, (operating - breakeven) / number(year["gross_receipts"])
+
+
+@reference
+def cent_schedule(
+    principal: Decimal | int | str | float,
+    annual_rate: Decimal | int | str | float,
+    term_months: int,
+    interest_rounding: str = ROUND_HALF_EVEN,
+) -> dict[str, Decimal]:
+    """Cent-rounded level payments; the last or payoff month settles the balance."""
+    balance = number(principal).quantize(CENT, rounding=ROUND_HALF_EVEN)
+    rate = number(annual_rate) / MONTHS
+    payment = (amortized_annual_debt_service(balance, annual_rate, term_months) / MONTHS).quantize(
+        CENT, rounding=ROUND_HALF_EVEN
+    )
+    totals = {"interest": ZERO, "payments": ZERO, "count": ZERO, "final": ZERO}
+    for month in range(1, term_months + 1):
+        interest = (balance * rate).quantize(CENT, rounding=interest_rounding)
+        paid = balance + interest if month == term_months or payment - interest >= balance else payment
+        balance -= paid - interest
+        totals["interest"] += interest
+        totals["payments"] += paid
+        totals["count"], totals["final"] = Decimal(month), paid
+        if balance == ZERO:
+            break
+    return {"scheduled_payment": payment, **totals}
+
+
+@reference
+def stressed_coverage(
+    year: Input,
+    existing_debt: Input,
+    proposed_loan: Input,
+    guarantor: Input,
+    ownership: Decimal | str,
+    revenue_change: Decimal | str,
+    rate_change_bps: Decimal | str,
+    bps_per_unit: Decimal = BASIS_POINTS,
+) -> dict[str, Decimal | None]:
+    """Revenue and rate stresses with every other input held fixed, as stress previews define."""
+    y, g = amounts(year), amounts(guarantor)
+    operating = (
+        y["gross_receipts"] * (ONE + number(revenue_change))
+        - y["cogs"]
+        - y["operating_expense_excl_dna_interest_comp"]
+        - y["officer_compensation"]
+    )
+    rate = number(proposed_loan["annual_rate"]) + number(rate_change_bps) / bps_per_unit
+    payment = amortized_annual_debt_service(proposed_loan["amount"], rate, int(number(proposed_loan["term_months"])))
+    service = _existing_service(year, existing_debt) + payment
+    personal = sum((g[key] for key in PERSONAL_DEBT), ZERO)
+    return {
+        "dscr": _coverage(operating, service),
+        "fccr": _coverage(operating, service + number(existing_debt["operating_lease_annual"])),
+        "global_dscr": _coverage(
+            number(ownership) * operating + g["wages"] + g["interest_dividend_income"], service + personal
+        ),
+    }
+
+
+ALPINE_PARTIAL_OWNERSHIP = Decimal("0.6")
+
+ANALYSIS_EXPECTED = {
+    "alpine_common_size_cogs_2025": Decimal("0.654761904761904761904762"),
+    "alpine_common_size_gross_profit_2025": Decimal("0.345238095238095238095238"),
+    "alpine_common_size_ordinary_business_income_2025": Decimal("0.100714285714285714285714"),
+    "alpine_common_size_ebitda_2025": Decimal("0.150000000000000000000000"),
+    "alpine_change_gross_receipts_2025": Decimal("0.076923076923076923076923"),
+    "alpine_change_ordinary_business_income_2025": Decimal("0.084615384615384615384615"),
+    "alpine_change_ebitda_2025": Decimal("0.149635036496350364963504"),
+    "alpine_capacity_dscr_payment": Decimal("384000.000000000000000000000000"),
+    "alpine_capacity_fccr_payment": Decimal("381000.000000000000000000000000"),
+    "alpine_capacity_global_dscr_payment": Decimal("398800.000000000000000000000000"),
+    "alpine_max_principal": Decimal("2352984.826672761045726790462363"),
+    "alpine_breakeven_dscr_approval": Decimal("251201.247581660240952232316665"),
+    "alpine_breakeven_dscr_decline": Decimal("200960.998065328192761785853332"),
+    "alpine_breakeven_fccr_approval": Decimal("269953.197678393831314143023999"),
+    "alpine_breakeven_fccr_decline": Decimal("224960.998065328192761785853332"),
+    "alpine_breakeven_global_dscr_approval": Decimal("232701.247581660240952232316665"),
+    "alpine_breakeven_global_dscr_decline": Decimal("172560.998065328192761785853332"),
+    "alpine_ebitda_cushion_dscr_approval": Decimal("0.601267860981491681028203"),
+    "alpine_revenue_cushion_dscr_approval": Decimal("0.090190179147223752154230"),
+    "alpine_ebitda_cushion_fccr_approval": Decimal("0.571502860827946299501360"),
+    "alpine_revenue_cushion_fccr_approval": Decimal("0.085725429124191944925204"),
+    "alpine_revenue_cushion_fccr_decline": Decimal("0.096437857603493287437670"),
+    "alpine_partial_owner_capacity_global_dscr_payment": Decimal("197200.000000000000000000000000"),
+    "alpine_partial_owner_max_principal": Decimal("1217870.361731938263037593383669"),
+    "alpine_partial_owner_breakeven_global_dscr_approval": Decimal("387835.412636100401587053861109"),
+    "alpine_partial_owner_breakeven_global_dscr_decline": Decimal("287601.663442213654602976422220"),
+    "alpine_schedule_scheduled_payment": Decimal("6746.75"),
+    "alpine_schedule_final_payment": Decimal("6746.74"),
+    "alpine_schedule_total_interest": Decimal("309609.99"),
+    "alpine_schedule_total_payments": Decimal("809609.99"),
+    "alpine_schedule_payment_count": Decimal("120"),
+    "alpine_stress_dscr_revenue_minus_5": Decimal("2.089957773117084319683834"),
+    "alpine_stress_dscr_revenue_minus_10": Decimal("1.044978886558542159841917"),
+    "alpine_stress_fccr_revenue_minus_10": Decimal("0.933495147185542131540825"),
+    "alpine_stress_global_dscr_revenue_minus_10": Decimal("1.155632052725789932488688"),
+    "alpine_stress_dscr_revenue_minus_10_rate_200": Decimal("1.010462126597435888635812"),
+    "alpine_stress_dscr_revenue_minus_20_rate_300": Decimal("-0.993543982102041400945780"),
+}
+
+ANALYSIS_FLAGS = {
+    "alpine_binding_constraint": "fccr",
+    "alpine_partial_owner_binding_constraint": "global_dscr",
+}
+EXACT_CENTS = {name for name in ANALYSIS_EXPECTED if name.startswith("alpine_schedule_")}
+
+
+def analysis_values() -> tuple[dict[str, Decimal], dict[str, str]]:
+    loan = _proposed(ALPINE_PROPOSED_LOAN)
+    rate, term = number(ALPINE_PROPOSED_LOAN["annual_rate"]), int(number(ALPINE_PROPOSED_LOAN["term_months"]))
+    values: dict[str, Decimal] = {}
+    flags: dict[str, str] = {}
+    for line in ("cogs", "gross_profit", "ordinary_business_income", "ebitda"):
+        values[f"alpine_common_size_{line}_2025"] = available(common_size(ALPINE_2025, line))
+    for line in ("gross_receipts", "ordinary_business_income", "ebitda"):
+        values[f"alpine_change_{line}_2025"] = available(change_vs_prior(ALPINE_2024, ALPINE_2025, line))
+    for label, ownership in (("alpine", ONE), ("alpine_partial_owner", ALPINE_PARTIAL_OWNERSHIP)):
+        payments = capacity_payments(ALPINE_2025, ALPINE_EXISTING_DEBT, ALPINE_GUARANTOR, ownership)
+        binding = binding_constraint(payments)
+        flags[f"{label}_binding_constraint"] = binding
+        values[f"{label}_max_principal"] = present_value(payments[binding], rate, term)
+        for name, payment in payments.items():
+            values[f"{label}_capacity_{name}_payment"] = payment
+        for constraint in CONSTRAINT_ORDER:
+            for kind, table in (("approval", APPROVAL), ("decline", DECLINE)):
+                breakeven = available(
+                    ebitda_breakeven(
+                        ALPINE_2025, ALPINE_EXISTING_DEBT, loan, ALPINE_GUARANTOR, ownership, constraint, table[constraint]
+                    )
+                )
+                values[f"{label}_breakeven_{constraint}_{kind}"] = breakeven
+                ebitda_cushion, revenue_cushion = cushions(ALPINE_2025, breakeven)
+                values[f"{label}_ebitda_cushion_{constraint}_{kind}"] = ebitda_cushion
+                values[f"{label}_revenue_cushion_{constraint}_{kind}"] = revenue_cushion
+    schedule = cent_schedule(ALPINE_PROPOSED_LOAN["amount"], rate, term)
+    values.update(
+        alpine_schedule_scheduled_payment=schedule["scheduled_payment"],
+        alpine_schedule_final_payment=schedule["final"],
+        alpine_schedule_total_interest=schedule["interest"],
+        alpine_schedule_total_payments=schedule["payments"],
+        alpine_schedule_payment_count=schedule["count"],
+    )
+    for suffix, change, bps in (
+        ("revenue_minus_5", "-0.05", "0"),
+        ("revenue_minus_10", "-0.10", "0"),
+        ("revenue_minus_10_rate_200", "-0.10", "200"),
+        ("revenue_minus_20_rate_300", "-0.20", "300"),
+    ):
+        cell = stressed_coverage(
+            ALPINE_2025, ALPINE_EXISTING_DEBT, ALPINE_PROPOSED_LOAN, ALPINE_GUARANTOR, ONE, change, bps
+        )
+        for name, value in cell.items():
+            values[f"alpine_stress_{name}_{suffix}"] = available(value)
+    return values, flags
+
+
+def run_analysis_fixtures() -> tuple[list[Check], list[FlagCheck]]:
+    values, flags = analysis_values()
+    checks = [
+        Check(name, values[name], expected, ZERO if name in EXACT_CENTS else TOLERANCE)
+        for name, expected in ANALYSIS_EXPECTED.items()
+    ]
+    return checks, [FlagCheck(name, flags[name], expected) for name, expected in ANALYSIS_FLAGS.items()]
+
+
 @reference
 def _mutant_dscr_omits_addback(year: Input, existing_debt: Input, proposed_loan: Input) -> Decimal:
     return ordinary_business_income(year) / _service(year, existing_debt, proposed_loan)
@@ -509,7 +777,67 @@ def run_mutations() -> list[tuple[str, bool]]:
     killed = mutated_flag != EXPECTED_FLAGS["bristlecone_k1_history_flag"]
     results.append(("k1_always_stable", killed))
 
+    results.extend(run_analysis_mutations())
     return results
+
+
+def _differs(got: Decimal, name: str) -> bool:
+    return abs(got - ANALYSIS_EXPECTED[name]) > (ZERO if name in EXACT_CENTS else TOLERANCE)
+
+
+@reference
+def run_analysis_mutations() -> list[tuple[str, bool]]:
+    loan = _proposed(ALPINE_PROPOSED_LOAN)
+    rate, term = number(ALPINE_PROPOSED_LOAN["annual_rate"]), int(number(ALPINE_PROPOSED_LOAN["term_months"]))
+    payments = capacity_payments(ALPINE_2025, ALPINE_EXISTING_DEBT, ALPINE_GUARANTOR, ONE)
+    breakeven = available(
+        ebitda_breakeven(ALPINE_2025, ALPINE_EXISTING_DEBT, loan, ALPINE_GUARANTOR, ONE, "dscr", APPROVAL["dscr"])
+    )
+    operating, receipts = ebitda(ALPINE_2025), number(ALPINE_2025["gross_receipts"])
+    partial_breakeven_without_weight = available(
+        ebitda_breakeven(
+            ALPINE_2025, ALPINE_EXISTING_DEBT, loan, ALPINE_GUARANTOR, ONE, "global_dscr", APPROVAL["global_dscr"]
+        )
+    )
+    stressed = stressed_coverage(
+        ALPINE_2025, ALPINE_EXISTING_DEBT, ALPINE_PROPOSED_LOAN, ALPINE_GUARANTOR, ONE, "-0.10", "200", Decimal("1000")
+    )
+    accumulated = (ONE + rate) ** term
+    annual_rate_principal = payments["fccr"] / MONTHS * (accumulated - ONE) / (rate * accumulated)
+    schedule = cent_schedule(ALPINE_PROPOSED_LOAN["amount"], rate, term)
+    rounded_down = cent_schedule(ALPINE_PROPOSED_LOAN["amount"], rate, term, ROUND_DOWN)
+    maximum = max(CONSTRAINT_ORDER, key=lambda name: payments[name])
+    return [
+        (
+            "common_size_prior_base",
+            _differs(number(ALPINE_2025["cogs"]) / number(ALPINE_2024["gross_receipts"]), "alpine_common_size_cogs_2025"),
+        ),
+        (
+            "growth_current_denominator",
+            _differs(
+                (receipts - number(ALPINE_2024["gross_receipts"])) / receipts, "alpine_change_gross_receipts_2025"
+            ),
+        ),
+        ("capacity_ignores_existing_service", _differs(operating / APPROVAL["dscr"], "alpine_capacity_dscr_payment")),
+        (
+            "capacity_fccr_omits_lease",
+            _differs(payments["fccr"] + number(ALPINE_EXISTING_DEBT["operating_lease_annual"]), "alpine_capacity_fccr_payment"),
+        ),
+        ("binding_uses_maximum", maximum != ANALYSIS_FLAGS["alpine_binding_constraint"]),
+        ("max_principal_annual_rate", _differs(annual_rate_principal, "alpine_max_principal")),
+        (
+            "global_breakeven_ignores_ownership",
+            _differs(partial_breakeven_without_weight, "alpine_partial_owner_breakeven_global_dscr_approval"),
+        ),
+        ("ebitda_cushion_inverted", _differs(breakeven / operating, "alpine_ebitda_cushion_dscr_approval")),
+        ("revenue_cushion_over_ebitda", _differs((operating - breakeven) / operating, "alpine_revenue_cushion_dscr_approval")),
+        (
+            "amortization_without_final_adjustment",
+            _differs(schedule["scheduled_payment"] * schedule["count"], "alpine_schedule_total_payments"),
+        ),
+        ("amortization_round_down_interest", _differs(rounded_down["interest"], "alpine_schedule_total_interest")),
+        ("grid_bps_scale", _differs(available(stressed["dscr"]), "alpine_stress_dscr_revenue_minus_10_rate_200")),
+    ]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -521,8 +849,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    checks = run_fixtures()
-    flag_checks = run_flag_checks()
+    analysis_checks, analysis_flags = run_analysis_fixtures()
+    checks = run_fixtures() + analysis_checks
+    flag_checks = run_flag_checks() + analysis_flags
     failed = [c for c in checks if not c.passed]
     failed_flags = [f for f in flag_checks if not f.passed]
 

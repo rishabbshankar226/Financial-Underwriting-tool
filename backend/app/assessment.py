@@ -59,6 +59,14 @@ def _reported_year(year: DatedFinancialYear, calculated: dict[str, Calculation])
     )
 
 
+def comparable_periods(previous: Period, latest: Period) -> bool:
+    """Adjacent periods that share a fiscal start month can be compared year over year."""
+    return (
+        previous.period_end + timedelta(days=1) == latest.period_start
+        and previous.period_start.month == latest.period_start.month
+    )
+
+
 def assess_commercial(
     request: CommercialAssessmentRequest, policy: PolicyConfig = DEFAULT_POLICY
 ) -> CommercialAssessment:
@@ -66,10 +74,7 @@ def assess_commercial(
     selected_history = [latest_index]
     if latest_index:
         previous, latest = request.years[-2:]
-        if (
-            previous.period_end + timedelta(days=1) == latest.period_start
-            and previous.period_start.month == latest.period_start.month
-        ):
+        if comparable_periods(previous, latest):
             selected_history.insert(0, latest_index - 1)
     # Calculation records retain the operands that produced each raw result.
     facts = commercial_facts(

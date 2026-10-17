@@ -460,3 +460,20 @@ def test_fingerprint_covers_normalized_command_and_saved_baseline_identity(basel
     assert preview(baseline, padded)["fingerprint"] == result["fingerprint"]
     assert preview(saved_baseline(tmp_path), item)["fingerprint"] != result["fingerprint"]
     assert preview(baseline, {**item, "rationale": "A different stated assumption"})["fingerprint"] != result["fingerprint"]
+
+
+# Digests recorded before the projection and baseline verification were shared with analysis.
+@pytest.mark.parametrize("scenarios, digest", [
+    ([scenario("zero")], "fcdecf4994eca47b2666c18ed0156d3f89963c0b98f5ef889eb973ed63f4ab84"),
+    ([scenario("revenue", revenue_change="-0.1"),
+      scenario("costs", cogs_change="0.1", operating_expense_change="0.1"),
+      scenario("all", revenue_change="-0.1", cogs_change="0.1", operating_expense_change="0.1",
+               proposed_rate_change_bps="200")],
+     "f48470aafe460c1c7ca56cb607a395c7e9d9ae272af3503e844acf6684f49455"),
+    ([scenario("rate", proposed_rate_change_bps="-1050"), scenario("fractional", proposed_rate_change_bps="12.5")],
+     "d2f74e6301946e664b66b1711f430f6db4addcbd1ae7cf85f293be630f8cac8b"),
+])
+def test_preview_scenario_serialization_is_pinned_across_shared_refactors(baseline, scenarios, digest):
+    text = json.dumps(preview(baseline, *scenarios)["scenarios"], sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False)
+    assert sha256(text.encode()).hexdigest() == digest

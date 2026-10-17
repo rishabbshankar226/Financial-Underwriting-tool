@@ -88,6 +88,41 @@ def test_invalid_bridge_commands_never_reach_application(session, changes):
     assert response["status"] in (400, 413)
 
 
+def test_analysis_routes_reach_the_application(session):
+    stateless = session.process([request("/commercial/analysis")])[0]
+    assert stateless["status"] == 200
+    assert json.loads(stateless["body"])["schema_version"] == "commercial-analysis-v1"
+    command = json.dumps({"input": json.loads(FIXTURE), "rationale": "Synthetic analysis baseline"})
+    created = session.process(
+        [request("/cases", command, headers={"content-type": "application/json", "idempotency-key": str(uuid4())})]
+    )[0]
+    case_id = json.loads(created["body"])["case_id"]
+    saved = session.process([request(f"/cases/{case_id}/revisions/1/analysis", "")])[0]
+    assert saved["status"] == 200
+    assert json.loads(saved["body"])["source"] == "saved_revision"
+
+
+def test_case_listing_search_parameters_reach_the_application(session):
+    listing = session.process(
+        [request("/cases?q=alpine&outcome=approve&sort=updated&limit=10", "", method="GET", headers={})]
+    )[0]
+    assert listing["status"] == 200
+    assert json.loads(listing["body"]) == {"listing_version": "case-listing-v2", "items": [], "next_cursor": None}
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"path": f"/cases/{uuid4()}/revisions?q=a", "method": "GET", "body": "", "headers": {}},
+        {"path": "/commercial/analysis?q=a"},
+        {"path": "/cases?sort=created&sort=updated", "method": "GET", "body": "", "headers": {}},
+        {"path": "/cases?search=a", "method": "GET", "body": "", "headers": {}},
+    ],
+)
+def test_listing_parameters_are_confined_to_the_case_listing(session, changes):
+    assert session.process([request(**changes)])[0]["status"] == 400
+
+
 def test_old_generation_and_changed_request_identity_fail_closed(session):
     assert session.process([request(generation=str(uuid4()))])[0]["status"] == 409
     original = request()

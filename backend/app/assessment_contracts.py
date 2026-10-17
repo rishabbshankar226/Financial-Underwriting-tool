@@ -10,6 +10,7 @@ from typing import Annotated, Literal, Self
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, model_validator
 
 from .config import PolicyConfig
+from .field_errors import ContractValueError
 from .finance import (
     MAX_TERM_MONTHS,
     ExactFinancialDecimal,
@@ -30,10 +31,13 @@ def iso_date(value: object) -> date:
     if type(value) is date:
         return value
     if isinstance(value, str) and len(value) == 10:
-        parsed = date.fromisoformat(value)
+        try:
+            parsed = date.fromisoformat(value)
+        except ValueError as exc:
+            raise ContractValueError(str(exc), "invalid_date") from exc
         if parsed.isoformat() == value:
             return parsed
-    raise ValueError("A calendar date in ISO YYYY-MM-DD format is required")
+    raise ContractValueError("A calendar date in ISO YYYY-MM-DD format is required", "invalid_date")
 
 
 ISODate = Annotated[date, BeforeValidator(iso_date)]
@@ -63,10 +67,18 @@ class DatedFinancialYear(Period):
     def complete_annual_period(self) -> Self:
         start = self.period_start
         if start.day != 1 or start.year == 9999:
-            raise ValueError("Annual periods must start on the first day of a month in a supported year")
+            raise ContractValueError(
+                "Annual periods must start on the first day of a month in a supported year",
+                "period_shape",
+                pointer="/period_start",
+            )
         expected_end = date(start.year + 1, start.month, 1) - timedelta(days=1)
         if self.period_end != expected_end:
-            raise ValueError("Financial periods must contain twelve complete calendar months")
+            raise ContractValueError(
+                "Financial periods must contain twelve complete calendar months",
+                "period_shape",
+                pointer="/period_end",
+            )
         return self
 
 
@@ -130,16 +142,32 @@ class CommercialAssessmentRequest(ContractModel):
 
     @model_validator(mode="after")
     def consistent_assumptions(self) -> Self:
-        for previous, current in pairwise(self.years):
+        for index, (previous, current) in enumerate(pairwise(self.years), start=1):
             if current.period_start <= previous.period_end:
-                raise ValueError("Financial periods must be oldest first, unique, and non-overlapping")
-        if any(y.period_end > self.assessment_as_of for y in self.years):
-            raise ValueError("Financial periods cannot end after assessment_as_of")
+                raise ContractValueError(
+                    "Financial periods must be oldest first, unique, and non-overlapping",
+                    "period_order",
+                    pointer=f"/years/{index}/period_start",
+                )
+        for index, year in enumerate(self.years):
+            if year.period_end > self.assessment_as_of:
+                raise ContractValueError(
+                    "Financial periods cannot end after assessment_as_of",
+                    "period_after_as_of",
+                    pointer=f"/years/{index}/period_end",
+                )
         latest, wc = self.years[-1], self.working_capital
         if (wc.period_start, wc.period_end) != (latest.period_start, latest.period_end):
-            raise ValueError("Working-capital period must match the latest financial period")
+            boundary = "period_start" if wc.period_start != latest.period_start else "period_end"
+            raise ContractValueError(
+                "Working-capital period must match the latest financial period",
+                "working_capital_period",
+                pointer=f"/working_capital/{boundary}",
+            )
         if decimal_sum([g.ownership_percentage for g in self.guarantors]) > Decimal("1"):
-            raise ValueError("Total guarantor ownership cannot exceed 100%")
+            raise ContractValueError(
+                "Total guarantor ownership cannot exceed 100%", "ownership_total", pointer="/guarantors", limit="1"
+            )
         return self
 
 
