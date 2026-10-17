@@ -2,7 +2,7 @@
 
 The backend can persist accepted dated commercial cases in one explicitly
 configured SQLite file. Each accepted numeric edit appends a revision, complete
-assessment, and server-derived event. The browser's **Save case**, **Saved cases**,
+assessment, and server-derived event. The browser's **Save case**, **Open case**,
 and revision history controls use this contract. See [workspace behavior](WORKSPACE.md)
 for original-result reads, conflict review, and exact-write recovery.
 
