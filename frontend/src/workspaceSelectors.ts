@@ -13,9 +13,11 @@ export type WorkspaceView = {
   decisionWord: string;
   decisionNote: string;
   pendingTitle: string;
+  /** The last accepted unsaved case while its recommendation is inactive; offered for re-evaluation. */
+  previousAccepted: Accepted | null;
 };
 
-export function selectWorkspaceView(state: Workspace): WorkspaceView {
+export function selectWorkspaceView(state: Workspace, pendingWrite: boolean): WorkspaceView {
   const ready = state.status === "ready",
     accepted = state.accepted,
     input = accepted?.input;
@@ -62,5 +64,7 @@ export function selectWorkspaceView(state: Workspace): WorkspaceView {
           ? "Waiting for saved write confirmation"
           : "Evaluating draft"
       : "No current result",
+    previousAccepted:
+      accepted && !state.saved && (state.action === "evaluate" || !pendingWrite) ? accepted : null,
   };
 }

@@ -24,6 +24,7 @@ import { writeComparisonLocator } from "./scenarioSelection";
 import { BrandBar, CaseHeader } from "./views/WorkspaceHeader";
 import { PrototypeNotice } from "./views/PrototypeNotice";
 import { Toolbar } from "./views/Toolbar";
+import { CompatibilityPanel, ContextStrip, WorkspaceStatus } from "./views/WorkspaceStatus";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
 import {
@@ -84,7 +85,7 @@ export default function App() {
     [discarding, setDiscarding] = useState(false);
   const opener = useRef<HTMLElement | null>(null);
   const edits = useEditController(opener, workspace.edit);
-  const view = selectWorkspaceView(state);
+  const view = selectWorkspaceView(state, !!workspace.operation);
   const { ready, accepted, input, assessment, decision } = view;
   const index = input ? Math.min(selectedPeriod, input.years.length - 1) : 0;
   useEffect(() => {
@@ -191,92 +192,16 @@ export default function App() {
           onOpen={(locator) => void workspace.openSaved(locator)}
         />
       )}
-      {!ready && (
-        <div className="pending" role="status">
-          <strong>{view.pendingTitle}</strong>
-          {state.draft && state.action === "evaluate" && (
-            <p>
-              Submitted draft: {state.draft.filename} · {state.draft.mode} ·{" "}
-              {typeof state.draft.payload.borrower_name === "string"
-                ? state.draft.payload.borrower_name
-                : "Unnamed input"}
-              {state.draft.edit &&
-                ` · ${state.draft.edit.path}: ${state.draft.edit.prior} → ${state.draft.edit.next}`}
-            </p>
-          )}
-          {accepted &&
-            !state.saved &&
-            (state.action === "evaluate" || !workspace.operation) && (
-              <p>
-                Previous accepted case: {accepted.input.borrower_name} ·{" "}
-                {accepted.filename}. Its recommendation is inactive.
-              </p>
-            )}
-        </div>
-      )}
-      {state.error && (
-        <div className="warning" role="alert">
-          {state.error}
-        </div>
-      )}
-      {state.status === "unavailable" && (
-        <div className="actions">
-          {state.draft && state.action === "evaluate" && (
-            <button onClick={() => void submit(state.draft!)}>
-              Retry submitted draft
-            </button>
-          )}
-          {accepted &&
-            !state.saved &&
-            (state.action === "evaluate" || !workspace.operation) && (
-              <button
-                onClick={() =>
-                  void submit({
-                    mode: accepted.mode,
-                    payload: accepted.input,
-                    filename: accepted.filename,
-                  })
-                }
-              >
-                Re-evaluate last accepted case
-              </button>
-            )}
-          {state.saved && (
-            <button
-              onClick={() =>
-                void workspace.openSaved({
-                  caseId: state.saved!.view.snapshot.case_id,
-                  revision: state.saved!.view.snapshot.revision,
-                })
-              }
-            >
-              View previous stored revision
-            </button>
-          )}
-        </div>
-      )}
+      <WorkspaceStatus
+        state={state}
+        view={view}
+        onSubmit={(draft) => void submit(draft)}
+        onOpen={(locator) => void workspace.openSaved(locator)}
+      />
       {ready && state.saved?.view.compatibility && tab !== "review" && (
-        <section className="panel compatibility">
-          <h2>Original stored assessment</h2>
-          <p>{state.saved.view.compatibility}</p>
-          <pre>{JSON.stringify(state.saved.view.snapshot, null, 2)}</pre>
-        </section>
+        <CompatibilityPanel view={state.saved.view} />
       )}
-      {assessment && (
-        <div className="context">
-          <span>
-            Assessment as of: {assessment.assumptions_as_of} · USD · dollars ·
-            nominal annual rate
-          </span>
-          <span>
-            Coverage period: {periodLabel(assessment.selected_period, 0)}
-          </span>
-          <span>
-            Current pro forma coverage · fixed rate · fully amortizing · monthly
-            payments
-          </span>
-        </div>
-      )}
+      {assessment && <ContextStrip assessment={assessment} />}
       {assessment && <AssessmentSummary assessment={assessment} />}
       <nav className="workspaceNav" aria-label="Workspace views">
         {(["spread", "assumptions", "details", "memo", "history", "scenarios", "review"] as const).map(
