@@ -19,3 +19,6 @@ frontend/playwright-report/
 /.streamlit/secrets.toml
 *.egg-info/
 /streamlit_app/component/build/
+
+# Isolated Claude Code session worktrees are local checkouts, never repository content.
+/.claude/worktrees/
