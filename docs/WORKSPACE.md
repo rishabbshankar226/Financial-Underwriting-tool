@@ -1,6 +1,6 @@
 # Analyst workspace
 
-The default synthetic Alpine case uses the dated assessment API. Explicit legacy mode preserves undated intake and the legacy decision route. The browser formats backend values and manages local drafts; Python performs all financial calculations.
+After connecting, the workspace opens on a start screen and evaluates nothing until the analyst chooses **Try the example case** (the synthetic dated Alpine case), **Open saved case** or **Import case file (JSON)**. A tab with an unconfirmed saved write, or a remembered saved selection, skips the start screen and restores that state instead. Explicit legacy mode preserves undated intake and the legacy decision route. The browser formats backend values and manages local drafts; Python performs all financial calculations.
 
 ## Access
 
@@ -8,24 +8,42 @@ Enter the configured operator token in **Connect workspace**. The workspace
 mounts only after a protected authentication check. The token stays in page
 memory and is sent only to the configured API origin; remote URLs require HTTPS.
 Reload, disconnect or a 401 requires re-entry. Requests have a 30-second deadline.
-Disconnect cancels requests and clears visible financial data without deleting
+**Disconnect workspace** (in **More**) cancels requests and clears visible financial data without deleting
 exact pending-write tracking. Reconnecting never submits a write automatically.
 The tab-local journal may contain financial inputs and requires an appropriate
 browser/host policy. See [security requirements](SECURITY_ARCHITECTURE.md).
 
+## Layout
+
+- **Brand bar:** **Open case** lists saved cases, **Save case** saves an accepted unsaved dated case, and **More** holds the dated and legacy example cases, **Import case file (JSON)**, the **Dark theme** toggle and **Disconnect workspace**. More is a disclosure: Escape or a click outside it closes the panel and returns focus to its button; the theme toggle leaves it open.
+- **Case header:** the borrower name (the view's only h1), the mode badge (**Dated assessment** or **Legacy · undated input**), the saved state (**Draft — not saved**, **Saved · revision N · latest**, **Historical revision N (read-only)** or an inactive previous revision) and the source file or saved case.
+- **Prototype notice:** a short disclaimer that stays on screen, with the full text one click away.
+- **Decision bar:** the illustrative outcome and the server's one-line reason, taken from the matching analysis. While a draft edit recalculates, the bar reads CALCULATING and shows the replaced outcome as **Previous result: … (inactive)**.
+- **KPI tiles:** Business DSCR, Global DSCR, FCCR, UCA cash flow, EBITDA and annual debt service for the latest period. Each tile shows its policy line, the server's status and its cushion; cushions, the EBITDA breakeven and the payment capacity arrive with the analysis.
+- **Views** are WAI-ARIA tabs with a roving tab stop: Left and Right arrows move between tabs and select them, Home and End jump to the ends, and only the selected view is rendered.
+
 ## Views
 
 - **Spread:** all nine annual inputs across supplied periods, plus reconciled gross profit, OBI, EBITDA, and K-1 ratio. Selecting an earlier period does not change current coverage to historical coverage.
-- **Assumptions:** annual existing debt, proposed loan, supplied guarantors, and latest-period working capital. Input amounts are editable with field-specific validation and rationale. Dates, case structure, and repayment conventions are changed through complete JSON import.
-- **Details:** backend definitions, expressions, actual operands and references, raw results, K-1 comparison periods, guarantor contributions, raw policy comparisons, and the complete policy snapshot. The content fingerprint does not authenticate documents.
-- **Memo:** a narrative from the accepted response's factors and reasons, unavailable while an input is pending/rejected.
-- **History:** unsaved cases show successfully applied session edits with period-aware paths and separately labeled imported overrides. Saved cases show immutable server-recorded revision summaries and the selected original event, including its unit, period/as-of date, guarantor context, rationale, actor and recording time. New saved events display the configured credential identity; archived demonstration actors retain their original unverified label.
-- **Scenarios:** author and review explicit current shocks against a supported saved dated revision, retain a reviewed batch as a separate original comparison, and reopen case-wide comparison summaries. The selected underwriting result remains unchanged.
-- **Review:** summarize a current ready saved original and download its full parsed JSON evidence, optionally including an explicitly selected matching retained comparison. Display original identity, period, units, backend facts and unverified recording metadata; unsupported financial definitions permit original JSON only. [Review exports](REVIEW_EXPORTS.md) specifies eligibility, linkage, representation and limits.
+- **Overview:** the decision explanation (headline, the outcome rule applied, its four conditions, each factor's status, summary and cushions, and the illustrative score), debt capacity at the policy approval minimums (binding constraint, maximum principal at the proposed rate and term, headroom or shortfall, and revenue cushions), and gross-receipts and EBITDA trends by period. Chart bars are sized by exact BigInt scaling of server values, used only as drawing geometry; each chart's text alternative lists the formatted values. Legacy decisions have no Overview analysis.
+- **Debt & Loan:** annual existing debt, the proposed loan and latest-period working capital. Input amounts are editable with field-specific validation and rationale. Dates, case structure and repayment conventions are changed through complete JSON import.
+- **Global Cash Flow:** supplied guarantors' ownership, outside income and personal debt, editable like Debt & Loan, or the business-only fallback when there are none.
+- **Stress Tests:** author and review explicit current shocks against a supported saved dated revision, retain a reviewed batch as a separate original comparison, and reopen case-wide comparison summaries. The selected underwriting result remains unchanged.
+- **Credit Memo:** a narrative from the accepted response's factors and reasons, unavailable while an input is pending/rejected.
+- **History & Audit:** three stacked sections.
+  - *History:* unsaved cases show successfully applied session edits with period-aware paths and separately labeled imported overrides. Saved cases show immutable server-recorded revision summaries and the selected original event, including its unit, period/as-of date, guarantor context, rationale, actor and recording time. New saved events display the configured credential identity; archived demonstration actors retain their original unverified label.
+  - *Calculation details:* backend definitions, expressions, actual operands and references, raw results, K-1 comparison periods, guarantor contributions, raw policy comparisons and the complete policy snapshot. The content fingerprint does not authenticate documents.
+  - *Review package:* summarize a current ready saved original and download its full parsed JSON evidence, optionally including an explicitly selected matching retained comparison. Display original identity, period, units, backend facts and unverified recording metadata; unsupported financial definitions permit original JSON only. [Review exports](REVIEW_EXPORTS.md) specifies eligibility, linkage, representation and limits.
+
+An unsupported stored definition opens on History & Audit; its original JSON is shown in pages of at most 64 KiB of UTF-8 text.
+
+## Analysis
+
+The workspace asks the read-only [analysis service](ANALYSIS_CONTRACT.md) to explain each ready dated assessment: an unsaved draft through `POST /commercial/analysis` under the current policy, a saved revision through `POST /cases/{id}/revisions/{revision}/analysis` under its retained policy. The request runs in the background after the assessment is accepted, one at a time; the last four results are kept for the session, keyed by their source and the assessment fingerprint. A result is shown only when its fingerprint and periods match the assessment on screen. A mismatch or an unknown analysis version is refused with a plain notice, and a server without the routes shows **Analysis unavailable on this server**; the assessment, KPI values and decision stay available. A saved case or comparison write cancels any background analysis before it is sent, and no analysis starts while a write is in flight. Analysis never changes the decision, stored records or recovery tracking.
 
 ## Display, theme and value entry
 
-The workspace opens in a light theme. **Dark theme** in the brand bar switches to the dark colour roles; the choice is a display preference kept in this browser (see [security](SECURITY_ARCHITECTURE.md#browser-credential-and-data-handling)), and a browser that refuses storage keeps the page light. Both themes meet WCAG AA contrast for text, controls and focus indicators. Text is at least 12px, figures use tabular numerals, and read-only amounts keep full contrast. Alternate supplied spread rows carry a faint band and calculated rows sit under a subtotal rule. Browser printing always uses the light roles on white paper, hides workspace controls and keeps the prototype disclaimers. A reduced-motion setting removes the short hover transitions.
+The workspace opens in a light theme. **Dark theme** in the **More** menu switches to the dark colour roles; the choice is a display preference kept in this browser (see [security](SECURITY_ARCHITECTURE.md#browser-credential-and-data-handling)), and a browser that refuses storage keeps the page light. Both themes meet WCAG AA contrast for text, controls and focus indicators. Text is at least 12px, figures use tabular numerals, and read-only amounts keep full contrast. Alternate supplied spread rows carry a faint band and calculated rows sit under a subtotal rule. Browser printing always uses the light roles on white paper, hides workspace controls and keeps the prototype disclaimers. A reduced-motion setting removes the short hover transitions.
 
 Edits accept amounts as analysts type them: an optional `$`, thousands commas grouped in threes, and a negative written as `-1,250,000` or `(1,250,000)`. Unit suffixes such as K or M, exponents, `%` in an amount, spaces inside the number, more than 34 digits, and nonzero magnitudes outside 1e-30 to 1e30 are each rejected with a specific message. Rate and ownership fields take a percentage with an optional `%` sign (`12.5` or `12.5%` becomes 0.125 once); loan terms take whole months. Range messages use display units, for example "Value is outside the allowed range: 0% to 100%." Scenario percentage shocks use the same percentage grammar, including `(10%)`; basis-point shocks take plain signed numbers.
 
@@ -33,6 +51,9 @@ Edits accept amounts as analysts type them: an optional `$`, thousands commas gr
 
 | Event | Effect |
 |---|---|
+| Connect with nothing to restore | Idle start screen. No request until the analyst chooses an example, a saved case or an import. Unreadable recovery tracking stays visible there. |
+| Connect with an unconfirmed saved case write | Show its recovery state first: exact retry only, never an automatic send. |
+| Connect with a remembered saved selection | Read that original directly; the start screen is skipped. |
 | Open, cancel, invalid, or unchanged edit | Accepted input/result and applied history remain unchanged. |
 | Valid edit or selected import/demo | Clear active results and show evaluating. Keep the prior accepted case explicitly labeled as previous. |
 | Successful current response | Adopt input/result together; use server-normalized input for dated mode. Apply one edit event or reset history for case replacement. |
@@ -47,6 +68,10 @@ Edits accept amounts as analysts type them: an optional `$`, thousands commas gr
 | Scenario draft edit, add/remove or baseline change | Invalidate the live preview even if the draft returns to equal values; cancel and ignore obsolete responses. |
 | Reviewed comparison save | Reserve the shared write journal and consume the current preview. Verify and display the original comparison separately from the case assessment. |
 | Original comparison open/reload | Read the original record by verified case/comparison IDs; do not recalculate or change the active case revision. |
+| Analysis response | Adopt it only if its fingerprint and periods match the current assessment; a superseded or late response is discarded. |
+| Saved write starts while analysis is in flight | Cancel the analysis before sending the write; request it again after the receipt or failure. |
+
+Rejections and failures read in plain language: field-mapped server errors name the field and its period or guarantor, without echoing the submitted value; unreachable, unreadable and incomplete responses say what happened and that nothing was recalculated.
 
 Selection identifiers are allocated before asynchronous file reads. Raw import text goes unchanged to the chosen endpoint, preserving duplicate-key rejection. The byte limit is inclusive at 1,000,000 bytes. Response guards validate the nested display contract and structural references; they do not recompute financial arithmetic or validate document authenticity.
 
@@ -54,13 +79,13 @@ Legacy financial values are explicitly normalized only after backend success; bo
 
 Unsaved history is local React state and reload clears it. Saved history belongs to the optional [saved-case backend](CASE_STORAGE.md), with original results read from the database. Scenario stress arithmetic runs in Python under the retained policy. The access gate authenticates the configured operator credential; the saved-run JSON exporter uses guarded originals without recalculation or changes to recovery. The workspace has no CSV export or downloadable memo; browser printing uses the print rules above, but there is no dedicated memo print workflow. Decision scores and policy values remain illustrative settings requiring institutional approval.
 
-`App.tsx` is the composition root: it owns the workspace hooks, the selected view and period, and the dialogs. Views in `frontend/src/views/` receive state derived by `selectWorkspaceView` plus callbacks, and never call the workspace hook themselves. Field labels, edit paths and units come from `fieldCatalog.ts`, display formatting from `format.ts`, and exact decimal parsing and formatting from the import-free `decimal.ts`. `ThemeRoot.tsx` applies the theme; `transport.ts` is the only module that touches Web Storage.
+`App.tsx` is the composition root: it owns the workspace hooks, the selected view and period, the single file input and the dialogs. Views in `frontend/src/views/` receive state derived by `selectWorkspaceView` plus callbacks, and never call the workspace hook themselves; `frontend/src/components/` holds the tabs, disclosure menu and paged JSON viewer. `analysisContracts.ts`, `analysisApi.ts` and `useAnalysis.ts` guard, fetch and cache analyses; `requestPriority.ts` lets writes cancel background reads, and `errorCopy.ts` words failures. Field labels, edit paths and units come from `fieldCatalog.ts`, display formatting from `format.ts`, and exact decimal parsing and formatting from the import-free `decimal.ts`. `ThemeRoot.tsx` applies the theme; `transport.ts` is the only module that touches Web Storage.
 
 ## Save, reopen and revise
 
 **Save case** is enabled only for an accepted unsaved dated input when this tab has no unresolved saved operation or conflict. Its dialog requires a nonblank rationale of at most 2,000 Unicode characters before trimming. Saving evaluates that input under the server's current policy and adopts the returned revision 1. Earlier session events are not imported into server history. Legacy cases remain unsaved; no dates or units are invented.
 
-**Saved cases** lists 25 creation-ordered metadata rows per page, with explicit loading, empty, unavailable, refresh and load-more states. Opening a row reads the latest stored snapshot. A small tab-local locator can reopen the selected case after reload; it contains only the backend identity, case ID and requested revision. The browser never restores a result or ETag from this hint.
+**Open case** (or **Open saved case** on the start screen) lists 25 creation-ordered metadata rows per page, with explicit loading, empty, unavailable, refresh and load-more states. Opening a row reads the latest stored snapshot. A small tab-local locator can reopen the selected case after reload; it contains only the backend identity, case ID and requested revision. The browser never restores a result or ETag from this hint.
 
 The selected view labels its case, revision, run, recording time and assessment as-of date. **Latest when fetched** means the latest accepted head at that read; another writer may advance it afterward. Only a supported latest selection is editable. Each numeric edit uses the selected strong ETag, a fresh UUID operation key and the server's command allowlist. Rate/ownership display percentages are converted once to decimal API units. The server derives the event and evaluates the accepted revision; the browser performs no financial arithmetic.
 
@@ -78,7 +103,7 @@ Invalid, oversized, changed-backend, or unsupported recovery envelopes block new
 
 ## Scenario review and original comparisons
 
-Select **Scenarios** after saving a dated assessment or opening an explicit
+Select **Stress Tests** after saving a dated assessment or opening an explicit
 original revision. Historical revisions are valid baselines; the current head
 and spread-column selection do not replace them. The composer identifies the
 case, revision, run, payload hash, latest operating period, assumption date and
@@ -136,4 +161,4 @@ a database.
 
 ## Verification
 
-Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the existing dated/legacy workspace and saved-case workflow, plus scenario authoring, immutable comparison retention/original reads, archive pagination, shared recovery, bounded responses and rendering, delayed responses, unsupported definitions, keyboard focus, mobile layout, field metadata and formatting, and the theme preference. See [verification coverage](VERIFICATION.md#reproduction-and-regression-coverage). Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. V2 financial tests include exact transport, reporting allocation and immutable numeric-v1 compatibility; the independent reference gate uses a separate Decimal implementation.
+Run `./scripts/run_all_checks.sh` from the repository root with backend dependencies active and the frontend dependencies/browser installed. Playwright covers the start screen, tabs and More menu, the dated/legacy workspace and saved-case workflow, analysis pairing, cancellation and fallbacks, scenario authoring, immutable comparison retention/original reads, archive pagination, shared recovery, bounded responses and rendering, delayed responses, unsupported definitions, keyboard focus, mobile layout, field metadata and formatting, plain-language errors, and the theme preference. See [verification coverage](VERIFICATION.md#reproduction-and-regression-coverage). Desktop and 390px screenshots are written under `frontend/test-results`. Each run owns a fresh temporary database and backend process, refuses a running backend on port 8000, and does not use an inherited application database. V2 financial tests include exact transport, reporting allocation and immutable numeric-v1 compatibility; the independent reference gate uses a separate Decimal implementation.

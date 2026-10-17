@@ -1,4 +1,4 @@
-import { connectWorkspace, openView, TEST_OPERATOR_ID } from "./testCredentials";
+import { connectWorkspace, moreAction, openCaseBrowser, openView, TEST_OPERATOR_ID } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { Page, APIRequestContext, Response } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -195,7 +195,7 @@ test("a comparison acknowledgment after changing cases offers its original recor
     });
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await started;
-    await page.getByRole("button", { name: "Legacy Alpine demo", exact: true }).click();
+    await moreAction(page, "legacyExample");
     await expect(page.getByText("Legacy · undated input", { exact: true })).toBeVisible();
     release();
     await expect(page.getByRole("button", { name: "Open acknowledged comparison", exact: true })).toBeVisible();
@@ -307,7 +307,7 @@ test("large originals render only opened trace and guarantor pages and bound JSO
     input.guarantors = Array.from({ length: 60 }, (_, i) => ({ ...dated.guarantors[0], ownership_percentage: 0.01, name: `Guarantor ${i + 1} 😀` }));
     const original = await create(request, input), stored = await retain(request, original, "Paged projection");
     await page.goto("/"); await connectWorkspace(page);
-    await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+    await openCaseBrowser(page);
     await page.getByRole("button", { name: `Open ${input.borrower_name} case ${original.case_id}`, exact: true }).click();
     await expect(page.locator(".savedContext")).toContainText(original.run_id);
     await openView(page, "scenarios");
@@ -335,7 +335,7 @@ test("unsaved dated authoring asks for a saved baseline and legacy cannot invoke
     await page.getByRole("button", { name: "Save baseline case", exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.getByRole("dialog").press("Escape");
-    await page.getByRole("button", { name: "Legacy Alpine demo", exact: true }).click();
+    await moreAction(page, "legacyExample");
     await expect(page.getByText("Legacy · undated input", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Save baseline case", exact: true })).toBeDisabled();
 });
@@ -422,7 +422,7 @@ test("an unsupported baseline still exposes its case archive and original compar
     const input = structuredClone(dated); input.borrower_name = "Synthetic future baseline";
     const original = await create(request, input), stored = await retain(request, original, "Original supported comparison");
     await page.route(`**/cases/${original.case_id}`, async route => { const response = await route.fetch(), future = await response.json(); future.assessment.calculation_version = "future"; await route.fulfill({ response, json: future }); });
-    await page.goto("/"); await connectWorkspace(page); await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+    await page.goto("/"); await connectWorkspace(page); await openCaseBrowser(page);
     await page.getByRole("button", { name: `Open ${input.borrower_name} case ${original.case_id}`, exact: true }).click(); await expect(page.locator(".savedContext")).toContainText(original.run_id);
     await openView(page, "scenarios"); await expect(page.locator(".scenarioComposer")).toContainText("New preview is unavailable");
     await expect(page.getByRole("button", { name: "Preview scenarios", exact: true })).toHaveCount(0);

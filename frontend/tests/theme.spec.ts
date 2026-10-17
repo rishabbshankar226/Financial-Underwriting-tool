@@ -1,4 +1,4 @@
-import { connectWorkspace } from "./testCredentials";
+import { connectWorkspace, moreAction, moreActions } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 
 const darkCanvas = "rgb(11, 13, 16)";
@@ -14,10 +14,12 @@ test("light is the default and a dark choice persists across reloads", async ({ 
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(lightCanvas);
   await connectWorkspace(page);
-  const toggle = page.getByRole("button", { name: "Dark theme", exact: true });
+  await page.getByRole("button", { name: "More", exact: true }).click();
+  const toggle = page.locator(".moreMenu").getByRole("button", { name: moreActions.theme, exact: true });
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
 
   await toggle.click();
+  // The theme is a toggle, so the menu stays open to show its new state.
   await expect(toggle).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -28,7 +30,7 @@ test("light is the default and a dark choice persists across reloads", async ({ 
   await page.reload();
   await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "dark");
   await connectWorkspace(page);
-  await page.getByRole("button", { name: "Dark theme", exact: true }).click();
+  await moreAction(page, "theme");
   await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "light");
   expect(await page.evaluate(() => localStorage.getItem("spreadline.theme.v1"))).toBe("light");
   expect(problems).toEqual([]);
@@ -46,7 +48,7 @@ test("unreadable preference storage keeps the light default and an in-page toggl
   await page.goto("/");
   await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "light");
   await connectWorkspace(page);
-  await page.getByRole("button", { name: "Dark theme", exact: true }).click();
+  await moreAction(page, "theme");
   await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "dark");
 });
 

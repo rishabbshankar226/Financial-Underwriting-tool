@@ -286,7 +286,7 @@ export function SavedHistory({
     }
   }
   return (
-    <section className="panel memo">
+    <section className="panel historyPanel">
       <div className="panelTitle">
         <h2>Saved revision history</h2>
         <button onClick={pages.refresh}>Refresh revisions</button>

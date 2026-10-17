@@ -20,7 +20,7 @@ export function HistoryView({
   return saved ? (
     <SavedHistory saved={saved} active={ready} onOpen={onOpen} />
   ) : (
-    <section className="panel memo">
+    <section className="panel historyPanel">
       <h2>Session edit history</h2>
       <p>
         Resets on reload. Actor: demonstration analyst; timestamps are

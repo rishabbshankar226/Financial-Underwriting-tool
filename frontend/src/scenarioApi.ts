@@ -7,7 +7,8 @@ export const MAX_RESPONSE = 16777216;
 const definiteComparison409 = new Set(["preview_changed", "storage_upgrade_required", "baseline_run_mismatch", "baseline_unsupported", "baseline_replay_mismatch", "baseline_replay_unavailable"]);
 function casePath(caseId: string) { requireCase(uuid(caseId), "comparison case locator"); return `/cases/${encodeURIComponent(caseId)}`; }
 function baselinePath(caseId: string, number: number) { requireCase(revision(number), "comparison revision locator"); return `${casePath(caseId)}/revisions/${number}`; }
-async function boundedJson(response: Response) {
+/** Reads at most 16 MiB of a streamed JSON body as fatal UTF-8; shared by every bounded read-only client. */
+export async function boundedJson(response: Response, label = "Comparison") {
     const reader = response.body?.getReader();
     if (!reader)
         throw new Error("Missing response body");
@@ -20,7 +21,7 @@ async function boundedJson(response: Response) {
                 break;
             bytes += value.byteLength;
             if (bytes > MAX_RESPONSE)
-                throw new Error("Comparison response exceeds 16 MiB");
+                throw new Error(`${label} response exceeds 16 MiB`);
             chunks.push(value);
         }
     }

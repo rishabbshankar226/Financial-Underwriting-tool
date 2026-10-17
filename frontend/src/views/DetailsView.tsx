@@ -1,29 +1,28 @@
+import { useId } from "react";
 import { formatDecimal } from "../decimal";
 import type { Assessment, Decision, Input, Metric } from "../contracts";
 import { derivedSpreadFacts, fieldLabels as labels, periodLabel } from "../fieldCatalog";
 import { metricText } from "../metricDisplay";
-import { RecordingDetails } from "../SavedCases";
-import type { StoredSelection } from "../workspace";
 
+/** Definitions, operands and policy comparisons behind the current result. Saved-run recording metadata is
+ * shown with the revision history beside it. */
 export function DetailsView({
   ready,
-  saved,
   input,
   assessment,
   decision,
   index,
 }: {
   ready: boolean;
-  saved: StoredSelection | null;
   input: Input | undefined;
   assessment: Assessment | null;
   decision: Decision | null;
   index: number;
 }) {
+  const heading = useId();
   return (
-    <section className="panel">
-      <h2>Calculation and policy details</h2>
-      {ready && saved && <RecordingDetails view={saved.view} />}
+    <section className="panel" aria-labelledby={heading}>
+      <h2 id={heading}>Calculation details</h2>
       {assessment ? (
         <>
           <p>

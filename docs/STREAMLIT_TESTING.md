@@ -154,10 +154,20 @@ The existing suite checks the financial engine, independent reference formulas,
 precision, standalone browser contracts, saved records, conflicts and scenarios.
 The additional suite checks the embedded raw transport, authentication boundary,
 response limits, rerun deduplication, reset identity, disabled rollout, keyboard
-focus inside Shadow DOM, separate drafts and explicit recovery after reload.
+focus inside Shadow DOM, the start screen on a fresh session, closing the More
+menu by a click outside it inside the shadow root, separate drafts and explicit
+recovery after reload.
 Browser runs own fresh synthetic temporary stores and refuse an existing server
 on their test port. An installed Chromium can be selected with the existing
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` override.
+
+After the workspace layout and analysis (PR 3, [verification](VERIFICATION.md)),
+the same commands passed:
+- 1,501 backend tests;
+- 29 testing-host tests;
+- 320 standalone browser and contract checks;
+- four packaged Streamlit browser workflows;
+- eleven exact-decimal checks.
 
 After the analysis services ([verification](VERIFICATION.md)), the same commands
 passed:
@@ -185,8 +195,12 @@ are local verification output, not published customer data.
 ## Hosted smoke test and rollback
 
 - Confirm uninvited access is blocked before using configured operations.
-- Load the dated sample; inspect current metrics and select an earlier spread
-  column. The current coverage period must remain explicit.
+- A fresh session opens on the start screen with nothing evaluated. Choose
+  **Try the example case**; inspect the decision bar, KPI tiles and Overview,
+  then select an earlier spread column. The current coverage period must remain
+  explicit.
+- Open **More**: switch the theme, confirm the page restyles inside the host, and
+  close the menu with a click outside it.
 - Edit an input, save with a rationale, reload and reopen the original revision.
 - Preview a scenario; confirm projected results do not replace the baseline.
 - Test reconnect and exact recovery behavior with synthetic data. Check that

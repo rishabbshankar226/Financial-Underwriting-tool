@@ -49,7 +49,7 @@ export function Review({ view, selection, headRevision, sourceScope, original, p
             ["DSCR", assessment.current_facts.dscr], ["FCCR", assessment.current_facts.fccr],
             ["Global DSCR", assessment.current_facts.global_dscr], ["Observed K-1 history", assessment.current_facts.k1_history],
           ] as const).map(([label, metric]) => <div key={label}><span>{label}</span><strong>{metricText(metric)}</strong>{metric.explanation && <small>{short(metric.explanation)}</small>}</div>)}</div>
-          <p>Recorded reasons: {assessment.decision.reasons.length}. Inspect factors and calculations in the existing Details and Memo views.</p>
+          <p>Recorded reasons: {assessment.decision.reasons.length}. Factors and calculations are in Calculation details above and in the Credit Memo.</p>
         </> : <p className="warning">Original JSON only. These financial definitions are not supported for typed conclusions. The guarded original can still be downloaded.</p>}
       </> : <p>Save or open a dated commercial revision to review and export its original evidence. Unsaved inputs, legacy decisions and incomplete case transitions cannot supply this package.</p>}
     </section>
@@ -63,7 +63,7 @@ export function Review({ view, selection, headRevision, sourceScope, original, p
         {comparison?.compatibility && <p className="warning">Original JSON only for this comparison; typed projections are unavailable.</p>}
         {!matches && <p className="warning">This retained comparison has a different original baseline. Open that explicit revision to match its evidence before inclusion.</p>}
         {!matches && s && r.case_id === s.case_id && <button onClick={() => onOpenBaseline({ caseId: r.case_id, revision: r.baseline_revision })}>Open comparison baseline revision</button>}
-      </> : <p>Open a retained original in Scenarios to include its full batch. A live preview or pending save is excluded.</p>}
+      </> : <p>Open a retained original in Stress Tests to include its full batch. A live preview or pending save is excluded.</p>}
       <label className="reviewInclude"><input type="checkbox" checked={included} disabled={!view || !matches || original.loading}
         onChange={event => setChoice({ source, included: event.target.checked })}/>Include this retained comparison</label>
     </section>

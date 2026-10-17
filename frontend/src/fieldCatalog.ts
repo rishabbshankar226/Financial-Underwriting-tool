@@ -140,6 +140,59 @@ export function assumptionField(
   };
 }
 
+/** Names for the request's structural members, used when a server error points at them. */
+const structureLabels: Record<string, string> = {
+  schema_version: "Schema version",
+  assessment_as_of: "Assessment date",
+  borrower_name: "Borrower name",
+  geography: "Geography",
+  units: "Units",
+  currency: "Currency",
+  monetary_unit: "Monetary unit",
+  annual_rate_unit: "Rate unit",
+  years: "Fiscal periods",
+  period_start: "Period start",
+  period_end: "Period end",
+  existing_debt: "Existing debt",
+  proposed_loan: "Proposed loan",
+  rate_type: "Rate type",
+  repayment_type: "Repayment type",
+  payment_frequency: "Payment frequency",
+  guarantors: "Guarantors",
+  name: "Guarantor name",
+  working_capital: "Working capital",
+  overrides: "Imported overrides",
+};
+const unescapeToken = (token: string) => token.replace(/~1/g, "/").replace(/~0/g, "~");
+const humanize = (token: string) => {
+  const words = token.replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+};
+const labelFor = (token: string) => fieldLabels[token] ?? structureLabels[token] ?? humanize(token);
+
+/** A plain label for a request JSON Pointer, e.g. "/years/1/gross_receipts" → "Gross receipts (period 2)". */
+export function describeFieldPath(pointer: string): string {
+  if (pointer === "") return "The case file";
+  const tokens = pointer.split("/").slice(1).map(unescapeToken);
+  const [group, second, third] = tokens;
+  const index = /^\d+$/.test(second ?? "") ? Number(second) : null;
+  if ((group === "years" || group === "guarantors") && index !== null) {
+    const owner = group === "years" ? `period ${index + 1}` : `guarantor ${index + 1}`;
+    return third === undefined ? `${humanize(group === "years" ? "period" : "guarantor")} ${index + 1}` : `${labelFor(tokens[tokens.length - 1])} (${owner})`;
+  }
+  if (group === "working_capital" && (second === "period_start" || second === "period_end"))
+    return `Working capital ${structureLabels[second].toLowerCase()}`;
+  return labelFor(tokens[tokens.length - 1]);
+}
+
+/** The JSON Pointer for a validation `loc` such as ["body", "years", 0, "gross_receipts"]: the fallback
+ * when a response carries no field-errors envelope. */
+export function pointerFromLoc(loc: unknown): string {
+  if (!Array.isArray(loc)) return "";
+  const tokens = loc[0] === "body" ? loc.slice(1) : loc;
+  return tokens.map((token) => `/${String(token).replace(/~/g, "~0").replace(/\//g, "~1")}`).join("");
+}
+
 /** The editable field at an allowlisted input path. */
 export function editableField(input: Input, mode: Mode, path: string): EditableField {
   const [group, first, second, ...rest] = path.split("/").slice(1);

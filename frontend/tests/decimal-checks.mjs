@@ -162,3 +162,29 @@ test("percent and whole-number inputs become exact API values", () => {
     assert.match(result.message, /whole/, raw);
   }
 });
+
+// Chart geometry is the one presentation-only BigInt scaling of server values; it is never shown as a figure.
+test("chart units scale half-even from exact decimals and stay within the drawing range", () => {
+  assert.equal(decimal.scaledUnits("4200000", "4200000", 64), 64n);
+  assert.equal(decimal.scaledUnits("3900000", "4200000", 64), 59n);
+  assert.equal(decimal.scaledUnits("1", "8", 4), 0n);
+  assert.equal(decimal.scaledUnits("3", "8", 4), 2n);
+  assert.equal(decimal.scaledUnits("-50", "100", 10), -5n);
+  assert.equal(decimal.scaledUnits("-50", "-100", 10), -5n);
+  assert.equal(decimal.scaledUnits("0.15", "0.3", 10), 5n);
+  assert.equal(decimal.scaledUnits("7", "0", 10), 0n);
+  assert.equal(decimal.scaledUnits("0", "10", 10), 0n);
+  assert.equal(decimal.scaledUnits("250", "100", 10), 10n);
+  assert.throws(() => decimal.scaledUnits("1", "2", 0), /drawing units/);
+  for (let value = -40; value <= 40; value++) {
+    for (const max of [40, 41, 7, 3]) {
+      if (Math.abs(value) > max) continue;
+      const scaled = BigInt(Math.abs(value)) * 48n;
+      let units = scaled / BigInt(max);
+      const remainder = scaled % BigInt(max);
+      if (remainder * 2n > BigInt(max) || (remainder * 2n === BigInt(max) && units % 2n === 1n)) units++;
+      const expected = value < 0 ? -units : units;
+      assert.equal(decimal.scaledUnits(`${value}.000`, `${max}`, 48), expected, `${value}/${max}`);
+    }
+  }
+});

@@ -1,6 +1,7 @@
 import { annualFields, type Assessment, type Decision, type Input } from "../contracts";
 import { derivedSpreadFacts, fieldLabels as labels, periodLabel, spreadField } from "../fieldCatalog";
-import { legacyFactorText as factorText, legacyMoney as money } from "../format";
+import { formatMultiple, isDecimal } from "../decimal";
+import { factorValueText, legacyMoney as money, moneyText } from "../format";
 import { metricText } from "../metricDisplay";
 import { EditButton, type OpenEditor } from "./EditButton";
 
@@ -116,11 +117,11 @@ function CoveragePanel({ decision }: { decision: Decision | null }) {
         decision.factors.map((f) => (
           <div className="metric" data-state={f.passed === null ? "review" : f.passed ? "pass" : "fail"} key={f.name}>
             <span>{labels[f.name] ?? f.name}</span>
-            <strong>{factorText(f)}</strong>
+            <strong>{factorValueText(f)}</strong>
             <small>
-              {f.name === "uca_positive"
-                ? `Must exceed $${money(String(f.threshold))}`
-                : `Policy: ${f.comparison_operator ?? "comparison unavailable"} ${String(f.threshold)}`}{" "}
+              {f.name === "uca_positive" && isDecimal(f.threshold)
+                ? `Must exceed ${moneyText(f.threshold)}`
+                : `Policy: ${f.comparison_operator ?? "comparison unavailable"} ${isDecimal(f.threshold) ? formatMultiple(f.threshold) : String(f.threshold)}`}{" "}
               ·{" "}
               {f.passed === null
                 ? "Review required"
@@ -128,7 +129,7 @@ function CoveragePanel({ decision }: { decision: Decision | null }) {
                   ? "Pass"
                   : "Below policy"}
               {f.decline_threshold !== null &&
-                ` · decline below ${f.decline_threshold}x`}
+                ` · decline below ${formatMultiple(f.decline_threshold)}`}
             </small>
           </div>
         ))

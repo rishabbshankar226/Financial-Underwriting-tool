@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { PagedJson } from "./components/PagedJson";
 import { queryWorkspace } from "./workspaceDom";
 import { currentFactKeys, type Trace } from "./contracts";
 import { metricText } from "./metricDisplay";
@@ -32,21 +33,7 @@ function Pages<T>({ rows, render, label }: {
 function OriginalJson({ value }: {
     value: unknown;
 }) {
-    const pages = useMemo(() => {
-        const bytes = new TextEncoder().encode(JSON.stringify(value, null, 2)), result: string[] = [], decoder = new TextDecoder("utf-8", { fatal: true });
-        for (let offset = 0; offset < bytes.length;) {
-            let end = Math.min(offset + 65536, bytes.length);
-            while (end < bytes.length && (bytes[end] & 0xc0) === 0x80)
-                end--;
-            result.push(decoder.decode(bytes.slice(offset, end)));
-            offset = end;
-        }
-        return result;
-    }, [value]);
-    const [page, setPage] = useState(0);
-    return <div className="originalComparisonJson"><p>Original JSON · page {page + 1} of {pages.length} · up to 64 KiB of UTF-8 text per page</p>
-    <pre>{pages[page]}</pre><div className="actions"><button disabled={page === 0} onClick={() => setPage(page - 1)}>Previous JSON page</button>
-      <button disabled={page + 1 === pages.length} onClick={() => setPage(page + 1)}>Next JSON page</button></div></div>;
+    return <PagedJson value={value} className="originalComparisonJson" title="Original JSON" noun="JSON"/>;
 }
 function TraceRow({ row }: {
     row: Trace;

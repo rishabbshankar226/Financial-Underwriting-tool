@@ -1,4 +1,4 @@
-import { connectWorkspace, openView } from "./testCredentials";
+import { connectWorkspace, moreAction, openCaseBrowser, openView } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -29,7 +29,7 @@ async function save(page: Page, rationale = "Synthetic creation") {
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when fetched",
   );
-  await expect(page.locator(".uploadbar")).toContainText(
+  await expect(page.locator(".caseSource")).toContainText(
     `Saved case ${snapshot.case_id}`,
   );
   return snapshot;
@@ -51,7 +51,7 @@ async function editRevenue(page: Page, value: string, rationale: string) {
 async function openSaved(page: Page, id: string) {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+  await openCaseBrowser(page);
   await page
     .locator(".caseRow")
     .filter({ hasText: id })
@@ -465,9 +465,7 @@ test("late committed write resolves tracking without replacing a newer selection
   });
   await editRevenue(page, "1", "Late accepted edit");
   await waiting;
-  await page
-    .getByRole("button", { name: "Legacy Alpine demo", exact: true })
-    .click();
+  await moreAction(page, "legacyExample");
   await expect(
     page.getByText("Legacy · undated input", { exact: true }),
   ).toBeVisible();
@@ -618,7 +616,7 @@ test("saved pagination reads more than one page of cases and revisions", async (
   }
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+  await openCaseBrowser(page);
   await expect(
     page.locator(".caseRow").filter({ hasText: oldest.case_id }),
   ).toHaveCount(0);
@@ -687,9 +685,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
       ).json()
     ).items,
   ).toHaveLength(1);
-  await page
-    .getByRole("button", { name: "Legacy Alpine demo", exact: true })
-    .click();
+  await moreAction(page, "legacyExample");
   await expect(
     page.getByText("Legacy · undated input", { exact: true }),
   ).toBeVisible();
@@ -790,14 +786,14 @@ test("an older saved read cannot replace the newer selected case", async ({
   });
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+  await openCaseBrowser(page);
   await page
     .locator(".caseRow")
     .filter({ hasText: cases[0].case_id })
     .getByRole("button", { name: /^Open / })
     .click();
   await started;
-  await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+  await openCaseBrowser(page);
   await page
     .locator(".caseRow")
     .filter({ hasText: cases[1].case_id })
@@ -968,7 +964,7 @@ test("a refreshed case page wins over an older delayed list response", async ({
   });
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+  await openCaseBrowser(page);
   await started;
   const response = await request.post("http://127.0.0.1:8000/cases", {
     headers: { "Idempotency-Key": randomUUID() },

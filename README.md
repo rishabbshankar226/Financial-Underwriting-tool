@@ -2,9 +2,10 @@
 
 Deterministic underwriting calculations, exact financial reports, and immutable
 local assessment records. The FastAPI service calculates commercial and
-consumer ratios and policy comparisons. A React workspace reviews dated
-spreads, analyst edits, and scenario comparisons. SQLite retains original
-inputs, decisions, traces, policies, and retry receipts.
+consumer ratios and policy comparisons. A React workspace opens on a start
+screen, explains each decision, and reviews dated spreads, debt capacity,
+analyst edits and scenario comparisons. SQLite retains original inputs,
+decisions, traces, policies, and retry receipts.
 
 **Open the hosted workspace:** <https://spreadline-testing.streamlit.app/>.
 It is a private Streamlit Community Cloud app for synthetic data only:
@@ -34,12 +35,13 @@ policy or certify regulatory compliance.
 | `main.py`, route adapters, `request_limits.py` | Bounded HTTP intake, exact numeric-token decoding and error translation |
 | `authentication.py` | Environment-loaded Bearer verification and server-derived operator identity before request processing |
 | `sba.py`, `backend/data/` | Verified official size rows, dated evidence checks and incomplete eligibility screens |
-| `frontend/src/` | Typed response guards, exact editor values, report formatting and explicit write recovery |
+| `frontend/src/` | Start screen and tabbed views, typed response guards, background analysis, exact editor values, report formatting and explicit write recovery |
 | `gate/reference_calculator.py` | Independent Decimal reference formulas and named mutation checks |
 
 The application has no LLM, Monte Carlo model, bureau connection, or OCR
 service. Python calculates financial results. Browser BigInt arithmetic handles
-decimal-place conversion, validation, and financial presentation.
+decimal-place conversion, validation, and financial presentation; its one other
+use sizes Overview chart bars, as drawing geometry that is never shown as a figure.
 
 ## Precision and reporting
 
@@ -283,7 +285,7 @@ Destinations must be fresh. See [storage](docs/CASE_STORAGE.md),
 [workspace recovery](docs/WORKSPACE.md). Environment files and local databases
 are ignored by git.
 
-The workspace **Review** view downloads a [deterministic JSON review package](docs/REVIEW_EXPORTS.md)
+The workspace's **History & Audit** view downloads a [deterministic JSON review package](docs/REVIEW_EXPORTS.md)
 for a saved original, optionally with one matching retained comparison. It
 preserves the parsed originals and recorded hashes with explicit unverified
 provenance; it does not claim original server bytes or independently verified
