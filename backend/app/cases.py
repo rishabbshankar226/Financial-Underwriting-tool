@@ -18,10 +18,11 @@ from time import monotonic
 from typing import TYPE_CHECKING, Literal
 from uuid import UUID, uuid4
 
-from pydantic import JsonValue
+from pydantic import JsonValue, ValidationError
 
 from .assessment import assess_commercial
 from .assessment_contracts import SCHEMA_VERSION as ASSESSMENT_SCHEMA_VERSION
+from .assessment_contracts import SERIALIZATION_VERSION as ASSESSMENT_SERIALIZATION_VERSION
 from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest
 from .authentication import DEMONSTRATION_ACTOR, valid_actor
 from .case_contracts import (
@@ -40,6 +41,8 @@ from .case_contracts import (
 from .case_replay import replay_snapshot
 from .case_schema import SCHEMA_IDENTITY, SCHEMA_STATEMENTS, SCHEMA_VERSION, SCHEMAS, schema_objects
 from .config import DEFAULT_POLICY, PolicyConfig
+from .contract_errors import FieldErrors, validation_field_errors
+from .core import CALCULATION_VERSION
 from .finance import as_decimal, decimal_text
 from .ingestion import parse_structured
 from .json_values import JsonObject, canonical_json, json_array, json_integer, json_object, json_string
@@ -86,10 +89,71 @@ EDIT_FIELDS = {
 }
 
 
+SUPPORTED_DEFINITION = (ASSESSMENT_SCHEMA_VERSION, CALCULATION_VERSION, ASSESSMENT_SERIALIZATION_VERSION)
+SUMMARY_COLUMNS = """c.case_id,c.borrower_name,c.created_at,c.head_revision AS revision,
+    c.head_run_id AS run_id,c.recorded_at,
+    json_extract(r.assessment_json,'$.schema_version') AS a_schema,
+    json_extract(r.assessment_json,'$.calculation_version') AS a_calculation,
+    json_extract(r.assessment_json,'$.serialization_version') AS a_serialization,
+    json_extract(r.assessment_json,'$.decision.outcome') AS a_outcome,
+    json_extract(r.assessment_json,'$.current_facts.dscr.reported_value') AS a_dscr,
+    json_type(r.assessment_json,'$.current_facts.dscr.reported_value') AS a_dscr_type,
+    json_extract(r.assessment_json,'$.normalized_input.proposed_loan.amount') AS a_amount,
+    json_type(r.assessment_json,'$.normalized_input.proposed_loan.amount') AS a_amount_type,
+    json_extract(r.assessment_json,'$.normalized_input.assessment_as_of') AS a_as_of"""
+SUPPORTED_RUN = """json_extract(r.assessment_json,'$.schema_version')=?
+    AND json_extract(r.assessment_json,'$.calculation_version')=?
+    AND json_extract(r.assessment_json,'$.serialization_version')=?"""
+
+
+@dataclass(frozen=True)
+class CaseQuery:
+    """Optional listing search; the default query keeps the original order and v1 cursors."""
+
+    q: str | None = None
+    outcome: Literal["approve", "review", "decline"] | None = None
+    sort: Literal["created", "updated"] = "created"
+
+    @property
+    def legacy(self) -> bool:
+        return self.q is None and self.outcome is None and self.sort == "created"
+
+    def binding(self) -> str:
+        return sha256(_canonical({"outcome": self.outcome, "q": self.q, "sort": self.sort}).encode()).hexdigest()
+
+
+LISTING_OUTCOMES: dict[str, Literal["approve", "review", "decline"]] = {
+    "approve": "approve",
+    "review": "review",
+    "decline": "decline",
+}
+
+
+def case_query(q: str | None = None, outcome: str | None = None, sort: str | None = None) -> CaseQuery:
+    text = None
+    if q is not None:
+        text = q.strip()
+        if not 1 <= len(text) <= 120 or not text.isprintable():
+            raise CaseStoreError(400, "invalid_query", "Search text must contain 1 to 120 printable characters")
+    if outcome is not None and outcome not in LISTING_OUTCOMES:
+        raise CaseStoreError(400, "invalid_query", "Outcome must be approve, review or decline")
+    if sort is not None and sort not in ("created", "updated"):
+        raise CaseStoreError(400, "invalid_query", "Sort must be created or updated")
+    return CaseQuery(
+        q=text,
+        outcome=LISTING_OUTCOMES[outcome] if outcome is not None else None,
+        sort="updated" if sort == "updated" else "created",
+    )
+
+
+def _like_pattern(text: str) -> str:
+    return "%" + text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%"
+
+
 class CaseStoreError(Exception):
-    def __init__(self, status: int, code: str, message: str) -> None:
+    def __init__(self, status: int, code: str, message: str, *, errors: FieldErrors | None = None) -> None:
         super().__init__(message)
-        self.status, self.code = status, code
+        self.status, self.code, self.errors = status, code, errors
 
 
 def _canonical(value: object) -> str:
@@ -641,6 +705,14 @@ class CaseStore:
         data, event = CaseStore._edit_data(base, command.field_path, value, command.rationale)
         try:
             request = CommercialAssessmentRequest.model_validate_json(_canonical(data))
+        except ValidationError as exc:
+            # Pointers address the case input, the same namespace as the command's field_path.
+            raise CaseStoreError(
+                422,
+                "invalid_edit_value",
+                "Edit violates the dated assessment contract",
+                errors=validation_field_errors(exc, data),
+            ) from exc
         except (ValueError, OverflowError, RecursionError) as exc:
             raise CaseStoreError(
                 422, "invalid_edit_value", "Edit violates the dated assessment contract"
@@ -736,29 +808,95 @@ class CaseStore:
         except (ValueError, TypeError, KeyError, AttributeError, CaseStoreError, RecursionError) as exc:
             raise CaseStoreError(400, "invalid_cursor", "Invalid cursor for this listing") from exc
 
-    def list_cases(self, limit: int = 25, after: str | None = None) -> CasePage:
-        self._page_limit(limit)
-        cursor = self._read_cursor(after, "cases") if after is not None else None
-        with self._db() as connection:
-            where, parameters = (
-                ("WHERE (created_at,case_id)<(?,?)", [cursor["created_at"], cursor["case_id"]])
-                if cursor
-                else ("", [])
+    @classmethod
+    def _read_listing_cursor(cls, cursor: str, query: CaseQuery) -> JsonObject:
+        """A filtered or re-sorted listing resumes only the query whose identity its cursor binds."""
+        try:
+            if not re.fullmatch(r"[A-Za-z0-9_-]{1,512}", cursor):
+                raise ValueError()
+            data = _decode(base64.b64decode(cursor + "=" * (-len(cursor) % 4), altchars=b"-_", validate=True).decode())
+            if (
+                data.keys() != {"kind", "version", "sort", "filters", "key", "case_id"}
+                or data["kind"] != "cases"
+                or type(data["version"]) is not int
+                or data["version"] != 2
+                or cls._cursor(data) != cursor
+            ):
+                raise ValueError()
+            require_uuid(json_string(data["case_id"]))
+            if datetime.fromisoformat(json_string(data["key"])).tzinfo is None:
+                raise ValueError()
+        except (ValueError, TypeError, KeyError, AttributeError, CaseStoreError, RecursionError) as exc:
+            raise CaseStoreError(400, "invalid_cursor", "Invalid cursor for this listing") from exc
+        if data["sort"] != query.sort or data["filters"] != query.binding():
+            raise CaseStoreError(
+                400, "invalid_cursor", "Cursor does not match this listing's search, filter or sort"
             )
+        return data
+
+    @staticmethod
+    def _summary(row: sqlite3.Row) -> CaseSummary:
+        values = {key: row[key] for key in ("case_id", "borrower_name", "created_at", "revision", "run_id", "recorded_at")}
+        supported = (row["a_schema"], row["a_calculation"], row["a_serialization"]) == SUPPORTED_DEFINITION
+        try:
+            if supported and (row["a_dscr_type"] not in ("text", "null") or row["a_amount_type"] != "text"):
+                raise ValueError("Stored summary values must be decimal strings")
+            return CaseSummary.model_validate(
+                {
+                    **values,
+                    "definition_supported": supported,
+                    "outcome": row["a_outcome"] if supported else None,
+                    "dscr": row["a_dscr"] if supported else None,
+                    "requested_amount": row["a_amount"] if supported else None,
+                    "assessment_as_of": row["a_as_of"] if supported else None,
+                }
+            )
+        except (ValueError, TypeError) as exc:
+            raise CaseStoreError(503, "storage_integrity", "Stored case summary failed verification") from exc
+
+    def list_cases(self, limit: int = 25, after: str | None = None, query: CaseQuery | None = None) -> CasePage:
+        self._page_limit(limit)
+        query = query or CaseQuery()
+        key = "created_at" if query.sort == "created" else "recorded_at"
+        clauses: list[str] = []
+        parameters: list[str | int] = []
+        if after is not None:
+            if query.legacy:
+                cursor = self._read_cursor(after, "cases")
+                parameters += [json_string(cursor["created_at"]), json_string(cursor["case_id"])]
+            else:
+                cursor = self._read_listing_cursor(after, query)
+                parameters += [json_string(cursor["key"]), json_string(cursor["case_id"])]
+            clauses.append(f"(c.{key},c.case_id)<(?,?)")
+        if query.q is not None:
+            clauses.append("c.borrower_name LIKE ? ESCAPE '\\'")
+            parameters.append(_like_pattern(query.q))
+        if query.outcome is not None:
+            clauses.append(f"{SUPPORTED_RUN} AND json_extract(r.assessment_json,'$.decision.outcome')=?")
+            parameters += [*SUPPORTED_DEFINITION, query.outcome]
+        where = "WHERE " + " AND ".join(clauses) if clauses else ""
+        with self._db() as connection:
             rows = connection.execute(
-                f"""SELECT case_id,borrower_name,created_at,head_revision AS revision,
-                head_run_id AS run_id,recorded_at FROM cases {where}
-                ORDER BY created_at DESC,case_id DESC LIMIT ?""",
+                f"""SELECT {SUMMARY_COLUMNS} FROM cases c JOIN runs r ON r.run_id=c.head_run_id {where}
+                ORDER BY c.{key} DESC,c.case_id DESC LIMIT ?""",
                 [*parameters, limit + 1],
             ).fetchall()
-            items = [CaseSummary.model_validate(dict(row)) for row in rows[:limit]]
-            next_cursor = (
-                self._cursor(
-                    dict(kind="cases", version=1, created_at=items[-1].created_at, case_id=items[-1].case_id)
+            items = [self._summary(row) for row in rows[:limit]]
+            next_cursor = None
+            if len(rows) > limit:
+                last = items[-1]
+                next_cursor = self._cursor(
+                    dict(kind="cases", version=1, created_at=last.created_at, case_id=last.case_id)
+                    if query.legacy
+                    else dict(
+                        kind="cases",
+                        version=2,
+                        sort=query.sort,
+                        filters=query.binding(),
+                        key=last.created_at if query.sort == "created" else last.recorded_at,
+                        case_id=last.case_id,
+                    )
                 )
-                if len(rows) > limit
-                else None
-            )
             return CasePage(items=items, next_cursor=next_cursor)
 
     def list_revisions(self, case_id: str, limit: int = 25, after: str | None = None) -> RevisionPage:

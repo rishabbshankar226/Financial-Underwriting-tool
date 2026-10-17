@@ -117,8 +117,17 @@ Unknown execution failures remain uncertain even if a commit may have happened;
 **Retry exact write** retains the original operation identity. Keep the existing
 explicit conflict review and discard procedures in [WORKSPACE.md](WORKSPACE.md).
 
-The bridge permits only the current workspace's assessment, case, replay and
-scenario routes. It rejects arbitrary URLs, browser-supplied Authorization,
+The bridge permits only the workspace's own routes:
+- assessment;
+- both analysis routes;
+- case, replay and scenario routes.
+
+Its query rules are:
+- `GET /cases` alone may add the listing's `q`, `outcome` and `sort`;
+- other GET routes page only with `limit` and `after`;
+- POST routes accept no query string.
+
+It rejects arbitrary URLs, browser-supplied Authorization,
 unexpected headers, invalid generations and oversized commands. It preserves raw
 JSON text through existing intake. At most four requests are active per browser
 batch, with a 1,000,000-byte command body limit, a 16 MiB individual response cap,
@@ -150,9 +159,18 @@ Browser runs own fresh synthetic temporary stores and refuse an existing server
 on their test port. An installed Chromium can be selected with the existing
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` override.
 
-Local verification on October 16, 2026 passed 948 existing backend tests,
-23 testing-host tests, 189 standalone browser/contract checks, three packaged
-Streamlit browser workflows, and five exact-decimal presentation checks. The
+After the analysis services ([verification](VERIFICATION.md)), the same commands
+passed:
+- 1,501 backend tests;
+- 29 testing-host tests;
+- 237 standalone browser and contract checks;
+- three packaged Streamlit browser workflows;
+- five exact-decimal checks.
+
+Historical: the original host verification on October 16, 2026 passed 948
+existing backend tests, 23 testing-host tests, 189 standalone browser/contract
+checks, three packaged Streamlit browser workflows, and five exact-decimal
+presentation checks. The
 independent reference and precision gates, Python lint/strict typing, both
 frontend builds, dependency consistency and the npm audit also passed. Desktop
 and 390 px layouts were visually reviewed. Scenario retention browser checks

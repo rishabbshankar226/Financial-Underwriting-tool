@@ -4,6 +4,86 @@ Target: `rishabbshankar226/Financial-Underwriting-tool` only.
 Baseline: `1b59a90f715853a41c5791edf6dce03c1a77839e`.
 Approved Decimal, authentication and SBA contract changes are implemented.
 
+## Analyst usability PR 1: analysis services (2026-10-16)
+
+**Scope.** Branch `claude/usability-1-analysis-services`, based on `main`
+`52c593a`. It adds the additive `field-errors-v1`, `commercial-analysis-v1` and
+`case-listing-v2` contracts approved in
+[ANALYST_USABILITY_APPROVAL.md](ANALYST_USABILITY_APPROVAL.md).
+
+**Environment.** A clean Python 3.12.14 environment was installed from the exact
+development constraints. Node was 22.23.3, with 24.19.0 for the Streamlit build.
+
+**Baseline.** Before any change, the unchanged baseline passed:
+
+| Suite | Tests |
+| --- | --- |
+| Backend | 948 |
+| Testing-host | 23 |
+| Standalone browser | 237 |
+| Packaged Streamlit browser | 3 |
+| Exact-decimal | 5 |
+
+**Final implementation:**
+
+| Executed command | Observed result |
+| --- | --- |
+| `./scripts/run_all_checks.sh` | Exit 0. Ran pip consistency, Ruff and strict mypy (no issues in 36 source files), the gate self-test, the precision probe, 1,501 backend tests, npm audit (0 vulnerabilities), 5 decimal tests, the production build and 237 Playwright tests. |
+| `python gate/reference_calculator.py --selftest` | 55 values and 4 flags pinned; all 19 named mutations killed (7 existing, 12 analysis). |
+| `bash scripts/run_streamlit_checks.sh` (Node 24) | Exit 0. Host Ruff and strict mypy passed; 29 host tests passed; the component rebuild was byte-identical and the asset check passed; 3 Streamlit browser workflows passed. |
+
+**Continuous integration.**
+[GitHub Actions run 38988452351](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38988452351)
+completed successfully on implementation commit
+`13a5c695f134e9c7c111cd09883fdb51427515d9`, October 17, 2026 UTC. As a pull
+request run it tested GitHub's merge commit
+`46364198559e7814539fab79f99fa5e87a7a46df` of that head into `main` `52c593a`;
+its tree is identical to the implementation commit's tree. All three job
+conclusions and complete decoded logs were retrieved and inspected.
+
+| Executed CI check | Observed result |
+| --- | --- |
+| Backend job `117265242675` | 1,501 tests passed in 46.19s on Python 3.12.15 |
+| Python quality in that job | pip consistency passed; Ruff passed; strict mypy found no issues in 36 source files |
+| Independent reference gate | 55 values and 4 flags pinned; all 19 named mutations killed |
+| Original precision probes | All 4 cases passed exact assertions |
+| Frontend job `117265242821` | Node 22.23.3 install, audit, decimal tests and strict TypeScript production build passed; 45 Vite modules transformed |
+| Dependency audit in that job | npm audit exited 0 and reported 0 vulnerabilities |
+| Node decimal suite | 5 tests passed, 0 failed |
+| Full Chromium Playwright suite | 237 passed in 1.2m |
+| Streamlit job `117265242847` | Node 24.21.0 component rebuild (43 modules) passed; assets match their source and manifest |
+| Bundle diff check in that job | `git diff --exit-code` on the committed component build exited 0 |
+| Testing host in that job | pip consistency passed; Ruff passed; strict mypy found no issues in 4 source files; 29 host tests passed in 2.00s |
+| Packaged Streamlit browser workflows | 3 passed in 11.8s |
+
+The follow-up commit that adds this block changes documentation only.
+Application code, tests, dependency pins and CI files remain identical to the
+verified commit.
+
+**New and changed backend tests** add 553 cases:
+- `test_field_errors.py` (73): golden pins of every pre-change 422 `detail` body, plus pointer, code and limit mapping.
+- `test_analysis.py` (412), covering:
+  - hand-derived Alpine and partial-owner values;
+  - not-applicable rules;
+  - cent-schedule invariants;
+  - grid-to-preview equivalence;
+  - all 384 outcome-rule factor states;
+  - operand resolution;
+  - payload bounds.
+- `test_analysis_api.py` (23): routes, aliases, retained policy, the 409/503 matrix, no writes.
+- `test_case_browser.py` (25): search, filter, sort, bound cursors, archived v1 rows, fail-closed summaries.
+- Additions to the reference-value, scenario-pin, authentication and body-budget suites:
+  - every analysis value is compared with the independent gate;
+  - preview serialization is pinned by SHA-256 before the shared refactor;
+  - the analysis routes are added to the protected and bounded route families.
+
+**Characterization before change:** the pre-change 422 bodies and scenario
+preview digests were recorded from the unchanged code before any production
+edit, and still match exactly.
+
+**What these checks establish:** deterministic software behavior. They do not
+approve credit policy, validate a model, or certify compliance.
+
 ## Verified implementation and full CI
 
 [GitHub Actions run 38780154052](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/38780154052)

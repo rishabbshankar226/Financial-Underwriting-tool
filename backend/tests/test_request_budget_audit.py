@@ -6,7 +6,7 @@ from fixtures import alpine_request
 
 
 @pytest.mark.parametrize("path", [
-    "/commercial/decision", "/consumer/decision", "/sba/evaluate", "/commercial/assessment",
+    "/commercial/decision", "/consumer/decision", "/sba/evaluate", "/commercial/assessment", "/commercial/analysis",
 ])
 @pytest.mark.parametrize("media_type", [None, "application/json", "application/problem+json", "text/plain"])
 def test_post_body_budget_is_enforced_before_decoding(path, media_type):

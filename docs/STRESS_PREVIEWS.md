@@ -104,4 +104,6 @@ The preview fingerprint uses SHA-256 over compact sorted-key UTF-8 JSON containi
 
 Storage errors use the existing case error envelope; busy storage includes `Retry-After: 1`. Errors remain readable by the allowed local browser origins. A preview opens an existing store in read-only mode and never initializes, repairs or migrates it.
 
+Contract rejections and `scenario_invalid` also carry the additive `field-errors-v1` envelope described in [the assessment contract](ASSESSMENT_CONTRACT.md#field-mapped-errors-field-errors-v1). A failing scenario points at `/scenarios/{index}/assumptions`, and duplicate keys point at the repeated `scenario_key`. The read-only analysis grid reuses these same projection definitions under each assessment's policy; see [the analysis contract](ANALYSIS_CONTRACT.md).
+
 The live OpenAPI document at `/docs` describes the complete request and response. Run the [verification workflow](VERIFICATION.md) to check arithmetic, strict requests, trace references, concurrent edits, unchanged stored records and historical previews after restore.

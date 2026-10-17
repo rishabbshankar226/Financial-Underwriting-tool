@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, replace
 from decimal import Decimal
 from hashlib import sha256
+from typing import Literal
 
 from .assessment import assess_commercial
 from .assessment_contracts import (
@@ -20,6 +21,7 @@ from .assessment_contracts import (
 from .case_contracts import CaseSnapshot
 from .case_replay import replay_snapshot
 from .cases import AssessmentOperation, CaseStoreError, require_uuid
+from .contract_errors import scenario_field_errors
 from .core import CALCULATION_VERSION, Calculation, Operand, _finite, projected_commercial_facts
 from .decision import decision_from_commercial_facts
 from .finance import BASIS_POINTS_PER_UNIT, ONE, calculation, finite_result, quantize
@@ -36,6 +38,7 @@ from .scenario_contracts import (
     PreviewFingerprint,
     ProjectionInputs,
     ReasonChange,
+    ScenarioAssumptions,
     ScenarioCommand,
     ScenarioPreview,
     ScenarioPreviewCommand,
@@ -61,7 +64,10 @@ def _canonical(value: object) -> str:
     return canonical_json(value)
 
 
-def _supported_baseline(snapshot: CaseSnapshot, operation: AssessmentOperation) -> CommercialAssessment:
+def verified_baseline(
+    snapshot: CaseSnapshot, operation: AssessmentOperation, *, purpose: Literal["preview", "analysis"]
+) -> CommercialAssessment:
+    """The retained assessment, only when its definition is supported and it replays exactly."""
     raw = snapshot.assessment
     versions = tuple(
         raw.get(key) for key in ("schema_version", "calculation_version", "serialization_version")
@@ -70,7 +76,7 @@ def _supported_baseline(snapshot: CaseSnapshot, operation: AssessmentOperation) 
         raise CaseStoreError(503, "storage_integrity", "The stored assessment has invalid version metadata")
     if versions != (SCHEMA_VERSION, CALCULATION_VERSION, SERIALIZATION_VERSION):
         raise CaseStoreError(
-            409, "baseline_unsupported", "The retained assessment definition cannot support this preview"
+            409, "baseline_unsupported", f"The retained assessment definition cannot support this {purpose}"
         )
     try:
         baseline = CommercialAssessment.model_validate_json(_canonical(raw))
@@ -84,6 +90,11 @@ def _supported_baseline(snapshot: CaseSnapshot, operation: AssessmentOperation) 
         raise CaseStoreError(
             409, code, "The retained baseline could not be reproduced under its stored policy"
         )
+    return baseline
+
+
+def _supported_baseline(snapshot: CaseSnapshot, operation: AssessmentOperation) -> CommercialAssessment:
+    baseline = verified_baseline(snapshot, operation, purpose="preview")
     if any(getattr(baseline.normalized_input.years[-1], name) < 0 for name in TARGETS):
         raise CaseStoreError(
             422, "scenario_baseline", "Percentage targets must have nonnegative baseline amounts"
@@ -91,7 +102,7 @@ def _supported_baseline(snapshot: CaseSnapshot, operation: AssessmentOperation) 
     return baseline
 
 
-def _baseline_trace(baseline: CommercialAssessment) -> tuple[Calculation, ...]:
+def baseline_trace(baseline: CommercialAssessment) -> tuple[Calculation, ...]:
     """Preserve all retained operands; scope their evidence references."""
     rows = []
     for row in baseline.calculation_trace:
@@ -126,14 +137,14 @@ def _baseline_trace(baseline: CommercialAssessment) -> tuple[Calculation, ...]:
     return tuple(rows)
 
 
-def _project_inputs(
-    request: CommercialAssessmentRequest, command: ScenarioCommand
+def project_inputs(
+    request: CommercialAssessmentRequest, assumptions: ScenarioAssumptions
 ) -> tuple[ProjectionInputs, tuple[Calculation, ...]]:
     latest = len(request.years) - 1
     raw = request.years[-1].model_dump()
     trace = []
     for name, shock in TARGETS.items():
-        before, change = _finite(raw[name]), finite_result(getattr(command.assumptions, shock))
+        before, change = _finite(raw[name]), finite_result(getattr(assumptions, shock))
         after = _finite(before * (ONE + change))
         raw[name] = after
         trace.append(
@@ -153,7 +164,7 @@ def _project_inputs(
             )
         )
     loan = request.proposed_loan.model_dump()
-    before, change = _finite(loan["annual_rate"]), command.assumptions.proposed_rate_change_bps
+    before, change = _finite(loan["annual_rate"]), assumptions.proposed_rate_change_bps
     loan["annual_rate"] = _finite(before + change / BASIS_POINTS_PER_UNIT)
     if not 0 <= loan["annual_rate"] <= 1:
         raise ValueError("Unsupported resulting rate")
@@ -262,7 +273,7 @@ def _scenario_result(
     baseline: CommercialAssessment, command: ScenarioCommand, observed: tuple[Calculation, ...]
 ) -> ScenarioResult:
     request = baseline.normalized_input
-    inputs, assumption_trace = _project_inputs(request, command)
+    inputs, assumption_trace = project_inputs(request, command.assumptions)
     facts = projected_commercial_facts(
         request,
         inputs.operating,
@@ -347,7 +358,7 @@ def preview_commercial_scenarios(
             409, "baseline_run_mismatch", "The selected revision does not contain the requested baseline run"
         )
     baseline = _supported_baseline(snapshot, assessment_operation)
-    observed = _baseline_trace(baseline)
+    observed = baseline_trace(baseline)
     results = []
     for index, scenario in enumerate(command.scenarios):
         try:
@@ -357,6 +368,7 @@ def preview_commercial_scenarios(
                 422,
                 "scenario_invalid",
                 f"Scenario {index} ({scenario.scenario_key}) exceeds the supported calculation contract",
+                errors=scenario_field_errors(index),
             ) from exc
     normalized = command.model_dump(mode="json")
     normalized["baseline_run_id"] = expected_run

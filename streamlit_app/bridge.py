@@ -27,9 +27,13 @@ _ROUTES = {
         rf"(?:/cases|{_CASE}|{_CASE}/revisions|{_REVISION}|{_CASE}/scenario-comparisons(?:/{_UUID})?)"
     ),
     "POST": re.compile(
-        rf"(?:/commercial/(?:assessment|decision)|/cases|{_CASE}/revisions|{_REVISION}/(?:replay|scenarios/preview|scenario-comparisons))"
+        rf"(?:/commercial/(?:assessment|decision|analysis)|/cases|{_CASE}/revisions"
+        rf"|{_REVISION}/(?:replay|analysis|scenarios/preview|scenario-comparisons))"
     ),
 }
+# Search, filter and sort apply only to the case listing; other GET routes page with limit/after.
+_PAGE_QUERY = frozenset(("limit", "after"))
+_LISTING_QUERY = _PAGE_QUERY | {"q", "outcome", "sort"}
 _REQUEST_HEADERS = {"content-type", "accept", "idempotency-key", "if-match"}
 _RESPONSE_HEADERS = {
     "content-type",
@@ -97,7 +101,8 @@ class BridgeRequest:
         ):
             raise ValueError("Unsupported bridge route")
         pairs = parse_qsl(target.query, keep_blank_values=True, strict_parsing=True)
-        if pairs and (method != "GET" or any(k not in {"limit", "after"} for k, _ in pairs)):
+        allowed = _LISTING_QUERY if target.path == "/cases" else _PAGE_QUERY
+        if pairs and (method != "GET" or any(k not in allowed for k, _ in pairs)):
             raise ValueError("Unsupported bridge query")
         if len({k for k, _ in pairs}) != len(pairs):
             raise ValueError("Duplicate query parameters")

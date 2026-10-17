@@ -4,11 +4,13 @@ from typing import Literal, Self
 
 from pydantic import Field, JsonValue, field_validator, model_validator
 
-from .assessment_contracts import CommercialAssessmentRequest, ContractModel
+from .assessment_contracts import CommercialAssessmentRequest, ContractModel, ISODate
 from .authentication import valid_actor
-from .finance import FinancialDecimal, as_decimal
+from .field_errors import ContractValueError
+from .finance import ExactFinancialDecimal, FinancialDecimal, ReportedDecimal, as_decimal
 
 STORAGE_VERSION: Literal["case-json-v1"] = "case-json-v1"
+LISTING_VERSION: Literal["case-listing-v2"] = "case-listing-v2"
 REPLAY_HEADER = "Idempotency-Replayed"
 
 
@@ -20,7 +22,7 @@ class CaseCreate(ContractModel):
     @classmethod
     def nonblank_rationale(cls, value: str) -> str:
         if not value.strip():
-            raise ValueError("A nonblank rationale is required")
+            raise ContractValueError("A nonblank rationale is required", "blank_text")
         return value.strip()
 
 
@@ -45,7 +47,7 @@ class CaseEdit(ContractModel):
     @model_validator(mode="after")
     def integer_term(self) -> Self:
         if self.field_path == "/proposed_loan/term_months" and type(self.new_value) is not int:
-            raise ValueError("Loan term edits require a JSON integer")
+            raise ContractValueError("Loan term edits require a JSON integer", "invalid_type", pointer="/new_value")
         return self
 
 
@@ -106,9 +108,16 @@ class CaseSummary(ContractModel):
     revision: int
     run_id: str
     recorded_at: str
+    # Head-run summaries exist only for the supported definition; archived definitions list as null.
+    definition_supported: bool
+    outcome: Literal["approve", "review", "decline"] | None
+    dscr: ReportedDecimal | None
+    requested_amount: ExactFinancialDecimal | None
+    assessment_as_of: ISODate | None
 
 
 class CasePage(ContractModel):
+    listing_version: Literal["case-listing-v2"] = LISTING_VERSION
     items: list[CaseSummary]
     next_cursor: str | None
 

@@ -10,7 +10,7 @@ from uuid import uuid4
 
 import app.main as main
 import pytest
-from app import case_routes, json_transport, scenario_routes
+from app import analysis_routes, case_routes, json_transport, scenario_routes
 from fastapi.testclient import TestClient
 from httpx2 import Response
 
@@ -27,6 +27,8 @@ _CASE = f"/cases/{CASE_ID}"
 PROTECTED_ROUTES = (
     ("POST", "/commercial/assessment"),
     ("POST", "/commercial/assessment/"),
+    ("POST", "/commercial/analysis"),
+    ("POST", "/commercial/analysis/"),
     ("POST", "/commercial/decision"),
     ("POST", "/consumer/decision"),
     ("POST", "/sba/evaluate"),
@@ -38,6 +40,7 @@ PROTECTED_ROUTES = (
         ("POST", _CASE + "/revisions"),
         ("GET", _CASE + "/revisions/1"),
         ("POST", _CASE + "/revisions/1/replay"),
+        ("POST", _CASE + "/revisions/1/analysis"),
         ("POST", _CASE + "/revisions/1/scenarios/preview"),
         ("POST", _CASE + "/revisions/1/scenario-comparisons"),
         ("GET", _CASE + "/scenario-comparisons"),
@@ -83,6 +86,8 @@ def sensitive_calls(monkeypatch: pytest.MonkeyPatch) -> list[str]:
 
     monkeypatch.setattr(case_routes, "CaseStore", storage)
     monkeypatch.setattr(scenario_routes, "CaseStore", storage)
+    monkeypatch.setattr(analysis_routes, "analyze_commercial", calculation)
+    monkeypatch.setattr(analysis_routes, "analyze_saved_revision", calculation)
     for name in (
         "assess_commercial",
         "decide_commercial",
