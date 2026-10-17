@@ -3,10 +3,16 @@
 import argparse
 import hashlib
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "streamlit_app/component/spreadline_workspace/frontend/build"
+REQUIREMENTS = ROOT / "streamlit_app/requirements.txt"
+# Hosted environments reinstall dependencies only when the requirements file changes, and the
+# packaged component keeps its built assets inside its installed copy. Stamping the bundle into
+# the requirements file makes every new bundle a dependency change, so hosts reinstall it.
+STAMP = "# component-bundle: "
 
 
 def source_hash() -> str:
@@ -42,6 +48,12 @@ def manifest() -> dict[str, str | int]:
     }
 
 
+def stamped_requirements(text: str, entry: Mapping[str, str | int]) -> str:
+    """The requirements text with exactly one final stamp line naming this bundle."""
+    lines = [line for line in text.splitlines() if not line.startswith(STAMP)]
+    return "\n".join([*lines, f"{STAMP}{entry['bundle']} {entry['bundle_sha256']}"]) + "\n"
+
+
 def run(action: str) -> None:
     if action == "prepare":
         BUILD.mkdir(parents=True, exist_ok=True)
@@ -52,13 +64,20 @@ def run(action: str) -> None:
                 raise ValueError("Unexpected entry in the generated component directory")
             path.unlink()
     elif action == "write":
-        (BUILD / "manifest.json").write_text(json.dumps(manifest(), indent=2) + "\n", encoding="utf-8")
+        current = manifest()
+        (BUILD / "manifest.json").write_text(json.dumps(current, indent=2) + "\n", encoding="utf-8")
+        requirements = REQUIREMENTS.read_text(encoding="utf-8")
+        REQUIREMENTS.write_text(stamped_requirements(requirements, current), encoding="utf-8")
     else:
-        if json.loads((BUILD / "manifest.json").read_text(encoding="utf-8")) != manifest():
+        expected = manifest()
+        if json.loads((BUILD / "manifest.json").read_text(encoding="utf-8")) != expected:
             raise ValueError("Component assets are stale; rebuild the Streamlit component")
-        if {p.name for p in BUILD.iterdir()} != {"manifest.json", manifest()["bundle"]}:
+        if {p.name for p in BUILD.iterdir()} != {"manifest.json", expected["bundle"]}:
             raise ValueError("Unexpected files in public component assets")
-        print("Streamlit component assets match their source and manifest.")
+        requirements = REQUIREMENTS.read_text(encoding="utf-8")
+        if requirements != stamped_requirements(requirements, expected):
+            raise ValueError("The requirements bundle stamp is stale; rebuild the Streamlit component")
+        print("Streamlit component assets match their source, manifest and requirements stamp.")
 
 
 if __name__ == "__main__":
