@@ -71,6 +71,138 @@ export function formatDecimal(value: string, precision = 2, group = true): strin
   return `${negative && magnitude !== 0n ? "-" : ""}${integer}${precision ? "." + digits.slice(-precision) : ""}`;
 }
 
+export type DisplayScale = "units" | "thousands" | "millions";
+const scalePlaces: Record<DisplayScale, number> = { units: 0, thousands: 3, millions: 6 };
+/** Exact decimal shift into a display unit; rounding happens once, at formatting. */
+export function scaleDecimal(value: string, scale: DisplayScale): string {
+  return shiftDecimal(value, -scalePlaces[scale]);
+}
+/** Thousands separators without rounding or dropping any supplied digit. */
+export function groupDecimal(value: string): string {
+  const [integer, fraction] = canonicalDecimal(value).split(".");
+  const grouped = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return fraction === undefined ? grouped : `${grouped}.${fraction}`;
+}
+export type AccountingOptions = {
+  places?: number;
+  scale?: DisplayScale;
+  currency?: boolean;
+  negative?: "parentheses" | "minus";
+  group?: boolean;
+};
+/** Accounting presentation: half-even once from the exact value; a value that rounds to zero is never negative. */
+export function formatAccounting(value: string, options: AccountingOptions = {}): string {
+  const rounded = formatDecimal(scaleDecimal(value, options.scale ?? "units"), options.places ?? 0, options.group ?? true);
+  const negative = rounded.startsWith("-");
+  const body = (options.currency ? "$" : "") + (negative ? rounded.slice(1) : rounded);
+  if (!negative) return body;
+  return (options.negative ?? "parentheses") === "parentheses" ? `(${body})` : `-${body}`;
+}
+export function formatRatioPercent(
+  ratio: string,
+  places = 1,
+  options: { signed?: boolean; negative?: "parentheses" | "minus" } = {},
+): string {
+  const rounded = formatDecimal(shiftDecimal(ratio, 2), places, true);
+  if (rounded.startsWith("-"))
+    return (options.negative ?? "minus") === "parentheses" ? `(${rounded.slice(1)}%)` : `${rounded}%`;
+  return `${options.signed && !/^0(?:\.0+)?$/.test(rounded) ? "+" : ""}${rounded}%`;
+}
+/** Fewest places (min..max) at which the shown value compares with the threshold as the exact value does. */
+export function disambiguatingPlaces(value: string, threshold: string, min: number, max: number): number {
+  const actual = compareDecimal(value, threshold);
+  for (let places = min; places < max; places++)
+    if (compareDecimal(formatDecimal(value, places, false), threshold) === actual) return places;
+  return max;
+}
+export function formatMultiple(
+  value: string,
+  options: { places?: number; threshold?: string; maxPlaces?: number } = {},
+): string {
+  const places = options.places ?? 2;
+  const shown = options.threshold === undefined
+    ? places
+    : disambiguatingPlaces(value, options.threshold, places, Math.max(places, options.maxPlaces ?? 4));
+  return `${formatDecimal(value, shown, true)}x`;
+}
+
+export type AmountParseError =
+  | "empty" | "invalid" | "suffix" | "exponent" | "grouping" | "sign" | "parentheses" | "percent" | "digits" | "range"
+  | "negative";
+export type ParseResult = { ok: true; value: string } | { ok: false; code: AmountParseError; message: string };
+const amountMessage = "Enter a finite number such as 1,250,000, (1,250,000) or -1,250,000.";
+const parseMessages: Record<AmountParseError, string> = {
+  empty: "Enter an amount.",
+  invalid: amountMessage,
+  suffix: "Enter the full amount; K, M and B suffixes are not supported.",
+  exponent: "Enter the full amount without scientific notation.",
+  grouping: "Use commas only between groups of three digits, such as 1,250,000.",
+  sign: "Use either a minus sign or parentheses for a negative amount, not both.",
+  parentheses: "Close the parentheses around a negative amount, such as (58,000).",
+  percent: "Enter an amount without a percent sign.",
+  digits: "Use at most 34 significant digits.",
+  range: "Enter zero or an amount whose magnitude is from 1e-30 to 1e30.",
+  negative: "Enter zero or a positive amount.",
+};
+const edgeSpace = /^[\s   ]+|[\s   ]+$/g;
+function rejected(code: AmountParseError, message = parseMessages[code]): ParseResult {
+  return { ok: false, code, message };
+}
+/** Amounts as analysts type them: $, thousands commas, parentheses or minus; never K/M/B or exponents. */
+export function parseAnalystAmount(
+  raw: string,
+  options: { allowNegative?: boolean; currency?: boolean } = {},
+): ParseResult {
+  const text = raw.replace(/−/g, "-").replace(edgeSpace, "");
+  if (!text) return rejected("empty");
+  if (/%/.test(text)) return rejected("percent");
+  if (/\d/.test(text) && /[kmb]{1,2}\)?$/i.test(text)) return rejected("suffix");
+  if (/\d/.test(text) && /e/i.test(text)) return rejected("exponent");
+  if ((text.match(/-/g) ?? []).length > 1 || /-\s*\(|\(\s*-/.test(text)) return rejected("sign");
+  if ((text.match(/\(/g) ?? []).length !== (text.match(/\)/g) ?? []).length) return rejected("parentheses");
+  if ((text.match(/\$/g) ?? []).length > (options.currency === false ? 0 : 1)) return rejected("invalid");
+  const match = /^\$?(\()?(-)?\$?(\d[\d,]*(?:\.\d*)?|\.\d+)\)?$/.exec(text);
+  if (!match) return rejected("invalid");
+  const [integer] = match[3].split(".");
+  if (integer.includes(",") && !/^\d{1,3}(?:,\d{3})+$/.test(integer)) return rejected("grouping");
+  const negative = !!match[1] || !!match[2];
+  const unsigned = match[3].replace(/,/g, "");
+  const number = (negative ? "-" : "") + (unsigned.startsWith(".") ? "0" + unsigned : unsigned);
+  if (unsigned.replace(".", "").replace(/^0+(?=\d)/, "").length > 34) return rejected("digits");
+  let value: string;
+  try {
+    value = inputDecimal(number);
+  } catch {
+    return rejected("range");
+  }
+  if (options.allowNegative === false && compareDecimal(value, "0") < 0) return rejected("negative");
+  return { ok: true, value };
+}
+const percentMessage = "Enter a finite percentage such as 12.5 or 12.5%.";
+/** A percentage as typed (12.5, 12.5% or (2.5%)) returned as its exact decimal fraction. */
+export function parsePercentInput(raw: string, options: { allowNegative?: boolean } = {}): ParseResult {
+  let text = raw.replace(/−/g, "-").replace(edgeSpace, "");
+  if (!text) return rejected("empty", "Enter a percentage.");
+  if (/\$/.test(text)) return rejected("invalid", percentMessage);
+  const sign = /^(.*?)\s*%(\)?)$/.exec(text);
+  if (sign) text = sign[1] + sign[2];
+  if (/%/.test(text)) return rejected("percent", "Use one percent sign, such as 12.5%.");
+  const parsed = parseAnalystAmount(text, { allowNegative: options.allowNegative, currency: false });
+  if (!parsed.ok) return parsed.code === "invalid" ? rejected("invalid", percentMessage) : parsed;
+  try {
+    return { ok: true, value: inputDecimal(shiftDecimal(parsed.value, -2)) };
+  } catch {
+    return rejected("range");
+  }
+}
+const wholeMessage = "Enter a whole number, such as 120.";
+export function parseWholeNumber(raw: string): ParseResult {
+  if (/[$%]/.test(raw)) return rejected("invalid", wholeMessage);
+  const parsed = parseAnalystAmount(raw, { currency: false });
+  if (!parsed.ok) return rejected(parsed.code, wholeMessage);
+  return /^-?\d+$/.test(parsed.value) ? parsed : rejected("invalid", wholeMessage);
+}
+
 /** Preserve every input numeric token before JSON.parse can round a large balance. */
 export function parseInputJson(source: string): unknown {
   let encoded = "", quoted = false, escaped = false;
