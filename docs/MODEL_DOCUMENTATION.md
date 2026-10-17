@@ -27,6 +27,25 @@ additive traces and guarantor aggregates. The independent calculator uses an
 80-digit context and an algebraically different annuity expression. These are
 finite-precision implementations with explicit domains, not symbolic arithmetic.
 
+Read-only analysis (`commercial-analysis-v1`; see [ANALYSIS_CONTRACT.md](ANALYSIS_CONTRACT.md))
+derives several views from a completed assessment:
+- common-size and change-versus-prior spreads;
+- policy debt capacity and its binding constraint;
+- EBITDA and revenue breakevens;
+- a cent amortization schedule;
+- a coverage sensitivity grid;
+- a plain-language explanation that must agree with the recorded decision.
+
+**What the analysis is not:**
+- Debt capacity is arithmetic against configured policy minimums, not an
+  approval or a recommended loan size.
+- Cushions hold every other input fixed.
+- The grid reuses the stress-preview definitions and is not a forecast.
+
+**How it is checked:** the independent calculator implements each analysis
+family separately, and tests compare every pinned value to 1e-24 (schedules to
+the exact cent).
+
 ## 2. Validation / effective challenge
 
 `gate/reference_calculator.py` is never imported by application code. Its pinned values give an outside check on the arithmetic, and its mutation tests confirm those checks catch common formula errors. The backend tests rebuild the fixture inputs and compare their outputs to its expected values.

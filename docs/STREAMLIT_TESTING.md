@@ -117,8 +117,17 @@ Unknown execution failures remain uncertain even if a commit may have happened;
 **Retry exact write** retains the original operation identity. Keep the existing
 explicit conflict review and discard procedures in [WORKSPACE.md](WORKSPACE.md).
 
-The bridge permits only the current workspace's assessment, case, replay and
-scenario routes. It rejects arbitrary URLs, browser-supplied Authorization,
+The bridge permits only the workspace's own routes:
+- assessment;
+- both analysis routes;
+- case, replay and scenario routes.
+
+Its query rules are:
+- `GET /cases` alone may add the listing's `q`, `outcome` and `sort`;
+- other GET routes page only with `limit` and `after`;
+- POST routes accept no query string.
+
+It rejects arbitrary URLs, browser-supplied Authorization,
 unexpected headers, invalid generations and oversized commands. It preserves raw
 JSON text through existing intake. At most four requests are active per browser
 batch, with a 1,000,000-byte command body limit, a 16 MiB individual response cap,
