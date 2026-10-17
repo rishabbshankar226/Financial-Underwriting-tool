@@ -6,6 +6,12 @@ consumer ratios and policy comparisons. A React workspace reviews dated
 spreads, analyst edits, and scenario comparisons. SQLite retains original
 inputs, decisions, traces, policies, and retry receipts.
 
+**Open the hosted workspace:** <https://spreadline-testing.streamlit.app/>.
+It is a private Streamlit Community Cloud app for synthetic data only:
+Streamlit asks you to sign in, and only invited viewers can open it. The
+[Streamlit testing host](docs/STREAMLIT_TESTING.md) guide covers the
+deployment, its access boundary and running the same workspace locally.
+
 The supported deployment is one operator credential and one private database.
 Financial and storage routes require authentication before processing inputs.
 SBA screens use a pinned official workbook and dated measurement evidence;

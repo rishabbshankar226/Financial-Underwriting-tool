@@ -1,0 +1,80 @@
+import { test, expect } from "@playwright/test";
+import type { Factor, Metric } from "../src/contracts";
+import {
+  WHOLE_DOLLARS,
+  editorText,
+  fieldValueText,
+  formatDate,
+  formatTimestamp,
+  legacyFactorText,
+  legacyMoney,
+  legacySummaryAmount,
+  metricValueText,
+  moneyText,
+  scaleCaption,
+} from "../src/format";
+
+const metric = (raw: string | null, reported: string | null, unit: string, precision: number | null): Metric => ({
+  fact_id: "current.example",
+  raw_value: raw,
+  reported_value: reported,
+  unit,
+  display_precision: precision,
+  status: raw === null ? "not_applicable" : "available",
+  explanation: raw === null ? "No debt service" : null,
+});
+const factor = (name: string, raw: string | null): Factor => ({
+  name, value: raw ?? "Not applicable", raw_value: raw, weight: "0.35", threshold: "1.25", passed: raw !== null,
+  source: "test", comparison_operator: ">=", decline_threshold: "1.0", decline_triggered: false,
+});
+
+test("legacy shims reproduce today's workspace strings exactly", () => {
+  expect(legacyMoney("4200000")).toBe("4,200,000.00");
+  expect(legacyMoney("-58000")).toBe("-58,000.00");
+  expect(legacyFactorText(factor("uca_positive", "385000"))).toBe("$385,000.00");
+  expect(legacyFactorText(factor("dscr", "3.134936659675626479525752"))).toBe("3.1349x");
+  expect(legacyFactorText(factor("dscr", null))).toBe("Not applicable");
+  expect(legacyFactorText(factor("k1_history", "stable"))).toBe("stable");
+  expect(legacySummaryAmount(metric("630000", "630000.00", "USD", 2), true)).toBe("$630,000.00");
+  expect(legacySummaryAmount(metric("3.134936659675626479525752", "3.1349", "ratio", 4))).toBe("3.1349x");
+  expect(legacySummaryAmount(metric(null, null, "ratio", 4))).toBe("Not applicable");
+});
+
+test("analyst money display rounds once from the exact value", () => {
+  expect(moneyText("4200000.49")).toBe("$4,200,000");
+  expect(moneyText("-58000")).toBe("($58,000)");
+  expect(moneyText("-58000", WHOLE_DOLLARS, { currency: false })).toBe("(58,000)");
+  expect(moneyText("4200000", { scale: "thousands", cents: false })).toBe("$4,200");
+  expect(moneyText("2352984.826672761045726790462363", { scale: "millions", cents: false })).toBe("$2.4");
+  expect(moneyText("630000", { scale: "units", cents: true })).toBe("$630,000.00");
+  expect(scaleCaption(WHOLE_DOLLARS)).toBe("USD");
+  expect(scaleCaption({ scale: "thousands", cents: false })).toBe("USD thousands");
+  expect(scaleCaption({ scale: "millions", cents: false })).toBe("USD millions");
+});
+
+test("metric display rounds from the raw value when showing fewer places than reported", () => {
+  expect(metricValueText(metric("2.5049", "2.50", "USD", 2), "money")).toBe("$3");
+  expect(metricValueText(metric("630000", "630000.00", "USD", 2), "money", { scale: "units", cents: true })).toBe(
+    "$630,000.00");
+  expect(metricValueText(metric("3.134936659675626479525752", "3.1349", "ratio", 4), "multiple")).toBe("3.13x");
+  expect(metricValueText(metric("1.2496", "1.2496", "ratio", 4), "multiple", WHOLE_DOLLARS, "1.25")).toBe("1.2496x");
+  expect(metricValueText(metric("0.15", "0.1500", "ratio", 4), "percent")).toBe("15.0%");
+  expect(metricValueText(metric(null, null, "ratio", 4), "multiple")).toBe("Not applicable");
+  expect(metricValueText(metric("stable", "stable", "category", null), "category")).toBe("stable");
+});
+
+test("editor and field text keep exact editing values", () => {
+  expect(editorText("0.105", "%")).toBe("10.5");
+  expect(editorText("4200000", "USD")).toBe("4200000");
+  expect(editorText(120, "months")).toBe("120");
+  expect(fieldValueText("4200000", "USD")).toBe("$4,200,000");
+  expect(fieldValueText("0.105", "%")).toBe("10.50%");
+  expect(fieldValueText(120, "months")).toBe("120 months");
+});
+
+test("calendar dates are formatted without a time-zone shift", () => {
+  expect(formatDate("2026-10-06")).toBe("Oct 6, 2026");
+  expect(formatDate("2024-12-31")).toBe("Dec 31, 2024");
+  expect(formatTimestamp("2026-10-16T22:43:57.123456+00:00")).toContain("2026");
+  expect(formatTimestamp("not a time")).toBe("not a time");
+});

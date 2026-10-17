@@ -1,4 +1,4 @@
-import { connectWorkspace, TEST_API_ORIGIN } from "./testCredentials";
+import { connectWorkspace, openView, TEST_API_ORIGIN } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { APIRequestContext, Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -29,7 +29,7 @@ async function open(page: Page, s: any, record?: any, pending = false) {
     await page.getByRole("button", { name: `Open ${s.normalized_input.borrower_name} case ${s.case_id}`, exact: true }).click();
   }
   await expect(page.locator(".savedContext")).toContainText(s.run_id);
-  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await openView(page, "review");
   await expect(page.getByRole("heading", { name: "Saved-run review", exact: true })).toBeVisible();
 }
 async function download(page: Page) {
@@ -41,7 +41,7 @@ async function download(page: Page) {
 }
 test("Review explains the saved-original requirement for unsaved dated input", async ({ page }) => {
   await page.goto("/"); await connectWorkspace(page); await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await openView(page, "review");
   await expect(page.locator(".reviewWorkspace")).toContainText("Save or open a dated commercial revision");
   await expect(page.getByRole("button", { name: "Download JSON review package", exact: true })).toBeDisabled();
 });
@@ -130,7 +130,7 @@ test("legacy input has no saved-original JSON export", async ({ page }) => {
   await page.goto("/"); await connectWorkspace(page); await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.getByRole("button", { name: "Legacy Alpine demo", exact: true }).click();
   await expect(page.locator("header")).toContainText("Legacy");
-  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await openView(page, "review");
   await expect(page.getByRole("button", { name: "Download JSON review package", exact: true })).toBeDisabled();
 });
 async function delayedWorker(page: Page) {
@@ -151,7 +151,7 @@ for (const action of ["close", "inclusion", "new selection"] as const) test(`lat
   let downloads = 0; page.on("download", () => downloads++);
   await page.getByRole("button", { name: "Download JSON review package", exact: true }).click();
   await expect.poll(() => page.evaluate(() => typeof (window as any).__releaseReview)).toBe("function");
-  if (action === "close") await page.getByRole("button", { name: "spread", exact: true }).click();
+  if (action === "close") await openView(page, "spread");
   else if (action === "inclusion") await page.getByLabel("Include this retained comparison").check();
   else { await page.getByRole("button", { name: "Dated Alpine demo", exact: true }).click(); await expect(page.locator(".savedContext")).toHaveCount(0); }
   await page.evaluate(() => (window as any).__releaseReview());
@@ -169,7 +169,7 @@ test("superseded and closed downloads release their object URLs", async ({ page,
   await download(page); await download(page);
   let result = await page.evaluate(() => (window as any).__reviewUrls);
   expect(result.created).toHaveLength(2); expect(result.revoked).toEqual([result.created[0]]);
-  await page.getByRole("button", { name: "spread", exact: true }).click();
+  await openView(page, "spread");
   result = await page.evaluate(() => (window as any).__reviewUrls);
   expect(result.revoked).toEqual(result.created);
 });
@@ -260,7 +260,7 @@ test("initial evaluation has no export source", async ({ page }) => {
   const held = new Promise<void>(r => release = r), started = new Promise<void>(r => entered = r);
   await page.route("**/commercial/assessment", async route => { const response = await route.fetch(); entered(); await held; await route.fulfill({ response }); });
   await page.goto("/"); await connectWorkspace(page); await started;
-  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await openView(page, "review");
   await expect(page.getByRole("button", { name: "Download JSON review package", exact: true })).toBeDisabled();
   await expect(page.locator(".reviewMetrics")).toHaveCount(0);
   release(); await expect(page.locator(".decision strong")).toHaveText("APPROVE");

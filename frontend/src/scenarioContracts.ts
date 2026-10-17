@@ -1,4 +1,4 @@
-import { compareDecimal, inputDecimal, isDecimal, legacyDecimal, shiftDecimal } from "./decimal";
+import { compareDecimal, isDecimal, legacyDecimal, parseAnalystAmount, parsePercentInput } from "./decimal";
 import { annualFields, currentFactKeys, guardAssessment, guardDatedInput, guardDecision, metric, type Assessment, type Decision, type DatedRequest, type Factor, type Metric, type Period, type Policy, type Trace } from "./contracts";
 import { actor, date, finite, finiteJson, guardRecording, hash, object, requireCase, revision, sameJson, text, timestamp, uuid, type Page, type Recording, type StoredCase } from "./caseContracts";
 type Obj = Record<string, unknown>;
@@ -152,10 +152,11 @@ export function scenarioText(value: unknown, max: number): string {
     return result;
 }
 export function parseShock(raw: string, percentage: boolean): string {
-    const value = raw.trim();
-    requireCase(/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(value), "Enter a finite decimal change");
-    const number = inputDecimal(shiftDecimal(value.replace(/,/g, ""), percentage ? -2 : 0));
-    requireCase(isDecimal(number) && (!percentage || compareDecimal(number, "-1") >= 0), "Percentage changes must be at least -100%; all changes must be finite");
+    // Percent shocks accept "10", "10%" or "(10%)"; basis-point shocks are plain signed numbers.
+    const parsed = percentage ? parsePercentInput(raw) : parseAnalystAmount(raw, { currency: false });
+    requireCase(parsed.ok, "Enter a finite decimal change");
+    const number = parsed.ok ? parsed.value : "";
+    requireCase(!percentage || compareDecimal(number, "-1") >= 0, "Percentage changes must be at least -100%; all changes must be finite");
     return number;
 }
 export function normalizedScenario(value: unknown, legacy = false): ScenarioCommand {

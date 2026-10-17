@@ -1,4 +1,4 @@
-import { connectWorkspace, TEST_OPERATOR_ID } from "./testCredentials";
+import { connectWorkspace, openView, TEST_OPERATOR_ID } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { Page, APIRequestContext, Response } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -31,7 +31,7 @@ async function baseline(page: Page) {
     const response = await saved;
     const original = guardSavedCase(await response.json(), response.headers().etag).snapshot;
     await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
-    await page.getByRole("button", { name: "Scenarios", exact: true }).click();
+    await openView(page, "scenarios");
     return original;
 }
 async function preview(page: Page) {
@@ -69,7 +69,7 @@ test("preview and one retained batch preserve the original assessment and reopen
     const latest = await (await request.get(`http://127.0.0.1:8000/cases/${original.case_id}`)).json();
     expect(latest).toEqual(original);
     await page.reload(); await connectWorkspace(page);
-    await page.getByRole("button", { name: "Scenarios", exact: true }).click();
+    await openView(page, "scenarios");
     await expect(page.locator(".comparisonContext")).toContainText(record.comparison_id);
     expect((await (await request.get(`http://127.0.0.1:8000/cases/${original.case_id}/scenario-comparisons`)).json()).items).toHaveLength(1);
 });
@@ -125,7 +125,7 @@ test("lost comparison receipt survives reload and blocks other saves until exact
     expect(retryBody).toBe(originalBody);
     expect(retryKey).toBe(originalKey);
     expect((await (await request.get(`http://127.0.0.1:8000/cases/${original.case_id}/scenario-comparisons`)).json()).items).toHaveLength(1);
-    await page.getByRole("button", { name: "Scenarios", exact: true }).click();
+    await openView(page, "scenarios");
     await expect(page.locator(".comparisonContext")).toContainText("Saved comparison");
 });
 test("comparison tracking preflight failure sends no save and preserves the baseline", async ({ page }) => {
@@ -310,7 +310,7 @@ test("large originals render only opened trace and guarantor pages and bound JSO
     await page.getByRole("button", { name: "Saved cases", exact: true }).click();
     await page.getByRole("button", { name: `Open ${input.borrower_name} case ${original.case_id}`, exact: true }).click();
     await expect(page.locator(".savedContext")).toContainText(original.run_id);
-    await page.getByRole("button", { name: "Scenarios", exact: true }).click();
+    await openView(page, "scenarios");
     await page.getByRole("button", { name: `Open comparison ${stored.record.comparison_id}`, exact: true }).click();
     await expect(page.locator('[aria-label="trace"]')).toHaveCount(0);
     await page.getByText("Calculation trace", { exact: true }).click();
@@ -331,7 +331,7 @@ test("large originals render only opened trace and guarantor pages and bound JSO
 test("unsaved dated authoring asks for a saved baseline and legacy cannot invoke saving", async ({ page }) => {
     await page.goto("/"); await connectWorkspace(page);
     await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-    await page.getByRole("button", { name: "Scenarios", exact: true }).click();
+    await openView(page, "scenarios");
     await page.getByRole("button", { name: "Save baseline case", exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.getByRole("dialog").press("Escape");
@@ -398,7 +398,7 @@ test("503 exposes Retry-After, keeps exact tracking and never retries automatica
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("region", { name: "Saved write recovery", exact: true })).toContainText("Retry after 3");
     const operation = await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY);
-    await page.getByRole("button", { name: "details", exact: true }).click(); await page.getByRole("button", { name: "Scenarios", exact: true }).click();
+    await openView(page, "details"); await openView(page, "scenarios");
     expect(posts).toBe(1); expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBe(operation);
     await page.unroute("**/scenario-comparisons"); await page.getByRole("button", { name: "Retry exact write", exact: true }).click();
     await expect(page.locator(".comparisonContext")).toContainText("Saved comparison");
@@ -424,7 +424,7 @@ test("an unsupported baseline still exposes its case archive and original compar
     await page.route(`**/cases/${original.case_id}`, async route => { const response = await route.fetch(), future = await response.json(); future.assessment.calculation_version = "future"; await route.fulfill({ response, json: future }); });
     await page.goto("/"); await connectWorkspace(page); await page.getByRole("button", { name: "Saved cases", exact: true }).click();
     await page.getByRole("button", { name: `Open ${input.borrower_name} case ${original.case_id}`, exact: true }).click(); await expect(page.locator(".savedContext")).toContainText(original.run_id);
-    await page.getByRole("button", { name: "Scenarios", exact: true }).click(); await expect(page.locator(".scenarioComposer")).toContainText("New preview is unavailable");
+    await openView(page, "scenarios"); await expect(page.locator(".scenarioComposer")).toContainText("New preview is unavailable");
     await expect(page.getByRole("button", { name: "Preview scenarios", exact: true })).toHaveCount(0);
     await page.getByRole("button", { name: `Open comparison ${stored.record.comparison_id}`, exact: true }).click(); await expect(page.locator(".comparisonContext")).toContainText(stored.record.comparison_id);
     await page.getByText("Original comparison JSON", { exact: true }).click(); await expect(page.locator(".originalComparisonJson")).toContainText('"persisted": true');

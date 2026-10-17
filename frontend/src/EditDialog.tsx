@@ -1,4 +1,4 @@
-import { shiftDecimal } from "./decimal";
+import { editorText } from "./format";
 import { useEffect, useRef, useState } from "react";
 import { validateEdit, type EditableField, type EditEvent } from "./workspace";
 import { restoreDialogFocus } from "./CaseDialogs";
@@ -20,13 +20,7 @@ export default function EditDialog({
   proposal?: EditEvent;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [value, setValue] = useState(
-    String(
-      field.unit === "%"
-        ? shiftDecimal(String(proposal?.next ?? field.value), 2)
-        : (proposal?.next ?? field.value),
-    ),
-  );
+  const [value, setValue] = useState(editorText(proposal?.next ?? field.value, field.unit));
   const [rationale, setRationale] = useState(proposal?.rationale ?? "");
   const [error, setError] = useState("");
   useEffect(() => {
@@ -86,7 +80,7 @@ export default function EditDialog({
         <p>
           {field.period} · {field.unit}
           <br />
-          Current value: {field.unit === "%" ? shiftDecimal(String(field.value), 2) : field.value}
+          Current value: {editorText(field.value, field.unit)}
         </p>
         <label>
           New value{" "}

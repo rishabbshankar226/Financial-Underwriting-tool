@@ -1,143 +1,45 @@
-import { formatDecimal, isDecimal, shiftDecimal } from "./decimal";
 import { useEffect, useRef, useState } from "react";
-import {
-  annualFields,
-  type Assessment,
-  type Factor,
-  type Period,
-  type Metric,
-} from "./contracts";
-import type { EditableField, EditEvent } from "./workspace";
+import { selectWorkspaceView } from "./workspaceSelectors";
+import { useEditController } from "./useEditController";
 import EditDialog from "./EditDialog";
-import { metricText } from "./metricDisplay";
 import { queryWorkspace } from "./workspaceDom";
 import AssessmentSummary from "./AssessmentSummary";
 import { Scenarios } from "./Scenarios";
 import { Review } from "./Review";
-import { prototypeDisclaimer } from "./prototypeDisclaimer";
 import { useScenarioWorkspace } from "./useScenarioWorkspace";
 import { writeComparisonLocator } from "./scenarioSelection";
+import { BrandBar, CaseHeader } from "./views/WorkspaceHeader";
+import { PrototypeNotice } from "./views/PrototypeNotice";
+import { Toolbar } from "./views/Toolbar";
+import { CompatibilityPanel, ContextStrip, WorkspaceStatus } from "./views/WorkspaceStatus";
+import { ViewTabs, type WorkspaceTab } from "./views/ViewTabs";
+import { SpreadView } from "./views/SpreadView";
+import { AssumptionsView } from "./views/AssumptionsView";
+import { DetailsView } from "./views/DetailsView";
+import { MemoView } from "./views/MemoView";
+import { HistoryView } from "./views/HistoryView";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
-import {
-  SavedCaseList,
-  SavedContext,
-  SavedHistory,
-  RecordingDetails,
-  RecoveryPanel,
-} from "./SavedCases";
-const disclaimer = prototypeDisclaimer;
-const labels: Record<string, string> = {
-  gross_receipts: "Gross receipts",
-  gross_profit: "Gross profit",
-  cogs: "COGS",
-  operating_expense_excl_dna_interest_comp: "Operating expenses",
-  officer_compensation: "Officer compensation",
-  depreciation: "Depreciation",
-  amortization: "Amortization",
-  interest_expense: "Interest expense",
-  section_179: "Section 179",
-  k1_distribution: "K-1 distributions",
-  ordinary_business_income: "Ordinary business income",
-  ebitda: "EBITDA",
-  dscr: "DSCR",
-  fccr: "Simplified FCCR",
-  global_dscr: "Global DSCR",
-  uca_positive: "UCA cash flow",
-  k1_history: "K-1 distribution history",
-  cpltd_annual: "Annual CPLTD",
-  operating_lease_annual: "Annual operating leases",
-  amount: "Proposed principal",
-  annual_rate: "Annual nominal rate",
-  term_months: "Loan term",
-  ownership_percentage: "Ownership",
-  wages: "Annual wages",
-  interest_dividend_income: "Annual interest/dividend income",
-  mortgage_pi_annual: "Annual mortgage P&I",
-  auto_loan_annual: "Annual auto debt",
-  credit_card_min_annual: "Annual card minimum",
-  ar_increase: "AR increase",
-  inventory_increase: "Inventory increase",
-  ap_increase: "AP increase",
-  cash_taxes_paid: "Cash taxes paid",
-};
-const money = (value: string) => formatDecimal(value, 2);
-const periodLabel = (year: Partial<Period>, index: number) =>
-  year.period_start && year.period_end
-    ? `${year.period_start} – ${year.period_end}`
-    : `Supplied period ${index + 1}`;
-function factorText(f: Factor): string {
-  const v = f.raw_value;
-  if (v === null) return "Not applicable";
-  if (!isDecimal(v)) return String(v);
-  return f.name === "uca_positive" ? `$${money(v)}` : `${formatDecimal(v, 4)}x`;
-}
-function TraceDetail({
-  metric,
-  assessment,
-}: {
-  metric: Metric;
-  assessment: Assessment;
-}) {
-  const row = assessment.calculation_trace.find(
-    (r) => r.fact_id === metric.fact_id,
-  );
-  return row ? (
-    <details>
-      <summary>
-        {metric.fact_id} · {metricText(metric)}
-      </summary>
-      <p>
-        <strong>{row.definition_id}</strong>
-      </p>
-      <p className="expression">{row.expression}</p>
-      <h3>Actual operands</h3>
-      {row.operands.map((o, i) => (
-        <div className="operand" key={i}>
-          <code>{o.reference}</code>
-          <span>
-            {o.raw_value === null ? "Not applicable" : String(o.raw_value)}{" "}
-            {o.unit}
-          </span>
-          <small>{o.reference_type}{o.reported_value !== null && ` · Reported component: ${formatDecimal(String(o.reported_value), 2)} ${o.unit}`}</small>
-        </div>
-      ))}
-      <p>
-        Raw result: {String(row.raw_value)} {row.unit}
-      </p>
-      {row.explanation && <p>{row.explanation}</p>}
-    </details>
-  ) : null;
-}
+import { SavedCaseList, SavedContext, RecoveryPanel } from "./SavedCases";
+
+/** Composition root: owns the workspace hooks, view and dialog state, and wires views to them. */
 export default function App() {
   const workspace = useAnalystWorkspace();
   const scenarios = useScenarioWorkspace(workspace);
   const { state, submit, demo, upload } = workspace;
-  const [tab, setTab] = useState<
-    "spread" | "assumptions" | "details" | "memo" | "history" | "scenarios" | "review"
-  >("spread");
+  const [tab, setTab] = useState<WorkspaceTab>("spread");
   const [selectedPeriod, setSelectedPeriod] = useState(1);
-  const [editing, setEditing] = useState<EditableField | null>(null);
-  const [proposal, setProposal] = useState<EditEvent | undefined>();
   const [saving, setSaving] = useState(false),
     [showCases, setShowCases] = useState(false),
     [discarding, setDiscarding] = useState(false);
   const opener = useRef<HTMLElement | null>(null);
-  const ready = state.status === "ready",
-    accepted = state.accepted,
-    input = accepted?.input;
-  const assessment =
-    ready && accepted?.mode === "dated" ? accepted.result : null;
-  const decision =
-    ready && accepted
-      ? accepted.mode === "dated"
-        ? accepted.result.decision
-        : accepted.result
-      : null;
+  const edits = useEditController(opener, workspace.edit);
+  const view = selectWorkspaceView(state, !!workspace.operation);
+  const { ready, accepted, input, assessment, decision } = view;
   const index = input ? Math.min(selectedPeriod, input.years.length - 1) : 0;
   useEffect(() => {
     if (state.status === "evaluating") {
-      setEditing(null);
+      edits.dismiss();
       setSaving(false);
     }
     if (state.status === "ready" && state.resetPeriod && state.accepted)
@@ -145,214 +47,24 @@ export default function App() {
     if (state.status === "ready" && state.saved?.view.compatibility)
       setTab("history");
   }, [state.id, state.status, state.accepted, state.resetPeriod]);
-  function edit(event: EditEvent) {
-    if (!editing) return;
-    workspace.edit(event, editing);
-    setEditing(null);
-    setProposal(undefined);
-  }
-  function field(
-    path: string,
-    label: string,
-    value: string | number,
-    unit: EditableField["unit"] = "USD",
-    min?: string | number,
-    max?: string | number,
-    integer = false,
-    period?: string,
-  ) {
-    return (
-      <button
-        className="rowEdit"
-        disabled={!workspace.canEdit}
-        onClick={(event) => {
-          opener.current = event.currentTarget;
-          setEditing({
-            path,
-            label,
-            value,
-            unit,
-            min,
-            max,
-            integer,
-            period:
-              period ??
-              (input && "assessment_as_of" in input
-                ? `Assumption as of ${input.assessment_as_of}`
-                : "Legacy annual assumption"),
-          });
-        }}
-      >
-        {label}
-      </button>
-    );
-  }
-  function assumptionGroup(
-    title: string,
-    prefix: string,
-    values: Record<string, string | number>,
-    period?: string,
-  ) {
-    return (
-      <div className="panel" key={prefix}>
-        <h2>{title}</h2>
-        {Object.entries(values).map(([key, value]) => {
-          const percent = ["annual_rate", "ownership_percentage"].includes(key),
-            integer = key === "term_months";
-          const nonnegative = [
-            "cpltd_annual",
-            "operating_lease_annual",
-            "amount",
-            "annual_rate",
-            "ownership_percentage",
-            "mortgage_pi_annual",
-            "auto_loan_annual",
-            "credit_card_min_annual",
-          ].includes(key);
-          return (
-            <div className="assumption" key={key}>
-              {field(
-                `${prefix}/${key}`,
-                labels[key] ?? key,
-                value,
-                percent ? "%" : integer ? "months" : "USD",
-                integer
-                  ? accepted?.mode === "dated"
-                    ? 12
-                    : 1
-                  : nonnegative
-                    ? 0
-                    : undefined,
-                key === "ownership_percentage" ||
-                  (key === "annual_rate" && accepted?.mode === "dated")
-                  ? 1
-                  : undefined,
-                integer,
-                period,
-              )}
-              <strong>
-                {percent
-                  ? `${money(shiftDecimal(String(value), 2))}%`
-                  : integer
-                    ? `${value} months`
-                    : `$${money(String(value))}`}
-              </strong>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
   return (
     <main className="analystWorkspace">
-      <div className="workspaceBrand">
-        <div className="wordmark">
-          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-            <path d="M2 5h13v4H2zm7 5h13v4H9zM2 15h13v4H2z" fill="currentColor" />
-          </svg>
-          <span>Spreadline</span>
-        </div>
-        <span className="workspaceType">
-          COMMERCIAL UNDERWRITING <span>USD</span>
-        </span>
-      </div>
-      <header>
-        <div>
-          <div className="eyebrow">SPREADLINE / CREDIT WORKSPACE</div>
-          <h1>
-            {ready
-              ? (input?.borrower_name ??
-                (typeof state.saved?.view.snapshot.normalized_input
-                  .borrower_name === "string"
-                  ? state.saved.view.snapshot.normalized_input.borrower_name
-                  : "Saved case"))
-              : "Assessment workspace"}
-          </h1>
-          <p>
-            {ready
-              ? state.saved
-                ? "Saved dated assessment"
-                : accepted?.mode === "dated"
-                  ? "Dated assessment"
-                  : "Legacy · undated input"
-              : state.status === "evaluating"
-                ? state.action === "open"
-                  ? "Opening stored revision"
-                  : state.action === "write"
-                    ? "Waiting for accepted stored receipt"
-                    : "Evaluating selected draft"
-                : "Selected input unavailable"}
-          </p>
-        </div>
-        <div
-          className="decision"
-          data-outcome={decision?.outcome ?? "unavailable"}
-          aria-live="polite"
-        >
-          <span>Illustrative decision</span>
-          <strong>
-            {decision
-              ? decision.outcome.toUpperCase()
-              : state.status === "evaluating"
-                ? state.action === "open"
-                  ? "LOADING"
-                  : state.action === "write"
-                    ? "SAVING"
-                    : "CALCULATING"
-                : "UNAVAILABLE"}
-          </strong>
-          <small>
-            {decision
-              ? `${decision.policy_version} · illustrative score ${decision.score}`
-              : "A current accepted calculation is required"}
-          </small>
-        </div>
-      </header>
-      <div className="warning environmentWarning">
-        <span>Prototype use</span>
-        <p>{disclaimer}</p>
-      </div>
-      <div className="uploadbar">
-        <div className="actions">
-          <button onClick={() => demo("dated")}>Dated Alpine demo</button>
-          <button onClick={() => demo("legacy")}>Legacy Alpine demo</button>
-          <button
-            data-focus-fallback
-            aria-expanded={showCases}
-            onClick={() => setShowCases((value) => !value)}
-          >
-            Saved cases
-          </button>
-          <button
-            className="primary"
-            disabled={!workspace.canSave}
-            onClick={(event) => {
-              opener.current = event.currentTarget;
-              setSaving(true);
-            }}
-          >
-            Save case
-          </button>
-        </div>
-        <label>
-          Import synthetic JSON{" "}
-          <input
-            type="file"
-            accept=".json,application/json"
-            onChange={(e) => {
-              void upload(e.target.files?.[0]);
-              e.target.value = "";
-            }}
-          />
-        </label>
-        <span>{state.filename} · synthetic only</span>
-        {accepted?.mode === "legacy" && (
-          <span>
-            Saving requires a separately imported dated assessment with explicit
-            dates and units.
-          </span>
-        )}
-      </div>
+      <BrandBar />
+      <CaseHeader view={view} />
+      <PrototypeNotice />
+      <Toolbar
+        filename={state.filename}
+        legacy={accepted?.mode === "legacy"}
+        showCases={showCases}
+        canSave={workspace.canSave}
+        onDemo={demo}
+        onToggleCases={() => setShowCases((value) => !value)}
+        onSave={(element) => {
+          opener.current = element;
+          setSaving(true);
+        }}
+        onUpload={(file) => void upload(file)}
+      />
       {showCases && (
         <SavedCaseList
           onOpen={(locator) => {
@@ -380,11 +92,7 @@ export default function App() {
         }}
         onReview={(element) => {
           const review = workspace.reviewConflict();
-          if (review) {
-            opener.current = element;
-            setEditing(review.field);
-            setProposal(review.proposal);
-          }
+          if (review) edits.review(review.field, review.proposal, element);
         }}
       />
       {state.saved && (
@@ -394,116 +102,18 @@ export default function App() {
           onOpen={(locator) => void workspace.openSaved(locator)}
         />
       )}
-      {!ready && (
-        <div className="pending" role="status">
-          <strong>
-            {state.status === "evaluating"
-              ? state.action === "open"
-                ? "Loading original stored assessment"
-                : state.action === "write"
-                  ? "Waiting for saved write confirmation"
-                  : "Evaluating draft"
-              : "No current result"}
-          </strong>
-          {state.draft && state.action === "evaluate" && (
-            <p>
-              Submitted draft: {state.draft.filename} · {state.draft.mode} ·{" "}
-              {typeof state.draft.payload.borrower_name === "string"
-                ? state.draft.payload.borrower_name
-                : "Unnamed input"}
-              {state.draft.edit &&
-                ` · ${state.draft.edit.path}: ${state.draft.edit.prior} → ${state.draft.edit.next}`}
-            </p>
-          )}
-          {accepted &&
-            !state.saved &&
-            (state.action === "evaluate" || !workspace.operation) && (
-              <p>
-                Previous accepted case: {accepted.input.borrower_name} ·{" "}
-                {accepted.filename}. Its recommendation is inactive.
-              </p>
-            )}
-        </div>
-      )}
-      {state.error && (
-        <div className="warning" role="alert">
-          {state.error}
-        </div>
-      )}
-      {state.status === "unavailable" && (
-        <div className="actions">
-          {state.draft && state.action === "evaluate" && (
-            <button onClick={() => void submit(state.draft!)}>
-              Retry submitted draft
-            </button>
-          )}
-          {accepted &&
-            !state.saved &&
-            (state.action === "evaluate" || !workspace.operation) && (
-              <button
-                onClick={() =>
-                  void submit({
-                    mode: accepted.mode,
-                    payload: accepted.input,
-                    filename: accepted.filename,
-                  })
-                }
-              >
-                Re-evaluate last accepted case
-              </button>
-            )}
-          {state.saved && (
-            <button
-              onClick={() =>
-                void workspace.openSaved({
-                  caseId: state.saved!.view.snapshot.case_id,
-                  revision: state.saved!.view.snapshot.revision,
-                })
-              }
-            >
-              View previous stored revision
-            </button>
-          )}
-        </div>
-      )}
+      <WorkspaceStatus
+        state={state}
+        view={view}
+        onSubmit={(draft) => void submit(draft)}
+        onOpen={(locator) => void workspace.openSaved(locator)}
+      />
       {ready && state.saved?.view.compatibility && tab !== "review" && (
-        <section className="panel compatibility">
-          <h2>Original stored assessment</h2>
-          <p>{state.saved.view.compatibility}</p>
-          <pre>{JSON.stringify(state.saved.view.snapshot, null, 2)}</pre>
-        </section>
+        <CompatibilityPanel view={state.saved.view} />
       )}
-      {assessment && (
-        <div className="context">
-          <span>
-            Assessment as of: {assessment.assumptions_as_of} · USD · dollars ·
-            nominal annual rate
-          </span>
-          <span>
-            Coverage period: {periodLabel(assessment.selected_period, 0)}
-          </span>
-          <span>
-            Current pro forma coverage · fixed rate · fully amortizing · monthly
-            payments
-          </span>
-        </div>
-      )}
+      {assessment && <ContextStrip assessment={assessment} />}
       {assessment && <AssessmentSummary assessment={assessment} />}
-      <nav className="workspaceNav" aria-label="Workspace views">
-        {(["spread", "assumptions", "details", "memo", "history", "scenarios", "review"] as const).map(
-          (value) => (
-            <button
-              className={tab === value ? "active" : ""}
-              aria-pressed={tab === value}
-              aria-current={tab === value ? "page" : undefined}
-              onClick={() => setTab(value)}
-              key={value}
-            >
-              {value === "scenarios" ? "Scenarios" : value === "review" ? "Review" : value}
-            </button>
-          ),
-        )}
-      </nav>
+      <ViewTabs tab={tab} onSelect={setTab} />
       {tab === "scenarios" && <Scenarios model={scenarios}
         onSaveBaseline={(element) => { if (workspace.canSave) { opener.current = element; setSaving(true); } }}
         onOpenBaseline={(locator) => void workspace.openSaved(locator)}/>}
@@ -513,383 +123,55 @@ export default function App() {
         pending={!!(workspace.operation || workspace.recoveryError || workspace.conflict || workspace.inFlight)}
         onOpenBaseline={(locator) => void workspace.openSaved(locator)}/>}
       {tab === "spread" && (
-        <section className="grid">
-          <div className="panel wide">
-            <div className="panelTitle">
-              <h2>Annual financial spread</h2>
-              <span>
-                {ready
-                  ? workspace.canEdit
-                    ? "Select a supplied input to edit · derived rows are read-only"
-                    : "Original accepted inputs · editing unavailable for this selection"
-                  : "Previous accepted inputs · editing unavailable"}
-              </span>
-            </div>
-            {input ? (
-              <div className="tableScroll">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Line item · USD</th>
-                      {input.years.map((y, i) => (
-                        <th key={i}>
-                          <button
-                            aria-pressed={index === i}
-                            className={index === i ? "period active" : "period"}
-                            onClick={() => setSelectedPeriod(i)}
-                          >
-                            {periodLabel(y, i)}
-                          </button>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {annualFields.map((key) => (
-                      <tr key={key}>
-                        <th scope="row">{labels[key]}</th>
-                        {input.years.map((y, i) => (
-                          <td key={i} className="num">
-                            <button
-                              className="rowEdit"
-                              aria-label={`Edit ${labels[key]} for ${periodLabel(y, i)}`}
-                              disabled={!workspace.canEdit}
-                              onClick={(event) => {
-                                opener.current = event.currentTarget;
-                                setEditing({
-                                  path: `/years/${i}/${key}`,
-                                  label: labels[key],
-                                  value: y[key],
-                                  unit: "USD",
-                                  min:
-                                    key === "interest_expense" ? "0" : undefined,
-                                  period: periodLabel(y, i),
-                                });
-                              }}
-                            >
-                              ${money(assessment?.historical_spread[i].reported_financials[key] ?? y[key])}
-                            </button>
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                    {assessment &&
-                      (
-                        [
-                          "gross_profit",
-                          "ordinary_business_income",
-                          "ebitda",
-                          "k1_distribution_ratio",
-                        ] as const
-                      ).map((key) => (
-                        <tr className="derived" data-fact={key} key={key}>
-                          <th scope="row">
-                            {labels[key] ?? "K-1 distribution ratio"}{" "}
-                            <small>Calculated</small>
-                          </th>
-                          {assessment.historical_spread.map((h, i) => (
-                            <td key={i} className="num">
-                              {metricText(h[key])}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p>No accepted inputs yet.</p>
-            )}
-            {assessment && <p className="fine">Report amounts reconcile to income totals in cents. Editing opens the original unrounded input.</p>}
-            {accepted?.mode === "legacy" && (
-              <p className="fine">
-                Legacy inputs have no verified dates or dated calculation trace.
-                Supplied period order is retained.
-              </p>
-            )}
-          </div>
-          <div className="panel">
-            <h2>Current coverage</h2>
-            {decision ? (
-              decision.factors.map((f) => (
-                <div className="metric" data-state={f.passed === null ? "review" : f.passed ? "pass" : "fail"} key={f.name}>
-                  <span>{labels[f.name] ?? f.name}</span>
-                  <strong>{factorText(f)}</strong>
-                  <small>
-                    {f.name === "uca_positive"
-                      ? `Must exceed $${money(String(f.threshold))}`
-                      : `Policy: ${f.comparison_operator ?? "comparison unavailable"} ${String(f.threshold)}`}{" "}
-                    ·{" "}
-                    {f.passed === null
-                      ? "Review required"
-                      : f.passed
-                        ? "Pass"
-                        : "Below policy"}
-                    {f.decline_threshold !== null &&
-                      ` · decline below ${f.decline_threshold}x`}
-                  </small>
-                </div>
-              ))
-            ) : (
-              <p>No current results. Resolve the selected input and retry.</p>
-            )}
-          </div>
-        </section>
+        <SpreadView
+          ready={ready}
+          canEdit={workspace.canEdit}
+          input={input}
+          legacy={accepted?.mode === "legacy"}
+          assessment={assessment}
+          decision={decision}
+          index={index}
+          onSelectPeriod={setSelectedPeriod}
+          onEdit={edits.open}
+        />
       )}
       {tab === "assumptions" && (
-        <section>
-          <p>
-            {ready
-              ? "Annual assumptions used by the backend. Select an amount to propose an edit."
-              : "Previous accepted assumptions; no active recommendation."}
-          </p>
-          {input && (
-            <div className="assumptionsGrid">
-              {assumptionGroup(
-                "Existing debt",
-                "/existing_debt",
-                input.existing_debt,
-              )}
-              {assumptionGroup(
-                "Proposed fixed monthly loan",
-                "/proposed_loan",
-                {
-                  amount: input.proposed_loan.amount,
-                  annual_rate: input.proposed_loan.annual_rate,
-                  term_months: input.proposed_loan.term_months,
-                },
-              )}
-              {assumptionGroup(
-                "Working capital",
-                "/working_capital",
-                {
-                  ar_increase: input.working_capital.ar_increase,
-                  inventory_increase: input.working_capital.inventory_increase,
-                  ap_increase: input.working_capital.ap_increase,
-                  cash_taxes_paid: input.working_capital.cash_taxes_paid,
-                },
-                `Working capital for ${periodLabel(input.years[input.years.length - 1], input.years.length - 1)}`,
-              )}
-              {input.guarantors.map((g, i) =>
-                assumptionGroup(g.name, `/guarantors/${i}`, {
-                  ownership_percentage: g.ownership_percentage,
-                  wages: g.wages,
-                  interest_dividend_income: g.interest_dividend_income,
-                  mortgage_pi_annual: g.mortgage_pi_annual,
-                  auto_loan_annual: g.auto_loan_annual,
-                  credit_card_min_annual: g.credit_card_min_annual,
-                }),
-              )}
-              {input.guarantors.length === 0 && (
-                <div className="panel">
-                  <h2>Business-only fallback</h2>
-                  <p>
-                    No guarantors supplied. The backend uses full business
-                    EBITDA for global coverage.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </section>
+        <AssumptionsView
+          ready={ready}
+          accepted={accepted}
+          canEdit={workspace.canEdit}
+          onEdit={edits.open}
+        />
       )}
       {tab === "details" && (
-        <section className="panel">
-          <h2>Calculation and policy details</h2>
-          {ready && state.saved && <RecordingDetails view={state.saved.view} />}
-          {assessment ? (
-            <>
-              <p>
-                Policy version:{" "}
-                <strong>{assessment.policy_snapshot.version}</strong>
-              </p>
-              <p>
-                K-1 comparison periods:{" "}
-                {assessment.k1_history_periods
-                  .map((p, i) => periodLabel(p, i))
-                  .join(" / ")}
-              </p>
-              <h3>Current facts</h3>
-              {Object.values(assessment.current_facts).map((m) => (
-                <TraceDetail
-                  key={m.fact_id}
-                  metric={m}
-                  assessment={assessment}
-                />
-              ))}
-              <h3>
-                Selected historical period:{" "}
-                {periodLabel(input!.years[index], index)}
-              </h3>
-              {(
-                [
-                  "gross_profit",
-                  "ordinary_business_income",
-                  "ebitda",
-                  "k1_distribution_ratio",
-                ] as const
-              ).map((key) => (
-                <TraceDetail
-                  key={key}
-                  metric={assessment.historical_spread[index][key]}
-                  assessment={assessment}
-                />
-              ))}
-              <h3>Guarantor contributions</h3>
-              {assessment.guarantor_contributions.length ? (
-                assessment.guarantor_contributions.map((g) => (
-                  <div key={g.guarantor_index}>
-                    <h4>{g.name}</h4>
-                    {[g.business_ebitda, g.outside_income, g.personal_debt].map(
-                      (m) => (
-                        <TraceDetail
-                          key={m.fact_id}
-                          metric={m}
-                          assessment={assessment}
-                        />
-                      ),
-                    )}
-                  </div>
-                ))
-              ) : (
-                <p>Business-only fallback; no guarantor contributions.</p>
-              )}
-              <details>
-                <summary>Complete policy snapshot</summary>
-                <pre>{JSON.stringify(assessment.policy_snapshot, null, 2)}</pre>
-              </details>
-              <p className="fine">
-                Calculation: {assessment.calculation_version} · serialization:{" "}
-                {assessment.serialization_version}
-                <br />
-                Content fingerprint (not document authentication):{" "}
-                <code>{assessment.fingerprint.value}</code>
-              </p>
-            </>
-          ) : (
-            <p>
-              {ready
-                ? "Legacy mode has decision factors but no dated spread or trace."
-                : "No current assessment is available."}
-            </p>
-          )}
-          {decision && (
-            <div>
-              <h3>Raw policy comparisons</h3>
-              {decision.factors.map((f) => (
-                <div className="operand" key={f.name}>
-                  <strong>{labels[f.name]}</strong>
-                  <span>
-                    Raw: {String(f.raw_value)} {f.comparison_operator}{" "}
-                    {String(f.threshold)} · decline floor{" "}
-                    {f.decline_threshold ?? "not applicable"}
-                  </span>
-                  <small>{f.source}</small>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+        <DetailsView
+          ready={ready}
+          saved={state.saved}
+          input={input}
+          assessment={assessment}
+          decision={decision}
+          index={index}
+        />
       )}
-      {tab === "memo" && (
-        <section className="panel memo">
-          <h2>Credit memo</h2>
-          {decision ? (
-            <>
-              <h3>Recommendation</h3>
-              <p>
-                {decision.outcome[0].toUpperCase() + decision.outcome.slice(1)}{" "}
-                for prototype demonstration based on the accepted inputs.
-              </p>
-              <h3>Primary factors considered</h3>
-              <ul>
-                {decision.factors.map((f) => (
-                  <li key={f.name}>
-                    {labels[f.name]}: {factorText(f)} —{" "}
-                    {f.passed === null
-                      ? "manual review required"
-                      : f.passed
-                        ? "meets configured policy"
-                        : "does not meet configured policy"}
-                  </li>
-                ))}
-              </ul>
-              <h3>Recorded reasons</h3>
-              {decision.reasons.length ? (
-                <ul>
-                  {decision.reasons.map((r, i) => (
-                    <li key={i}>{r.message}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No additional reasons returned.</p>
-              )}
-            </>
-          ) : (
-            <p>No current decision is available.</p>
-          )}
-          <p className="fine">{disclaimer}</p>
-        </section>
+      {tab === "memo" && <MemoView decision={decision} />}
+      {tab === "history" && (
+        <HistoryView
+          saved={state.saved}
+          ready={ready}
+          history={state.history}
+          input={input}
+          onOpen={(locator) => void workspace.openSaved(locator)}
+        />
       )}
-      {tab === "history" &&
-        (state.saved ? (
-          <SavedHistory
-            saved={state.saved}
-            active={ready}
-            onOpen={(locator) => void workspace.openSaved(locator)}
-          />
-        ) : (
-          <section className="panel memo">
-            <h2>Session edit history</h2>
-            <p>
-              Resets on reload. Actor: demonstration analyst; timestamps are
-              local and unverified.
-            </p>
-            {state.history.length === 0 ? (
-              <p>No applied edits this session.</p>
-            ) : (
-              state.history.map((e, i) => (
-                <div className="audit" key={i}>
-                  <strong>{e.path}</strong>
-                  <span>
-                    {e.prior} → {e.next}
-                  </span>
-                  <small>
-                    {e.rationale} · {e.at}
-                  </small>
-                </div>
-              ))
-            )}
-            {input && "overrides" in input && !!input.overrides?.length && (
-              <>
-                <h3>Unverified imported history</h3>
-                {input.overrides.map((e, i) => (
-                  <div className="audit imported" key={i}>
-                    <strong>{e.field}</strong>
-                    <span>
-                      {String(e.prior_value)} → {String(e.new_value)}
-                    </span>
-                    <small>
-                      {e.rationale} · supplied actor {e.actor} · {e.at}
-                    </small>
-                  </div>
-                ))}
-              </>
-            )}
-          </section>
-        ))}
-      {editing && (
+      {edits.editing && (
         <EditDialog
-          key={`${editing.path}:${state.id}`}
+          key={`${edits.editing.path}:${state.id}`}
           restoreFocus={opener.current}
-          field={editing}
+          field={edits.editing}
           saved={!!state.saved}
-          proposal={proposal}
-          onCancel={() => {
-            setEditing(null);
-            setProposal(undefined);
-          }}
-          onSubmit={edit}
+          proposal={edits.proposal}
+          onCancel={edits.cancel}
+          onSubmit={edits.submit}
         />
       )}
       {saving && accepted?.mode === "dated" && (

@@ -4,6 +4,7 @@ import type {
 } from "@streamlit/component-v2-lib";
 import { createRoot, type Root } from "react-dom/client";
 import App from "./App";
+import { ThemeRoot } from "./ThemeRoot";
 import { EmbeddedTransport } from "./embeddedTransport";
 import type { HostRequest } from "./embeddedTransport";
 import { configureEmbeddedTransport } from "./transport";
@@ -42,16 +43,18 @@ const render: FrontendRenderer<State, Data> = ({
     mounted = { root, transport };
     mounts.set(parentElement, mounted);
     root.render(
-      <div className="embeddedWorkspace">
-        <div className="hostingNotice">
-          <span>TESTING WORKSPACE</span>
-          <span>
-            Synthetic data only · saved test cases may reset when the host
-            restarts
-          </span>
+      <ThemeRoot>
+        <div className="embeddedWorkspace">
+          <div className="hostingNotice">
+            <span>TESTING WORKSPACE</span>
+            <span>
+              Synthetic data only · saved test cases may reset when the host
+              restarts
+            </span>
+          </div>
+          <App />
         </div>
-        <App />
-      </div>,
+      </ThemeRoot>,
     );
   }
   mounted.transport.publish = (requests) => setStateValue("requests", requests);
