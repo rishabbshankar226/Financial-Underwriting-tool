@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.responses import Response
 
+from .analysis_routes import install_analysis_openapi, owns_analysis_json
+from .analysis_routes import router as analysis_router
 from .assessment import assess_commercial
 from .assessment_contracts import CommercialAssessment, CommercialAssessmentRequest
 from .authentication import OperatorAuthenticationMiddleware
@@ -36,6 +38,7 @@ async def validate_raw_json(
         or owns_case_json(request.url.path)
         or owns_scenario_json(request.url.path)
         or owns_comparison_json(request.url.path)
+        or owns_analysis_json(request.url.path)
     ):
         # This route owns a bounded stream read, before any JSON buffering.
         return await call_next(request)
@@ -70,9 +73,11 @@ app.add_middleware(
 app.include_router(case_router)
 app.include_router(scenario_router)
 app.include_router(comparison_router)
+app.include_router(analysis_router)
 install_case_openapi(app)
 install_scenario_openapi(app)
 install_comparison_openapi(app)
+install_analysis_openapi(app)
 install_contract_openapi(app, (CommercialAssessmentRequest, CommercialRequest, ConsumerRequest, SBACase))
 
 
