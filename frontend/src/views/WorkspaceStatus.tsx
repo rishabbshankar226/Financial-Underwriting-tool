@@ -1,3 +1,4 @@
+import { PagedJson } from "../components/PagedJson";
 import type { Assessment } from "../contracts";
 import type { StoredCase } from "../caseContracts";
 import type { Locator } from "../caseRecovery";
@@ -85,13 +86,13 @@ export function WorkspaceStatus({
   );
 }
 
-/** A stored record this build can show but not recalculate. */
+/** A stored record this build can show but not recalculate, paged so a large original never floods the view. */
 export function CompatibilityPanel({ view }: { view: StoredCase }) {
   return (
     <section className="panel compatibility">
       <h2>Original stored assessment</h2>
       <p>{view.compatibility}</p>
-      <pre>{JSON.stringify(view.snapshot, null, 2)}</pre>
+      <PagedJson value={view.snapshot} className="compatibilityJson" title="Original stored JSON" noun="record" />
     </section>
   );
 }

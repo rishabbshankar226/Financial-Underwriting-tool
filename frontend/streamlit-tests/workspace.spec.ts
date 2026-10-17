@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { openView } from "../tests/testCredentials";
+import { enterWorkspace, moreAction, openView } from "../tests/testCredentials";
 
 test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews a scenario", async ({
   page,
@@ -11,12 +11,18 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
       errors.push(message.text());
   });
   await page.goto("/");
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
   await expect(page.locator(".hostingNotice")).toContainText(
     "Synthetic data only",
   );
+  // The analysis reaches the workspace through the bridge: its cushions fill the KPI tiles.
+  await expect(
+    page.locator(".kpiTile").filter({ hasText: "Business DSCR" }),
+  ).toContainText("Cushion +1.88x");
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator(".hostingNotice").scrollIntoViewIfNeeded();
   await page.screenshot({
@@ -90,6 +96,8 @@ test("an acknowledged write with retained recovery tracking can be retried after
     };
   });
   await page.goto("/");
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
@@ -150,6 +158,8 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
   browser,
 }) => {
   await page.goto("/");
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
@@ -181,6 +191,8 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
   try {
     const other = await context.newPage();
     await other.goto("http://127.0.0.1:8501");
+    await expect(other.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+    await enterWorkspace(other, { timeout: 30_000 });
     await expect(other.locator(".decision strong")).toHaveText("APPROVE", {
       timeout: 30_000,
     });
@@ -194,12 +206,18 @@ test("the embedded theme choice is namespaced and leaves the Streamlit page unto
   page,
 }) => {
   await page.goto("/");
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
   await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "light");
-  await page.getByRole("button", { name: "Dark theme", exact: true }).click();
+  await moreAction(page, "theme");
   await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "dark");
+  // The theme toggle leaves the menu open; a click outside it, inside the shadow root, closes it.
+  await expect(page.locator(".moreMenu")).toBeVisible();
+  await page.getByRole("heading", { level: 1 }).click();
+  await expect(page.locator(".moreMenu")).toHaveCount(0);
   expect(
     await page.evaluate(() => [
       localStorage.getItem("spreadline.embedded.spreadline.theme.v1"),
@@ -208,6 +226,9 @@ test("the embedded theme choice is namespaced and leaves the Streamlit page unto
     ]),
   ).toEqual(["dark", null, null]);
   await page.reload();
+  // An unsaved example leaves nothing to restore, so the reload returns to the start screen.
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });

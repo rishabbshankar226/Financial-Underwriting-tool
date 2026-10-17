@@ -10,13 +10,8 @@ export default function AccessGate() {
   const [loading, setLoading] = useState(false);
   const request = useRef<AbortController | null>(null);
   useEffect(() => () => { request.current?.abort(); }, []);
-  if (access.connected) return <>
-    <div className="accessBar">
-      <span>Connected to the configured operator API</span>
-      <button onClick={() => { clearApiCredential(); setError(""); }}>Disconnect workspace</button>
-    </div>
-    <App />
-  </>;
+  // Disconnect lives in the workspace's More menu; it clears the credential and returns here.
+  if (access.connected) return <App onDisconnect={() => { clearApiCredential(); setError(""); }} />;
   return <main className="accessGate">
     <section className="panel" aria-labelledby="access-title">
       <div className="eyebrow">SPREADLINE / API ACCESS</div>

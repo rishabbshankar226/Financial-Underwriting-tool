@@ -3,6 +3,7 @@ import { CaseApiError, caseError, writeCase } from "./caseApi";
 import { browserStorage, clearRecovery, discardRecovery, guardPendingWrite, readRecovery, saveRecovery, type PendingWrite } from "./caseRecovery";
 import { sameJson, type StoredCase } from "./caseContracts";
 import { writeComparison } from "./scenarioApi";
+import { abortBackgroundRequests } from "./requestPriority";
 import type { StoredComparison } from "./scenarioContracts";
 export type SavedReceipt = {
     kind: "case";
@@ -34,12 +35,15 @@ export class SavedWriteController {
     start(operation: PendingWrite): Promise<SavedReceipt> {
         if (this.state.operation || this.state.inFlight || this.state.recoveryError)
             throw new Error("Resolve this tab's existing saved write first.");
+        // A write never waits behind background reads such as analysis.
+        abortBackgroundRequests();
         return this.submit(operation);
     }
     retry(): Promise<SavedReceipt> {
         const op = this.state.operation;
         if (!op || this.state.inFlight || (this.state.writeError?.status === 409 && !this.state.writeError.certain))
             throw new Error("Review this pending operation before retrying.");
+        abortBackgroundRequests();
         return this.submit(op);
     }
     private submit(value: PendingWrite): Promise<SavedReceipt> {

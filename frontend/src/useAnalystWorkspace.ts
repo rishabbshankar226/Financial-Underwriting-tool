@@ -24,13 +24,14 @@ import {
 } from "./caseRecovery";
 import {
   applyEdit,
-  initialWorkspace,
+  initialWorkspaceFor,
   transition,
   type Draft,
   type EditableField,
   type EditEvent,
   type Workspace,
 } from "./workspace";
+import { evaluationFailureMessage, importFailureMessage } from "./errorCopy";
 
 import { useSavedWrite, type SavedReceipt } from "./useSavedWrite";
 import type { ScenarioPreview, StoredComparison } from "./scenarioContracts";
@@ -41,7 +42,8 @@ type Conflict = {
   error: string;
 };
 export function useAnalystWorkspace() {
-  const [state, dispatch] = useReducer(transition, initialWorkspace);
+  // The first render already shows the start screen, a reopening saved case or pending-write recovery.
+  const [state, dispatch] = useReducer(transition, null, () => initialWorkspaceFor(browserStorage()));
   const current = useRef(state);
   current.current = state;
   const sequence = useRef(0),
@@ -94,11 +96,7 @@ export function useAnalystWorkspace() {
         dispatch({ type: "success", id, accepted });
     } catch (error) {
       if (id === sequence.current && !controller.signal.aborted)
-        dispatch({
-          type: "failure",
-          id,
-          error: `Invalid fixture or unavailable backend: ${error instanceof Error ? error.message : String(error)}`,
-        });
+        dispatch({ type: "failure", id, error: evaluationFailureMessage(error) });
     }
   }
   function demo(mode: "dated" | "legacy") {
@@ -136,11 +134,7 @@ export function useAnalystWorkspace() {
       );
     } catch (error) {
       if (id === sequence.current)
-        dispatch({
-          type: "failure",
-          id,
-          error: `Invalid fixture: ${error instanceof Error ? error.message : String(error)}`,
-        });
+        dispatch({ type: "failure", id, error: importFailureMessage(error) });
     }
   }
   async function openSaved(locator: Locator) {
@@ -435,21 +429,13 @@ export function useAnalystWorkspace() {
   }
   useEffect(() => {
     mounted.current = true;
+    // A pending case write already shows its recovery state; with nothing to restore the tab stays idle.
     const pending = writes.controller.snapshot().operation;
-    if (pending && pending.kind !== "comparison") {
-      const id = begin("Pending saved write", null, "write");
-      dispatch({
-        type: "failure",
-        id,
-        error:
-          "A saved write needs confirmation. Retry the exact write; no proposal is accepted locally yet.",
-      });
-    } else {
+    if (!pending || pending.kind === "comparison") {
       const locator = readLocator(browserStorage());
       if (locator) void openSaved(locator);
       else if (pending?.kind === "comparison")
         void openSaved({ caseId: pending.caseId, revision: pending.baselineRevision });
-      else demo("dated");
     }
     return () => {
       mounted.current = false;

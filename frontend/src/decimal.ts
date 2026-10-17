@@ -126,6 +126,22 @@ export function formatMultiple(
   return `${formatDecimal(value, shown, true)}x`;
 }
 
+/** Presentation-only chart geometry: |value| ÷ |max| × units, rounded half-even and capped at units, carrying
+ * the value's sign. The result sizes an SVG shape and is never displayed as a figure; a zero max draws nothing. */
+export function scaledUnits(value: string, max: string, units: number): bigint {
+  if (!Number.isSafeInteger(units) || units < 1 || units > 10000) throw new Error("Unsupported drawing units.");
+  const a = parts(value), b = parts(max), scale = Math.max(a.scale, b.scale);
+  const magnitude = (n: bigint) => (n < 0n ? -n : n);
+  const numerator = magnitude(a.coefficient) * TEN ** BigInt(scale - a.scale) * BigInt(units);
+  const denominator = magnitude(b.coefficient) * TEN ** BigInt(scale - b.scale);
+  if (denominator === 0n) return 0n;
+  let result = numerator / denominator;
+  const remainder = numerator % denominator;
+  if (remainder * 2n > denominator || (remainder * 2n === denominator && result % 2n === 1n)) result++;
+  if (result > BigInt(units)) result = BigInt(units);
+  return a.coefficient < 0n ? -result : result;
+}
+
 export type AmountParseError =
   | "empty" | "invalid" | "suffix" | "exponent" | "grouping" | "sign" | "parentheses" | "percent" | "digits" | "range"
   | "negative";

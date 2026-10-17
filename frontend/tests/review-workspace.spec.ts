@@ -1,4 +1,4 @@
-import { connectWorkspace, openView, TEST_API_ORIGIN } from "./testCredentials";
+import { connectWorkspace, moreAction, openCaseBrowser, openView, TEST_API_ORIGIN } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { APIRequestContext, Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -25,7 +25,7 @@ async function open(page: Page, s: any, record?: any, pending = false) {
   }, { s, record, key: LOCATOR_KEY, comparisonKey: COMPARISON_LOCATOR_KEY, base: TEST_API_ORIGIN });
   await page.goto("/"); await connectWorkspace(page);
   if (pending) {
-    await page.getByRole("button", { name: "Saved cases", exact: true }).click();
+    await openCaseBrowser(page);
     await page.getByRole("button", { name: `Open ${s.normalized_input.borrower_name} case ${s.case_id}`, exact: true }).click();
   }
   await expect(page.locator(".savedContext")).toContainText(s.run_id);
@@ -98,7 +98,8 @@ test("known storage with unsupported financial definitions exports the original 
 test("pending recovery remains byte-identical while a current original is exported", async ({ page, request }) => {
   const original = await create(request), pending = JSON.stringify(makeCreate(input, "Pending synthetic other case"));
   await page.addInitScript(({ key, pending }) => sessionStorage.setItem(key, pending), { key: RECOVERY_KEY, pending });
-  let posts: string[] = []; page.on("request", r => { if (r.method() === "POST") posts.push(new URL(r.url()).pathname); });
+  // The read-only analysis route may run while a write is pending; nothing else may POST.
+  let posts: string[] = []; page.on("request", r => { if (r.method() === "POST" && !new URL(r.url()).pathname.endsWith("/analysis")) posts.push(new URL(r.url()).pathname); });
   await open(page, original.snapshot, undefined, true);
   await expect(page.locator(".reviewWorkspace")).toContainText("Pending work is excluded");
   const parsed = JSON.parse((await download(page)).text);
@@ -128,7 +129,7 @@ test("failed read with a stale saved object disables export until an original is
 });
 test("legacy input has no saved-original JSON export", async ({ page }) => {
   await page.goto("/"); await connectWorkspace(page); await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "Legacy Alpine demo", exact: true }).click();
+  await moreAction(page, "legacyExample");
   await expect(page.locator("header")).toContainText("Legacy");
   await openView(page, "review");
   await expect(page.getByRole("button", { name: "Download JSON review package", exact: true })).toBeDisabled();
@@ -153,7 +154,7 @@ for (const action of ["close", "inclusion", "new selection"] as const) test(`lat
   await expect.poll(() => page.evaluate(() => typeof (window as any).__releaseReview)).toBe("function");
   if (action === "close") await openView(page, "spread");
   else if (action === "inclusion") await page.getByLabel("Include this retained comparison").check();
-  else { await page.getByRole("button", { name: "Dated Alpine demo", exact: true }).click(); await expect(page.locator(".savedContext")).toHaveCount(0); }
+  else { await moreAction(page, "example"); await expect(page.locator(".savedContext")).toHaveCount(0); }
   await page.evaluate(() => (window as any).__releaseReview());
   await expect(page.getByRole("link", { name: "Download prepared JSON", exact: true })).toHaveCount(0);
   expect(downloads).toBe(0);

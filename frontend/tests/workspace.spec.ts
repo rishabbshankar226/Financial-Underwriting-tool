@@ -1,4 +1,5 @@
-import { connectWorkspace, openView } from "./testCredentials";
+import { connectWorkspace, moreAction, openView } from "./testCredentials";
+import { rejectedCaseLead } from "../src/errorCopy";
 import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 const alpine = JSON.parse(
@@ -11,9 +12,7 @@ const alpine = JSON.parse(
 async function gotoLegacy(page: import("@playwright/test").Page) {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page
-    .getByRole("button", { name: "Legacy Alpine demo", exact: true })
-    .click();
+  await moreAction(page, "legacyExample");
   await expect(
     page.getByText("Legacy · undated input", { exact: true }),
   ).toBeVisible();
@@ -63,7 +62,7 @@ test("overrides recalculate decision, coverage, memo and audit", async ({
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(
     page.locator(".metric").filter({ hasText: /^DSCR/ }),
-  ).not.toContainText("3.1349x");
+  ).not.toContainText("3.13x");
   await openView(page, "memo");
   await expect(page.locator(".memo")).toContainText("Decline");
   await expect(page.locator(".memo")).not.toContainText(
@@ -127,7 +126,7 @@ test("JSON upload loads data and invalid upload is reported", async ({
       mimeType: "application/json",
       buffer: Buffer.from("{}"),
     });
-  await expect(page.getByRole("alert")).toContainText("Invalid fixture");
+  await expect(page.getByRole("alert")).toContainText(rejectedCaseLead);
 });
 
 test("UCA card displays the configured cash-flow floor from the API", async ({

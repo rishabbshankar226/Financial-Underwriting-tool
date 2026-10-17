@@ -1,5 +1,6 @@
 import type { Factor, Metric } from "./contracts";
 import {
+  compareDecimal,
   formatAccounting,
   formatDecimal,
   formatMultiple,
@@ -52,6 +53,34 @@ export function metricValueText(
   }
   if (kind === "percent") return formatRatioPercent(raw, 1);
   return formatMultiple(raw, { threshold });
+}
+
+export const WITH_CENTS: MoneyDisplay = { scale: "units", cents: true };
+
+/** A signed distance from a policy line, rounded once from the raw value: "+1.88x", "-0.12x", "+$385,000"
+ * or "($12,000)". Multiples keep enough places that a positive cushion never reads as zero. */
+export function signedMetricText(metric: Metric, kind: "multiple" | "money"): string {
+  if (metric.status !== "available" || !isDecimal(metric.raw_value)) return "Not applicable";
+  const raw = metric.raw_value,
+    positive = compareDecimal(raw, "0") > 0;
+  if (kind === "money") return `${positive ? "+" : ""}${moneyText(raw)}`;
+  return `${positive ? "+" : ""}${formatMultiple(raw, { threshold: "0" })}`;
+}
+
+/** A policy factor's measured value: UCA in whole dollars, coverage as a multiple that keeps enough places
+ * to compare with its threshold as the exact value does, and K-1 history as its category. */
+export function factorValueText(factor: Factor): string {
+  const value = factor.raw_value;
+  if (value === null) return "Not applicable";
+  if (!isDecimal(value)) return String(value);
+  if (factor.name === "uca_positive") return moneyText(value);
+  return formatMultiple(value, { threshold: isDecimal(factor.threshold) ? factor.threshold : undefined });
+}
+
+/** A ratio metric shown as a percentage of its base, rounded once from the raw value. */
+export function ratioPercentText(metric: Metric, places = 1): string {
+  if (metric.status !== "available" || !isDecimal(metric.raw_value)) return "Not applicable";
+  return formatRatioPercent(metric.raw_value, places);
 }
 
 /** The exact stored value as the editor shows it: percentages in percent units, nothing rounded. */
