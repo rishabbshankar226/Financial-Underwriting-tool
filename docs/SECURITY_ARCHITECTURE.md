@@ -46,6 +46,12 @@ an appropriate host/browser-session policy. A compromised same-origin script,
 browser extension or host can read page memory and data; authentication does
 not defend against a compromised client or host.
 
+The only durable browser value is the display theme. Local storage key
+`spreadline.theme.v1` holds `light` or `dark` (under the `spreadline.embedded.`
+prefix inside the Streamlit host). It never contains a credential, case data or
+journal content, it is read and written only through `transport.ts`, and an
+unreadable store leaves the page light. Clearing site data resets it.
+
 ## Implemented controls
 
 | Control | Implementation | Scope |
