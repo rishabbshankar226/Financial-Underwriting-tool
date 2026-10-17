@@ -25,6 +25,7 @@ import { BrandBar, CaseHeader } from "./views/WorkspaceHeader";
 import { PrototypeNotice } from "./views/PrototypeNotice";
 import { Toolbar } from "./views/Toolbar";
 import { CompatibilityPanel, ContextStrip, WorkspaceStatus } from "./views/WorkspaceStatus";
+import { ViewTabs, type WorkspaceTab } from "./views/ViewTabs";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
 import {
@@ -76,9 +77,7 @@ export default function App() {
   const workspace = useAnalystWorkspace();
   const scenarios = useScenarioWorkspace(workspace);
   const { state, submit, demo, upload } = workspace;
-  const [tab, setTab] = useState<
-    "spread" | "assumptions" | "details" | "memo" | "history" | "scenarios" | "review"
-  >("spread");
+  const [tab, setTab] = useState<WorkspaceTab>("spread");
   const [selectedPeriod, setSelectedPeriod] = useState(1);
   const [saving, setSaving] = useState(false),
     [showCases, setShowCases] = useState(false),
@@ -203,21 +202,7 @@ export default function App() {
       )}
       {assessment && <ContextStrip assessment={assessment} />}
       {assessment && <AssessmentSummary assessment={assessment} />}
-      <nav className="workspaceNav" aria-label="Workspace views">
-        {(["spread", "assumptions", "details", "memo", "history", "scenarios", "review"] as const).map(
-          (value) => (
-            <button
-              className={tab === value ? "active" : ""}
-              aria-pressed={tab === value}
-              aria-current={tab === value ? "page" : undefined}
-              onClick={() => setTab(value)}
-              key={value}
-            >
-              {value === "scenarios" ? "Scenarios" : value === "review" ? "Review" : value}
-            </button>
-          ),
-        )}
-      </nav>
+      <ViewTabs tab={tab} onSelect={setTab} />
       {tab === "scenarios" && <Scenarios model={scenarios}
         onSaveBaseline={(element) => { if (workspace.canSave) { opener.current = element; setSaving(true); } }}
         onOpenBaseline={(locator) => void workspace.openSaved(locator)}/>}
