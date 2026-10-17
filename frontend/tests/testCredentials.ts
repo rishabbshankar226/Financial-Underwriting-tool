@@ -9,3 +9,19 @@ export async function connectWorkspace(page: Page): Promise<void> {
   await page.getByRole("button", { name: "Connect workspace", exact: true }).click();
   await expect(page.getByRole("button", { name: "Disconnect workspace", exact: true })).toBeVisible();
 }
+
+export type WorkspaceView = "spread" | "assumptions" | "details" | "memo" | "history" | "scenarios" | "review";
+const viewNames: Record<WorkspaceView, string> = {
+  spread: "spread",
+  assumptions: "assumptions",
+  details: "details",
+  memo: "memo",
+  history: "history",
+  scenarios: "Scenarios",
+  review: "Review",
+};
+
+/** Workspace navigation is centralized so view renames and tab semantics change in one place. */
+export async function openView(page: Page, view: WorkspaceView): Promise<void> {
+  await page.getByRole("button", { name: viewNames[view], exact: true }).click();
+}

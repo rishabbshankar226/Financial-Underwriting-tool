@@ -1,4 +1,4 @@
-import { connectWorkspace } from "./testCredentials";
+import { connectWorkspace, openView } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -35,7 +35,7 @@ async function save(page: Page, rationale = "Synthetic creation") {
   return snapshot;
 }
 async function editRevenue(page: Page, value: string, rationale: string) {
-  await page.getByRole("button", { name: "spread", exact: true }).click();
+  await openView(page, "spread");
   await page
     .getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -74,7 +74,7 @@ test("real save/reload/edit/history reads original runs without stateless recalc
   await editRevenue(page, "1", "Synthetic revenue revision");
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(page.locator(".savedContext")).toContainText("Revision 2");
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(page.locator(".savedEvent")).toContainText("4200000 → 1");
   await expect(page.locator(".savedEvent")).toContainText("2025-01-01");
   await page
@@ -88,7 +88,7 @@ test("real save/reload/edit/history reads original runs without stateless recalc
     path: info.outputPath("historical-revision.png"),
     fullPage: true,
   });
-  await page.getByRole("button", { name: "spread", exact: true }).click();
+  await openView(page, "spread");
   await expect(
     page.getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -227,7 +227,7 @@ test("saved controls retain keyboard focus, fit mobile and replay without changi
     if (["error", "warning"].includes(m.type())) errors.push(m.text());
   });
   const snapshot = await save(page);
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await page.getByRole("button", { name: "Check replay", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText("Matched");
   await expect(page.locator(".savedContext")).toContainText(snapshot.run_id);
@@ -338,7 +338,7 @@ test("lost edit retry after reload identifies its old receipt when head advanced
     committedEtag = response.headers().etag;
     await route.abort();
   });
-  await page.getByRole("button", { name: "assumptions", exact: true }).click();
+  await openView(page, "assumptions");
   await page
     .getByRole("button", { name: "Annual nominal rate", exact: true })
     .click();
@@ -382,7 +382,7 @@ test("lost edit retry after reload identifies its old receipt when head advanced
   await expect(page.locator(".savedContext")).toContainText(
     "Latest known revision 3",
   );
-  await page.getByRole("button", { name: "assumptions", exact: true }).click();
+  await openView(page, "assumptions");
   await expect(
     page.getByRole("button", { name: "Annual nominal rate", exact: true }),
   ).toBeDisabled();
@@ -631,7 +631,7 @@ test("saved pagination reads more than one page of cases and revisions", async (
     .getByRole("button", { name: /^Open / })
     .click();
   await expect(page.locator(".savedContext")).toContainText("Revision 31");
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(
     page.getByRole("button", { name: "Open revision 1", exact: true }),
   ).toHaveCount(0);
@@ -754,7 +754,7 @@ test("unsaved edits preserve the existing session rationale behavior", async ({
     .getByRole("button", { name: "Evaluate edit", exact: true })
     .click();
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(page.locator(".audit")).toContainText("x".repeat(2001));
 });
 
@@ -923,7 +923,7 @@ test("saved names and rationales render as text and long content fits mobile", a
   const snapshot = await response.json();
   await openSaved(page, snapshot.case_id);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(page.locator(".savedEvent")).toContainText(rationale);
   expect(
     await page.evaluate(() => (window as Window & {savedTextExecuted?: boolean}).savedTextExecuted),
@@ -1020,7 +1020,7 @@ test("mismatch replay stays separate and a delayed old replay cannot cross revis
       });
     },
   );
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await page.getByRole("button", { name: "Check replay", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText("Mismatch");
   await expect(page.locator(".replayResult")).toContainText(

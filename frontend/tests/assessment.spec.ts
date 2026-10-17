@@ -1,4 +1,4 @@
-import { connectWorkspace } from "./testCredentials";
+import { connectWorkspace, openView } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 
 test("dated workspace shows all periods, server facts and policy trace", async ({
@@ -19,7 +19,7 @@ test("dated workspace shows all periods, server facts and policy trace", async (
   await expect(
     page.getByText("Coverage period: 2025-01-01 – 2025-12-31", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "details", exact: true }).click();
+  await openView(page, "details");
   await expect(
     page.getByText("prototype-2026-10-03", { exact: true }),
   ).toBeVisible();
@@ -41,7 +41,7 @@ test("malformed import invalidates the result and memo", async ({ page }) => {
     buffer: Buffer.from("{"),
   });
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
-  await page.getByRole("button", { name: "memo", exact: true }).click();
+  await openView(page, "memo");
   await expect(page.locator(".memo")).not.toContainText(
     "Approve for prototype",
   );
@@ -68,7 +68,7 @@ test("failed edits remain drafts and retry records the edit once", async ({
     .getByRole("button", { name: "Evaluate edit", exact: true })
     .click();
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(
     page.getByText("No applied edits this session.", { exact: true }),
   ).toBeVisible();
@@ -194,7 +194,7 @@ test("dialog validation, keyboard focus and cancellation preserve the accepted r
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(edit).toBeFocused();
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(
     page.getByText("No applied edits this session.", { exact: true }),
   ).toBeVisible();
@@ -212,7 +212,7 @@ test("incomplete successful response is unavailable and never becomes a memo", a
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   await expect(page.getByRole("alert")).toContainText("policy");
-  await page.getByRole("button", { name: "memo", exact: true }).click();
+  await openView(page, "memo");
   await expect(page.locator(".memo")).toContainText("No current decision");
 });
 
@@ -256,7 +256,7 @@ test("desktop and mobile workflow fits and has no application console errors", a
     { width: 390, height: 844 },
   ]) {
     await page.setViewportSize(viewport);
-    await page.getByRole("button", { name: "spread", exact: true }).click();
+    await openView(page, "spread");
     await expect
       .poll(() =>
         page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
@@ -266,7 +266,7 @@ test("desktop and mobile workflow fits and has no application console errors", a
       path: testInfo.outputPath(`spread-${viewport.width}.png`),
       fullPage: true,
     });
-    await page.getByRole("button", { name: "details", exact: true }).click();
+    await openView(page, "details");
     await page
       .locator("details")
       .filter({ hasText: "current.dscr" })
@@ -282,7 +282,7 @@ test("desktop and mobile workflow fits and has no application console errors", a
       path: testInfo.outputPath(`details-${viewport.width}.png`),
       fullPage: true,
     });
-    await page.getByRole("button", { name: "spread", exact: true }).click();
+    await openView(page, "spread");
     await page
       .getByRole("button", {
         name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -310,7 +310,7 @@ test("assumption rate and signed working-capital edits use their API units", asy
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "assumptions", exact: true }).click();
+  await openView(page, "assumptions");
   await page
     .getByRole("button", { name: "Annual nominal rate", exact: true })
     .click();
@@ -332,7 +332,7 @@ test("assumption rate and signed working-capital edits use their API units", asy
   await expect(
     page.locator(".assumption").filter({ hasText: "AR increase" }),
   ).toContainText("-1,000");
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(page.locator(".audit")).toHaveCount(2);
   await expect(page.locator(".audit").first()).toContainText("0.105 → 0.125");
 });
@@ -354,7 +354,7 @@ test("unavailable ratios and absent guarantors have explicit explanations", asyn
   await expect(
     page.locator(".metric").filter({ hasText: /^DSCR/ }),
   ).toContainText("Not applicable");
-  await page.getByRole("button", { name: "details", exact: true }).click();
+  await openView(page, "details");
   await page
     .locator("details")
     .filter({ hasText: "current.dscr" })

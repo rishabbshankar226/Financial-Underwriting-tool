@@ -1,4 +1,4 @@
-import { connectWorkspace } from "./testCredentials";
+import { connectWorkspace, openView } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import { readFileSync } from "node:fs";
 const alpine = JSON.parse(
@@ -64,12 +64,12 @@ test("overrides recalculate decision, coverage, memo and audit", async ({
   await expect(
     page.locator(".metric").filter({ hasText: /^DSCR/ }),
   ).not.toContainText("3.1349x");
-  await page.getByRole("button", { name: "memo", exact: true }).click();
+  await openView(page, "memo");
   await expect(page.locator(".memo")).toContainText("Decline");
   await expect(page.locator(".memo")).not.toContainText(
     "Approve for prototype",
   );
-  await page.getByRole("button", { name: "history", exact: true }).click();
+  await openView(page, "history");
   await expect(page.locator(".audit")).toContainText(
     "Synthetic regression check",
   );
@@ -96,7 +96,7 @@ test("backend failures clear the previous decision", async ({ page }) => {
   await page.route("**/commercial/decision", (route) => route.abort());
   await override(page, "1");
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
-  await page.getByRole("button", { name: "memo", exact: true }).click();
+  await openView(page, "memo");
   await expect(page.locator(".memo")).not.toContainText("Approve");
 });
 

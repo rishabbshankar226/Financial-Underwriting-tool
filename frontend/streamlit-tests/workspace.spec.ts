@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openView } from "../tests/testCredentials";
 
 test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews a scenario", async ({
   page,
@@ -48,7 +49,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
     { timeout: 30_000 },
   );
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
-  await page.getByRole("button", { name: "Scenarios", exact: true }).click();
+  await openView(page, "scenarios");
   await page.getByLabel("Scenario 1 preset").selectOption("revenue");
   await page
     .getByLabel("Scenario 1 rationale")
