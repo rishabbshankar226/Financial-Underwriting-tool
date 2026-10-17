@@ -9,7 +9,9 @@ import {
   workingCapitalPeriod,
 } from "./fieldCatalog";
 import { legacyFactorText as factorText, legacyMoney as money } from "./format";
-import type { EditableField, EditEvent } from "./workspace";
+import type { EditableField } from "./workspace";
+import { selectWorkspaceView } from "./workspaceSelectors";
+import { useEditController } from "./useEditController";
 import EditDialog from "./EditDialog";
 import { metricText } from "./metricDisplay";
 import { queryWorkspace } from "./workspaceDom";
@@ -74,27 +76,17 @@ export default function App() {
     "spread" | "assumptions" | "details" | "memo" | "history" | "scenarios" | "review"
   >("spread");
   const [selectedPeriod, setSelectedPeriod] = useState(1);
-  const [editing, setEditing] = useState<EditableField | null>(null);
-  const [proposal, setProposal] = useState<EditEvent | undefined>();
   const [saving, setSaving] = useState(false),
     [showCases, setShowCases] = useState(false),
     [discarding, setDiscarding] = useState(false);
   const opener = useRef<HTMLElement | null>(null);
-  const ready = state.status === "ready",
-    accepted = state.accepted,
-    input = accepted?.input;
-  const assessment =
-    ready && accepted?.mode === "dated" ? accepted.result : null;
-  const decision =
-    ready && accepted
-      ? accepted.mode === "dated"
-        ? accepted.result.decision
-        : accepted.result
-      : null;
+  const edits = useEditController(opener, workspace.edit);
+  const view = selectWorkspaceView(state);
+  const { ready, accepted, input, assessment, decision } = view;
   const index = input ? Math.min(selectedPeriod, input.years.length - 1) : 0;
   useEffect(() => {
     if (state.status === "evaluating") {
-      setEditing(null);
+      edits.dismiss();
       setSaving(false);
     }
     if (state.status === "ready" && state.resetPeriod && state.accepted)
@@ -102,22 +94,13 @@ export default function App() {
     if (state.status === "ready" && state.saved?.view.compatibility)
       setTab("history");
   }, [state.id, state.status, state.accepted, state.resetPeriod]);
-  function edit(event: EditEvent) {
-    if (!editing) return;
-    workspace.edit(event, editing);
-    setEditing(null);
-    setProposal(undefined);
-  }
   function editButton(editable: EditableField, content: ReactNode, label?: string) {
     return (
       <button
         className="rowEdit"
         aria-label={label}
         disabled={!workspace.canEdit}
-        onClick={(event) => {
-          opener.current = event.currentTarget;
-          setEditing(editable);
-        }}
+        onClick={(event) => edits.open(editable, event.currentTarget)}
       >
         {content}
       </button>
@@ -166,30 +149,8 @@ export default function App() {
       <header>
         <div>
           <div className="eyebrow">SPREADLINE / CREDIT WORKSPACE</div>
-          <h1>
-            {ready
-              ? (input?.borrower_name ??
-                (typeof state.saved?.view.snapshot.normalized_input
-                  .borrower_name === "string"
-                  ? state.saved.view.snapshot.normalized_input.borrower_name
-                  : "Saved case"))
-              : "Assessment workspace"}
-          </h1>
-          <p>
-            {ready
-              ? state.saved
-                ? "Saved dated assessment"
-                : accepted?.mode === "dated"
-                  ? "Dated assessment"
-                  : "Legacy · undated input"
-              : state.status === "evaluating"
-                ? state.action === "open"
-                  ? "Opening stored revision"
-                  : state.action === "write"
-                    ? "Waiting for accepted stored receipt"
-                    : "Evaluating selected draft"
-                : "Selected input unavailable"}
-          </p>
+          <h1>{view.title}</h1>
+          <p>{view.subtitle}</p>
         </div>
         <div
           className="decision"
@@ -197,22 +158,8 @@ export default function App() {
           aria-live="polite"
         >
           <span>Illustrative decision</span>
-          <strong>
-            {decision
-              ? decision.outcome.toUpperCase()
-              : state.status === "evaluating"
-                ? state.action === "open"
-                  ? "LOADING"
-                  : state.action === "write"
-                    ? "SAVING"
-                    : "CALCULATING"
-                : "UNAVAILABLE"}
-          </strong>
-          <small>
-            {decision
-              ? `${decision.policy_version} · illustrative score ${decision.score}`
-              : "A current accepted calculation is required"}
-          </small>
+          <strong>{view.decisionWord}</strong>
+          <small>{view.decisionNote}</small>
         </div>
       </header>
       <div className="warning environmentWarning">
@@ -287,11 +234,7 @@ export default function App() {
         }}
         onReview={(element) => {
           const review = workspace.reviewConflict();
-          if (review) {
-            opener.current = element;
-            setEditing(review.field);
-            setProposal(review.proposal);
-          }
+          if (review) edits.review(review.field, review.proposal, element);
         }}
       />
       {state.saved && (
@@ -303,15 +246,7 @@ export default function App() {
       )}
       {!ready && (
         <div className="pending" role="status">
-          <strong>
-            {state.status === "evaluating"
-              ? state.action === "open"
-                ? "Loading original stored assessment"
-                : state.action === "write"
-                  ? "Waiting for saved write confirmation"
-                  : "Evaluating draft"
-              : "No current result"}
-          </strong>
+          <strong>{view.pendingTitle}</strong>
           {state.draft && state.action === "evaluate" && (
             <p>
               Submitted draft: {state.draft.filename} · {state.draft.mode} ·{" "}
@@ -771,18 +706,15 @@ export default function App() {
             )}
           </section>
         ))}
-      {editing && (
+      {edits.editing && (
         <EditDialog
-          key={`${editing.path}:${state.id}`}
+          key={`${edits.editing.path}:${state.id}`}
           restoreFocus={opener.current}
-          field={editing}
+          field={edits.editing}
           saved={!!state.saved}
-          proposal={proposal}
-          onCancel={() => {
-            setEditing(null);
-            setProposal(undefined);
-          }}
-          onSubmit={edit}
+          proposal={edits.proposal}
+          onCancel={edits.cancel}
+          onSubmit={edits.submit}
         />
       )}
       {saving && accepted?.mode === "dated" && (
