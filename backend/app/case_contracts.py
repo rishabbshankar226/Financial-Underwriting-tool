@@ -4,12 +4,13 @@ from typing import Literal, Self
 
 from pydantic import Field, JsonValue, field_validator, model_validator
 
-from .assessment_contracts import CommercialAssessmentRequest, ContractModel
+from .assessment_contracts import CommercialAssessmentRequest, ContractModel, ISODate
 from .authentication import valid_actor
 from .field_errors import ContractValueError
-from .finance import FinancialDecimal, as_decimal
+from .finance import ExactFinancialDecimal, FinancialDecimal, ReportedDecimal, as_decimal
 
 STORAGE_VERSION: Literal["case-json-v1"] = "case-json-v1"
+LISTING_VERSION: Literal["case-listing-v2"] = "case-listing-v2"
 REPLAY_HEADER = "Idempotency-Replayed"
 
 
@@ -107,9 +108,16 @@ class CaseSummary(ContractModel):
     revision: int
     run_id: str
     recorded_at: str
+    # Head-run summaries exist only for the supported definition; archived definitions list as null.
+    definition_supported: bool
+    outcome: Literal["approve", "review", "decline"] | None
+    dscr: ReportedDecimal | None
+    requested_amount: ExactFinancialDecimal | None
+    assessment_as_of: ISODate | None
 
 
 class CasePage(ContractModel):
+    listing_version: Literal["case-listing-v2"] = LISTING_VERSION
     items: list[CaseSummary]
     next_cursor: str | None
 
