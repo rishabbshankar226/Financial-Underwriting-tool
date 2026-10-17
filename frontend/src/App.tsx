@@ -23,6 +23,7 @@ import { useScenarioWorkspace } from "./useScenarioWorkspace";
 import { writeComparisonLocator } from "./scenarioSelection";
 import { BrandBar, CaseHeader } from "./views/WorkspaceHeader";
 import { PrototypeNotice } from "./views/PrototypeNotice";
+import { Toolbar } from "./views/Toolbar";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
 import {
@@ -140,47 +141,19 @@ export default function App() {
       <BrandBar />
       <CaseHeader view={view} />
       <PrototypeNotice />
-      <div className="uploadbar">
-        <div className="actions">
-          <button onClick={() => demo("dated")}>Dated Alpine demo</button>
-          <button onClick={() => demo("legacy")}>Legacy Alpine demo</button>
-          <button
-            data-focus-fallback
-            aria-expanded={showCases}
-            onClick={() => setShowCases((value) => !value)}
-          >
-            Saved cases
-          </button>
-          <button
-            className="primary"
-            disabled={!workspace.canSave}
-            onClick={(event) => {
-              opener.current = event.currentTarget;
-              setSaving(true);
-            }}
-          >
-            Save case
-          </button>
-        </div>
-        <label>
-          Import synthetic JSON{" "}
-          <input
-            type="file"
-            accept=".json,application/json"
-            onChange={(e) => {
-              void upload(e.target.files?.[0]);
-              e.target.value = "";
-            }}
-          />
-        </label>
-        <span>{state.filename} · synthetic only</span>
-        {accepted?.mode === "legacy" && (
-          <span>
-            Saving requires a separately imported dated assessment with explicit
-            dates and units.
-          </span>
-        )}
-      </div>
+      <Toolbar
+        filename={state.filename}
+        legacy={accepted?.mode === "legacy"}
+        showCases={showCases}
+        canSave={workspace.canSave}
+        onDemo={demo}
+        onToggleCases={() => setShowCases((value) => !value)}
+        onSave={(element) => {
+          opener.current = element;
+          setSaving(true);
+        }}
+        onUpload={(file) => void upload(file)}
+      />
       {showCases && (
         <SavedCaseList
           onOpen={(locator) => {
