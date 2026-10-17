@@ -159,9 +159,18 @@ Browser runs own fresh synthetic temporary stores and refuse an existing server
 on their test port. An installed Chromium can be selected with the existing
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` override.
 
-Local verification on October 16, 2026 passed 948 existing backend tests,
-23 testing-host tests, 189 standalone browser/contract checks, three packaged
-Streamlit browser workflows, and five exact-decimal presentation checks. The
+After the analysis services ([verification](VERIFICATION.md)), the same commands
+passed:
+- 1,501 backend tests;
+- 29 testing-host tests;
+- 237 standalone browser and contract checks;
+- three packaged Streamlit browser workflows;
+- five exact-decimal checks.
+
+Historical: the original host verification on October 16, 2026 passed 948
+existing backend tests, 23 testing-host tests, 189 standalone browser/contract
+checks, three packaged Streamlit browser workflows, and five exact-decimal
+presentation checks. The
 independent reference and precision gates, Python lint/strict typing, both
 frontend builds, dependency consistency and the npm audit also passed. Desktop
 and 390 px layouts were visually reviewed. Scenario retention browser checks
