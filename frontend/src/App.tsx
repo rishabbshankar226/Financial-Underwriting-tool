@@ -1,14 +1,8 @@
-import { formatDecimal, shiftDecimal } from "./decimal";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { formatDecimal } from "./decimal";
+import { useEffect, useRef, useState } from "react";
 import type { Assessment, Metric } from "./contracts";
-import {
-  assumptionField,
-  fieldLabels as labels,
-  periodLabel,
-  workingCapitalPeriod,
-} from "./fieldCatalog";
-import { legacyFactorText as factorText, legacyMoney as money } from "./format";
-import type { EditableField } from "./workspace";
+import { fieldLabels as labels, periodLabel } from "./fieldCatalog";
+import { legacyFactorText as factorText } from "./format";
 import { selectWorkspaceView } from "./workspaceSelectors";
 import { useEditController } from "./useEditController";
 import EditDialog from "./EditDialog";
@@ -26,6 +20,7 @@ import { Toolbar } from "./views/Toolbar";
 import { CompatibilityPanel, ContextStrip, WorkspaceStatus } from "./views/WorkspaceStatus";
 import { ViewTabs, type WorkspaceTab } from "./views/ViewTabs";
 import { SpreadView } from "./views/SpreadView";
+import { AssumptionsView } from "./views/AssumptionsView";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
 import {
@@ -97,45 +92,6 @@ export default function App() {
     if (state.status === "ready" && state.saved?.view.compatibility)
       setTab("history");
   }, [state.id, state.status, state.accepted, state.resetPeriod]);
-  function editButton(editable: EditableField, content: ReactNode, label?: string) {
-    return (
-      <button
-        className="rowEdit"
-        aria-label={label}
-        disabled={!workspace.canEdit}
-        onClick={(event) => edits.open(editable, event.currentTarget)}
-      >
-        {content}
-      </button>
-    );
-  }
-  function assumptionGroup(
-    title: string,
-    prefix: string,
-    values: Record<string, string | number>,
-    period?: string,
-  ) {
-    return (
-      <div className="panel" key={prefix}>
-        <h2>{title}</h2>
-        {Object.entries(values).map(([key, value]) => {
-          const editable = assumptionField(input!, accepted!.mode, prefix, key, value, period);
-          return (
-            <div className="assumption" key={key}>
-              {editButton(editable, editable.label)}
-              <strong>
-                {editable.unit === "%"
-                  ? `${money(shiftDecimal(String(value), 2))}%`
-                  : editable.unit === "months"
-                    ? `${value} months`
-                    : `$${money(String(value))}`}
-              </strong>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
   return (
     <main className="analystWorkspace">
       <BrandBar />
@@ -225,61 +181,12 @@ export default function App() {
         />
       )}
       {tab === "assumptions" && (
-        <section>
-          <p>
-            {ready
-              ? "Annual assumptions used by the backend. Select an amount to propose an edit."
-              : "Previous accepted assumptions; no active recommendation."}
-          </p>
-          {input && (
-            <div className="assumptionsGrid">
-              {assumptionGroup(
-                "Existing debt",
-                "/existing_debt",
-                input.existing_debt,
-              )}
-              {assumptionGroup(
-                "Proposed fixed monthly loan",
-                "/proposed_loan",
-                {
-                  amount: input.proposed_loan.amount,
-                  annual_rate: input.proposed_loan.annual_rate,
-                  term_months: input.proposed_loan.term_months,
-                },
-              )}
-              {assumptionGroup(
-                "Working capital",
-                "/working_capital",
-                {
-                  ar_increase: input.working_capital.ar_increase,
-                  inventory_increase: input.working_capital.inventory_increase,
-                  ap_increase: input.working_capital.ap_increase,
-                  cash_taxes_paid: input.working_capital.cash_taxes_paid,
-                },
-                workingCapitalPeriod(input),
-              )}
-              {input.guarantors.map((g, i) =>
-                assumptionGroup(g.name, `/guarantors/${i}`, {
-                  ownership_percentage: g.ownership_percentage,
-                  wages: g.wages,
-                  interest_dividend_income: g.interest_dividend_income,
-                  mortgage_pi_annual: g.mortgage_pi_annual,
-                  auto_loan_annual: g.auto_loan_annual,
-                  credit_card_min_annual: g.credit_card_min_annual,
-                }),
-              )}
-              {input.guarantors.length === 0 && (
-                <div className="panel">
-                  <h2>Business-only fallback</h2>
-                  <p>
-                    No guarantors supplied. The backend uses full business
-                    EBITDA for global coverage.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </section>
+        <AssumptionsView
+          ready={ready}
+          accepted={accepted}
+          canEdit={workspace.canEdit}
+          onEdit={edits.open}
+        />
       )}
       {tab === "details" && (
         <section className="panel">
