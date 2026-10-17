@@ -1,12 +1,14 @@
-import { formatDecimal, isDecimal, shiftDecimal } from "./decimal";
-import { useEffect, useRef, useState } from "react";
+import { formatDecimal, shiftDecimal } from "./decimal";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { annualFields, type Assessment, type Metric } from "./contracts";
 import {
-  annualFields,
-  type Assessment,
-  type Factor,
-  type Period,
-  type Metric,
-} from "./contracts";
+  assumptionField,
+  fieldLabels as labels,
+  periodLabel,
+  spreadField,
+  workingCapitalPeriod,
+} from "./fieldCatalog";
+import { legacyFactorText as factorText, legacyMoney as money } from "./format";
 import type { EditableField, EditEvent } from "./workspace";
 import EditDialog from "./EditDialog";
 import { metricText } from "./metricDisplay";
@@ -27,51 +29,6 @@ import {
   RecoveryPanel,
 } from "./SavedCases";
 const disclaimer = prototypeDisclaimer;
-const labels: Record<string, string> = {
-  gross_receipts: "Gross receipts",
-  gross_profit: "Gross profit",
-  cogs: "COGS",
-  operating_expense_excl_dna_interest_comp: "Operating expenses",
-  officer_compensation: "Officer compensation",
-  depreciation: "Depreciation",
-  amortization: "Amortization",
-  interest_expense: "Interest expense",
-  section_179: "Section 179",
-  k1_distribution: "K-1 distributions",
-  ordinary_business_income: "Ordinary business income",
-  ebitda: "EBITDA",
-  dscr: "DSCR",
-  fccr: "Simplified FCCR",
-  global_dscr: "Global DSCR",
-  uca_positive: "UCA cash flow",
-  k1_history: "K-1 distribution history",
-  cpltd_annual: "Annual CPLTD",
-  operating_lease_annual: "Annual operating leases",
-  amount: "Proposed principal",
-  annual_rate: "Annual nominal rate",
-  term_months: "Loan term",
-  ownership_percentage: "Ownership",
-  wages: "Annual wages",
-  interest_dividend_income: "Annual interest/dividend income",
-  mortgage_pi_annual: "Annual mortgage P&I",
-  auto_loan_annual: "Annual auto debt",
-  credit_card_min_annual: "Annual card minimum",
-  ar_increase: "AR increase",
-  inventory_increase: "Inventory increase",
-  ap_increase: "AP increase",
-  cash_taxes_paid: "Cash taxes paid",
-};
-const money = (value: string) => formatDecimal(value, 2);
-const periodLabel = (year: Partial<Period>, index: number) =>
-  year.period_start && year.period_end
-    ? `${year.period_start} – ${year.period_end}`
-    : `Supplied period ${index + 1}`;
-function factorText(f: Factor): string {
-  const v = f.raw_value;
-  if (v === null) return "Not applicable";
-  if (!isDecimal(v)) return String(v);
-  return f.name === "uca_positive" ? `$${money(v)}` : `${formatDecimal(v, 4)}x`;
-}
 function TraceDetail({
   metric,
   assessment,
@@ -151,39 +108,18 @@ export default function App() {
     setEditing(null);
     setProposal(undefined);
   }
-  function field(
-    path: string,
-    label: string,
-    value: string | number,
-    unit: EditableField["unit"] = "USD",
-    min?: string | number,
-    max?: string | number,
-    integer = false,
-    period?: string,
-  ) {
+  function editButton(editable: EditableField, content: ReactNode, label?: string) {
     return (
       <button
         className="rowEdit"
+        aria-label={label}
         disabled={!workspace.canEdit}
         onClick={(event) => {
           opener.current = event.currentTarget;
-          setEditing({
-            path,
-            label,
-            value,
-            unit,
-            min,
-            max,
-            integer,
-            period:
-              period ??
-              (input && "assessment_as_of" in input
-                ? `Assumption as of ${input.assessment_as_of}`
-                : "Legacy annual assumption"),
-          });
+          setEditing(editable);
         }}
       >
-        {label}
+        {content}
       </button>
     );
   }
@@ -197,43 +133,14 @@ export default function App() {
       <div className="panel" key={prefix}>
         <h2>{title}</h2>
         {Object.entries(values).map(([key, value]) => {
-          const percent = ["annual_rate", "ownership_percentage"].includes(key),
-            integer = key === "term_months";
-          const nonnegative = [
-            "cpltd_annual",
-            "operating_lease_annual",
-            "amount",
-            "annual_rate",
-            "ownership_percentage",
-            "mortgage_pi_annual",
-            "auto_loan_annual",
-            "credit_card_min_annual",
-          ].includes(key);
+          const editable = assumptionField(input!, accepted!.mode, prefix, key, value, period);
           return (
             <div className="assumption" key={key}>
-              {field(
-                `${prefix}/${key}`,
-                labels[key] ?? key,
-                value,
-                percent ? "%" : integer ? "months" : "USD",
-                integer
-                  ? accepted?.mode === "dated"
-                    ? 12
-                    : 1
-                  : nonnegative
-                    ? 0
-                    : undefined,
-                key === "ownership_percentage" ||
-                  (key === "annual_rate" && accepted?.mode === "dated")
-                  ? 1
-                  : undefined,
-                integer,
-                period,
-              )}
+              {editButton(editable, editable.label)}
               <strong>
-                {percent
+                {editable.unit === "%"
                   ? `${money(shiftDecimal(String(value), 2))}%`
-                  : integer
+                  : editable.unit === "months"
                     ? `${value} months`
                     : `$${money(String(value))}`}
               </strong>
@@ -550,25 +457,11 @@ export default function App() {
                         <th scope="row">{labels[key]}</th>
                         {input.years.map((y, i) => (
                           <td key={i} className="num">
-                            <button
-                              className="rowEdit"
-                              aria-label={`Edit ${labels[key]} for ${periodLabel(y, i)}`}
-                              disabled={!workspace.canEdit}
-                              onClick={(event) => {
-                                opener.current = event.currentTarget;
-                                setEditing({
-                                  path: `/years/${i}/${key}`,
-                                  label: labels[key],
-                                  value: y[key],
-                                  unit: "USD",
-                                  min:
-                                    key === "interest_expense" ? "0" : undefined,
-                                  period: periodLabel(y, i),
-                                });
-                              }}
-                            >
-                              ${money(assessment?.historical_spread[i].reported_financials[key] ?? y[key])}
-                            </button>
+                            {editButton(
+                              spreadField(input, i, key),
+                              `$${money(assessment?.historical_spread[i].reported_financials[key] ?? y[key])}`,
+                              `Edit ${labels[key]} for ${periodLabel(y, i)}`,
+                            )}
                           </td>
                         ))}
                       </tr>
@@ -668,7 +561,7 @@ export default function App() {
                   ap_increase: input.working_capital.ap_increase,
                   cash_taxes_paid: input.working_capital.cash_taxes_paid,
                 },
-                `Working capital for ${periodLabel(input.years[input.years.length - 1], input.years.length - 1)}`,
+                workingCapitalPeriod(input),
               )}
               {input.guarantors.map((g, i) =>
                 assumptionGroup(g.name, `/guarantors/${i}`, {

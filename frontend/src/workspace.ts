@@ -1,4 +1,12 @@
-import { compareDecimal, decimalEqual, inputDecimal, shiftDecimal } from "./decimal";
+import {
+  compareDecimal,
+  decimalEqual,
+  groupDecimal,
+  parseAnalystAmount,
+  parsePercentInput,
+  parseWholeNumber,
+  shiftDecimal,
+} from "./decimal";
 import type { Accepted, Input, Mode } from "./contracts";
 import type { StoredCase } from "./caseContracts";
 export type StoredSelection = {
@@ -164,25 +172,36 @@ export type EditableField = {
   max?: string | number;
   integer?: boolean;
 };
+function boundText(value: string | number, unit: EditableField["unit"]): string {
+  if (unit === "%") return `${shiftDecimal(String(value), 2)}%`;
+  if (unit === "months") return `${value} month${String(value) === "1" ? "" : "s"}`;
+  return `$${groupDecimal(String(value))}`;
+}
+function rangeText(field: EditableField): string {
+  const { min, max, unit } = field;
+  if (min !== undefined && max !== undefined) return `${boundText(min, unit)} to ${boundText(max, unit)}`;
+  return min !== undefined ? `${boundText(min, unit)} or more` : `up to ${boundText(max!, unit)}`;
+}
+/** Parse an edit as typed in display units ($ amounts, percentages, whole months) into exact API units. */
 export function validateEdit(
   field: EditableField,
   raw: string,
   rationale: string,
+  options: { requireRationale?: boolean } = {},
 ): string | number {
-  if (!/^-?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?$/.test(raw.trim()))
-    throw new Error("Enter a valid finite number.");
-  const display = inputDecimal(raw.trim().replace(/,/g, ""));
-  const decimal = inputDecimal(field.unit === "%" ? shiftDecimal(display, -2) : display);
+  const parsed =
+    field.unit === "%" ? parsePercentInput(raw) : field.integer ? parseWholeNumber(raw) : parseAnalystAmount(raw);
+  if (!parsed.ok) throw new Error(parsed.message);
+  const decimal = parsed.value;
   let next: string | number = decimal;
   if (field.integer) {
-    if (!/^-?\d+$/.test(decimal) || !Number.isSafeInteger(Number(decimal)))
-      throw new Error("Enter a safe whole number of months.");
+    if (!Number.isSafeInteger(Number(decimal))) throw new Error("Enter a safe whole number of months.");
     next = Number(decimal);
   }
   if ((field.min !== undefined && compareDecimal(decimal, String(field.min)) < 0) ||
       (field.max !== undefined && compareDecimal(decimal, String(field.max)) > 0))
-    throw new Error(`Value is outside the supported range (${field.min ?? "no minimum"} to ${field.max ?? "no maximum"} in API units).`);
-  if (!rationale.trim()) throw new Error("A nonblank rationale is required.");
+    throw new Error(`Value is outside the allowed range: ${rangeText(field)}.`);
+  if ((options.requireRationale ?? true) && !rationale.trim()) throw new Error("A nonblank rationale is required.");
   if (decimalEqual(next, field.value)) throw new Error("Enter a changed value or cancel.");
   return next;
 }

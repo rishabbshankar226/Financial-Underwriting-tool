@@ -7,14 +7,7 @@ import { fetchComparisons } from "./scenarioApi";
 import { shockKeys, type ComparisonSummary, type ScenarioPreview, type ScenarioResult, type StoredComparison } from "./scenarioContracts";
 import { presets, type useScenarioWorkspace } from "./useScenarioWorkspace";
 import type { Locator } from "./caseRecovery";
-const labels: Record<string, string> = {
-    ordinary_business_income: "Ordinary business income", ebitda: "EBITDA", proposed_monthly_payment: "Proposed monthly payment",
-    proposed_annual_payment: "Proposed annual payment", debt_service: "Business debt service", fixed_charge_service: "Fixed charge service",
-    global_business_ebitda: "Owned business EBITDA", global_outside_income: "Outside income", global_personal_debt: "Personal debt",
-    global_cash_flow: "Global cash flow", global_debt_service: "Global debt service", dscr: "DSCR", fccr: "Simplified FCCR",
-    global_dscr: "Global DSCR", net_working_capital_increase: "Working capital increase", uca_cash_flow: "UCA cash flow",
-    k1_ratio_difference: "Observed K-1 ratio difference", k1_history: "Observed K-1 history", uca_positive: "UCA positive",
-};
+import { factLabels as labels } from "./fieldCatalog";
 const shockLabels = ["Revenue change (%)", "COGS change (%)", "Operating expense change (%)", "Proposed rate change (bps)"];
 function Disclosure({ title, children }: {
     title: string;

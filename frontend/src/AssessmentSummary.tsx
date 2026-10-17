@@ -1,14 +1,5 @@
-import type { Assessment, Metric } from "./contracts";
-import { formatDecimal, isDecimal } from "./decimal";
-
-function amount(metric: Metric, currency = false): string {
-  const value = metric.reported_value ?? metric.raw_value;
-  if (metric.status !== "available" || !isDecimal(value))
-    return "Not applicable";
-  return currency
-    ? `$${formatDecimal(value, 2)}`
-    : `${formatDecimal(value, 4)}x`;
-}
+import type { Assessment } from "./contracts";
+import { legacySummaryAmount as amount } from "./format";
 
 export default function AssessmentSummary({
   assessment,
