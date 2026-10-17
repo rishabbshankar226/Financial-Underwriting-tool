@@ -102,7 +102,7 @@ def _supported_baseline(snapshot: CaseSnapshot, operation: AssessmentOperation) 
     return baseline
 
 
-def _baseline_trace(baseline: CommercialAssessment) -> tuple[Calculation, ...]:
+def baseline_trace(baseline: CommercialAssessment) -> tuple[Calculation, ...]:
     """Preserve all retained operands; scope their evidence references."""
     rows = []
     for row in baseline.calculation_trace:
@@ -358,7 +358,7 @@ def preview_commercial_scenarios(
             409, "baseline_run_mismatch", "The selected revision does not contain the requested baseline run"
         )
     baseline = _supported_baseline(snapshot, assessment_operation)
-    observed = _baseline_trace(baseline)
+    observed = baseline_trace(baseline)
     results = []
     for index, scenario in enumerate(command.scenarios):
         try:
