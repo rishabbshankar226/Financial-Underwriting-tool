@@ -96,6 +96,27 @@ On the initial build, Community Cloud replaced PyArrow 26.0.0 with 24.0.0. The
 runtime constraint now matches that working host version; the 23 Python host
 tests and three packaged browser workflows also passed with PyArrow 24.0.0.
 
+## Updating the hosted app
+
+Deploy by fast-forwarding `codex/streamlit-testing-workspace` to a `main` commit
+whose CI passed; Community Cloud builds that branch. The workspace reaches the host
+as an installed copy of `streamlit_app/component` with its built assets inside, so
+new code alone does not replace it. On October 17, 2026, fast-forwarding to
+`0d3eefa` (light theme, decomposed views) and then rebooting the app still served
+the previously installed workspace, while reinstalling the package locally with
+uv or pip picked up the new bundle.
+
+`npm --prefix frontend run build:streamlit` therefore also rewrites the last line
+of `streamlit_app/requirements.txt` with the bundle file name and SHA-256, and
+`python3 scripts/streamlit_assets.py check` fails when that stamp is stale. Every
+new bundle reaches the host as a dependency change. Changes to
+`.streamlit/config.toml`, such as the theme, apply when the app restarts.
+
+After an update, open the app and confirm the expected workspace. If it still
+shows an older version, open **Manage app** and check the logged branch and
+dependency installation. Repeat the hosted smoke test before recording a newly
+deployed commit here.
+
 ## Temporary storage and recovery
 
 The default store is `.spreadline-data/streamlit/cases.sqlite3`, outside served
