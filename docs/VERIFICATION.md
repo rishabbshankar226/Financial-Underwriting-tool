@@ -24,7 +24,7 @@ dependency, backend route, stored record, contract or SQLite schema.
 | Executed command | Observed result |
 | --- | --- |
 | `./scripts/run_all_checks.sh` | Exit 0. Ran pip consistency, Ruff and strict mypy (no issues in 36 source files), the gate self-test (55 values and 4 flags pinned; all 19 mutations killed), the precision probe, 1,501 backend tests, npm audit (0 vulnerabilities), 11 decimal tests, the production build (73 modules) and 323 Playwright tests. |
-| `bash scripts/run_streamlit_checks.sh` (Node 24) | Exit 0. Host Ruff and strict mypy passed (no issues in 4 source files); 29 host tests passed; the component rebuilt from this source (71 modules) and its assets match their source and manifest; 4 packaged Streamlit browser workflows passed against the reinstalled component. |
+| `bash scripts/run_streamlit_checks.sh` (Node 24) | Exit 0, after merging `main` `658d9d5` (the requirements bundle stamp). Host Ruff and strict mypy passed (no issues in 4 source files); 34 host tests passed, including the 5 asset-stamp tests; the component rebuilt from this source (71 modules) and its assets match their source, manifest and requirements stamp; 4 packaged Streamlit browser workflows passed against the reinstalled component. |
 
 **Continuous integration (first push).**
 [GitHub Actions run 39004224624](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/39004224624)

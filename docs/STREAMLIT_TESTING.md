@@ -183,9 +183,9 @@ on their test port. An installed Chromium can be selected with the existing
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` override.
 
 After the workspace layout and analysis (PR 3, [verification](VERIFICATION.md)),
-the same commands passed:
+merged with the bundle-stamp change, the same commands passed:
 - 1,501 backend tests;
-- 29 testing-host tests;
+- 34 testing-host tests;
 - 323 standalone browser and contract checks;
 - four packaged Streamlit browser workflows;
 - eleven exact-decimal checks.
