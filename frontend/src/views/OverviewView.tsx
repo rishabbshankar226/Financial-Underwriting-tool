@@ -3,10 +3,10 @@ import type { CommercialAnalysis, MatchedRule } from "../analysisContracts";
 import type { Assessment, Metric } from "../contracts";
 import { formatMultiple } from "../decimal";
 import { periodLabel } from "../fieldCatalog";
-import { fieldValueText, metricValueText, moneyText, ratioPercentText, signedMetricText, WITH_CENTS } from "../format";
+import { fieldValueText, metricValueText, moneyMagnitudeText, moneyText, ratioPercentText, signedMetricText, WITH_CENTS } from "../format";
 import { useAnalysis, type AnalysisState } from "../useAnalysis";
 import type { WorkspaceView } from "../workspaceSelectors";
-import { constraintLabels, factorStatusText as statusText } from "./KpiTiles";
+import { capacityFit, constraintLabels, factorStatusText as statusText } from "./KpiTiles";
 import { TrendChart } from "./TrendChart";
 
 const ruleOrder: readonly MatchedRule[] = ["approve_all_conditions", "review_k1_history", "decline_coverage_floor", "review_otherwise"];
@@ -99,10 +99,15 @@ function Capacity({ analysis, assessment }: { analysis: CommercialAnalysis; asse
   };
   const approval = breakeven("approval_minimum"),
     decline = breakeven("decline_floor");
+  const fit = capacityFit(capacity);
   return (
     <>
       <p>
-        {capacity.has_capacity ? "The requested loan fits within" : "The requested loan exceeds"} the illustrative coverage minimums.{" "}
+        {fit === "fits"
+          ? "The requested principal fits within the illustrative coverage minimums."
+          : fit === "over"
+            ? "The requested principal is larger than the illustrative coverage minimums support."
+            : "Existing obligations leave no room for new payments at the illustrative coverage minimums."}{" "}
         {coverageTitle[capacity.binding_constraint]} binds first.
       </p>
       <dl className="capacityFacts">
@@ -121,8 +126,12 @@ function Capacity({ analysis, assessment }: { analysis: CommercialAnalysis; asse
           <dd>{metricValueText(capacity.requested_principal, "money", WITH_CENTS)}</dd>
         </div>
         <div>
-          <dt>{capacity.has_capacity ? "Principal headroom" : "Principal shortfall"}</dt>
-          <dd>{metricValueText(capacity.principal_headroom, "money", WITH_CENTS)}</dd>
+          <dt>{fit === "fits" ? "Principal headroom" : "Principal shortfall"}</dt>
+          <dd>
+            {fit === "fits"
+              ? metricValueText(capacity.principal_headroom, "money", WITH_CENTS)
+              : moneyMagnitudeText(capacity.principal_headroom.raw_value ?? "0", WITH_CENTS)}
+          </dd>
         </div>
         <div>
           <dt>Largest new payment</dt>

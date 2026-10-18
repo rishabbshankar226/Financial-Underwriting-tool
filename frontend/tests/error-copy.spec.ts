@@ -130,3 +130,19 @@ test("import failures explain the file problem in plain language", () => {
   }
   expect(importFailureMessage(shape)).toContain("does not contain a case");
 });
+
+test("a request the workspace could not send keeps its reason instead of blaming the connection", async () => {
+  const busy = await failure(async () => {
+    throw new Error("The workspace is busy. Review pending work before retrying.");
+  });
+  expect(evaluationFailureMessage(busy)).toContain("The workspace is busy. Review pending work before retrying.");
+  expect(evaluationFailureMessage(busy)).not.toContain("check the connection");
+  const timedOut = await failure(async () => {
+    throw new DOMException("signal timed out", "TimeoutError");
+  });
+  expect(evaluationFailureMessage(timedOut)).toContain("did not respond within 30 seconds");
+  const offline = await failure(async () => {
+    throw new TypeError("Failed to fetch");
+  });
+  expect(evaluationFailureMessage(offline)).toContain("could not be reached");
+});

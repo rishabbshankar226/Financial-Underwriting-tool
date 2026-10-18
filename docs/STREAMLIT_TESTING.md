@@ -165,7 +165,7 @@ After the workspace layout and analysis (PR 3, [verification](VERIFICATION.md)),
 the same commands passed:
 - 1,501 backend tests;
 - 29 testing-host tests;
-- 320 standalone browser and contract checks;
+- 323 standalone browser and contract checks;
 - four packaged Streamlit browser workflows;
 - eleven exact-decimal checks.
 

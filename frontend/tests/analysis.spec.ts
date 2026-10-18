@@ -410,3 +410,29 @@ test("a failed analysis is retried only on request and then explains the decisio
   await expect(page.locator(".decision")).toContainText(expected.explanation.headline);
   expect(calls).toBe(2);
 });
+
+test("a request larger than the coverage minimums support reads as a shortfall, and near-floor ratios keep their places", async ({ page, request }) => {
+  const oversized = { ...dated, borrower_name: "Oversized request", proposed_loan: { ...dated.proposed_loan, amount: 3000000 } };
+  const expected = await serverAnalysis(request, oversized);
+  expect(expected.debt_capacity.has_capacity).toBe(true);
+  expect(expected.debt_capacity.principal_headroom.reported_value).toBe("-647015.17");
+  await page.goto("/");
+  await connectWorkspace(page, { example: false });
+  await page.locator("input[type=file]").setInputFiles(upload("oversized.json", oversized));
+  await expect(page.locator(".decision strong")).toHaveText("REVIEW");
+  await expect(page.locator(".decision")).toContainText(expected.explanation.headline);
+  const tiles = page.getByRole("region", { name: "Assessment overview", exact: true });
+  const service = tiles.locator(".kpiTile").filter({ hasText: "Annual debt service" });
+  await expect(service).toHaveAttribute("data-state", "fail");
+  await expect(service).not.toContainText("Within capacity");
+  await expect(service).toContainText("$647,015");
+  await expect(service).not.toContainText("($647,015)");
+  // FCCR is 1.0004 against a 1.00x decline floor: it must not read as equal to the floor.
+  await expect(tiles.locator(".kpiTile").filter({ has: page.locator(".kpiLabel", { hasText: /^FCCR$/ }) })).toContainText("1.0004x");
+  await expect(page.locator(".metric").filter({ hasText: "Simplified FCCR" })).toContainText("1.0004x");
+  await openView(page, "overview");
+  const capacity = page.getByRole("tabpanel").getByRole("region", { name: "Debt capacity", exact: true });
+  await expect(capacity).toContainText("$647,015.17");
+  await expect(capacity).not.toContainText("fits within");
+  await expect(capacity).not.toContainText("($647,015.17)");
+});

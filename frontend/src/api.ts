@@ -14,7 +14,8 @@ export const apiRequest = (path: string, init: RequestInit, transport: typeof fe
 /** One `field-errors-v1` item: where the server found a problem and its plain message (never the value). */
 export type FieldError = { pointer: string; code: string; message: string; limit: string | null };
 
-/** A failed evaluation. `status` is 0 when no response arrived; a rejection carries the server's field errors. */
+/** A failed evaluation. `status` is 0 when no response arrived. A rejection carries the server's field errors
+ * and string `detail`; a request that was not sent or completed carries its reason (or "timeout") as `detail`. */
 export class EvaluationError extends Error {
   constructor(
     message: string,
@@ -72,7 +73,11 @@ export async function evaluate(
       transport,
     );
   } catch (error) {
-    throw new EvaluationError(error instanceof Error ? error.message : String(error), "unavailable");
+    // A browser network failure is a TypeError; anything else is a reason the request was not sent or
+    // completed (a timeout, a busy embedded host, a changed connection) and is kept for the message.
+    const message = error instanceof Error ? error.message : String(error);
+    const reason = error instanceof DOMException && error.name === "TimeoutError" ? "timeout" : error instanceof TypeError ? null : message;
+    throw new EvaluationError(message, "unavailable", 0, [], reason);
   }
   let body: unknown;
   try {

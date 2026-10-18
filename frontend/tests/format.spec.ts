@@ -12,6 +12,7 @@ import {
   legacySummaryAmount,
   metricValueText,
   moneyText,
+  multipleText,
   ratioPercentText,
   scaleCaption,
   signedMetricText,
@@ -103,4 +104,14 @@ test("coverage factors use the analyst formats and keep threshold comparisons ho
   expect(factorValueText(factor("uca_positive", "-3814999"))).toBe("($3,814,999)");
   expect(factorValueText(factor("dscr", null))).toBe("Not applicable");
   expect(factorValueText(factor("k1_history", "stable"))).toBe("stable");
+});
+
+test("multiples keep enough places to compare honestly with every line shown beside them", () => {
+  expect(multipleText("1.0004", ["1.2", "1"])).toBe("1.0004x");
+  expect(multipleText("0.996", ["1.25", "1"])).toBe("0.996x");
+  expect(multipleText("1.2496", ["1.25", "1"])).toBe("1.2496x");
+  expect(multipleText("3.134936659675626479525752", ["1.25", "1"])).toBe("3.13x");
+  expect(multipleText("3.134936659675626479525752", [null, undefined])).toBe("3.13x");
+  expect(factorValueText({ ...factor("fccr", "1.0004"), threshold: "1.2", decline_threshold: "1" })).toBe("1.0004x");
+  expect(factorValueText({ ...factor("dscr", "0.996"), threshold: "1.25", decline_threshold: "1" })).toBe("0.996x");
 });

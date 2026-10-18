@@ -1,7 +1,8 @@
-import type { CommercialAnalysis, FactorStatus } from "../analysisContracts";
+import type { CommercialAnalysis, DebtCapacity, FactorStatus } from "../analysisContracts";
 import type { Assessment, Factor, Metric } from "../contracts";
 import { formatMultiple } from "../decimal";
-import { metricValueText, moneyText, ratioPercentText, signedMetricText } from "../format";
+import { compareDecimal, isDecimal } from "../decimal";
+import { metricValueText, moneyMagnitudeText, moneyText, multipleText, ratioPercentText, signedMetricText } from "../format";
 import { useAnalysis } from "../useAnalysis";
 
 export const factorStatusText: Record<FactorStatus, string> = {
@@ -25,6 +26,20 @@ const tileState: Record<FactorStatus, string> = {
 };
 export const constraintLabels = { dscr: "DSCR", fccr: "FCCR", global_dscr: "global DSCR" } as const;
 
+/** Whether the requested principal fits: the sign of the server's headroom decides it. `has_capacity` only
+ * says the binding minimum leaves some room for new payments at all. */
+export type CapacityFit = "fits" | "over" | "none";
+export function capacityFit(capacity: DebtCapacity): CapacityFit {
+  if (!capacity.has_capacity) return "none";
+  const headroom = capacity.principal_headroom.raw_value;
+  return isDecimal(headroom) && compareDecimal(headroom, "0") >= 0 ? "fits" : "over";
+}
+const capacityStatus: Record<CapacityFit, string> = {
+  fits: "Within capacity",
+  over: "Over capacity",
+  none: "No capacity",
+};
+
 /** The server's factor status; before the analysis arrives, the decision's own pass and floor flags. */
 function factorStatus(name: string, assessment: Assessment, analysis: CommercialAnalysis | null): FactorStatus {
   const explained = analysis?.explanation.factors.find((f) => f.name === name);
@@ -47,7 +62,7 @@ function ratioTile(label: string, name: "dscr" | "fccr" | "global_dscr", metric:
   const status = factorStatus(name, assessment, analysis);
   return {
     label,
-    value: metricValueText(metric, "multiple", undefined, minimum),
+    value: metric.status === "available" && isDecimal(metric.raw_value) ? multipleText(metric.raw_value, [minimum, floor]) : "Not applicable",
     state: tileState[status],
     status: factorStatusText[status],
     lines: [`Minimum ${formatMultiple(minimum)}, decline below ${formatMultiple(floor)}`],
@@ -64,6 +79,7 @@ export function KpiTiles({ assessment }: { assessment: Assessment }) {
     policy = assessment.policy_snapshot;
   const uca = factorStatus("uca_positive", assessment, analysis);
   const capacity = analysis?.debt_capacity;
+  const fit = capacity ? capacityFit(capacity) : null;
   const binding = analysis?.breakevens.binding_approval_constraint;
   const breakeven = binding ? analysis?.breakevens.rows.find((r) => r.constraint === binding && r.threshold_kind === "approval_minimum") : undefined;
   const bindingStatus = binding ? factorStatus(binding, assessment, analysis) : null;
@@ -98,14 +114,16 @@ export function KpiTiles({ assessment }: { assessment: Assessment }) {
     {
       label: "Annual debt service",
       value: metricValueText(facts.debt_service, "money"),
-      state: capacity ? (capacity.has_capacity ? "pass" : "fail") : "info",
-      status: capacity ? (capacity.has_capacity ? "Within capacity" : "Exceeds capacity") : null,
+      state: fit ? (fit === "fits" ? "pass" : "fail") : "info",
+      status: fit ? capacityStatus[fit] : null,
       lines: [
         `Includes proposed ${metricValueText(facts.proposed_annual_payment, "money")} a year`,
         ...(capacity ? [`New payments up to ${metricValueText(capacity.max_annual_payment, "money")} a year (${constraintLabels[capacity.binding_constraint]})`] : []),
       ],
       cushion: capacity
-        ? `${capacity.has_capacity ? "Principal headroom" : "Principal shortfall"} ${metricValueText(capacity.principal_headroom, "money")}`
+        ? fit === "fits"
+          ? `Principal headroom ${metricValueText(capacity.principal_headroom, "money")}`
+          : `Principal shortfall ${moneyMagnitudeText(capacity.principal_headroom.raw_value ?? "0")}`
         : pending,
     },
   ];

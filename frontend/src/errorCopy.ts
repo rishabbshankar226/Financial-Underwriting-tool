@@ -20,9 +20,12 @@ export function evaluationFailureMessage(error: unknown): string {
     if (error.kind === "rejected") return rejection(error);
     if (error.kind === "unreadable")
       return `The calculation service sent an unreadable response (${error.status}). Nothing was recalculated; retry when it is available.`;
-    return error.status
-      ? `The calculation service is unavailable (${error.status}). Nothing was recalculated; retry shortly.`
-      : "The calculation service could not be reached. Nothing was recalculated; check the connection, then retry.";
+    if (error.status)
+      return `The calculation service is unavailable (${error.status}). Nothing was recalculated; retry shortly.`;
+    if (error.detail === "timeout")
+      return "The calculation service did not respond within 30 seconds. Nothing was recalculated; retry when it is available.";
+    if (error.detail) return `The request was not completed: ${error.detail}`;
+    return "The calculation service could not be reached. Nothing was recalculated; check the connection, then retry.";
   }
   const message = error instanceof Error ? error.message : String(error);
   const incomplete = /^Incomplete or invalid assessment: (.+)$/.exec(message);

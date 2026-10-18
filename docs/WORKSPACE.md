@@ -15,11 +15,11 @@ browser/host policy. See [security requirements](SECURITY_ARCHITECTURE.md).
 
 ## Layout
 
-- **Brand bar:** **Open case** lists saved cases, **Save case** saves an accepted unsaved dated case, and **More** holds the dated and legacy example cases, **Import case file (JSON)**, the **Dark theme** toggle and **Disconnect workspace**. More is a disclosure: Escape or a click outside it closes the panel and returns focus to its button; the theme toggle leaves it open.
-- **Case header:** the borrower name (the view's only h1), the mode badge (**Dated assessment** or **Legacy · undated input**), the saved state (**Draft — not saved**, **Saved · revision N · latest**, **Historical revision N (read-only)** or an inactive previous revision) and the source file or saved case.
+- **Brand bar:** **Open case** lists saved cases, **Save case** saves an accepted unsaved dated case, and **More** holds the dated and legacy example cases, **Import case file (JSON)**, the **Dark theme** toggle and **Disconnect workspace**. More is a disclosure: Escape closes the panel and returns focus to its button, a click outside it closes the panel, and the theme toggle leaves it open.
+- **Case header:** the borrower name (the view's only h1), the mode badge (**Dated assessment** or **Legacy · undated input**), the saved state (**Draft — not saved**, **Saved · revision N · latest**, **Saved · revision N · latest unconfirmed**, **Historical revision N (read-only)** or an inactive previous revision) and the source file or saved case.
 - **Prototype notice:** a short disclaimer that stays on screen, with the full text one click away.
 - **Decision bar:** the illustrative outcome and the server's one-line reason, taken from the matching analysis. While a draft edit recalculates, the bar reads CALCULATING and shows the replaced outcome as **Previous result: … (inactive)**.
-- **KPI tiles:** Business DSCR, Global DSCR, FCCR, UCA cash flow, EBITDA and annual debt service for the latest period. Each tile shows its policy line, the server's status and its cushion; cushions, the EBITDA breakeven and the payment capacity arrive with the analysis.
+- **KPI tiles:** Business DSCR, Global DSCR, FCCR, UCA cash flow, EBITDA and annual debt service for the latest period. Each tile shows its policy line, the server's status and its cushion; cushions, the EBITDA breakeven and the payment capacity arrive with the analysis. Ratios keep enough places to compare honestly with both the approval minimum and the decline floor (1.0004x beside a 1.00x floor). The debt service tile reads **Within capacity** only when the server's principal headroom is zero or more; a negative headroom reads as a principal shortfall.
 - **Views** are WAI-ARIA tabs with a roving tab stop: Left and Right arrows move between tabs and select them, Home and End jump to the ends, and only the selected view is rendered.
 
 ## Views
@@ -71,7 +71,7 @@ Edits accept amounts as analysts type them: an optional `$`, thousands commas gr
 | Analysis response | Adopt it only if its fingerprint and periods match the current assessment; a superseded or late response is discarded. |
 | Saved write starts while analysis is in flight | Cancel the analysis before sending the write; request it again after the receipt or failure. |
 
-Rejections and failures read in plain language: field-mapped server errors name the field and its period or guarantor, without echoing the submitted value; unreachable, unreadable and incomplete responses say what happened and that nothing was recalculated.
+Rejections and failures read in plain language: field-mapped server errors name the field and its period or guarantor, without echoing the submitted value. Unreachable, timed-out and unreadable responses say that nothing was recalculated, an incomplete response says it was not used, and a request the workspace could not send (for example a busy embedded host) keeps that reason.
 
 Selection identifiers are allocated before asynchronous file reads. Raw import text goes unchanged to the chosen endpoint, preserving duplicate-key rejection. The byte limit is inclusive at 1,000,000 bytes. Response guards validate the nested display contract and structural references; they do not recompute financial arithmetic or validate document authenticity.
 
