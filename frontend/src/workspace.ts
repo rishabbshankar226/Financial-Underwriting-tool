@@ -9,6 +9,7 @@ import {
 } from "./decimal";
 import type { Accepted, Input, Mode } from "./contracts";
 import type { StoredCase } from "./caseContracts";
+import { readLocator, readRecovery } from "./caseRecovery";
 export type StoredSelection = {
   view: StoredCase;
   selection: "latest" | "revision" | "receipt";
@@ -34,7 +35,8 @@ export type Workspace = {
   accepted: Accepted | null;
   draft: Draft | null;
   filename: string;
-  status: "evaluating" | "ready" | "unavailable";
+  /** `idle` is a fresh tab with nothing to restore: the start screen, before any case is chosen. */
+  status: "idle" | "evaluating" | "ready" | "unavailable";
   error: string;
   history: EditEvent[];
   saved: StoredSelection | null;
@@ -45,14 +47,26 @@ export const initialWorkspace: Workspace = {
   id: 0,
   accepted: null,
   draft: null,
-  filename: "alpine_dated_v2.json",
-  status: "evaluating",
+  filename: "",
+  status: "idle",
   error: "",
   history: [],
   saved: null,
   action: "evaluate",
   resetPeriod: true,
 };
+export const pendingWriteMessage =
+  "A saved write needs confirmation. Retry the exact write; no proposal is accepted locally yet.";
+/** The first render for this tab, decided from its recovery journal and selection hint before any request:
+ * an unconfirmed case write first, then a remembered saved selection, otherwise the start screen. */
+export function initialWorkspaceFor(storage: Storage | null): Workspace {
+  const pending = readRecovery(storage).operation;
+  if (pending && pending.kind !== "comparison")
+    return { ...initialWorkspace, status: "unavailable", action: "write", filename: "Pending saved write", error: pendingWriteMessage };
+  const locator = readLocator(storage);
+  const caseId = locator?.caseId ?? (pending?.kind === "comparison" ? pending.caseId : null);
+  return caseId ? { ...initialWorkspace, status: "evaluating", action: "open", filename: `Saved case ${caseId}` } : initialWorkspace;
+}
 export type Event =
   | {
       type: "start";

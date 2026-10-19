@@ -3,6 +3,7 @@ import type { Factor, Metric } from "../src/contracts";
 import {
   WHOLE_DOLLARS,
   editorText,
+  factorValueText,
   fieldValueText,
   formatDate,
   formatTimestamp,
@@ -11,7 +12,10 @@ import {
   legacySummaryAmount,
   metricValueText,
   moneyText,
+  multipleText,
+  ratioPercentText,
   scaleCaption,
+  signedMetricText,
 } from "../src/format";
 
 const metric = (raw: string | null, reported: string | null, unit: string, precision: number | null): Metric => ({
@@ -77,4 +81,37 @@ test("calendar dates are formatted without a time-zone shift", () => {
   expect(formatDate("2024-12-31")).toBe("Dec 31, 2024");
   expect(formatTimestamp("2026-10-16T22:43:57.123456+00:00")).toContain("2026");
   expect(formatTimestamp("not a time")).toBe("not a time");
+});
+
+test("cushions are signed distances from the policy line and never read as zero when positive", () => {
+  expect(signedMetricText(metric("1.884936659675626479525751", "1.8849", "ratio", 4), "multiple")).toBe("+1.88x");
+  expect(signedMetricText(metric("-0.1234", "-0.1234", "ratio", 4), "multiple")).toBe("-0.12x");
+  expect(signedMetricText(metric("0.00004", "0.0000", "ratio", 4), "multiple")).toBe("+0.0000x");
+  expect(signedMetricText(metric("0.004", "0.0040", "ratio", 4), "multiple")).toBe("+0.004x");
+  expect(signedMetricText(metric("0", "0.0000", "ratio", 4), "multiple")).toBe("0.00x");
+  expect(signedMetricText(metric("385000", "385000.00", "USD", 2), "money")).toBe("+$385,000");
+  expect(signedMetricText(metric("-12000.5", "-12000.50", "USD", 2), "money")).toBe("($12,000)");
+  expect(signedMetricText(metric(null, null, "ratio", 4), "multiple")).toBe("Not applicable");
+  expect(ratioPercentText(metric("0.0857254291241919449252040419", "0.0857", "ratio", 4), 2)).toBe("8.57%");
+  expect(ratioPercentText(metric("0.5715028608279462995013602794", "0.5715", "ratio", 4))).toBe("57.2%");
+  expect(ratioPercentText(metric(null, null, "ratio", 4))).toBe("Not applicable");
+});
+
+test("coverage factors use the analyst formats and keep threshold comparisons honest", () => {
+  expect(factorValueText(factor("dscr", "3.134936659675626479525752"))).toBe("3.13x");
+  expect(factorValueText({ ...factor("dscr", "1.2496"), threshold: "1.25" })).toBe("1.2496x");
+  expect(factorValueText(factor("uca_positive", "385000"))).toBe("$385,000");
+  expect(factorValueText(factor("uca_positive", "-3814999"))).toBe("($3,814,999)");
+  expect(factorValueText(factor("dscr", null))).toBe("Not applicable");
+  expect(factorValueText(factor("k1_history", "stable"))).toBe("stable");
+});
+
+test("multiples keep enough places to compare honestly with every line shown beside them", () => {
+  expect(multipleText("1.0004", ["1.2", "1"])).toBe("1.0004x");
+  expect(multipleText("0.996", ["1.25", "1"])).toBe("0.996x");
+  expect(multipleText("1.2496", ["1.25", "1"])).toBe("1.2496x");
+  expect(multipleText("3.134936659675626479525752", ["1.25", "1"])).toBe("3.13x");
+  expect(multipleText("3.134936659675626479525752", [null, undefined])).toBe("3.13x");
+  expect(factorValueText({ ...factor("fccr", "1.0004"), threshold: "1.2", decline_threshold: "1" })).toBe("1.0004x");
+  expect(factorValueText({ ...factor("dscr", "0.996"), threshold: "1.25", decline_threshold: "1" })).toBe("0.996x");
 });

@@ -47,6 +47,10 @@ The scope was approved in the [usability approval record](ANALYST_USABILITY_APPR
 
 Responses also record the assessment `calculation_version` and the scenario definition version used by the grid.
 
+## Browser use
+
+The workspace requests an analysis for each ready dated assessment in the background, one request at a time: unsaved drafts use the stateless route and saved revisions the stored-revision route. It shows a result only when `assessment_fingerprint` and the periods match the assessment on screen, reports an unknown version as unsupported, and shows an "unavailable" notice when the host answers 404 without a storage error code. A saved write cancels a background analysis before the write is sent. See [workspace behavior](WORKSPACE.md#analysis).
+
 ## Definitions
 
 Every figure is a traced calculation (`analysis.*` fact IDs) using the existing `Metric` shape:

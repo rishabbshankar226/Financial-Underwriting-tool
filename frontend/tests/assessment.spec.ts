@@ -23,13 +23,14 @@ test("dated workspace shows all periods, server facts and policy trace", async (
   await expect(
     page.getByText("prototype-2026-10-03", { exact: true }),
   ).toBeVisible();
-  await page
+  const calculations = page.getByRole("region", { name: "Calculation details", exact: true });
+  await calculations
     .locator("details")
     .filter({ hasText: "dscr" })
     .first()
     .locator("summary")
     .click();
-  await expect(page.locator("details[open]")).toContainText("operands");
+  await expect(calculations.locator("details[open]")).toContainText("operands");
 });
 
 test("malformed import invalidates the result and memo", async ({ page }) => {
@@ -165,7 +166,7 @@ test("older file read cannot overwrite a newer malformed selection", async ({
     if (!release) throw new Error("Missing delayed file-read fixture");
     await release();
   });
-  await expect(page.locator(".uploadbar")).toContainText("malformed.json");
+  await expect(page.locator(".caseSource")).toContainText("malformed.json");
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
 });
 
@@ -230,7 +231,7 @@ test("exact import byte limit is accepted and one byte over clears the result", 
     mimeType: "application/json",
     buffer: padded,
   });
-  await expect(page.locator(".uploadbar")).toContainText("limit.json");
+  await expect(page.locator(".caseSource")).toContainText("limit.json");
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page.locator("input[type=file]").setInputFiles({
     name: "oversize.json",
@@ -268,6 +269,7 @@ test("desktop and mobile workflow fits and has no application console errors", a
     });
     await openView(page, "details");
     await page
+      .getByRole("region", { name: "Calculation details", exact: true })
       .locator("details")
       .filter({ hasText: "current.dscr" })
       .first()
@@ -355,13 +357,14 @@ test("unavailable ratios and absent guarantors have explicit explanations", asyn
     page.locator(".metric").filter({ hasText: /^DSCR/ }),
   ).toContainText("Not applicable");
   await openView(page, "details");
-  await page
+  const calculations = page.getByRole("region", { name: "Calculation details", exact: true });
+  await calculations
     .locator("details")
     .filter({ hasText: "current.dscr" })
     .first()
     .locator("summary")
     .click();
-  await expect(page.locator("details[open]")).toContainText("denominator");
+  await expect(calculations.locator("details[open]")).toContainText("denominator");
   await expect(
     page.getByText("Business-only fallback; no guarantor contributions.", {
       exact: true,

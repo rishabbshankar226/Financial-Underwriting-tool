@@ -1,5 +1,7 @@
 import type { Factor, Metric } from "./contracts";
 import {
+  compareDecimal,
+  disambiguatingPlaces,
   formatAccounting,
   formatDecimal,
   formatMultiple,
@@ -52,6 +54,49 @@ export function metricValueText(
   }
   if (kind === "percent") return formatRatioPercent(raw, 1);
   return formatMultiple(raw, { threshold });
+}
+
+export const WITH_CENTS: MoneyDisplay = { scale: "units", cents: true };
+
+/** A multiple with enough places (2 to 4) to compare with every policy line shown beside it as the exact
+ * value does, so 1.0004 beside a 1.00x decline floor reads "1.0004x", never "1.00x". */
+export function multipleText(value: string, thresholds: readonly (string | boolean | null | undefined)[]): string {
+  const places = thresholds.reduce<number>(
+    (most, threshold) => (isDecimal(threshold) ? Math.max(most, disambiguatingPlaces(value, threshold, 2, 4)) : most),
+    2,
+  );
+  return formatMultiple(value, { places });
+}
+
+/** A money amount without its sign, for a figure already labeled as a shortfall: "$647,015". */
+export function moneyMagnitudeText(value: string, display: MoneyDisplay = WHOLE_DOLLARS): string {
+  return moneyText(value.startsWith("-") ? value.slice(1) : value, display);
+}
+
+/** A signed distance from a policy line, rounded once from the raw value: "+1.88x", "-0.12x", "+$385,000"
+ * or "($12,000)". Multiples keep enough places that a positive cushion never reads as zero. */
+export function signedMetricText(metric: Metric, kind: "multiple" | "money"): string {
+  if (metric.status !== "available" || !isDecimal(metric.raw_value)) return "Not applicable";
+  const raw = metric.raw_value,
+    positive = compareDecimal(raw, "0") > 0;
+  if (kind === "money") return `${positive ? "+" : ""}${moneyText(raw)}`;
+  return `${positive ? "+" : ""}${formatMultiple(raw, { threshold: "0" })}`;
+}
+
+/** A policy factor's measured value: UCA in whole dollars, coverage as a multiple that keeps enough places
+ * to compare with its threshold as the exact value does, and K-1 history as its category. */
+export function factorValueText(factor: Factor): string {
+  const value = factor.raw_value;
+  if (value === null) return "Not applicable";
+  if (!isDecimal(value)) return String(value);
+  if (factor.name === "uca_positive") return moneyText(value);
+  return multipleText(value, [factor.threshold, factor.decline_threshold]);
+}
+
+/** A ratio metric shown as a percentage of its base, rounded once from the raw value. */
+export function ratioPercentText(metric: Metric, places = 1): string {
+  if (metric.status !== "available" || !isDecimal(metric.raw_value)) return "Not applicable";
+  return formatRatioPercent(metric.raw_value, places);
 }
 
 /** The exact stored value as the editor shows it: percentages in percent units, nothing rounded. */

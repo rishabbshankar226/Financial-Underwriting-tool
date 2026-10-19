@@ -4,6 +4,57 @@ Target: `rishabbshankar226/Financial-Underwriting-tool` only.
 Baseline: `1b59a90f715853a41c5791edf6dce03c1a77839e`.
 Approved Decimal, authentication and SBA contract changes are implemented.
 
+## Analyst usability PR 3: workspace layout and analysis (2026-10-16)
+
+**Scope.** Branch `claude/usability-3-workspace-layout`, based on `main`
+`0d3eefa` with PRs #16 and #17 merged. It implements sections P1 (layout, start
+screen, ARIA tabs, plain-language errors) and P2 (decision bar, KPI tiles,
+Overview and analysis plumbing) of Appendix B2 in the approved plan, recorded in
+[ANALYST_USABILITY_APPROVAL.md](ANALYST_USABILITY_APPROVAL.md). It changes no
+dependency, backend route, stored record, contract or SQLite schema.
+
+**Environment.** Python 3.12.14 installed from the exact constraints. Node was
+22.23.3, with 24.19.0 for the Streamlit build.
+
+**Baseline.** Before any change, `./scripts/run_all_checks.sh` passed with
+1,501 backend tests, 10 decimal tests and 248 Playwright tests.
+
+**Final implementation:**
+
+| Executed command | Observed result |
+| --- | --- |
+| `./scripts/run_all_checks.sh` | Exit 0. Ran pip consistency, Ruff and strict mypy (no issues in 36 source files), the gate self-test (55 values and 4 flags pinned; all 19 mutations killed), the precision probe, 1,501 backend tests, npm audit (0 vulnerabilities), 11 decimal tests, the production build (73 modules) and 323 Playwright tests. |
+| `bash scripts/run_streamlit_checks.sh` (Node 24) | Exit 0, after merging `main` `658d9d5` (the requirements bundle stamp). Host Ruff and strict mypy passed (no issues in 4 source files); 34 host tests passed, including the 5 asset-stamp tests; the component rebuilt from this source (71 modules) and its assets match their source, manifest and requirements stamp; 4 packaged Streamlit browser workflows passed against the reinstalled component. |
+
+**Continuous integration (first push).**
+[GitHub Actions run 39004224624](https://github.com/rishabbshankar226/Financial-Underwriting-tool/actions/runs/39004224624)
+passed all three jobs on `bbfc5c2`, October 17, 2026 UTC, as a pull request run:
+backend job `117313267965` (1,501 tests; Ruff, strict mypy on 36 files and the
+gate self-test passed), frontend job `117313267877` (Node 22; audit, 11 decimal
+tests, the production build and 320 Playwright tests) and Streamlit job
+`117313267673` (Node 24 rebuild of 71 modules matching the committed assets,
+29 host tests, 4 browser workflows).
+
+**Review fixes.** A fresh-context review of `0d3eefa..8692a74` found that the UI
+read the analysis's `has_capacity` flag as "the requested loan fits", so a
+$3,000,000 Alpine request (headroom −$647,015.17, outcome REVIEW) showed
+"Within capacity" and "fits within". Fit now follows the sign of the server's
+principal headroom. Ratios now keep enough places to compare honestly with
+both the approval minimum and the decline floor (FCCR 1.0004 reads "1.0004x"
+beside a 1.00x floor), and a request the workspace could not send keeps its
+reason in the error message. Each fix has a test that failed first. The table above records the runs after these fixes.
+
+**New browser and Node checks:**
+- `landing.spec.ts` (13): the start screen evaluates nothing until a choice; each start action; restored saved selections and pending writes skip it; unreadable tracking stays visible; APG tab roles, roving tabindex, arrow/Home/End keys and unmounted panels; the More disclosure (Escape returns focus, outside click closes); disconnect; the notice disclosure; no overflow at 390, 1280 and 1440 px with one h1 and main.
+- `analysis.spec.ts` (14): the matching analysis fills the decision bar, KPI cushions and Overview; a different fingerprint and an unknown version are refused; a late response is ignored; at most one request is in flight; case and comparison writes cancel a background analysis before they are sent and it resumes after the receipt; saved revisions use the retained-policy route; the 404 fallback; explicit retry; the inactive previous result while a draft edit recalculates; an oversized request reads as a principal shortfall.
+- Node-only: `analysis-contracts.spec.ts` (27) against real stateless and saved analyses; `workspace-state.spec.ts` (6) for the idle start state and `requestPriority`; `error-copy.spec.ts` (8); `trend-geometry.spec.ts` (4); three `format.spec.ts` cases; one decimal check for the presentation-only chart scaling.
+- Updated per the plan's spec-impact list: `connectWorkspace` enters from the start screen; `openView` uses role `tab` and the new labels; `moreAction`, `disconnect` and `openCaseBrowser` replace demo, disconnect and saved-case clicks; `.uploadbar` became `.caseSource`; details filters are scoped to the "Calculation details" region; the Overview figures read "$630,000" and "3.13x"; the Streamlit workflows assert the start screen and close the More menu inside the shadow root.
+
+**Regression greps:** `decimal.ts` still has no imports; `src` has no dynamic `import(`; no new `Number(` or `parseFloat` in the money modules; no Node-tested module imports `workspaceDom`; only `transport.ts` touches Web Storage.
+
+**What these checks establish:** deterministic software behavior. They do not
+approve credit policy, validate a model, or certify compliance.
+
 ## Analyst usability PR 1: analysis services (2026-10-16)
 
 **Scope.** Branch `claude/usability-1-analysis-services`, based on `main`

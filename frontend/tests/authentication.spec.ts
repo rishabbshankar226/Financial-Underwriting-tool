@@ -1,6 +1,6 @@
 import { test, expect, type Page, type Request } from "@playwright/test";
 import { guardPendingWrite, RECOVERY_KEY } from "../src/caseRecovery";
-import { connectWorkspace, TEST_API_ORIGIN, TEST_API_TOKEN } from "./testCredentials";
+import { connectWorkspace, disconnect, moreAction, TEST_API_ORIGIN, TEST_API_TOKEN } from "./testCredentials";
 
 function apiRequest(request: Request): boolean {
   return new URL(request.url()).origin === TEST_API_ORIGIN;
@@ -84,9 +84,9 @@ test("disconnect removes financial views and a delayed response cannot restore t
     await route.fulfill({ response }).catch(() => {});
     finished();
   });
-  await page.getByRole("button", { name: "Dated Alpine demo", exact: true }).click();
+  await moreAction(page, "example");
   await started;
-  await page.getByRole("button", { name: "Disconnect workspace", exact: true }).click();
+  await disconnect(page);
   await expect(page.getByLabel("API token", { exact: true })).toHaveValue("");
   await expect(page.locator(".decision, .savedContext, .memo")).toHaveCount(0);
   release();
@@ -134,7 +134,7 @@ test("disconnect preserves a pending command and key until an explicit authentic
   const operation = guardPendingWrite(JSON.parse(journal), TEST_API_ORIGIN);
   expect(operation.body).toBe(body);
   expect(operation.id).toBe(key);
-  await page.getByRole("button", { name: "Disconnect workspace", exact: true }).click();
+  await disconnect(page);
   await expect(page.getByLabel("API token", { exact: true })).toHaveValue("");
   await expect(page.locator(".decision, .savedContext, .memo")).toHaveCount(0);
   release();

@@ -4,32 +4,89 @@ import {
   guardLegacyInput,
   type Accepted,
 } from "./contracts";
+import { pointerFromLoc } from "./fieldCatalog";
 import type { Draft } from "./workspace";
 import { dispatchRequest } from "./transport";
 export { apiBase } from "./transport";
 export const apiRequest = (path: string, init: RequestInit, transport: typeof fetch = fetch): Promise<Response> =>
   dispatchRequest(path, init, transport);
+
+/** One `field-errors-v1` item: where the server found a problem and its plain message (never the value). */
+export type FieldError = { pointer: string; code: string; message: string; limit: string | null };
+
+/** A failed evaluation. `status` is 0 when no response arrived. A rejection carries the server's field errors
+ * and string `detail`; a request that was not sent or completed carries its reason (or "timeout") as `detail`. */
+export class EvaluationError extends Error {
+  constructor(
+    message: string,
+    readonly kind: "rejected" | "unavailable" | "unreadable",
+    readonly status = 0,
+    readonly fieldErrors: FieldError[] = [],
+    readonly detail: string | null = null,
+  ) {
+    super(message);
+    this.name = "EvaluationError";
+  }
+}
+
+function fieldErrorsFrom(body: unknown, detail: unknown): FieldError[] {
+  const envelope = body && typeof body === "object" && "errors" in body ? (body as { errors: unknown }).errors : null;
+  if (envelope && typeof envelope === "object" && (envelope as { version?: unknown }).version === "field-errors-v1") {
+    const items = (envelope as { items?: unknown }).items;
+    if (Array.isArray(items))
+      return items.flatMap((item) =>
+        item && typeof item === "object" && typeof item.pointer === "string" && typeof item.message === "string"
+          ? [{
+              pointer: item.pointer,
+              code: typeof item.code === "string" ? item.code : "invalid_value",
+              message: item.message,
+              limit: typeof item.limit === "string" ? item.limit : null,
+            }]
+          : [],
+      );
+  }
+  // Hosts without the envelope still report validation locations.
+  return Array.isArray(detail)
+    ? detail.flatMap((item) =>
+        item && typeof item === "object" && "loc" in item
+          ? [{ pointer: pointerFromLoc(item.loc), code: "invalid_value", message: String(item.msg ?? "Invalid input"), limit: null }]
+          : [],
+      )
+    : [];
+}
+
 export async function evaluate(
   draft: Draft,
   signal: AbortSignal,
   transport: typeof fetch = fetch,
 ): Promise<Accepted> {
-  const response = await apiRequest(
-    `/commercial/${draft.mode === "dated" ? "assessment" : "decision"}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: draft.rawJson ?? JSON.stringify(draft.payload),
-      signal,
-    },
-    transport,
-  );
+  let response: Response;
+  try {
+    response = await apiRequest(
+      `/commercial/${draft.mode === "dated" ? "assessment" : "decision"}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: draft.rawJson ?? JSON.stringify(draft.payload),
+        signal,
+      },
+      transport,
+    );
+  } catch (error) {
+    // A browser network failure is a TypeError; anything else is a reason the request was not sent or
+    // completed (a timeout, a busy embedded host, a changed connection) and is kept for the message.
+    const message = error instanceof Error ? error.message : String(error);
+    const reason = error instanceof DOMException && error.name === "TimeoutError" ? "timeout" : error instanceof TypeError ? null : message;
+    throw new EvaluationError(message, "unavailable", 0, [], reason);
+  }
   let body: unknown;
   try {
     body = await response.json();
   } catch {
-    throw new Error(
+    throw new EvaluationError(
       `Backend returned an unreadable response (${response.status}).`,
+      "unreadable",
+      response.status,
     );
   }
   if (!response.ok) {
@@ -48,7 +105,13 @@ export async function evaluate(
       : typeof detail === "string"
         ? detail
         : `Request failed (${response.status}).`;
-    throw new Error(message);
+    throw new EvaluationError(
+      message,
+      response.status < 500 ? "rejected" : "unavailable",
+      response.status,
+      fieldErrorsFrom(body, detail),
+      typeof detail === "string" ? detail : null,
+    );
   }
   return draft.mode === "dated"
     ? (() => {

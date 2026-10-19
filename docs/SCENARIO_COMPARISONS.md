@@ -3,7 +3,7 @@
 Retain an entire reviewed [stress preview](STRESS_PREVIEWS.md) as one immutable
 comparison. It stays linked to the selected original case/revision/run and its
 retained policy. Read it again after restart or later case edits through HTTP
-or the browser's **Scenarios** view. The browser lists original comparison
+or the browser's **Stress Tests** view. The browser lists original comparison
 summaries across all revisions of the selected case and opens the selected
 original record without recalculation. See [the scenario workflow](WORKSPACE.md#scenario-review-and-original-comparisons).
 
