@@ -67,8 +67,8 @@ export function TraceInspector({
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    heading.current?.focus({ preventScroll: true });
-  }, [data.title]);
+    heading.current?.focus();
+  }, [data.title, data.trace?.fact_id]);
   const row = data.trace,
     additive = row
       ? (signs[row.definition_id] ??

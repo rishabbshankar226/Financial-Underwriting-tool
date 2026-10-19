@@ -229,6 +229,7 @@ export function ConsumerWorkflow() {
   );
   const [preset, setPreset] = useState(""),
     [inspector, setInspector] = useState<InspectorData | null>(null);
+  const inspectorOpener = useRef<HTMLButtonElement | null>(null);
   useEffect(() => setInspector(null), [request.result]);
   const specs = [
     field("/applicant_name", "Applicant name", "text"),
@@ -261,7 +262,8 @@ export function ConsumerWorkflow() {
   const total = request.result?.factors.find(
     (factor) => factor.name === "back_end_dti",
   );
-  function inspect(housing: boolean) {
+  function inspect(housing: boolean, opener: HTMLButtonElement) {
+    inspectorOpener.current = opener;
     setInspector({
       title: housing ? "Housing DTI" : "Total DTI",
       factor: housing ? undefined : total,
@@ -370,14 +372,20 @@ export function ConsumerWorkflow() {
                   ? formatRatioPercent(total.value, 4)
                   : "Unavailable"}
               </strong>
-              <button type="button" onClick={() => inspect(false)}>
+              <button
+                type="button"
+                onClick={(event) => inspect(false, event.currentTarget)}
+              >
                 Inspect Total DTI
               </button>
             </article>
             <article>
               <h3>Housing DTI</h3>
               <p>Unavailable from this endpoint</p>
-              <button type="button" onClick={() => inspect(true)}>
+              <button
+                type="button"
+                onClick={(event) => inspect(true, event.currentTarget)}
+              >
                 Inspect Housing DTI
               </button>
             </article>
@@ -417,7 +425,13 @@ export function ConsumerWorkflow() {
         </section>
       )}
       {inspector && (
-        <TraceInspector data={inspector} onClose={() => setInspector(null)} />
+        <TraceInspector
+          data={inspector}
+          onClose={() => {
+            setInspector(null);
+            inspectorOpener.current?.focus();
+          }}
+        />
       )}
     </div>
   );

@@ -909,6 +909,9 @@ dialog textarea,
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
+.tableScroll:has(tbody th) {
+  scroll-padding-inline-start: 170px;
+}
 table {
   width: 100%;
   border-collapse: collapse;
