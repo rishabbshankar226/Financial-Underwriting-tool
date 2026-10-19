@@ -1,4 +1,5 @@
-import { connectWorkspace, moreAction, openCaseBrowser, openView, TEST_OPERATOR_ID } from "./testCredentials";
+import { readWorkspaceMemory } from "./workspaceMemory";
+import { connectWorkspace, disconnect, moreAction, openCaseBrowser, openView, TEST_OPERATOR_ID } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { Page, APIRequestContext, Response } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -68,8 +69,12 @@ test("preview and one retained batch preserve the original assessment and reopen
     await expect(page.getByRole("button", { name: "Save reviewed comparison", exact: true })).toBeDisabled();
     const latest = await (await request.get(`http://127.0.0.1:8000/cases/${original.case_id}`)).json();
     expect(latest).toEqual(original);
-    await page.reload(); await connectWorkspace(page);
+    await page.reload(); await connectWorkspace(page, { example: false });
+    await expect(page.locator(".startScreen")).toBeVisible();
+    await openCaseBrowser(page);
+    await page.locator(".caseRow").filter({ hasText: original.case_id }).getByRole("button", { name: /^Open / }).click();
     await openView(page, "scenarios");
+    await page.getByRole("button", { name: `Open comparison ${record.comparison_id}`, exact: true }).click();
     await expect(page.locator(".comparisonContext")).toContainText(record.comparison_id);
     expect((await (await request.get(`http://127.0.0.1:8000/cases/${original.case_id}/scenario-comparisons`)).json()).items).toHaveLength(1);
 });
@@ -98,7 +103,7 @@ test("a delayed preview cannot become current after the draft changes", async ({
     await expect(page.getByRole("button", { name: "Save reviewed comparison", exact: true })).toBeDisabled();
     await expect(page.locator(".scenarioComposer")).toContainText("Preview required");
 });
-test("lost comparison receipt survives reload and blocks other saves until exact recovery", async ({ page, request }) => {
+test("lost comparison receipt survives same-page reconnect and blocks other saves until exact recovery", async ({ page, request }) => {
     const original = await baseline(page);
     await preview(page);
     let originalBody = "", originalKey = "";
@@ -106,7 +111,7 @@ test("lost comparison receipt survives reload and blocks other saves until exact
         return route.continue(); originalBody = route.request().postData()!; originalKey = route.request().headers()["idempotency-key"]; await route.fetch(); await route.abort("failed"); });
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
-    await page.reload(); await connectWorkspace(page);
+    await disconnect(page); await connectWorkspace(page);
     let posts = 0;
     page.on("request", r => { if (r.method() === "POST" && r.url().endsWith("/scenario-comparisons"))
         posts++; });
@@ -134,8 +139,12 @@ test("comparison tracking preflight failure sends no save and preserves the base
     let saves = 0;
     page.on("request", r => { if (r.method() === "POST" && r.url().endsWith("/scenario-comparisons"))
         saves++; });
-    await page.evaluate(key => { const original = Storage.prototype.setItem; Storage.prototype.setItem = function (k, v) { if (k === key)
-        throw new Error("Synthetic quota"); return original.call(this, k, v); }; }, RECOVERY_KEY);
+    await page.evaluate(async key => {
+        const modulePath = "/src/transport.ts";
+        const memory = (await import(modulePath)).workspaceStorage() as Storage;
+        const original = memory.setItem.bind(memory);
+        memory.setItem = (k, v) => { if (k === key) throw new Error("Synthetic memory tracking failure"); original(k, v); };
+    }, RECOVERY_KEY);
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("alert")).toContainText("Nothing was sent");
     expect(saves).toBe(0);
@@ -244,15 +253,15 @@ test("operation conflicts keep the key until explicit discard review and Escape 
     });
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeDisabled();
-    const journal = await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY);
+    const journal = await readWorkspaceMemory(page, RECOVERY_KEY);
     await page.getByRole("button", { name: "Review discarding tracking", exact: true }).click();
     await page.getByRole("dialog").press("Escape");
-    expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBe(journal);
+    expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBe(journal);
     await expect(page.getByRole("button", { name: "Review discarding tracking", exact: true })).toBeFocused();
     await page.getByRole("button", { name: "Review discarding tracking", exact: true }).click();
     await page.getByRole("button", { name: "Discard tracking", exact: true }).click();
     await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
-    expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBeNull();
+    expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBeNull();
 });
 test("blank shocks block preview, fractional basis points convert once, and ten normalized rows retain one ordered batch", async ({ page }) => {
     await baseline(page);
@@ -382,7 +391,7 @@ test("a malformed success keeps the original comparison key after commit and ret
     });
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
-    const operation = JSON.parse((await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY))!);
+    const operation = JSON.parse((await readWorkspaceMemory(page, RECOVERY_KEY))!);
     await page.unroute("**/scenario-comparisons");
     let body = "", key = ""; page.on("request", r => { if (r.method() === "POST" && r.url().endsWith("/scenario-comparisons")) { body = r.postData()!; key = r.headers()["idempotency-key"]; } });
     await page.getByRole("button", { name: "Retry exact write", exact: true }).click(); await expect(page.locator(".comparisonContext")).toContainText("Saved comparison");
@@ -397,9 +406,9 @@ test("503 exposes Retry-After, keeps exact tracking and never retries automatica
     });
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("region", { name: "Saved write recovery", exact: true })).toContainText("Retry after 3");
-    const operation = await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY);
+    const operation = await readWorkspaceMemory(page, RECOVERY_KEY);
     await openView(page, "details"); await openView(page, "scenarios");
-    expect(posts).toBe(1); expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBe(operation);
+    expect(posts).toBe(1); expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBe(operation);
     await page.unroute("**/scenario-comparisons"); await page.getByRole("button", { name: "Retry exact write", exact: true }).click();
     await expect(page.locator(".comparisonContext")).toContainText("Saved comparison");
 });

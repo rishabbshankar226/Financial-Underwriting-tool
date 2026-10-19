@@ -20,9 +20,19 @@ export default function EditDialog({
   proposal?: EditEvent;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [value, setValue] = useState(editorText(proposal?.next ?? field.value, field.unit));
+  const [value, setValue] = useState(
+    editorText(proposal?.next ?? field.value, field.unit),
+  );
   const [rationale, setRationale] = useState(proposal?.rationale ?? "");
   const [error, setError] = useState("");
+  function validateValue(next: string) {
+    try {
+      validateEdit(field, next, "", { requireRationale: false });
+      return "";
+    } catch (reason) {
+      return reason instanceof Error ? reason.message : "Review this value.";
+    }
+  }
   useEffect(() => {
     const element = dialog.current;
     element?.showModal();
@@ -44,10 +54,16 @@ export default function EditDialog({
         );
         const first = nodes[0],
           last = nodes[nodes.length - 1];
-        if (event.shiftKey && activeWorkspaceElement(event.currentTarget) === first) {
+        if (
+          event.shiftKey &&
+          activeWorkspaceElement(event.currentTarget) === first
+        ) {
           event.preventDefault();
           last.focus();
-        } else if (!event.shiftKey && activeWorkspaceElement(event.currentTarget) === last) {
+        } else if (
+          !event.shiftKey &&
+          activeWorkspaceElement(event.currentTarget) === last
+        ) {
           event.preventDefault();
           first.focus();
         }
@@ -87,15 +103,40 @@ export default function EditDialog({
           <input
             autoFocus
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            placeholder={
+              field.unit === "%" ? "10.5%" : field.integer ? "120" : "500000.00"
+            }
+            aria-describedby="edit-value-help"
+            onBlur={() => setError(validateValue(value))}
+            onChange={(e) => {
+              setValue(e.target.value);
+              if (!validateValue(e.target.value)) setError("");
+            }}
             inputMode="decimal"
           />
         </label>
+        <small id="edit-value-help">
+          {field.unit === "%"
+            ? "Percentage · converted once to a decimal fraction"
+            : field.integer
+              ? "Integer months"
+              : "USD decimal · up to 34 significant digits"}
+          {field.min !== undefined
+            ? ` · minimum ${editorText(field.min, field.unit)}`
+            : ""}
+          {field.max !== undefined
+            ? ` · maximum ${editorText(field.max, field.unit)}`
+            : ""}
+        </small>
         <label>
           Rationale{" "}
           <textarea
             value={rationale}
-            onChange={(e) => setRationale(e.target.value)}
+            placeholder="Explain the source or reason for this edit"
+            onChange={(e) => {
+              setRationale(e.target.value);
+              if (e.target.value.trim()) setError("");
+            }}
             rows={3}
           />
         </label>

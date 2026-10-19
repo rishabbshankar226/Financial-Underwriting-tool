@@ -91,8 +91,24 @@ export function CompatibilityPanel({ view }: { view: StoredCase }) {
   return (
     <section className="panel compatibility">
       <h2>Original stored assessment</h2>
+      {String(view.snapshot.assessment.schema_version).endsWith("-v1") && (
+        <div className="modelScope" role="status">
+          <strong>Archived v1 Record — Read-Only (replay_unavailable)</strong>
+          <p>
+            Original JSON facts, hashes, and receipts are preserved and remain
+            available for storage integrity verification. V2 calculation replay
+            and editing are disabled. Browser export carries recorded hashes
+            without independently verifying them.
+          </p>
+        </div>
+      )}
       <p>{view.compatibility}</p>
-      <PagedJson value={view.snapshot} className="compatibilityJson" title="Original stored JSON" noun="record" />
+      <PagedJson
+        value={view.snapshot}
+        className="compatibilityJson"
+        title="Original stored JSON"
+        noun="record"
+      />
     </section>
   );
 }
@@ -104,9 +120,7 @@ export function ContextStrip({ assessment }: { assessment: Assessment }) {
         Assessment as of: {assessment.assumptions_as_of} · USD · dollars ·
         nominal annual rate
       </span>
-      <span>
-        Coverage period: {periodLabel(assessment.selected_period, 0)}
-      </span>
+      <span>Coverage period: {periodLabel(assessment.selected_period, 0)}</span>
       <span>
         Current pro forma coverage · fixed rate · fully amortizing · monthly
         payments

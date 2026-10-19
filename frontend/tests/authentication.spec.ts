@@ -1,6 +1,7 @@
 import { test, expect, type Page, type Request } from "@playwright/test";
+import { browserWorkspaceValues, readWorkspaceMemory } from "./workspaceMemory";
 import { guardPendingWrite, RECOVERY_KEY } from "../src/caseRecovery";
-import { connectWorkspace, disconnect, moreAction, TEST_API_ORIGIN, TEST_API_TOKEN } from "./testCredentials";
+import { connectWorkspace, disconnect, moreAction, openCaseBrowser, TEST_API_ORIGIN, TEST_API_TOKEN } from "./testCredentials";
 
 function apiRequest(request: Request): boolean {
   return new URL(request.url()).origin === TEST_API_ORIGIN;
@@ -128,7 +129,7 @@ test("disconnect preserves a pending command and key until an explicit authentic
   await page.getByLabel("Save rationale").fill("Synthetic disconnect after commit");
   await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
   await committed;
-  const journal = await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY);
+  const journal = await readWorkspaceMemory(page, RECOVERY_KEY);
   expect(journal).not.toBeNull();
   if (!journal) throw new Error("Pending write must be journaled before transport");
   const operation = guardPendingWrite(JSON.parse(journal), TEST_API_ORIGIN);
@@ -139,14 +140,15 @@ test("disconnect preserves a pending command and key until an explicit authentic
   await expect(page.locator(".decision, .savedContext, .memo")).toHaveCount(0);
   release();
   await completed;
-  expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBe(journal);
+  expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBe(journal);
   await page.unroute("**/cases");
   await connectWorkspace(page);
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
   await page.waitForLoadState("networkidle");
   expect(writes).toBe(1);
-  expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBe(journal);
+  expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBe(journal);
   await assertCredentialIsMemoryOnly(page);
+  expect(await browserWorkspaceValues(page)).toEqual({ local: [], session: [] });
   const retry = page.waitForRequest(request => apiRequest(request) && request.method() === "POST" && new URL(request.url()).pathname === "/cases");
   const replayed = page.waitForResponse(response => response.request().method() === "POST" && new URL(response.url()).pathname === "/cases");
   await page.getByRole("button", { name: "Retry exact write", exact: true }).click();
@@ -157,5 +159,42 @@ test("disconnect preserves a pending command and key until an explicit authentic
   expect((await replayed).headers()["idempotency-replayed"]).toBe("true");
   await expect(page.locator(".savedContext")).toContainText(caseId);
   expect(writes).toBe(2);
-  expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBeNull();
+  expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBeNull();
+});
+
+test("a full reload loses a pending command and opens no saved selection without an explicit choice", async ({ page }) => {
+  await page.goto("/");
+  await connectWorkspace(page);
+  await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  let caseId = "", writes = 0;
+  page.on("request", request => {
+    if (apiRequest(request) && request.method() === "POST" && /^\/cases(?:$|\/[^/]+\/revisions$|\/[^/]+\/revisions\/[^/]+\/scenario-comparisons$)/.test(new URL(request.url()).pathname)) writes++;
+  });
+  await page.route("**/cases", async route => {
+    if (route.request().method() !== "POST") return route.continue();
+    const receipt = await (await route.fetch()).json();
+    caseId = receipt.case_id;
+    await route.abort("failed");
+  });
+  await page.getByRole("button", { name: "Save case", exact: true }).click();
+  await page.getByLabel("Save rationale").fill("Synthetic unconfirmed command before reload");
+  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
+  expect(await readWorkspaceMemory(page, RECOVERY_KEY)).not.toBeNull();
+  await page.unroute("**/cases");
+  await page.reload();
+  await expect(page.getByLabel("API token", { exact: true })).toHaveValue("");
+  expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBeNull();
+  await connectWorkspace(page, { example: false });
+  await expect(page.locator(".startScreen")).toBeVisible();
+  await expect(page.locator(".savedContext")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
+  await page.waitForLoadState("networkidle");
+  expect(writes).toBe(1);
+  expect(await browserWorkspaceValues(page)).toEqual({ local: [], session: [] });
+  await openCaseBrowser(page);
+  await page.locator(".caseRow").filter({ hasText: caseId }).getByRole("button", { name: /^Open / }).click();
+  await expect(page.locator(".savedContext")).toContainText("Revision 1");
+  await expect(page.locator(".savedContext")).toContainText(caseId);
+  expect(writes).toBe(1);
 });
