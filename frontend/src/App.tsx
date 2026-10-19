@@ -9,12 +9,21 @@ import { useScenarioWorkspace } from "./useScenarioWorkspace";
 import { writeComparisonLocator } from "./scenarioSelection";
 import { AnalysisProvider } from "./useAnalysis";
 import { Tabs } from "./components/Tabs";
-import { BrandBar, CaseHeader, MoreMenu, PrimaryActions } from "./views/WorkspaceHeader";
+import {
+  BrandBar,
+  CaseHeader,
+  MoreMenu,
+  PrimaryActions,
+} from "./views/WorkspaceHeader";
 import { StartScreen } from "./views/StartScreen";
 import { PrototypeNotice } from "./views/PrototypeNotice";
 import { DecisionBar } from "./views/DecisionBar";
 import { KpiTiles } from "./views/KpiTiles";
-import { CompatibilityPanel, ContextStrip, WorkspaceStatus } from "./views/WorkspaceStatus";
+import {
+  CompatibilityPanel,
+  ContextStrip,
+  WorkspaceStatus,
+} from "./views/WorkspaceStatus";
 import { workspaceTabs, type WorkspaceTab } from "./views/workspaceTabs";
 import { SpreadView } from "./views/SpreadView";
 import { OverviewView } from "./views/OverviewView";
@@ -25,6 +34,13 @@ import { HistoryView } from "./views/HistoryView";
 import { useAnalystWorkspace } from "./useAnalystWorkspace";
 import { SaveCaseDialog, DiscardTrackingDialog } from "./CaseDialogs";
 import { SavedCaseList, SavedContext, RecoveryPanel } from "./SavedCases";
+import { SessionStatus } from "./components/SessionStatus";
+import { CommercialComposer } from "./CommercialComposer";
+import { ConsumerWorkflow, SbaWorkflow } from "./DomainWorkflows";
+import type { Mode } from "./contracts";
+import { AnalysisPanels, ModelScope } from "./views/AnalysisPanels";
+import { RejectedInputFields } from "./RejectedInputFields";
+import { applyEdit, type Draft } from "./workspace";
 
 /** Composition root: owns the workspace hooks, view and dialog state, and wires views to them. */
 export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
@@ -32,6 +48,11 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
   const scenarios = useScenarioWorkspace(workspace);
   const { state, submit, demo, upload } = workspace;
   const [tab, setTab] = useState<WorkspaceTab>("spread");
+  const [domain, setDomain] = useState<"commercial" | "consumer" | "sba">(
+    "commercial",
+  );
+  const [composer, setComposer] = useState(false),
+    [composerMode, setComposerMode] = useState<Mode>("dated");
   const [selectedPeriod, setSelectedPeriod] = useState(1);
   const [saving, setSaving] = useState(false),
     [showCases, setShowCases] = useState(false),
@@ -54,13 +75,61 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
     if (state.status === "ready" && state.saved?.view.compatibility)
       setTab("audit");
   }, [state.id, state.status, state.accepted, state.resetPeriod]);
-  const openFile = () => fileInput.current?.click();
-  const openSaved = (locator: Parameters<typeof workspace.openSaved>[0]) => void workspace.openSaved(locator);
+  const openFile = () => {
+    setDomain("commercial");
+    setComposer(false);
+    fileInput.current?.click();
+  };
+  const openSaved = (locator: Parameters<typeof workspace.openSaved>[0]) =>
+    void workspace.openSaved(locator);
+  const rejected = workspace.rejected;
+  const rejectedCommand = rejected
+    ? (JSON.parse(rejected.body) as {
+        input?: Draft["payload"];
+        new_value?: string | number;
+        rationale: string;
+      })
+    : null;
+  const correctionDraft: Draft | null =
+    state.status !== "unavailable"
+      ? null
+      : (state.draft ??
+        (state.action !== "write"
+          ? null
+          : rejected?.kind === "create" && rejectedCommand?.input
+            ? {
+                mode: "dated",
+                payload: rejectedCommand.input,
+                filename: "Rejected saved creation",
+                resetHistory: true,
+              }
+            : rejected?.kind === "edit" &&
+                accepted &&
+                state.saved?.view.snapshot.case_id === rejected.caseId &&
+                rejectedCommand?.new_value !== undefined
+              ? {
+                  mode: accepted.mode,
+                  payload: applyEdit(accepted.input, {
+                    path: rejected.review.path,
+                    prior: rejected.review.value,
+                    next: rejectedCommand.new_value,
+                    rationale: rejectedCommand.rationale,
+                    at: "unverified proposal",
+                  }),
+                  filename: "Rejected saved edit",
+                }
+              : null));
+  const correctionErrors = state.draft
+    ? workspace.fieldErrors
+    : (workspace.writeError?.fieldErrors ?? []);
   return (
-    <AnalysisProvider subject={view.analysisSubject} paused={workspace.inFlight}>
+    <AnalysisProvider
+      subject={view.analysisSubject}
+      paused={workspace.inFlight}
+    >
       <main className="analystWorkspace">
         <BrandBar>
-          {!idle && (
+          {!idle && domain === "commercial" && !composer && (
             <PrimaryActions
               showCases={showCases}
               canSave={workspace.canSave}
@@ -71,9 +140,107 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
               }}
             />
           )}
-          <MoreMenu onExample={demo} onImport={openFile} onDisconnect={onDisconnect} />
+          <MoreMenu
+            onExample={(mode) => {
+              setDomain("commercial");
+              setComposer(false);
+              demo(mode);
+            }}
+            onImport={openFile}
+            onDisconnect={onDisconnect}
+          />
         </BrandBar>
-        {idle ? (
+        <SessionStatus actor={state.saved?.view.snapshot.event.actor} />
+        <nav className="primaryNavigation" aria-label="Underwriting workflows">
+          <button
+            type="button"
+            aria-current={
+              domain === "commercial" && composerMode === "dated"
+                ? "page"
+                : undefined
+            }
+            onClick={() => {
+              setDomain("commercial");
+              setComposerMode("dated");
+              setComposer(true);
+              setShowCases(false);
+            }}
+          >
+            Commercial Assessment
+          </button>
+          <button
+            type="button"
+            aria-current={
+              domain === "commercial" && composerMode === "legacy"
+                ? "page"
+                : undefined
+            }
+            onClick={() => {
+              setDomain("commercial");
+              setComposerMode("legacy");
+              setComposer(true);
+              setShowCases(false);
+            }}
+          >
+            Commercial Decision
+          </button>
+          <button
+            type="button"
+            aria-current={domain === "consumer" ? "page" : undefined}
+            onClick={() => {
+              setDomain("consumer");
+              setShowCases(false);
+            }}
+          >
+            Consumer Decision
+          </button>
+          <button
+            type="button"
+            aria-current={domain === "sba" ? "page" : undefined}
+            onClick={() => {
+              setDomain("sba");
+              setShowCases(false);
+            }}
+          >
+            SBA Screen
+          </button>
+          <button
+            type="button"
+            aria-expanded={showCases}
+            onClick={() => {
+              setDomain("commercial");
+              setComposer(false);
+              setShowCases(true);
+            }}
+          >
+            Saved Cases
+          </button>
+        </nav>
+        {domain === "consumer" ? (
+          <ConsumerWorkflow />
+        ) : domain === "sba" ? (
+          <SbaWorkflow />
+        ) : composer ? (
+          <CommercialComposer
+            key={composerMode}
+            mode={composerMode}
+            initial={
+              accepted?.mode === composerMode ? accepted.input : undefined
+            }
+            serverErrors={workspace.fieldErrors}
+            serverMessage={state.status === "unavailable" ? state.error : ""}
+            busy={state.status === "evaluating"}
+            onClose={() => setComposer(false)}
+            onEvaluate={async (draft) => {
+              const result = await submit(draft);
+              if (result) {
+                setComposer(false);
+                setTab("spread");
+              }
+              return result;
+            }}
+          />
+        ) : idle ? (
           <StartScreen
             showCases={showCases}
             onExample={() => demo("dated")}
@@ -81,10 +248,14 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             onImport={openFile}
           />
         ) : (
-          <CaseHeader view={view} filename={state.filename} legacy={accepted?.mode === "legacy"} />
+          <CaseHeader
+            view={view}
+            filename={state.filename}
+            legacy={accepted?.mode === "legacy"}
+          />
         )}
         <PrototypeNotice />
-        {showCases && (
+        {showCases && domain === "commercial" && (
           <SavedCaseList
             onOpen={(locator) => {
               setShowCases(false);
@@ -92,7 +263,9 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             }}
             onClose={() => {
               setShowCases(false);
-              queryWorkspace<HTMLButtonElement>("[data-focus-fallback]")?.focus();
+              queryWorkspace<HTMLButtonElement>(
+                "[data-focus-fallback]",
+              )?.focus();
             }}
           />
         )}
@@ -101,7 +274,12 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           onOpenComparison={(view) => {
             const record = view.record;
             writeComparisonLocator(record.case_id, record.comparison_id);
-            void workspace.openSaved({ caseId: record.case_id, revision: record.baseline_revision }).then(() => setTab("stress"));
+            void workspace
+              .openSaved({
+                caseId: record.case_id,
+                revision: record.baseline_revision,
+              })
+              .then(() => setTab("stress"));
             workspace.dismissComparisonAck();
           }}
           onDiscard={(element) => {
@@ -113,15 +291,62 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             if (review) edits.review(review.field, review.proposal, element);
           }}
         />
-        {!idle && (
+        {!composer && correctionDraft && correctionErrors.length > 0 && (
+          <RejectedInputFields
+            key={`${state.id}:${rejected?.id ?? "draft"}`}
+            draft={correctionDraft}
+            errors={correctionErrors}
+            savedField={
+              rejected?.kind === "edit" ? rejected.review.path : undefined
+            }
+            rationale={rejectedCommand?.rationale}
+            onEvaluate={(draft) => void submit(draft)}
+            onReviewSaved={async (next, rationale, element) => {
+              const review = await workspace.reviewRejected(next, rationale);
+              if (review) edits.review(review.field, review.proposal, element);
+            }}
+          />
+        )}
+        {domain === "commercial" && !composer && !idle && (
           <>
-            {state.saved && <SavedContext saved={state.saved} active={ready} onOpen={openSaved} />}
-            <WorkspaceStatus state={state} view={view} onSubmit={(draft) => void submit(draft)} onOpen={openSaved} />
+            {accepted && (
+              <button
+                type="button"
+                className="editCompleteDraft"
+                onClick={() => {
+                  setComposerMode(accepted.mode);
+                  setComposer(true);
+                }}
+              >
+                Edit complete draft
+              </button>
+            )}
+            {state.saved && (
+              <SavedContext
+                saved={state.saved}
+                active={ready}
+                onOpen={openSaved}
+              />
+            )}
+            <WorkspaceStatus
+              state={state}
+              view={view}
+              onSubmit={(draft) => void submit(draft)}
+              onOpen={openSaved}
+            />
             <DecisionBar view={view} />
             {assessment && <KpiTiles assessment={assessment} />}
             {assessment && <ContextStrip assessment={assessment} />}
-            {ready && state.saved?.view.compatibility && <CompatibilityPanel view={state.saved.view} />}
-            <Tabs label="Workspace views" tabs={workspaceTabs} selected={tab} onSelect={setTab}>
+            {assessment && <ModelScope />}
+            {ready && state.saved?.view.compatibility && (
+              <CompatibilityPanel view={state.saved.view} />
+            )}
+            <Tabs
+              label="Workspace views"
+              tabs={workspaceTabs}
+              selected={tab}
+              onSelect={setTab}
+            >
               {tab === "spread" && (
                 <SpreadView
                   ready={ready}
@@ -135,33 +360,77 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
                   onEdit={edits.open}
                 />
               )}
-              {tab === "overview" && <OverviewView view={view} />}
-              {tab === "debt" && <DebtLoanView ready={ready} accepted={accepted} canEdit={workspace.canEdit} onEdit={edits.open} />}
-              {tab === "global" && <GlobalCashFlowView ready={ready} accepted={accepted} canEdit={workspace.canEdit} onEdit={edits.open} />}
-              {tab === "stress" && (
-                <Scenarios
-                  model={scenarios}
-                  onSaveBaseline={(element) => {
-                    if (workspace.canSave) {
-                      opener.current = element;
-                      setSaving(true);
-                    }
-                  }}
-                  onOpenBaseline={openSaved}
+              {tab === "overview" && (
+                <>
+                  <OverviewView view={view} />
+                  <AnalysisPanels kind="breakevens" />
+                </>
+              )}
+              {tab === "debt" && (
+                <>
+                  <DebtLoanView
+                    ready={ready}
+                    accepted={accepted}
+                    canEdit={workspace.canEdit}
+                    onEdit={edits.open}
+                  />
+                  <AnalysisPanels kind="schedule" />
+                </>
+              )}
+              {tab === "global" && (
+                <GlobalCashFlowView
+                  ready={ready}
+                  accepted={accepted}
+                  canEdit={workspace.canEdit}
+                  onEdit={edits.open}
                 />
+              )}
+              {tab === "stress" && (
+                <>
+                  <AnalysisPanels kind="grid" />
+                  <Scenarios
+                    model={scenarios}
+                    onSaveBaseline={(element) => {
+                      if (workspace.canSave) {
+                        opener.current = element;
+                        setSaving(true);
+                      }
+                    }}
+                    onOpenBaseline={openSaved}
+                  />
+                </>
               )}
               {tab === "memo" && <MemoView decision={decision} />}
               {tab === "audit" && (
                 <div className="historyAudit">
-                  <HistoryView saved={state.saved} ready={ready} history={state.history} input={input} onOpen={openSaved} />
-                  <DetailsView ready={ready} input={input} assessment={assessment} decision={decision} index={index} />
+                  <HistoryView
+                    saved={state.saved}
+                    ready={ready}
+                    history={state.history}
+                    input={input}
+                    onOpen={openSaved}
+                  />
+                  <DetailsView
+                    ready={ready}
+                    input={input}
+                    assessment={assessment}
+                    decision={decision}
+                    index={index}
+                  />
                   <Review
-                    view={ready ? state.saved?.view ?? null : null}
+                    view={ready ? (state.saved?.view ?? null) : null}
                     selection={state.saved?.selection ?? null}
                     headRevision={state.saved?.headRevision ?? null}
                     sourceScope={`${state.id}:${state.status}`}
                     original={scenarios.original}
-                    pending={!!(workspace.operation || workspace.recoveryError || workspace.conflict || workspace.inFlight)}
+                    pending={
+                      !!(
+                        workspace.operation ||
+                        workspace.recoveryError ||
+                        workspace.conflict ||
+                        workspace.inFlight
+                      )
+                    }
                     onOpenBaseline={openSaved}
                   />
                 </div>

@@ -1,4 +1,5 @@
-import { apiRequest } from "./api";
+import { apiRequest, fieldErrorsFrom, type FieldError } from "./api";
+import { noteStorageAvailability } from "./storageAvailability";
 import {
   guardCasePage,
   guardCreate,
@@ -22,6 +23,7 @@ export class CaseApiError extends Error {
     public code = "outcome_uncertain",
     public certain = false,
     public retryAfter: string | null = null,
+    public fieldErrors: FieldError[] = [],
   ) {
     super(message);
     this.name = "CaseApiError";
@@ -71,6 +73,7 @@ async function json(path: string, init: RequestInit, transport: typeof fetch) {
             : "Invalid input",
         )
         .join("; ");
+    if (code === "storage_not_configured") noteStorageAvailability(false);
     if (code === "storage_not_configured")
       message =
         "Saved cases are not enabled for this local workspace. You can continue with unsaved assessments.";
@@ -80,8 +83,10 @@ async function json(path: string, init: RequestInit, transport: typeof fetch) {
       code,
       [400, 404, 412, 413, 422, 428].includes(response.status),
       response.headers.get("Retry-After"),
+      fieldErrorsFrom(body, detail),
     );
   }
+  noteStorageAvailability(true);
   return { response, body };
 }
 function identity(caseId: string, number: number | "latest") {
@@ -185,8 +190,18 @@ export async function fetchCases(
   after: string | null,
   signal: AbortSignal,
   transport: typeof fetch = fetch,
+  filters: { q?: string; outcome?: string; sort?: "created" | "updated" } = {},
 ) {
-  const { body } = await json(`/cases${query(after)}`, { signal }, transport);
+  const parameters = new URLSearchParams({
+    limit: "25",
+    ...(after ? { after } : {}),
+    ...(filters.q ? { q: filters.q } : {}),
+    ...(filters.outcome ? { outcome: filters.outcome } : {}),
+    ...(filters.sort && filters.sort !== "created"
+      ? { sort: filters.sort }
+      : {}),
+  });
+  const { body } = await json(`/cases?${parameters}`, { signal }, transport);
   return guardCasePage(body);
 }
 export async function fetchRevisions(

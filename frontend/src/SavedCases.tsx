@@ -12,6 +12,8 @@ import type { Locator, PendingOperation, PendingWrite } from "./caseRecovery";
 import type { StoredSelection } from "./workspace";
 import type { useAnalystWorkspace } from "./useAnalystWorkspace";
 import type { StoredComparison } from "./scenarioContracts";
+import { PagedJson } from "./components/PagedJson";
+import { formatDecimal } from "./decimal";
 
 export function usePages<T>(
   key: string,
@@ -114,9 +116,18 @@ export function SavedCaseList({
   onOpen: (locator: Locator) => void;
   onClose: () => void;
 }) {
+  const [search, setSearch] = useState(""),
+    [q, setQuery] = useState(""),
+    [outcome, setOutcome] = useState(""),
+    [sort, setSort] = useState<"created" | "updated">("created");
+  useEffect(() => {
+    const timer = setTimeout(() => setQuery(search.trim()), 200);
+    return () => clearTimeout(timer);
+  }, [search]);
+  const filtered = !!(q || outcome || sort !== "created");
   const pages = usePages<CaseSummary>(
-    "cases",
-    fetchCases,
+    `cases:${q}:${outcome}:${sort}`,
+    (after, signal) => fetchCases(after, signal, fetch, { q, outcome, sort }),
     (item) => item.case_id,
   );
   return (
@@ -131,10 +142,68 @@ export function SavedCaseList({
           <button onClick={onClose}>Close saved cases</button>
         </div>
       </div>
+      <div className="caseFilters">
+        <label>
+          Search saved cases
+          <input
+            aria-label="Search saved cases"
+            value={search}
+            maxLength={120}
+            placeholder="Borrower name"
+            onChange={(event) => setSearch(event.target.value)}
+          />
+          <small>Literal borrower-name search · ASCII case-insensitive</small>
+        </label>
+        <label>
+          Filter by outcome
+          <select
+            aria-label="Filter by outcome"
+            value={outcome}
+            onChange={(event) => setOutcome(event.target.value)}
+          >
+            <option value="">All outcomes</option>
+            <option value="approve">Approve</option>
+            <option value="review">Review</option>
+            <option value="decline">Decline</option>
+          </select>
+        </label>
+        <label>
+          Sort saved cases
+          <select
+            aria-label="Sort saved cases"
+            value={sort}
+            onChange={(event) =>
+              setSort(event.target.value as "created" | "updated")
+            }
+          >
+            <option value="created">Newest creation</option>
+            <option value="updated">Latest update</option>
+          </select>
+        </label>
+      </div>
       {pages.loading && <p role="status">Loading saved cases…</p>}
       {pages.error && <p role="alert">{pages.error}</p>}
       {!pages.loading && !pages.error && !pages.items.length && (
-        <p>No saved cases yet. Save an accepted dated assessment to begin.</p>
+        <div>
+          <p>
+            {filtered
+              ? "No saved cases match these filters."
+              : "No saved cases yet. Save an accepted dated assessment to begin."}
+          </p>
+          {filtered && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
+                setQuery("");
+                setOutcome("");
+                setSort("created");
+              }}
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
       )}
       {pages.items.map((item) => (
         <article className="caseRow" key={item.case_id}>
@@ -146,6 +215,23 @@ export function SavedCaseList({
               <br />
               Last recorded {item.recorded_at}
             </p>
+            {item.definition_supported !== undefined && (
+              <p>
+                {item.definition_supported ? (
+                  <>
+                    {item.outcome?.toUpperCase()} · DSCR{" "}
+                    {item.dscr ?? "Unavailable"} · requested{" "}
+                    {item.requested_amount === null ||
+                    item.requested_amount === undefined
+                      ? "Unavailable"
+                      : `$${formatDecimal(item.requested_amount, 2)}`}{" "}
+                    · as of {item.assessment_as_of}
+                  </>
+                ) : (
+                  "Archived definition · original JSON only"
+                )}
+              </p>
+            )}
           </div>
           <button
             aria-label={`Open ${item.borrower_name} case ${item.case_id}`}
@@ -295,8 +381,11 @@ export function SavedHistory({
         <p>Previous saved selection; its recommendation is inactive.</p>
       )}
       <p>
-        Original accepted revisions and server-recorded events. Recorded actor: {event.actor}.
-        {event.actor === "prototype-demo-unverified" ? " Archived demonstration identity." : " Configured credential identity."}
+        Original accepted revisions and server-recorded events. Recorded actor:{" "}
+        {event.actor}.
+        {event.actor === "prototype-demo-unverified"
+          ? " Archived demonstration identity."
+          : " Configured credential identity."}
       </p>
       {pages.loading && <p role="status">Loading revisions…</p>}
       {pages.error && <p role="alert">{pages.error}</p>}
@@ -393,7 +482,23 @@ export function SavedHistory({
 }
 function Proposal({ operation }: { operation: PendingWrite }) {
   const command = JSON.parse(operation.body);
-  if(operation.kind === "comparison") return <p>Proposed comparison · Case {operation.caseId} · revision {operation.baselineRevision}<br/>Run {operation.baselineRunId} · as of {operation.context.assessment_as_of}<br/>{command.scenarios.map((s: {name:string;rationale:string}) => `${s.name}: ${s.rationale}`).join("; ")}</p>;
+  if (operation.kind === "comparison")
+    return (
+      <p>
+        Proposed comparison · Case {operation.caseId} · revision{" "}
+        {operation.baselineRevision}
+        <br />
+        Run {operation.baselineRunId} · as of{" "}
+        {operation.context.assessment_as_of}
+        <br />
+        {command.scenarios
+          .map(
+            (s: { name: string; rationale: string }) =>
+              `${s.name}: ${s.rationale}`,
+          )
+          .join("; ")}
+      </p>
+    );
   return operation.kind === "edit" ? (
     <p>
       Proposed {operation.review.label}: {operation.review.value} →{" "}
@@ -433,12 +538,51 @@ export function RecoveryPanel({
         <section className="pending" aria-label="Saved write recovery">
           <h2>
             {w.inFlight
-              ? w.operation?.kind === "comparison" ? "Saving comparison" : "Saving revision"
+              ? w.operation?.kind === "comparison"
+                ? "Saving comparison"
+                : "Saving revision"
               : w.operation
                 ? "Unconfirmed saved write"
                 : "Saved write recovery unavailable"}
           </h2>
+          {!w.inFlight && w.operation && (
+            <p className="recoveryState">
+              <strong>
+                {w.writeError?.status === 409
+                  ? "Conflicting operation key (409)"
+                  : "Unresolved browser tracking"}
+              </strong>
+              {w.writeError?.status === 409
+                ? " · Inspect saved records before explicitly discarding or creating a new operation key."
+                : " · A timeout, network drop, or credential rejection does not prove the write rolled back."}
+            </p>
+          )}
           {w.operation && <Proposal operation={w.operation} />}
+          {w.operation && (
+            <details>
+              <summary>Inspect pending payload</summary>
+              <p>
+                Exact operation UUID: <code>{w.operation.id}</code>
+                {w.operation.kind === "edit" && (
+                  <>
+                    <br />
+                    Original strong ETag: <code>{w.operation.etag}</code>
+                  </>
+                )}
+              </p>
+              <PagedJson
+                value={JSON.parse(w.operation.body)}
+                title="Pending command JSON"
+                noun="payload"
+                className="pendingPayload"
+              />
+            </details>
+          )}
+          <p className="fine">
+            Tracking is held only in page memory. Reloading or closing this page
+            loses the exact retry key; inspect saved records before making
+            another write.
+          </p>
           <p>
             {w.recoveryError ||
               w.writeError?.message ||
@@ -450,7 +594,10 @@ export function RecoveryPanel({
           <div className="actions">
             {w.operation && (
               <button
-                disabled={w.inFlight || (w.writeError?.status === 409 && !w.writeError.certain)}
+                disabled={
+                  w.inFlight ||
+                  (w.writeError?.status === 409 && !w.writeError.certain)
+                }
                 onClick={() => {
                   try {
                     w.retryWrite();
@@ -479,9 +626,19 @@ export function RecoveryPanel({
                 View stored baseline
               </button>
             )}
-            {w.operation?.kind === "comparison" && <button onClick={() => {
-              if (w.operation?.kind === "comparison") void w.openSaved({ caseId: w.operation.caseId, revision: w.operation.baselineRevision });
-            }}>View stored baseline</button>}
+            {w.operation?.kind === "comparison" && (
+              <button
+                onClick={() => {
+                  if (w.operation?.kind === "comparison")
+                    void w.openSaved({
+                      caseId: w.operation.caseId,
+                      revision: w.operation.baselineRevision,
+                    });
+                }}
+              >
+                View stored baseline
+              </button>
+            )}
             <button
               disabled={w.inFlight}
               onClick={(e) => onDiscard(e.currentTarget)}
@@ -498,6 +655,10 @@ export function RecoveryPanel({
           aria-label="Conflicting saved edit"
         >
           <h2>Review conflicting edit</h2>
+          <p>
+            <strong>Stale strong ETag (412)</strong> · The stored revision
+            changed before this new operation was accepted.
+          </p>
           <Proposal operation={w.conflict.operation} />
           <p>
             The case changed. Nothing from this proposal was accepted. Review
@@ -519,6 +680,23 @@ export function RecoveryPanel({
               {w.conflict.error || "Loading latest for review…"}
             </p>
           )}
+          <details>
+            <summary>Inspect pending edits vs. latest revision</summary>
+            <Proposal operation={w.conflict.operation} />
+            <p>
+              Latest revision:{" "}
+              {w.conflict.latest?.snapshot.revision ?? "Not loaded"}. Latest
+              field:{" "}
+              {w.conflict.latest
+                ? String(
+                    inputField(
+                      w.conflict.latest.snapshot.normalized_input,
+                      w.conflict.operation.review.path,
+                    ).value,
+                  )
+                : "Unavailable"}
+            </p>
+          </details>
           <div className="actions">
             <button
               disabled={!w.conflict.latest || !!w.operation}
@@ -528,6 +706,17 @@ export function RecoveryPanel({
             </button>
             <button onClick={w.refreshConflict}>
               Refresh conflict baseline
+            </button>
+            <button
+              onClick={() => {
+                if (w.conflict)
+                  void w.openSaved({
+                    caseId: w.conflict.operation.caseId,
+                    revision: "latest",
+                  });
+              }}
+            >
+              Reload latest revision
             </button>
             <button onClick={w.cancelConflict}>Cancel proposal</button>
           </div>
@@ -565,10 +754,36 @@ export function RecoveryPanel({
           </div>
         </section>
       )}
-      {w.comparisonAck && (w.comparisonAck.scope !== w.state.id || w.comparisonAck.view.record.case_id !== w.state.saved?.view.snapshot.case_id || w.comparisonAck.view.record.baseline_revision !== w.state.saved?.view.snapshot.revision) && <section className="pending" aria-label="Comparison acknowledged for another selection">
-        <h2>Comparison acknowledged for another selection</h2><p>Original comparison {w.comparisonAck.view.record.comparison_id} · baseline revision {w.comparisonAck.view.record.baseline_revision}. The current selection was preserved.</p>
-        <div className="actions"><button onClick={() => { if (w.comparisonAck) onOpenComparison(w.comparisonAck.view); }}>Open acknowledged comparison</button><button onClick={w.dismissComparisonAck}>Dismiss comparison acknowledgment</button></div>
-      </section>}
+      {w.comparisonAck &&
+        (w.comparisonAck.scope !== w.state.id ||
+          w.comparisonAck.view.record.case_id !==
+            w.state.saved?.view.snapshot.case_id ||
+          w.comparisonAck.view.record.baseline_revision !==
+            w.state.saved?.view.snapshot.revision) && (
+          <section
+            className="pending"
+            aria-label="Comparison acknowledged for another selection"
+          >
+            <h2>Comparison acknowledged for another selection</h2>
+            <p>
+              Original comparison {w.comparisonAck.view.record.comparison_id} ·
+              baseline revision {w.comparisonAck.view.record.baseline_revision}.
+              The current selection was preserved.
+            </p>
+            <div className="actions">
+              <button
+                onClick={() => {
+                  if (w.comparisonAck) onOpenComparison(w.comparisonAck.view);
+                }}
+              >
+                Open acknowledged comparison
+              </button>
+              <button onClick={w.dismissComparisonAck}>
+                Dismiss comparison acknowledgment
+              </button>
+            </div>
+          </section>
+        )}
     </>
   );
 }

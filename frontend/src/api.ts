@@ -8,11 +8,19 @@ import { pointerFromLoc } from "./fieldCatalog";
 import type { Draft } from "./workspace";
 import { dispatchRequest } from "./transport";
 export { apiBase } from "./transport";
-export const apiRequest = (path: string, init: RequestInit, transport: typeof fetch = fetch): Promise<Response> =>
-  dispatchRequest(path, init, transport);
+export const apiRequest = (
+  path: string,
+  init: RequestInit,
+  transport: typeof fetch = fetch,
+): Promise<Response> => dispatchRequest(path, init, transport);
 
 /** One `field-errors-v1` item: where the server found a problem and its plain message (never the value). */
-export type FieldError = { pointer: string; code: string; message: string; limit: string | null };
+export type FieldError = {
+  pointer: string;
+  code: string;
+  message: string;
+  limit: string | null;
+};
 
 /** A failed evaluation. `status` is 0 when no response arrived. A rejection carries the server's field errors
  * and string `detail`; a request that was not sent or completed carries its reason (or "timeout") as `detail`. */
@@ -29,19 +37,32 @@ export class EvaluationError extends Error {
   }
 }
 
-function fieldErrorsFrom(body: unknown, detail: unknown): FieldError[] {
-  const envelope = body && typeof body === "object" && "errors" in body ? (body as { errors: unknown }).errors : null;
-  if (envelope && typeof envelope === "object" && (envelope as { version?: unknown }).version === "field-errors-v1") {
+export function fieldErrorsFrom(body: unknown, detail: unknown): FieldError[] {
+  const envelope =
+    body && typeof body === "object" && "errors" in body
+      ? (body as { errors: unknown }).errors
+      : null;
+  if (
+    envelope &&
+    typeof envelope === "object" &&
+    (envelope as { version?: unknown }).version === "field-errors-v1"
+  ) {
     const items = (envelope as { items?: unknown }).items;
     if (Array.isArray(items))
       return items.flatMap((item) =>
-        item && typeof item === "object" && typeof item.pointer === "string" && typeof item.message === "string"
-          ? [{
-              pointer: item.pointer,
-              code: typeof item.code === "string" ? item.code : "invalid_value",
-              message: item.message,
-              limit: typeof item.limit === "string" ? item.limit : null,
-            }]
+        item &&
+        typeof item === "object" &&
+        typeof item.pointer === "string" &&
+        typeof item.message === "string"
+          ? [
+              {
+                pointer: item.pointer,
+                code:
+                  typeof item.code === "string" ? item.code : "invalid_value",
+                message: item.message,
+                limit: typeof item.limit === "string" ? item.limit : null,
+              },
+            ]
           : [],
       );
   }
@@ -49,7 +70,14 @@ function fieldErrorsFrom(body: unknown, detail: unknown): FieldError[] {
   return Array.isArray(detail)
     ? detail.flatMap((item) =>
         item && typeof item === "object" && "loc" in item
-          ? [{ pointer: pointerFromLoc(item.loc), code: "invalid_value", message: String(item.msg ?? "Invalid input"), limit: null }]
+          ? [
+              {
+                pointer: pointerFromLoc(item.loc),
+                code: "invalid_value",
+                message: String(item.msg ?? "Invalid input"),
+                limit: null,
+              },
+            ]
           : [],
       )
     : [];
@@ -76,7 +104,12 @@ export async function evaluate(
     // A browser network failure is a TypeError; anything else is a reason the request was not sent or
     // completed (a timeout, a busy embedded host, a changed connection) and is kept for the message.
     const message = error instanceof Error ? error.message : String(error);
-    const reason = error instanceof DOMException && error.name === "TimeoutError" ? "timeout" : error instanceof TypeError ? null : message;
+    const reason =
+      error instanceof DOMException && error.name === "TimeoutError"
+        ? "timeout"
+        : error instanceof TypeError
+          ? null
+          : message;
     throw new EvaluationError(message, "unavailable", 0, [], reason);
   }
   let body: unknown;

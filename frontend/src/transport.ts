@@ -1,4 +1,6 @@
 import { authenticatedFetch } from "./authentication";
+import { pageJournal, pagePreferences } from "./memoryStorage";
+import { trackRequest } from "./requestActivity";
 
 export type WorkspaceTransport = (
   path: string,
@@ -28,9 +30,11 @@ export function dispatchRequest(
   init: RequestInit,
   network: typeof fetch,
 ): Promise<Response> {
-  return embedded
-    ? embedded(path, init)
-    : authenticatedFetch(`${apiBase}${path}`, init, network);
+  return trackRequest(() =>
+    embedded
+      ? embedded(path, init)
+      : authenticatedFetch(`${apiBase}${path}`, init, network),
+  );
 }
 
 const embeddedPrefix = "spreadline.embedded.";
@@ -64,22 +68,10 @@ function prefixed(storage: Storage, prefix: string): Storage {
 }
 
 export function workspaceStorage(): Storage | null {
-  try {
-    const storage = window.sessionStorage;
-    // Keep the journal across reload and store changes so a mismatched generation
-    // blocks writes until reviewed. Standalone journals are a separate namespace.
-    return embedded ? prefixed(storage, embeddedPrefix) : storage;
-  } catch {
-    return null;
-  }
+  return embedded ? prefixed(pageJournal, embeddedPrefix) : pageJournal;
 }
 
-/** Durable display preferences only (the theme); never credentials, case data or the write journal. */
+/** Display preferences live only until this page reloads. */
 export function preferenceStorage(): Storage | null {
-  try {
-    const storage = window.localStorage;
-    return embedded ? prefixed(storage, embeddedPrefix) : storage;
-  } catch {
-    return null;
-  }
+  return embedded ? prefixed(pagePreferences, embeddedPrefix) : pagePreferences;
 }

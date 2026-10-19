@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { enterWorkspace, moreAction, openView } from "../tests/testCredentials";
+import { enterWorkspace, moreAction, openCaseBrowser, openView } from "../tests/testCredentials";
 
 test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews a scenario", async ({
   page,
@@ -49,7 +49,12 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when fetched",
   );
+  const savedCaseId = await page.locator(".savedContext code").first().innerText();
   await page.reload();
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator(".savedContext")).toHaveCount(0);
+  await openCaseBrowser(page);
+  await page.locator(".caseRow").filter({ hasText: savedCaseId }).getByRole("button", { name: /^Open / }).click();
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when fetched",
     { timeout: 30_000 },
@@ -81,76 +86,102 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   expect(errors).toEqual([]);
 });
 
-test("an acknowledged write with retained recovery tracking can be retried after reload exactly once", async ({
-  page,
-}) => {
+test("embedded saves work with browser storage denied and reload requires an explicit server selection", async ({ page }) => {
   await page.addInitScript(() => {
-    const remove = Storage.prototype.removeItem;
-    Storage.prototype.removeItem = function (key: string) {
-      if (
-        key === "spreadline.embedded.spreadline.pending-write.v1" &&
-        !sessionStorage.getItem("spreadline.test.allow-clear")
-      )
-        return;
-      return remove.call(this, key);
-    };
+    for (const key of ["localStorage", "sessionStorage"])
+      Object.defineProperty(window, key, {
+        configurable: true,
+        get() { throw new DOMException("Storage disabled", "SecurityError"); },
+      });
   });
   await page.goto("/");
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });
-  await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
-    timeout: 30_000,
-  });
+  await expect(page.locator(".decision strong")).toHaveText("APPROVE", { timeout: 30_000 });
   await page.getByRole("button", { name: "Save case", exact: true }).click();
-  await page
-    .getByLabel("Save rationale")
-    .fill("Synthetic recovery verification");
-  await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
-    .click();
-  await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
-  );
-  const original = await page.evaluate(() => ({
-    operation: JSON.parse(
-      sessionStorage.getItem(
-        "spreadline.embedded.spreadline.pending-write.v1",
-      )!,
-    ).id,
-    caseId: JSON.parse(
-      sessionStorage.getItem(
-        "spreadline.embedded.spreadline.case-selection.v1",
-      )!,
-    ).caseId,
-  }));
+  await page.getByLabel("Save rationale").fill("Synthetic memory-only embedded save");
+  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
+  const caseId = await page.locator(".savedContext code").first().innerText();
+  await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
   await page.reload();
-  await expect(
-    page.getByRole("button", { name: "Retry exact write", exact: true }),
-  ).toBeEnabled({ timeout: 30_000 });
-  await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
-  expect(
-    await page.evaluate(
-      () =>
-        JSON.parse(
-          sessionStorage.getItem(
-            "spreadline.embedded.spreadline.pending-write.v1",
-          )!,
-        ).id,
-    ),
-  ).toBe(original.operation);
-  await page.evaluate(() =>
-    sessionStorage.setItem("spreadline.test.allow-clear", "true"),
-  );
-  await page
-    .getByRole("button", { name: "Retry exact write", exact: true })
-    .click();
-  await expect(page.locator(".savedContext")).toContainText(original.caseId);
-  await expect(
-    page.getByText("Recovered the original revision 1.", { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Retry exact write", exact: true }),
-  ).toHaveCount(0);
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator(".decision, .savedContext")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
+  await openCaseBrowser(page);
+  await page.locator(".caseRow").filter({ hasText: caseId }).getByRole("button", { name: /^Open / }).click();
+  await expect(page.locator(".savedContext")).toContainText(caseId);
+  await expect(page.locator(".savedContext")).toContainText("Revision 1");
+  await openView(page, "history");
+  await expect(page.locator(".revisionList .caseRow")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Open revision 1", exact: true })).toBeVisible();
+});
+
+test("an embedded acknowledged write with uncleared memory retries the same operation and returns its original revision", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
+  await enterWorkspace(page, { timeout: 30_000 });
+  await expect(page.locator(".decision strong")).toHaveText("APPROVE", { timeout: 30_000 });
+
+  // Fault only this page's pending journal deletion; keep the test control in a
+  // JSHandle rather than adding a production global or touching browser storage.
+  const tracking = await page.evaluateHandle(() => {
+    const remove = Map.prototype.delete;
+    const state = {
+      allowClear: false,
+      blockedClears: 0,
+      blockedId: "",
+      clearedId: "",
+      restore() { Map.prototype.delete = remove; },
+    };
+    Map.prototype.delete = function (key: unknown) {
+      if (typeof key === "string" && key.endsWith("spreadline.pending-write.v1")) {
+        const operation = JSON.parse(String(this.get(key))) as { id: string };
+        if (!state.allowClear) {
+          state.blockedClears++;
+          state.blockedId = operation.id;
+          return false;
+        }
+        state.clearedId = operation.id;
+      }
+      return remove.call(this, key);
+    };
+    return state;
+  });
+  try {
+    await page.getByRole("button", { name: "Save case", exact: true }).click();
+    await page.getByLabel("Save rationale").fill("Synthetic acknowledged memory tracking recovery");
+    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+    await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
+    await expect(page.locator(".savedContext")).toContainText("Revision 1");
+    const caseId = await page.locator(".savedContext code").first().innerText();
+    const recovery = page.getByRole("region", { name: "Saved write recovery", exact: true });
+    await expect(recovery.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
+    await expect(recovery).toContainText("could not clear");
+    await recovery.getByText("Inspect pending payload", { exact: true }).click();
+    const operationId = await recovery.locator("details > p > code").first().innerText();
+    expect(operationId).toMatch(/^[0-9a-f-]{36}$/);
+    expect(await tracking.evaluate(state => state.blockedId)).toBe(operationId);
+    expect(await tracking.evaluate(state => state.blockedClears)).toBeGreaterThan(0);
+
+    await openView(page, "history");
+    await expect(page.locator(".revisionList .caseRow")).toHaveCount(1);
+    await expect(recovery.locator("details > p > code").first()).toHaveText(operationId);
+    expect(await tracking.evaluate(state => state.clearedId)).toBe("");
+    await tracking.evaluate(state => { state.allowClear = true; });
+    await recovery.getByRole("button", { name: "Retry exact write", exact: true }).click();
+    await expect(page.getByText("Recovered the original revision 1.", { exact: true })).toBeVisible();
+    await expect(page.locator(".savedContext")).toContainText(caseId);
+    await expect(page.locator(".savedContext")).toContainText("Revision 1");
+    await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
+    expect(await tracking.evaluate(state => state.clearedId)).toBe(operationId);
+    await page.getByRole("button", { name: "Refresh revisions", exact: true }).click();
+    await expect(page.locator(".revisionList .caseRow")).toHaveCount(1);
+    await expect(page.getByRole("button", { name: "Open revision 1", exact: true })).toBeVisible();
+  } finally {
+    await tracking.evaluate(state => state.restore());
+    await tracking.dispose();
+  }
 });
 
 test("embedded dialogs keep keyboard focus and browser sessions keep separate drafts", async ({
@@ -202,7 +233,7 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
   }
 });
 
-test("the embedded theme choice is namespaced and leaves the Streamlit page untouched", async ({
+test("the embedded theme is page-only and leaves the Streamlit page untouched", async ({
   page,
 }) => {
   await page.goto("/");
@@ -220,11 +251,11 @@ test("the embedded theme choice is namespaced and leaves the Streamlit page unto
   await expect(page.locator(".moreMenu")).toHaveCount(0);
   expect(
     await page.evaluate(() => [
-      localStorage.getItem("spreadline.embedded.spreadline.theme.v1"),
-      localStorage.getItem("spreadline.theme.v1"),
+      Object.entries(localStorage).filter(([key]) => key.startsWith("spreadline.")),
+      Object.entries(sessionStorage).filter(([key]) => key.startsWith("spreadline.")),
       document.documentElement.dataset.theme ?? null,
     ]),
-  ).toEqual(["dark", null, null]);
+  ).toEqual([[], [], null]);
   await page.reload();
   // An unsaved example leaves nothing to restore, so the reload returns to the start screen.
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
@@ -232,5 +263,5 @@ test("the embedded theme choice is namespaced and leaves the Streamlit page unto
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
-  await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator(".themeRoot")).toHaveAttribute("data-theme", "light");
 });

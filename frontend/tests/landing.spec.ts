@@ -1,3 +1,4 @@
+import { writeWorkspaceMemory } from "./workspaceMemory";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import type { APIRequestContext, Page } from "@playwright/test";
@@ -108,12 +109,8 @@ test("import case file opens the file chooser and evaluates the chosen file", as
 
 test("a remembered saved selection reopens the workspace without the start screen", async ({ page, request }) => {
   const saved = await createCase(request, "Remembered landing borrower");
-  await page.addInitScript(
-    ({ key, base, caseId }) =>
-      sessionStorage.setItem(key, JSON.stringify({ version: "case-selection-v1", apiBase: base, caseId, revision: "latest" })),
-    { key: LOCATOR_KEY, base: TEST_API_ORIGIN, caseId: saved.case_id },
-  );
   await page.goto("/");
+  await writeWorkspaceMemory(page, LOCATOR_KEY, JSON.stringify({ version: "case-selection-v1", apiBase: TEST_API_ORIGIN, caseId: saved.case_id, revision: "latest" }));
   await connectWorkspace(page, { example: false });
   await expect(page.locator(".savedContext")).toContainText(saved.case_id);
   await expect(page.locator(".startScreen")).toHaveCount(0);
@@ -122,12 +119,12 @@ test("a remembered saved selection reopens the workspace without the start scree
 test("an unconfirmed saved write reopens the workspace with exact retry and no start screen", async ({ page }) => {
   // Node resolves the API base without the dev server's setting; the journal must name the browser's.
   const pending = JSON.stringify({ ...makeCreate(dated, "Pending landing creation"), apiBase: TEST_API_ORIGIN });
-  await page.addInitScript(({ key, pending }) => sessionStorage.setItem(key, pending), { key: RECOVERY_KEY, pending });
   let posts = 0;
   page.on("request", (request) => {
     if (request.method() === "POST" && new URL(request.url()).pathname === "/cases") posts++;
   });
   await page.goto("/");
+  await writeWorkspaceMemory(page, RECOVERY_KEY, pending);
   await connectWorkspace(page, { example: false });
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
@@ -136,8 +133,9 @@ test("an unconfirmed saved write reopens the workspace with exact retry and no s
 });
 
 test("unreadable recovery tracking stays visible on the start screen", async ({ page }) => {
-  await page.addInitScript((key) => sessionStorage.setItem(key, "{invalid"), RECOVERY_KEY);
-  await startScreen(page);
+  await page.goto("/");
+  await writeWorkspaceMemory(page, RECOVERY_KEY, "{invalid");
+  await connectWorkspace(page, { example: false });
   await expect(page.getByRole("heading", { name: "Saved write recovery unavailable" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Review discarding tracking", exact: true })).toBeEnabled();
 });

@@ -1,3 +1,4 @@
+import { readWorkspaceMemory, writeWorkspaceMemory } from "./workspaceMemory";
 import { connectWorkspace, moreAction, openCaseBrowser, openView, TEST_API_ORIGIN } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { APIRequestContext, Page } from "@playwright/test";
@@ -18,12 +19,12 @@ async function retain(request: APIRequestContext, s: any) {
   const r = await request.post(`${path}/scenario-comparisons`, { headers: { "Idempotency-Key": randomUUID() }, data: { ...command, schema_version: "commercial-scenario-comparison-create-v2", expected_preview_fingerprint: (await p.json()).fingerprint.value } }); expect(r.status()).toBe(201);
   return { record: await r.json(), etag: r.headers().etag };
 }
-async function open(page: Page, s: any, record?: any, pending = false) {
-  await page.addInitScript(({ s, record, key, comparisonKey, base }) => {
-    sessionStorage.setItem(key, JSON.stringify({ version: "case-selection-v1", apiBase: base, caseId: s.case_id, revision: s.revision }));
-    if (record) sessionStorage.setItem(comparisonKey, JSON.stringify({ version: "comparison-selection-v1", apiBase: base, caseId: s.case_id, comparisonId: record.comparison_id }));
-  }, { s, record, key: LOCATOR_KEY, comparisonKey: COMPARISON_LOCATOR_KEY, base: TEST_API_ORIGIN });
-  await page.goto("/"); await connectWorkspace(page);
+async function open(page: Page, s: any, record?: any, pending?: string) {
+  await page.goto("/");
+  await writeWorkspaceMemory(page, LOCATOR_KEY, JSON.stringify({ version: "case-selection-v1", apiBase: TEST_API_ORIGIN, caseId: s.case_id, revision: s.revision }));
+  if (record) await writeWorkspaceMemory(page, COMPARISON_LOCATOR_KEY, JSON.stringify({ version: "comparison-selection-v1", apiBase: TEST_API_ORIGIN, caseId: s.case_id, comparisonId: record.comparison_id }));
+  if (pending) await writeWorkspaceMemory(page, RECOVERY_KEY, pending);
+  await connectWorkspace(page);
   if (pending) {
     await openCaseBrowser(page);
     await page.getByRole("button", { name: `Open ${s.normalized_input.borrower_name} case ${s.case_id}`, exact: true }).click();
@@ -97,14 +98,13 @@ test("known storage with unsupported financial definitions exports the original 
 });
 test("pending recovery remains byte-identical while a current original is exported", async ({ page, request }) => {
   const original = await create(request), pending = JSON.stringify(makeCreate(input, "Pending synthetic other case"));
-  await page.addInitScript(({ key, pending }) => sessionStorage.setItem(key, pending), { key: RECOVERY_KEY, pending });
   // The read-only analysis route may run while a write is pending; nothing else may POST.
   let posts: string[] = []; page.on("request", r => { if (r.method() === "POST" && !new URL(r.url()).pathname.endsWith("/analysis")) posts.push(new URL(r.url()).pathname); });
-  await open(page, original.snapshot, undefined, true);
+  await open(page, original.snapshot, undefined, pending);
   await expect(page.locator(".reviewWorkspace")).toContainText("Pending work is excluded");
   const parsed = JSON.parse((await download(page)).text);
   expect(parsed.case).toEqual(original);
-  expect(await page.evaluate(key => sessionStorage.getItem(key), RECOVERY_KEY)).toBe(pending);
+  expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBe(pending);
   expect(posts).toEqual([]);
 });
 test("keyboard and mobile review/download remain readable with a clean console", async ({ page, request }, info) => {

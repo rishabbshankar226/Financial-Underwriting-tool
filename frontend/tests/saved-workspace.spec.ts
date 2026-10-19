@@ -1,4 +1,6 @@
-import { connectWorkspace, moreAction, openCaseBrowser, openView } from "./testCredentials";
+import { readWorkspaceMemory, writeWorkspaceMemory } from "./workspaceMemory";
+import { LOCATOR_KEY, RECOVERY_KEY } from "../src/caseRecovery";
+import { connectWorkspace, disconnect, moreAction, openCaseBrowser, openView } from "./testCredentials";
 import { test, expect } from "./authenticatedTest";
 import type { Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
@@ -69,7 +71,10 @@ test("real save/reload/edit/history reads original runs without stateless recalc
   page.on("request", (r) => {
     if (r.url().endsWith("/commercial/assessment")) assessments++;
   });
-  await page.reload(); await connectWorkspace(page);
+  await page.reload(); await connectWorkspace(page, { example: false });
+  await expect(page.locator(".startScreen")).toBeVisible();
+  await openCaseBrowser(page);
+  await page.locator(".caseRow").filter({ hasText: snapshot.case_id }).getByRole("button", { name: /^Open / }).click();
   await expect(page.locator(".savedContext")).toContainText(snapshot.case_id);
   await editRevenue(page, "1", "Synthetic revenue revision");
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
@@ -103,7 +108,7 @@ test("real save/reload/edit/history reads original runs without stateless recalc
   await page.getByRole("button", { name: "Open latest", exact: true }).click();
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
 });
-test("lost create response survives reload and retry creates exactly one case", async ({
+test("lost create response survives same-page reconnect and retry creates exactly one case", async ({
   page,
   request,
 }) => {
@@ -128,7 +133,7 @@ test("lost create response survives reload and retry creates exactly one case", 
   ).toBeEnabled();
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   await page.unroute("**/cases");
-  await page.reload(); await connectWorkspace(page);
+  await disconnect(page); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   const retry = page.waitForRequest(
     (r) => new URL(r.url()).pathname === "/cases" && r.method() === "POST",
@@ -289,17 +294,16 @@ test("a rejected saved edit never falls back to stateless re-evaluation", async 
     ).revision,
   ).toBe(1);
 });
-test("stateless edits remain usable when the browser cannot keep recovery storage", async ({
+test("edits and exact saved-write retry work when browser storage is unavailable", async ({
   page,
 }) => {
-  await page.addInitScript(() =>
-    Object.defineProperty(window, "sessionStorage", {
-      configurable: true,
-      get() {
-        throw new Error("Storage unavailable");
-      },
-    }),
-  );
+  await page.addInitScript(() => {
+    for (const key of ["localStorage", "sessionStorage"])
+      Object.defineProperty(window, key, {
+        configurable: true,
+        get() { throw new DOMException("Storage unavailable", "SecurityError"); },
+      });
+  });
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   const field = page.getByRole("button", {
@@ -314,11 +318,35 @@ test("stateless edits remain usable when the browser cannot keep recovery storag
     .getByRole("button", { name: "Evaluate edit", exact: true })
     .click();
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
-  await expect(
-    page.getByRole("button", { name: "Save case", exact: true }),
-  ).toBeDisabled();
+  const saveButton = page.getByRole("button", { name: "Save case", exact: true });
+  await expect(saveButton).toBeEnabled();
+  let body = "", key = "", retryBody = "", retryKey = "";
+  await page.route("**/cases", async route => {
+    if (route.request().method() !== "POST") return route.continue();
+    body = route.request().postData()!;
+    key = route.request().headers()["idempotency-key"];
+    await route.fetch();
+    await route.abort("failed");
+  });
+  await saveButton.click();
+  await page.getByLabel("Save rationale").fill("Synthetic save with browser storage disabled");
+  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
+  await page.unroute("**/cases");
+  page.on("request", request => {
+    if (request.method() === "POST" && new URL(request.url()).pathname === "/cases") {
+      retryBody = request.postData()!;
+      retryKey = request.headers()["idempotency-key"];
+    }
+  });
+  await page.getByRole("button", { name: "Retry exact write", exact: true }).click();
+  await expect(page.locator(".savedContext")).toContainText("Revision 1");
+  expect(retryBody).toBe(body);
+  expect(retryKey).toBe(key);
+  await expect(page.locator(".decision strong")).toHaveText("DECLINE");
+  await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
 });
-test("lost edit retry after reload identifies its old receipt when head advanced", async ({
+test("lost edit retry after same-page reconnect identifies its old receipt when head advanced", async ({
   page,
   request,
 }) => {
@@ -364,7 +392,7 @@ test("lost edit retry after reload identifies its old receipt when head advanced
   );
   expect(advance.status()).toBe(201);
   await page.unroute("**/cases/*/revisions");
-  await page.reload(); await connectWorkspace(page);
+  await disconnect(page); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   const retry = page.waitForRequest(
     (r) => r.method() === "POST" && r.url().endsWith("/revisions"),
@@ -806,22 +834,25 @@ test("an older saved read cannot replace the newer selected case", async ({
     "Latest selected saved case",
   );
   await expect(page.locator(".savedContext")).toContainText(cases[1].run_id);
-  await page.reload(); await connectWorkspace(page);
+  expect(JSON.parse((await readWorkspaceMemory(page, LOCATOR_KEY))!).caseId).toBe(cases[1].case_id);
+  await page.reload(); await connectWorkspace(page, { example: false });
+  await expect(page.locator(".startScreen")).toBeVisible();
+  await openCaseBrowser(page);
+  await page.locator(".caseRow").filter({ hasText: cases[1].case_id }).getByRole("button", { name: /^Open / }).click();
   await expect(page.locator(".savedContext")).toContainText(cases[1].case_id);
 });
 
 test("invalid recovery tracking never auto-posts and needs explicit discard", async ({
   page,
 }) => {
-  await page.addInitScript(() =>
-    sessionStorage.setItem("spreadline.pending-write.v1", "{invalid"),
-  );
   let writes = 0;
   page.on("request", (r) => {
     if (r.method() === "POST" && new URL(r.url()).pathname.startsWith("/cases"))
       writes++;
   });
-  await page.goto("/"); await connectWorkspace(page);
+  await page.goto("/");
+  await writeWorkspaceMemory(page, RECOVERY_KEY, "{invalid");
+  await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await expect(
     page.getByRole("heading", { name: "Saved write recovery unavailable" }),
@@ -843,9 +874,7 @@ test("invalid recovery tracking never auto-posts and needs explicit discard", as
   await page.keyboard.press("Escape");
   await expect(review).toBeFocused();
   expect(
-    await page.evaluate(() =>
-      sessionStorage.getItem("spreadline.pending-write.v1"),
-    ),
+    await readWorkspaceMemory(page, RECOVERY_KEY),
   ).toBe("{invalid");
   await review.click();
   await page
@@ -855,30 +884,29 @@ test("invalid recovery tracking never auto-posts and needs explicit discard", as
     page.getByRole("button", { name: "Save case", exact: true }),
   ).toBeEnabled();
   expect(
-    await page.evaluate(() =>
-      sessionStorage.getItem("spreadline.pending-write.v1"),
-    ),
+    await readWorkspaceMemory(page, RECOVERY_KEY),
   ).toBeNull();
   expect(writes).toBe(0);
 });
 
-test("a journal quota failure stops the write and preserves the accepted result", async ({
+test("a memory tracking failure stops the write and preserves the accepted result", async ({
   page,
 }) => {
-  await page.addInitScript(() => {
-    const original = Storage.prototype.setItem;
-    Storage.prototype.setItem = function (key, value) {
-      if (key === "spreadline.pending-write.v1")
-        throw new DOMException("Synthetic quota failure", "QuotaExceededError");
-      original.call(this, key, value);
-    };
-  });
   let writes = 0;
   page.on("request", (r) => {
     if (r.method() === "POST" && new URL(r.url()).pathname === "/cases")
       writes++;
   });
   await page.goto("/"); await connectWorkspace(page);
+  await page.evaluate(async () => {
+    const modulePath = "/src/transport.ts";
+    const memory = (await import(modulePath)).workspaceStorage() as Storage;
+    const original = memory.setItem.bind(memory);
+    memory.setItem = (key, value) => {
+      if (key === "spreadline.pending-write.v1") throw new Error("Synthetic memory tracking failure");
+      original(key, value);
+    };
+  });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   const saveButton = page.getByRole("button", {
     name: "Save case",
@@ -897,9 +925,7 @@ test("a journal quota failure stops the write and preserves the accepted result"
   await page.keyboard.press("Escape");
   await expect(saveButton).toBeFocused();
   expect(
-    await page.evaluate(() =>
-      sessionStorage.getItem("spreadline.pending-write.v1"),
-    ),
+    await readWorkspaceMemory(page, RECOVERY_KEY),
   ).toBeNull();
 });
 

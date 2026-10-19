@@ -75,6 +75,11 @@ export type CaseSummary = {
   revision: number;
   run_id: string;
   recorded_at: string;
+  definition_supported?: boolean;
+  outcome?: "approve" | "review" | "decline" | null;
+  dscr?: string | null;
+  requested_amount?: string | null;
+  assessment_as_of?: string | null;
 };
 export type RevisionSummary = {
   case_id: string;
@@ -132,7 +137,8 @@ export function finiteJson(value: unknown, depth = 0, maxDepth = 64): void {
     return;
   }
   requireCase(typeof value === "object", "JSON value");
-  for (const child of Object.values(value as Obj)) finiteJson(child, depth + 1, maxDepth);
+  for (const child of Object.values(value as Obj))
+    finiteJson(child, depth + 1, maxDepth);
 }
 export function sameJson(a: unknown, b: unknown): boolean {
   if (a === b) return true;
@@ -254,7 +260,12 @@ export function inputField(
     context.unit = "decimal fraction";
   if (field === "term_months") context.unit = "months";
   const value = target[field];
-  requireCase(field === "term_months" ? Number.isSafeInteger(value) : isDecimal(value) || finite(value), "numeric input");
+  requireCase(
+    field === "term_months"
+      ? Number.isSafeInteger(value)
+      : isDecimal(value) || finite(value),
+    "numeric input",
+  );
   return { value: value as string | number, context };
 }
 export function guardCreate(value: unknown): CaseCreate {
@@ -264,14 +275,26 @@ export function guardCreate(value: unknown): CaseCreate {
   const legacy = rawInput.schema_version === "commercial-assessment-v1";
   if (legacy) {
     const convert = (value: unknown, key = ""): unknown => {
-      if (typeof value === "number") return key === "term_months" ? value : legacyDecimal(value);
-      if (Array.isArray(value)) return value.map(item => convert(item));
-      if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([name, item]) => [name, convert(item, name)]));
+      if (typeof value === "number")
+        return key === "term_months" ? value : legacyDecimal(value);
+      if (Array.isArray(value)) return value.map((item) => convert(item));
+      if (value && typeof value === "object")
+        return Object.fromEntries(
+          Object.entries(value).map(([name, item]) => [
+            name,
+            convert(item, name),
+          ]),
+        );
       return value;
     };
-    guardDatedInput({ ...object(convert(rawInput), "archived input"), schema_version: "commercial-assessment-v2" });
+    guardDatedInput({
+      ...object(convert(rawInput), "archived input"),
+      schema_version: "commercial-assessment-v2",
+    });
   }
-  const input = legacy ? rawInput as unknown as DatedRequest : guardDatedInput(rawInput);
+  const input = legacy
+    ? (rawInput as unknown as DatedRequest)
+    : guardDatedInput(rawInput);
   exact(input as unknown as Obj, [
     "schema_version",
     "assessment_as_of",
@@ -309,11 +332,17 @@ export function guardEdit(value: unknown): CaseEdit {
   const command = object(value, "edit command");
   exact(command, ["field_path", "new_value", "rationale"]);
   editPath(command.field_path);
-  requireCase(isDecimal(command.new_value) || finite(command.new_value), "finite edit value");
+  requireCase(
+    isDecimal(command.new_value) || finite(command.new_value),
+    "finite edit value",
+  );
   rationale(command.rationale);
   if (command.field_path === "/proposed_loan/term_months")
     requireCase(
-      finite(command.new_value) && Number.isSafeInteger(command.new_value) && command.new_value >= 12 && command.new_value <= 12000,
+      finite(command.new_value) &&
+        Number.isSafeInteger(command.new_value) &&
+        command.new_value >= 12 &&
+        command.new_value <= 12000,
       "whole term months",
     );
   return command as CaseEdit;
@@ -487,6 +516,10 @@ function summary(v: unknown): Obj {
 }
 export function guardCasePage(value: unknown): Page<CaseSummary> {
   const p = page(value);
+  requireCase(
+    p.listing_version === undefined || p.listing_version === "case-listing-v2",
+    "listing version",
+  );
   const ids = new Set<string>();
   for (const v of p.items as unknown[]) {
     const s = summary(v);
@@ -497,6 +530,24 @@ export function guardCasePage(value: unknown): Page<CaseSummary> {
       "case summary",
     );
     ids.add(s.case_id as string);
+    if (p.listing_version === "case-listing-v2") {
+      requireCase(
+        typeof s.definition_supported === "boolean",
+        "summary definition support",
+      );
+      requireCase(
+        s.definition_supported
+          ? ["approve", "review", "decline"].includes(String(s.outcome)) &&
+              (s.dscr === null || isDecimal(s.dscr)) &&
+              isDecimal(s.requested_amount) &&
+              date(s.assessment_as_of)
+          : s.outcome === null &&
+              s.dscr === null &&
+              s.requested_amount === null &&
+              s.assessment_as_of === null,
+        "summary financial values",
+      );
+    }
   }
   return p as Page<CaseSummary>;
 }

@@ -1,14 +1,16 @@
 import { parseInputJson } from "./decimal";
 import { useEffect, useReducer, useRef, useState } from "react";
-import alpine from "../../backend/fixtures/alpine.json";
-import datedAlpine from "../../backend/fixtures/alpine_dated_v2.json";
+import {
+  legacySample as alpine,
+  datedSample as datedAlpine,
+} from "./sampleCases";
 import {
   detectMode,
   guardLegacyInput,
   type DatedRequest,
   type Input,
 } from "./contracts";
-import { evaluate } from "./api";
+import { evaluate, EvaluationError, type FieldError } from "./api";
 import { caseError, fetchCase } from "./caseApi";
 import { inputField, sameJson, type StoredCase } from "./caseContracts";
 import {
@@ -43,7 +45,9 @@ type Conflict = {
 };
 export function useAnalystWorkspace() {
   // The first render already shows the start screen, a reopening saved case or pending-write recovery.
-  const [state, dispatch] = useReducer(transition, null, () => initialWorkspaceFor(browserStorage()));
+  const [state, dispatch] = useReducer(transition, null, () =>
+    initialWorkspaceFor(browserStorage()),
+  );
   const current = useRef(state);
   current.current = state;
   const sequence = useRef(0),
@@ -66,6 +70,7 @@ export function useAnalystWorkspace() {
   } | null>(null);
   const acknowledgment = useRef(0);
   const [notice, setNotice] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldError[]>([]);
   const [offer, setOffer] = useState<StoredCase | null>(null);
   const [rejected, setRejected] = useState<PendingOperation | null>(null);
   const [conflict, setConflict] = useState<Conflict | null>(null);
@@ -83,6 +88,7 @@ export function useAnalystWorkspace() {
     read.current = null;
     head.current = null;
     dispatch({ type: "start", id, filename, draft, action });
+    setFieldErrors([]);
     return id;
   }
   async function submit(draft: Draft, id = begin(draft.filename, draft)) {
@@ -92,11 +98,21 @@ export function useAnalystWorkspace() {
     read.current = controller;
     try {
       const accepted = await evaluate(draft, controller.signal);
-      if (id === sequence.current && !controller.signal.aborted)
+      if (id === sequence.current && !controller.signal.aborted) {
         dispatch({ type: "success", id, accepted });
+        return accepted;
+      }
     } catch (error) {
-      if (id === sequence.current && !controller.signal.aborted)
-        dispatch({ type: "failure", id, error: evaluationFailureMessage(error) });
+      if (id === sequence.current && !controller.signal.aborted) {
+        setFieldErrors(
+          error instanceof EvaluationError ? error.fieldErrors : [],
+        );
+        dispatch({
+          type: "failure",
+          id,
+          error: evaluationFailureMessage(error),
+        });
+      }
     }
   }
   function demo(mode: "dated" | "legacy") {
@@ -155,6 +171,7 @@ export function useAnalystWorkspace() {
           view,
           selection: locator.revision === "latest" ? "latest" : "revision",
         });
+      if (id === sequence.current && !controller.signal.aborted) return view;
     } catch (error) {
       if (id === sequence.current && !controller.signal.aborted)
         dispatch({ type: "failure", id, error: caseError(error).message });
@@ -329,7 +346,8 @@ export function useAnalystWorkspace() {
   }
   function retryWrite() {
     const op = writes.controller.snapshot().operation;
-    if (!op || inFlight || (writeError?.status === 409 && !writeError.certain)) return;
+    if (!op || inFlight || (writeError?.status === 409 && !writeError.certain))
+      return;
     const request = writes.controller.retry();
     if (op.kind === "comparison") {
       void executeComparison(op, sequence.current, request);
@@ -346,7 +364,9 @@ export function useAnalystWorkspace() {
   }
   function discardTracking() {
     writes.controller.discard();
-    setNotice("Local recovery tracking discarded. This does not undo a write that might already be saved.");
+    setNotice(
+      "Local recovery tracking discarded. This does not undo a write that might already be saved.",
+    );
   }
   async function executeComparison(
     op: ComparisonOperation,
@@ -360,24 +380,43 @@ export function useAnalystWorkspace() {
       if (!mounted.current) return;
       if (receipt.kind !== "comparison")
         throw new Error("Unexpected case receipt for comparison save");
-      setComparisonAck({ scope, view: receipt.view, operationId: op.id, serial: ++acknowledgment.current });
-      setNotice(`${receipt.replayed ? "Recovered the original" : "Saved"} comparison ${receipt.view.record.comparison_id}.`);
+      setComparisonAck({
+        scope,
+        view: receipt.view,
+        operationId: op.id,
+        serial: ++acknowledgment.current,
+      });
+      setNotice(
+        `${receipt.replayed ? "Recovered the original" : "Saved"} comparison ${receipt.view.record.comparison_id}.`,
+      );
     } catch (error) {
       if (mounted.current) {
         const failure = caseError(error);
-        setComparisonError({ scope, message: failure.message, code: failure.code });
+        setComparisonError({
+          scope,
+          message: failure.message,
+          code: failure.code,
+        });
       }
     }
   }
   function retainComparison(preview: ScenarioPreview) {
-    const s = current.current, b = preview.baseline;
-    if (s.status !== "ready" || !s.saved || conflictRef.current ||
-        s.saved.view.snapshot.case_id !== b.case_id ||
-        s.saved.view.snapshot.revision !== b.revision ||
-        s.saved.view.snapshot.run_id !== b.run_id ||
-        s.saved.view.snapshot.payload_hash !== b.payload_hash)
-      throw new Error("Review the currently selected original baseline before saving.");
-    const op = makeComparison(preview), request = writes.controller.start(op);
+    const s = current.current,
+      b = preview.baseline;
+    if (
+      s.status !== "ready" ||
+      !s.saved ||
+      conflictRef.current ||
+      s.saved.view.snapshot.case_id !== b.case_id ||
+      s.saved.view.snapshot.revision !== b.revision ||
+      s.saved.view.snapshot.run_id !== b.run_id ||
+      s.saved.view.snapshot.payload_hash !== b.payload_hash
+    )
+      throw new Error(
+        "Review the currently selected original baseline before saving.",
+      );
+    const op = makeComparison(preview),
+      request = writes.controller.start(op);
     void executeComparison(op, sequence.current, request);
   }
   function adoptConflict(latest: StoredCase) {
@@ -427,6 +466,43 @@ export function useAnalystWorkspace() {
       conflictRef.current = null;
     }
   }
+  async function reviewRejected(next: string | number, rationale: string) {
+    const op = rejected;
+    if (op?.kind !== "edit") return null;
+    const selection = sequence.current;
+    const controller = new AbortController();
+    conflictRead.current?.abort();
+    conflictRead.current = controller;
+    const latest = await fetchCase(op.caseId, "latest", controller.signal);
+    if (
+      controller.signal.aborted ||
+      selection !== sequence.current ||
+      !latest.assessment
+    )
+      return null;
+    const selected = inputField(
+      latest.assessment.normalized_input,
+      op.review.path,
+    );
+    if (!sameJson(selected.context, op.context))
+      throw new Error(
+        "The latest field has a different context. Review the complete original before changing it.",
+      );
+    const id = begin(`Saved case ${op.caseId}`, null, "open");
+    dispatch({ type: "stored-success", id, view: latest, selection: "latest" });
+    writeLocator(browserStorage(), { caseId: op.caseId, revision: "latest" });
+    setRejected(null);
+    return {
+      field: { ...op.review, value: selected.value },
+      proposal: {
+        path: op.review.path,
+        prior: selected.value,
+        next,
+        rationale,
+        at: "unverified proposal",
+      },
+    };
+  }
   useEffect(() => {
     mounted.current = true;
     // A pending case write already shows its recovery state; with nothing to restore the tab stays idle.
@@ -435,7 +511,10 @@ export function useAnalystWorkspace() {
       const locator = readLocator(browserStorage());
       if (locator) void openSaved(locator);
       else if (pending?.kind === "comparison")
-        void openSaved({ caseId: pending.caseId, revision: pending.baselineRevision });
+        void openSaved({
+          caseId: pending.caseId,
+          revision: pending.baselineRevision,
+        });
     }
     return () => {
       mounted.current = false;
@@ -447,6 +526,7 @@ export function useAnalystWorkspace() {
   }, []);
   return {
     state,
+    fieldErrors,
     submit,
     upload,
     demo,
@@ -475,6 +555,7 @@ export function useAnalystWorkspace() {
     retryWrite,
     discardTracking,
     reviewConflict,
+    reviewRejected,
     cancelConflict,
     refreshConflict: () => {
       if (conflictRef.current) void loadConflict(conflictRef.current.operation);
@@ -483,6 +564,9 @@ export function useAnalystWorkspace() {
     dismissOffer: () => setOffer(null),
     dismissComparisonAck: () => setComparisonAck(null),
     clearComparisonError: () => setComparisonError(null),
-    deferComparisonAck: (serial: number) => setComparisonAck(value => value?.serial === serial ? { ...value, scope: null } : value),
+    deferComparisonAck: (serial: number) =>
+      setComparisonAck((value) =>
+        value?.serial === serial ? { ...value, scope: null } : value,
+      ),
   };
 }

@@ -19,7 +19,12 @@ import {
 } from "./caseContracts";
 import type { DatedRequest } from "./contracts";
 import type { EditableField, EditEvent } from "./workspace";
-import { guardPreview, guardScenarioCommand, previewCommand, type ScenarioPreview } from "./scenarioContracts";
+import {
+  guardPreview,
+  guardScenarioCommand,
+  previewCommand,
+  type ScenarioPreview,
+} from "./scenarioContracts";
 import { hash } from "./caseContracts";
 
 export const RECOVERY_KEY = "spreadline.pending-write.v1";
@@ -55,24 +60,112 @@ export type ComparisonOperation = {
   baselineRevision: number;
   baselineRunId: string;
   baselinePayloadHash: string;
-  context: {period_start:string;period_end:string;assessment_as_of:string;policy_version:string;scenario_definition_version:string;calculation_version:string};
+  context: {
+    period_start: string;
+    period_end: string;
+    assessment_as_of: string;
+    policy_version: string;
+    scenario_definition_version: string;
+    calculation_version: string;
+  };
 };
 export type PendingWrite = PendingOperation | ComparisonOperation;
-export function guardPendingWrite(value:unknown,base=apiBase):PendingWrite {
-  const v=object(value,"pending write");
-  if(v.version!=="scenario-comparison-write-v1")return guardOperation(value,base);
-  requireCase(v.kind==="comparison"&&uuid(v.id)&&v.apiBase===base&&text(v.body)&&size(v.body)<=MAX_BODY,"comparison recovery envelope");
-  const command=guardScenarioCommand(JSON.parse(v.body));
-  requireCase(["commercial-scenario-comparison-create-v1", "commercial-scenario-comparison-create-v2"].includes(command.schema_version)&&JSON.stringify(command)===v.body&&uuid(v.caseId)&&revision(v.baselineRevision)&&v.baselineRunId===command.baseline_run_id&&hash(v.baselinePayloadHash),"comparison recovery identity/command");
-  const c=object(v.context,"comparison recovery context");
-  requireCase(date(c.period_start)&&date(c.period_end)&&date(c.assessment_as_of)&&c.period_start<=c.period_end&&c.period_end<=c.assessment_as_of&&text(c.policy_version)&&text(c.scenario_definition_version)&&text(c.calculation_version),"comparison recovery dates/versions");
-  requireCase(Object.keys(v).length===10&&["version","kind","id","apiBase","body","caseId","baselineRevision","baselineRunId","baselinePayloadHash","context"].every(k=>k in v),"comparison recovery fields");
-  requireCase(Object.keys(c).length===6&&["period_start","period_end","assessment_as_of","policy_version","scenario_definition_version","calculation_version"].every(k=>k in c),"comparison context fields");
-  Object.freeze(c);return Object.freeze(v) as ComparisonOperation;
+export function guardPendingWrite(
+  value: unknown,
+  base = apiBase,
+): PendingWrite {
+  const v = object(value, "pending write");
+  if (v.version !== "scenario-comparison-write-v1")
+    return guardOperation(value, base);
+  requireCase(
+    v.kind === "comparison" &&
+      uuid(v.id) &&
+      v.apiBase === base &&
+      text(v.body) &&
+      size(v.body) <= MAX_BODY,
+    "comparison recovery envelope",
+  );
+  const command = guardScenarioCommand(JSON.parse(v.body));
+  requireCase(
+    [
+      "commercial-scenario-comparison-create-v1",
+      "commercial-scenario-comparison-create-v2",
+    ].includes(command.schema_version) &&
+      JSON.stringify(command) === v.body &&
+      uuid(v.caseId) &&
+      revision(v.baselineRevision) &&
+      v.baselineRunId === command.baseline_run_id &&
+      hash(v.baselinePayloadHash),
+    "comparison recovery identity/command",
+  );
+  const c = object(v.context, "comparison recovery context");
+  requireCase(
+    date(c.period_start) &&
+      date(c.period_end) &&
+      date(c.assessment_as_of) &&
+      c.period_start <= c.period_end &&
+      c.period_end <= c.assessment_as_of &&
+      text(c.policy_version) &&
+      text(c.scenario_definition_version) &&
+      text(c.calculation_version),
+    "comparison recovery dates/versions",
+  );
+  requireCase(
+    Object.keys(v).length === 10 &&
+      [
+        "version",
+        "kind",
+        "id",
+        "apiBase",
+        "body",
+        "caseId",
+        "baselineRevision",
+        "baselineRunId",
+        "baselinePayloadHash",
+        "context",
+      ].every((k) => k in v),
+    "comparison recovery fields",
+  );
+  requireCase(
+    Object.keys(c).length === 6 &&
+      [
+        "period_start",
+        "period_end",
+        "assessment_as_of",
+        "policy_version",
+        "scenario_definition_version",
+        "calculation_version",
+      ].every((k) => k in c),
+    "comparison context fields",
+  );
+  Object.freeze(c);
+  return Object.freeze(v) as ComparisonOperation;
 }
-export function makeComparison(value:ScenarioPreview):ComparisonOperation {
-  const p=guardPreview(value),command={...previewCommand(p),schema_version:"commercial-scenario-comparison-create-v2",expected_preview_fingerprint:p.fingerprint.value};
-  return guardPendingWrite({version:"scenario-comparison-write-v1",kind:"comparison",id:crypto.randomUUID(),apiBase,body:JSON.stringify(command),caseId:p.baseline.case_id,baselineRevision:p.baseline.revision,baselineRunId:p.baseline.run_id,baselinePayloadHash:p.baseline.payload_hash,context:{...p.selected_period,assessment_as_of:p.assumptions_as_of,policy_version:p.policy_snapshot.version,scenario_definition_version:p.scenario_definition_version,calculation_version:p.calculation_version}}) as ComparisonOperation;
+export function makeComparison(value: ScenarioPreview): ComparisonOperation {
+  const p = guardPreview(value),
+    command = {
+      ...previewCommand(p),
+      schema_version: "commercial-scenario-comparison-create-v2",
+      expected_preview_fingerprint: p.fingerprint.value,
+    };
+  return guardPendingWrite({
+    version: "scenario-comparison-write-v1",
+    kind: "comparison",
+    id: crypto.randomUUID(),
+    apiBase,
+    body: JSON.stringify(command),
+    caseId: p.baseline.case_id,
+    baselineRevision: p.baseline.revision,
+    baselineRunId: p.baseline.run_id,
+    baselinePayloadHash: p.baseline.payload_hash,
+    context: {
+      ...p.selected_period,
+      assessment_as_of: p.assumptions_as_of,
+      policy_version: p.policy_snapshot.version,
+      scenario_definition_version: p.scenario_definition_version,
+      calculation_version: p.calculation_version,
+    },
+  }) as ComparisonOperation;
 }
 export function browserStorage(): Storage | null {
   return workspaceStorage();
@@ -119,14 +212,16 @@ export function guardOperation(
       field.path === edit.field_path &&
         text(field.label) &&
         text(field.period) &&
-        (isDecimal(field.value) || typeof field.value === "number" && Number.isFinite(field.value)) &&
+        (isDecimal(field.value) ||
+          (typeof field.value === "number" && Number.isFinite(field.value))) &&
         ["USD", "%", "months"].includes(String(field.unit)),
       "recovery review",
     );
     for (const k of ["min", "max"])
       requireCase(
         field[k] === undefined ||
-          (isDecimal(field[k]) || typeof field[k] === "number" && Number.isFinite(field[k])),
+          isDecimal(field[k]) ||
+          (typeof field[k] === "number" && Number.isFinite(field[k])),
         "field range",
       );
     requireCase(
@@ -279,11 +374,11 @@ export function saveRecovery(
     storage.setItem(RECOVERY_KEY, serialized);
     requireCase(
       storage.getItem(RECOVERY_KEY) === serialized,
-      "persisted recovery record",
+      "retained in-page recovery record",
     );
   } catch {
     throw new Error(
-      "This tab could not keep the write for recovery. Nothing was sent. Resolve its pending record or enable browser session storage before saving.",
+      "This tab could not keep the write for recovery. Nothing was sent. Resolve its pending record or restore in-page recovery tracking before saving.",
     );
   }
 }
