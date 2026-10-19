@@ -68,6 +68,11 @@ export function TraceInspector({
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     heading.current?.focus();
+    heading.current?.scrollIntoView({
+      block: "center",
+      inline: "nearest",
+      behavior: "instant",
+    });
   }, [data.title, data.trace?.fact_id]);
   const row = data.trace,
     additive = row
