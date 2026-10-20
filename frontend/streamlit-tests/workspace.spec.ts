@@ -13,6 +13,8 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await page.goto("/");
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });
+  await expect(page.getByRole("status", { name: "Assessment preparation" })).toBeVisible();
+  await expect(page.locator(".decision strong")).toHaveText("CALCULATING");
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
@@ -60,6 +62,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
     { timeout: 30_000 },
   );
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await expect(page.getByRole("status", { name: "Assessment preparation" })).toHaveCount(0);
   await openView(page, "scenarios");
   await page.getByLabel("Scenario 1 preset").selectOption("revenue");
   await page

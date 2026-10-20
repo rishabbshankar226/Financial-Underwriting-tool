@@ -34,6 +34,7 @@ import {
   type Workspace,
 } from "./workspace";
 import { evaluationFailureMessage, importFailureMessage } from "./errorCopy";
+import { finishDecisionTransition } from "./decisionPreparation";
 
 import { useSavedWrite, type SavedReceipt } from "./useSavedWrite";
 import type { ScenarioPreview, StoredComparison } from "./scenarioContracts";
@@ -71,6 +72,7 @@ export function useAnalystWorkspace() {
   const acknowledgment = useRef(0);
   const [notice, setNotice] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldError[]>([]);
+  const [preparation, setPreparation] = useState<{ id: number; received: boolean } | null>(null);
   const [offer, setOffer] = useState<StoredCase | null>(null);
   const [rejected, setRejected] = useState<PendingOperation | null>(null);
   const [conflict, setConflict] = useState<Conflict | null>(null);
@@ -89,6 +91,7 @@ export function useAnalystWorkspace() {
     head.current = null;
     dispatch({ type: "start", id, filename, draft, action });
     setFieldErrors([]);
+    setPreparation(null);
     return id;
   }
   async function submit(draft: Draft, id = begin(draft.filename, draft)) {
@@ -96,8 +99,13 @@ export function useAnalystWorkspace() {
     dispatch({ type: "start", id, filename: draft.filename, draft });
     const controller = new AbortController();
     read.current = controller;
+    const startedAt = performance.now();
+    setPreparation({ id, received: false });
     try {
       const accepted = await evaluate(draft, controller.signal);
+      if (id !== sequence.current || controller.signal.aborted) return;
+      setPreparation({ id, received: true });
+      await finishDecisionTransition(startedAt, controller.signal);
       if (id === sequence.current && !controller.signal.aborted) {
         dispatch({ type: "success", id, accepted });
         return accepted;
@@ -534,6 +542,8 @@ export function useAnalystWorkspace() {
   }, []);
   return {
     state,
+    preparation: state.status === "evaluating" && state.action === "evaluate" && preparation?.id === state.id
+      ? preparation : null,
     fieldErrors,
     submit,
     submitImport,

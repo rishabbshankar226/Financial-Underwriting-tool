@@ -43,6 +43,14 @@ service. Python calculates financial results. Browser BigInt arithmetic handles
 decimal-place conversion, validation, and financial presentation; its one other
 use sizes Overview chart bars, as drawing geometry that is never shown as a figure.
 
+New commercial evaluations show an assessment preparation animation for at least
+five seconds before revealing the recommendation. The calculation starts
+immediately; a slower response keeps the pending state visible, and errors
+appear without the presentation delay. The transition applies to Excel and
+JSON imports, guided forms, examples and unsaved edits in both the standalone
+and Streamlit workspaces. Opening or saving existing results adds no delay.
+Reduced-motion preferences replace the animation with a static indicator.
+
 ## Precision and reporting
 
 Financial calculations use string-initialized `Decimal` with 96 significant
