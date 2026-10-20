@@ -1,7 +1,14 @@
-import { Unzip, UnzipInflate, zipSync, strToU8 } from "fflate";
+import { Unzip, UnzipInflate, zipSync } from "fflate";
 import readExcel from "read-excel-file/universal";
-import { createReview, type WorkbookReview } from "./workbookModel";
+import {
+  columnName,
+  createReview,
+  type WorkbookReview,
+  type WorkbookSheet,
+} from "./workbookModel";
 import { workbookSheets } from "./workbookFields";
+import { compareDecimal } from "../decimal";
+import { parseField } from "../formContracts";
 
 export const MAX_WORKBOOK_BYTES = 2_000_000;
 const EXPANDED_LIMIT = 8_000_000,
@@ -244,7 +251,11 @@ function coordinate(value: string): void {
   if (column > 128 || Number(match[2]) > 256)
     fail("Worksheet dimensions exceed the template limit.");
 }
-function inspectXml(files: Record<string, Uint8Array>): void {
+type DateSources = {
+  epoch1904: boolean;
+  sheets: Map<string, Map<string, { type?: string; value: string }>>;
+};
+function inspectXml(files: Record<string, Uint8Array>): DateSources {
   let cells = 0;
   const decoded = new Map<string, string>();
   for (const [name, bytes] of Object.entries(files))
@@ -366,81 +377,86 @@ function inspectXml(files: Record<string, Uint8Array>): void {
     !["0", "1", "true", "false"].includes(dateSetting)
   )
     fail("The workbook date system is invalid. Save a fresh template copy.");
-  if (dateSetting === "true")
-    files["xl/workbook.xml"] = strToU8(
-      workbook.replace(
-        dateTag,
-        dateTag.replace(/date1904\s*=\s*(["']).*?\1/, 'date1904="1"'),
+  const sheets: DateSources["sheets"] = new Map();
+  paths.forEach((path, index) => {
+    const source = new Map<string, { type?: string; value: string }>();
+    for (const tag of decoded.get(path)!.matchAll(
+      new RegExp(
+        `<${xmlPrefix}c(?=[\\s/>])${xmlAttributes}(?<!/)>([\\s\\S]*?)<\\/${xmlPrefix}c>`,
+        "g",
       ),
-    );
-  if (dateSetting !== "1" && dateSetting !== "true") {
-    const styles = decoded.get("xl/styles.xml") ?? "";
-    const custom = new Set<string>();
-    for (const tag of tags(styles, "numFmt")) {
-      const a = attributes(tag[0]);
-      if (
-        /[yd]/i.test(
-          (a.formatCode ?? "").replace(/"[^"]*"|\\.|\[[^\]]*\]/g, ""),
-        )
-      )
-        custom.add(a.numFmtId);
+    )) {
+      const opening = tags(tag[0], "c").next().value![0],
+        a = attributes(opening),
+        value = tag[1].match(
+          new RegExp(`<${xmlPrefix}v(?=[\\s>])${xmlAttributes}>([^<]*)<\\/`),
+        )?.[1];
+      if (value !== undefined) source.set(a.r, { type: a.t, value });
     }
-    const xfs =
-      styles.match(
-        new RegExp(
-          `<${xmlPrefix}cellXfs${xmlAttributes}>([\\s\\S]*?)<\\/${xmlPrefix}cellXfs>`,
-        ),
-      )?.[1] ?? "";
-    const dateStyles = [...tags(xfs, "xf")].map((tag) => {
-      const id = attributes(tag[0]).numFmtId;
-      return (
-        custom.has(id) ||
-        [
-          "14",
-          "15",
-          "16",
-          "17",
-          "18",
-          "19",
-          "20",
-          "21",
-          "22",
-          "45",
-          "46",
-          "47",
-        ].includes(id)
-      );
-    });
-    for (const [name, xml] of decoded)
-      if (/^xl\/worksheets\//.test(name))
-        for (const tag of xml.matchAll(
-          new RegExp(
-            `<${xmlPrefix}c(?=[\\s/>])${xmlAttributes}(?<!/)>([\\s\\S]*?)<\\/${xmlPrefix}c>`,
-            "g",
-          ),
-        )) {
-          const a = attributes(tag[0].slice(0, tag[0].indexOf(">") + 1));
-          const raw = tag[0].match(
-            new RegExp(`<${xmlPrefix}v>([^<]*)<\\/`),
-          )?.[1];
-          if (
-            (!a.t || a.t === "n") &&
-            dateStyles[Number(a.s ?? "0")] &&
-            raw !== undefined &&
-            Number(raw) === 60
-          )
-            fail(
-              "Excel's fictitious 1900-02-29 is not a calendar date. Correct the date cell.",
-            );
-        }
-  }
+    sheets.set(names[index], source);
+  });
+  return { epoch1904: dateSetting === "1" || dateSetting === "true", sheets };
 }
+
+/** The reader identifies date styles; original XML values remain authoritative.
+ * Reconstruct whole calendar days before its Date conversion can normalize an
+ * invalid ISO date, lose a fractional day, or shift January/February 1900. */
+function restoreDates(sheets: WorkbookSheet[], sources: DateSources): void {
+  for (const sheet of sheets)
+    sheet.data.forEach((row, r) =>
+      row.forEach((value, c) => {
+        if (!(value instanceof Date)) return;
+        const cell = `${columnName(c)}${r + 1}`,
+          source = sources.sheets.get(sheet.sheet)?.get(cell),
+          raw = source?.value.trim() ?? "";
+        const message = `${sheet.sheet}!${cell}: use a valid calendar date without a time.`;
+        if (source?.type === "d") {
+          // Native ISO cells may be dates or midnight timestamps. Reject rollover
+          // and timezone/time components instead of silently changing the day.
+          const match = /^(\d{4}-\d{2}-\d{2})(?:T00:00(?::00(?:\.0+)?)?(?:Z|[+]00:00)?)?$/.exec(raw);
+          if (!match) fail(message);
+          try {
+            const day = parseField(
+              { pointer: "", label: "Date", kind: "date" }, match[1],
+            );
+            row[c] = new Date(`${day}T00:00:00Z`);
+          } catch {
+            fail(message);
+          }
+        } else {
+          const serial = Number(raw);
+          try {
+            if (
+              !raw || !Number.isSafeInteger(serial) ||
+              compareDecimal(raw, String(serial)) !== 0
+            )
+              fail(message);
+          } catch {
+            fail(message);
+          }
+          if (!sources.epoch1904 && serial === 60)
+            fail("Excel's fictitious 1900-02-29 is not a calendar date. Correct the date cell.");
+          const epoch = sources.epoch1904
+            ? "1904-01-01"
+            : serial < 60 ? "1899-12-31" : "1899-12-30";
+          const date = new Date(Date.parse(`${epoch}T00:00:00Z`) + serial * 86_400_000);
+          if (
+            !Number.isFinite(date.getTime()) ||
+            date.getUTCFullYear() < 1 || date.getUTCFullYear() > 9999
+          )
+            fail(message);
+          row[c] = date;
+        }
+      }),
+    );
+}
+
 export async function parseWorkbook(
   bytes: Uint8Array,
 ): Promise<WorkbookReview> {
   const entries = directory(bytes),
     files = expand(bytes, entries);
-  inspectXml(files);
+  const dateSources = inspectXml(files);
   // Repackage already bounded parts without compression. The general reader only
   // sees a verified archive and never needs nested decompression workers.
   const safe = zipSync(files, { level: 0 });
@@ -455,5 +471,6 @@ export async function parseWorkbook(
       "The Excel XML could not be read. Save a fresh .xlsx template copy with values only.",
     );
   }
+  restoreDates(sheets, dateSources);
   return createReview(sheets);
 }

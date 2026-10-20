@@ -232,6 +232,20 @@ export function validateReview(review: WorkbookReview): {
     if (field)
       issues.push({ pointer, sheet: field.sheet, cell: field.cell, message });
   };
+  // A review can clear a column that was populated in the workbook. Apply the
+  // same contiguous-column rule as createReview before building array indexes.
+  let emptyGuarantor: ReviewField | undefined;
+  for (const group of groups.values()) {
+    if (group[0].sheet !== "Guarantors") continue;
+    if (skipped.has(group[0].pointer)) emptyGuarantor ??= group[0];
+    else if (emptyGuarantor) {
+      issue(
+        emptyGuarantor.pointer,
+        "Keep populated guarantors together from the first column. Restore this guarantor or move later values into the empty column.",
+      );
+      break;
+    }
+  }
   if (issues.length) return { input: null, issues };
   const output: Record<string, unknown> = {
     schema_version: "commercial-assessment-v2",
