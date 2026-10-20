@@ -42,6 +42,7 @@ import { AnalysisPanels, ModelScope } from "./views/AnalysisPanels";
 import { RejectedInputFields } from "./RejectedInputFields";
 import { applyEdit, type Draft } from "./workspace";
 import { ExcelImport } from "./excel/ExcelImport";
+import { AssessmentPreparation } from "./views/AssessmentPreparation";
 
 /** Composition root: owns the workspace hooks, view and dialog state, and wires views to them. */
 export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
@@ -240,6 +241,9 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             Saved Cases
           </button>
         </nav>
+        {domain === "commercial" && workspace.preparation && (
+          <AssessmentPreparation key={workspace.preparation.id} received={workspace.preparation.received} />
+        )}
         {domain === "consumer" ? (
           <ConsumerWorkflow />
         ) : domain === "sba" ? (
