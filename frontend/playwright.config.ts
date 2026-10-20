@@ -4,6 +4,9 @@ import { TEST_API_ORIGIN, TEST_API_TOKEN, TEST_OPERATOR_ID } from "./tests/testC
 export default defineConfig({
   testDir: "./tests",
   workers: 1,
+  // New evaluations include a five-second presentation transition.
+  timeout: 90_000,
+  expect: { timeout: 10_000 },
   use: {
     baseURL: "http://127.0.0.1:5173",
     launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH

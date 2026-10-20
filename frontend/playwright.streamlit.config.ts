@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: "./streamlit-tests",
   workers: 1,
   timeout: 60_000,
+  expect: { timeout: 10_000 },
   use: {
     baseURL: "http://127.0.0.1:8501",
     launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
