@@ -41,6 +41,7 @@ import type { Mode } from "./contracts";
 import { AnalysisPanels, ModelScope } from "./views/AnalysisPanels";
 import { RejectedInputFields } from "./RejectedInputFields";
 import { applyEdit, type Draft } from "./workspace";
+import { ExcelImport } from "./excel/ExcelImport";
 
 /** Composition root: owns the workspace hooks, view and dialog state, and wires views to them. */
 export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
@@ -53,6 +54,8 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
   );
   const [composer, setComposer] = useState(false),
     [composerMode, setComposerMode] = useState<Mode>("dated");
+  const [excel, setExcel] = useState(false);
+  const excelNavigation = useRef<HTMLButtonElement>(null);
   const [selectedPeriod, setSelectedPeriod] = useState(1);
   const [saving, setSaving] = useState(false),
     [showCases, setShowCases] = useState(false),
@@ -76,6 +79,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
       setTab("audit");
   }, [state.id, state.status, state.accepted, state.resetPeriod]);
   const openFile = () => {
+    setExcel(false);
     setDomain("commercial");
     setComposer(false);
     fileInput.current?.click();
@@ -122,6 +126,12 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
   const correctionErrors = state.draft
     ? workspace.fieldErrors
     : (workspace.writeError?.fieldErrors ?? []);
+  const openExcel = () => {
+    setExcel(true);
+    setComposer(false);
+    setDomain("commercial");
+    setShowCases(false);
+  };
   return (
     <AnalysisProvider
       subject={view.analysisSubject}
@@ -129,7 +139,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
     >
       <main className="analystWorkspace">
         <BrandBar>
-          {!idle && domain === "commercial" && !composer && (
+          {!idle && domain === "commercial" && !composer && !excel && (
             <PrimaryActions
               showCases={showCases}
               canSave={workspace.canSave}
@@ -142,6 +152,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           )}
           <MoreMenu
             onExample={(mode) => {
+              setExcel(false);
               setDomain("commercial");
               setComposer(false);
               demo(mode);
@@ -154,12 +165,21 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
         <nav className="primaryNavigation" aria-label="Underwriting workflows">
           <button
             type="button"
+            ref={excelNavigation}
+            aria-current={excel ? "page" : undefined}
+            onClick={openExcel}
+          >
+            Excel intake
+          </button>
+          <button
+            type="button"
             aria-current={
-              domain === "commercial" && composerMode === "dated"
+              domain === "commercial" && composerMode === "dated" && !excel
                 ? "page"
                 : undefined
             }
             onClick={() => {
+              setExcel(false);
               setDomain("commercial");
               setComposerMode("dated");
               setComposer(true);
@@ -171,11 +191,12 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           <button
             type="button"
             aria-current={
-              domain === "commercial" && composerMode === "legacy"
+              domain === "commercial" && composerMode === "legacy" && !excel
                 ? "page"
                 : undefined
             }
             onClick={() => {
+              setExcel(false);
               setDomain("commercial");
               setComposerMode("legacy");
               setComposer(true);
@@ -188,6 +209,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             type="button"
             aria-current={domain === "consumer" ? "page" : undefined}
             onClick={() => {
+              setExcel(false);
               setDomain("consumer");
               setShowCases(false);
             }}
@@ -198,6 +220,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             type="button"
             aria-current={domain === "sba" ? "page" : undefined}
             onClick={() => {
+              setExcel(false);
               setDomain("sba");
               setShowCases(false);
             }}
@@ -208,6 +231,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             type="button"
             aria-expanded={showCases}
             onClick={() => {
+              setExcel(false);
               setDomain("commercial");
               setComposer(false);
               setShowCases(true);
@@ -220,6 +244,32 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           <ConsumerWorkflow />
         ) : domain === "sba" ? (
           <SbaWorkflow />
+        ) : excel ? (
+          <ExcelImport
+            busy={state.status === "evaluating"}
+            blocked={
+              workspace.operation ||
+              workspace.recoveryError ||
+              workspace.conflict ||
+              workspace.inFlight
+                ? "Resolve the saved-write recovery banner before evaluating an imported case."
+                : ""
+            }
+            serverErrors={workspace.fieldErrors}
+            serverMessage={state.status === "unavailable" ? state.error : ""}
+            onClose={() => {
+              setExcel(false);
+              excelNavigation.current?.focus();
+            }}
+            onEvaluate={async (draft) => {
+              const result = await workspace.submitImport(draft);
+              if (result) {
+                setExcel(false);
+                setTab("spread");
+              }
+              return result;
+            }}
+          />
         ) : composer ? (
           <CommercialComposer
             key={composerMode}
@@ -246,6 +296,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             onExample={() => demo("dated")}
             onToggleCases={() => setShowCases((value) => !value)}
             onImport={openFile}
+            onExcel={openExcel}
           />
         ) : (
           <CaseHeader
@@ -291,23 +342,27 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             if (review) edits.review(review.field, review.proposal, element);
           }}
         />
-        {!composer && correctionDraft && correctionErrors.length > 0 && (
-          <RejectedInputFields
-            key={`${state.id}:${rejected?.id ?? "draft"}`}
-            draft={correctionDraft}
-            errors={correctionErrors}
-            savedField={
-              rejected?.kind === "edit" ? rejected.review.path : undefined
-            }
-            rationale={rejectedCommand?.rationale}
-            onEvaluate={(draft) => void submit(draft)}
-            onReviewSaved={async (next, rationale, element) => {
-              const review = await workspace.reviewRejected(next, rationale);
-              if (review) edits.review(review.field, review.proposal, element);
-            }}
-          />
-        )}
-        {domain === "commercial" && !composer && !idle && (
+        {!composer &&
+          !excel &&
+          correctionDraft &&
+          correctionErrors.length > 0 && (
+            <RejectedInputFields
+              key={`${state.id}:${rejected?.id ?? "draft"}`}
+              draft={correctionDraft}
+              errors={correctionErrors}
+              savedField={
+                rejected?.kind === "edit" ? rejected.review.path : undefined
+              }
+              rationale={rejectedCommand?.rationale}
+              onEvaluate={(draft) => void submit(draft)}
+              onReviewSaved={async (next, rationale, element) => {
+                const review = await workspace.reviewRejected(next, rationale);
+                if (review)
+                  edits.review(review.field, review.proposal, element);
+              }}
+            />
+          )}
+        {domain === "commercial" && !composer && !excel && !idle && (
           <>
             {accepted && (
               <button

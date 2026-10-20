@@ -7,24 +7,35 @@ export function StartScreen({
   onExample,
   onToggleCases,
   onImport,
+  onExcel,
 }: {
   showCases: boolean;
   onExample: () => void;
   onToggleCases: () => void;
   onImport: () => void;
+  onExcel: () => void;
 }) {
   const id = useId();
   const options = [
     {
+      key: "excel",
+      title: "Import Excel workbook",
+      detail:
+        "Download the standard template, review its inputs and evaluate a commercial assessment.",
+      onClick: onExcel,
+    },
+    {
       key: "example",
       title: "Try the example case",
-      detail: "Alpine Fabrication: two fiscal years and a $500,000 ten-year term loan request.",
+      detail:
+        "Alpine Fabrication: two fiscal years and a $500,000 ten-year term loan request.",
       onClick: onExample,
     },
     {
       key: "open",
       title: "Open saved case",
-      detail: "Reopen a case saved on this server, at its latest or an earlier revision.",
+      detail:
+        "Reopen a case saved on this server, at its latest or an earlier revision.",
       onClick: onToggleCases,
     },
     {
@@ -37,7 +48,10 @@ export function StartScreen({
   return (
     <section className="startScreen" aria-labelledby={`${id}title`}>
       <h1 id={`${id}title`}>Start a credit analysis</h1>
-      <p className="startLead">Spread the borrower's statements, check coverage against the illustrative policy, and size the loan. Use synthetic data only.</p>
+      <p className="startLead">
+        Spread the borrower's statements, check coverage against the
+        illustrative policy, and size the loan. Use synthetic data only.
+      </p>
       <div className="startOptions">
         {options.map((option) => (
           <button

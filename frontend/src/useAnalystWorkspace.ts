@@ -115,6 +115,14 @@ export function useAnalystWorkspace() {
       }
     }
   }
+  function submitImport(draft: Draft) {
+    if (inFlight || operation || recoveryError || conflictRef.current)
+      throw new Error(
+        "Resolve saved-write recovery before evaluating this import.",
+      );
+    writeLocator(browserStorage(), null);
+    return submit(draft);
+  }
   function demo(mode: "dated" | "legacy") {
     writeLocator(browserStorage(), null);
     void submit({
@@ -528,6 +536,7 @@ export function useAnalystWorkspace() {
     state,
     fieldErrors,
     submit,
+    submitImport,
     upload,
     demo,
     save,

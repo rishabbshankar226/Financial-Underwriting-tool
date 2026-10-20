@@ -2120,3 +2120,15 @@ textarea {
     display: none;
   }
 }
+.excelImport { min-width: 0; }
+.excelImport .sectionHeading { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+.excelDownloads { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block: 16px; }
+.buttonLink { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 16px; border: 1px solid var(--border-strong); border-radius: 4px; text-decoration: underline; }
+.excelSheet { border: 1px solid var(--border-strong); border-radius: 4px; padding: 12px; margin-block: 16px; }
+.excelSheet summary { cursor: pointer; min-height: 44px; align-content: center; font-weight: 600; }
+.excelSheet .formGrid { margin-top: 12px; }
+.excelFilename { overflow-wrap: anywhere; }
+.excelImport input[type=file] { max-width: 100%; width: 100%; }
+.excelImport .fieldError, .excelImport small, .excelImport label { overflow-wrap: anywhere; }
+.startScreen .startOption:first-child { grid-column: 1 / -1; min-width: 0; }
+.excelReadingSkeleton span { display: block; height: 44px; opacity: 0.45; background: var(--border); border-radius: 4px; }
