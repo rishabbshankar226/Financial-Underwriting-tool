@@ -5,4 +5,4 @@ streamlit==1.66.0
 ./streamlit_app/component
 # Hosts reinstall these dependencies only when this file changes, so
 # scripts/streamlit_assets.py rewrites the last line on every component build.
-# component-bundle: index-DRHezijv.js 2d9c4cec0e63b6c81594aeecb60acacefd5af6c3a9eb97b08ac6886d02eefc4b
+# component-bundle: index-rs5ljqx-.js f693d09814f8d021ace3df903126fe3f67a8186a4b8d7cbfdadcb118230349e4

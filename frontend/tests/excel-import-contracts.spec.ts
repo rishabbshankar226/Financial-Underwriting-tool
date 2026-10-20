@@ -285,3 +285,52 @@ test("actual expansion and duplicate ZIP paths are checked independently of decl
   duplicate.set(Buffer.from("xl/worksheets/sheet1.xml"), where);
   await expect(parseWorkbook(duplicate)).rejects.toThrow(/duplicate|archive/i);
 });
+
+test("clearing an earlier guarantor cannot produce a sparse accepted request", async () => {
+  const review = await parseWorkbook(example());
+  const first = review.fields.filter((field) => field.sheet === "Guarantors");
+  const second = first.map((field) => ({
+    ...field,
+    pointer: field.pointer.replace("/guarantors/0/", "/guarantors/1/"),
+    cell: field.cell.replace(/^B/, "C"),
+    group: "Guarantor 2",
+  }));
+  const corrected = {
+    fields: review.fields.map((field) =>
+      field.sheet === "Guarantors" ? { ...field, value: "" } : field,
+    ).concat(second),
+  };
+  const result = validateReview(corrected);
+  expect(result.input).toBeNull();
+  expect(result.issues).toContainEqual(expect.objectContaining({
+    pointer: "/guarantors/0/name", sheet: "Guarantors", cell: "B8",
+  }));
+});
+
+test("invalid native ISO date cells cannot silently become a different calendar date", async () => {
+  await expect(parseWorkbook(
+    change("xl/worksheets/sheet1.xml", (xml) =>
+      cell(xml, "B10", "d", "2026-02-30T00:00:00Z"),
+    ),
+  )).rejects.toThrow(/Borrower!B10.*calendar date/);
+});
+
+test("native early 1900 dates retain the calendar date displayed by Excel", async () => {
+  for (const [serial, expectedDate] of [["1", "1900-01-01"], ["59", "1900-02-28"], ["61", "1900-03-01"]]) {
+    const review = await parseWorkbook(
+      change("xl/worksheets/sheet1.xml", (xml) => cell(xml, "B10", "n", serial)),
+    );
+    expect(review.fields.find((field) => field.pointer === "/assessment_as_of")?.value).toBe(expectedDate);
+  }
+});
+
+test("date parsing preserves valid ISO dates and rejects fractional days even below Number precision", async () => {
+  for (const raw of ["2026-10-06", "2026-10-06T00:00:00.000Z", "2026-10-06T00:00:00+00:00"]) {
+    const review = await parseWorkbook(change("xl/worksheets/sheet1.xml", (xml) => cell(xml, "B10", "d", raw)));
+    expect(validateReview(review).input).toEqual(expected);
+  }
+  for (const raw of ["46301.0000000000000001", "46301.5"]) {
+    await expect(parseWorkbook(change("xl/worksheets/sheet1.xml", (xml) => cell(xml, "B10", "n", raw))))
+      .rejects.toThrow(/Borrower!B10.*without a time/);
+  }
+});

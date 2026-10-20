@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { selectWorkspaceView } from "./workspaceSelectors";
 import { useEditController } from "./useEditController";
 import EditDialog from "./EditDialog";
@@ -61,6 +61,13 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
   const [saving, setSaving] = useState(false),
     [showCases, setShowCases] = useState(false),
     [discarding, setDiscarding] = useState(false);
+  // Completing an older evaluation may update the accepted case, but must not
+  // close a different intake opened while that request was pending. A generation
+  // also distinguishes leaving and reopening the same kind of form.
+  const intakeGeneration = useRef(0);
+  useLayoutEffect(() => {
+    intakeGeneration.current++;
+  }, [domain, composer, composerMode, excel, showCases]);
   const opener = useRef<HTMLElement | null>(null);
   // The one file input: the start screen and the More menu both open it.
   const fileInput = useRef<HTMLInputElement>(null);
@@ -266,8 +273,9 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
               excelNavigation.current?.focus();
             }}
             onEvaluate={async (draft) => {
+              const generation = intakeGeneration.current;
               const result = await workspace.submitImport(draft);
-              if (result) {
+              if (result && generation === intakeGeneration.current) {
                 setExcel(false);
                 setTab("spread");
               }
@@ -286,8 +294,9 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             busy={state.status === "evaluating"}
             onClose={() => setComposer(false)}
             onEvaluate={async (draft) => {
+              const generation = intakeGeneration.current;
               const result = await submit(draft);
-              if (result) {
+              if (result && generation === intakeGeneration.current) {
                 setComposer(false);
                 setTab("spread");
               }

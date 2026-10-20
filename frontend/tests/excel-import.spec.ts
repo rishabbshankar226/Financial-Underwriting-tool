@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { zipSync, unzipSync, strFromU8, strToU8 } from "fflate";
 import { test, expect } from "./authenticatedTest";
 import {
   connectWorkspace,
@@ -306,4 +307,74 @@ test("Excel intake preserves and blocks evaluation around an exact pending write
   await expect(
     page.getByRole("button", { name: "Retry exact write", exact: true }),
   ).toBeEnabled();
+});
+
+
+test("clearing an earlier guarantor is blocked locally and can be corrected", async ({ page }) => {
+  const parts = unzipSync(new Uint8Array(readFileSync(path)));
+  let xml = strFromU8(parts["xl/worksheets/sheet4.xml"])
+    .replace(/r="C(\d+)"/g, 'r="D$1"');
+  for (let row = 7; row <= 14; row++) {
+    const pattern = new RegExp(`<x:c r="B${row}"[^>]*>[\\s\\S]*?<\\/x:c>`);
+    xml = xml.replace(pattern, (original) => {
+      const first = row === 9 ? original.replace(">1<", ">0.5<") : original;
+      const second = first.replace(`r="B${row}"`, `r="C${row}"`)
+        .replace("Guarantor 1", "Guarantor 2").replace("Dana Alpine", "Robin Alpine");
+      return first + second;
+    });
+  }
+  parts["xl/worksheets/sheet4.xml"] = strToU8(xml);
+  const problems = collectConsoleProblems(page), posts: string[] = [];
+  await open(page);
+  page.on("request", (request) => {
+    if (request.method() === "POST") posts.push(new URL(request.url()).pathname);
+  });
+  await page.getByLabel("Excel workbook", { exact: true }).setInputFiles({
+    name: "two-guarantors.xlsx",
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    buffer: Buffer.from(zipSync(parts)),
+  });
+  await expect(page.getByRole("heading", { name: "Review Excel inputs", exact: true })).toBeVisible();
+  await page.getByText("Guarantors", { exact: true }).last().click();
+  const controls = page.locator('[data-pointer^="/guarantors/0/"]');
+  const originals: string[] = [];
+  for (const control of await controls.all()) {
+    originals.push(await control.inputValue());
+    await control.fill("");
+  }
+  await page.getByRole("button", { name: "Evaluate Excel inputs", exact: true }).click();
+  const summary = page.getByRole("region", { name: "Excel validation summary", exact: true });
+  await expect(summary).toContainText("Guarantors!B8");
+  await expect(summary).toContainText("Keep populated guarantors together");
+  await expect(page.getByLabel("Guarantor name · Guarantor 1", { exact: true })).toBeFocused();
+  expect(posts).toEqual([]);
+  for (let index = 0; index < originals.length; index++) await controls.nth(index).fill(originals[index]);
+  const sent = page.waitForRequest((request) => request.url().endsWith("/commercial/assessment"));
+  await page.getByRole("button", { name: "Evaluate Excel inputs", exact: true }).click();
+  const payload = (await sent).postDataJSON();
+  expect(payload.guarantors.map((g: { name: string }) => g.name)).toEqual(["Dana Alpine", "Robin Alpine"]);
+  await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  expect(problems).toEqual([]);
+});
+
+test("invalid native dates are rejected before review or evaluation", async ({ page }) => {
+  const parts = unzipSync(new Uint8Array(readFileSync(path)));
+  parts["xl/worksheets/sheet1.xml"] = strToU8(
+    strFromU8(parts["xl/worksheets/sheet1.xml"]).replace(
+      /<x:c r="B10"[^>]*>[\s\S]*?<\/x:c>/,
+      '<x:c r="B10" s="10" t="d"><x:v>2026-02-30T00:00:00Z</x:v></x:c>',
+    ),
+  );
+  const posts: string[] = [], problems = collectConsoleProblems(page);
+  await open(page);
+  page.on("request", (request) => { if (request.method() === "POST") posts.push(request.url()); });
+  await page.getByLabel("Excel workbook", { exact: true }).setInputFiles({
+    name: "invalid-date.xlsx",
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    buffer: Buffer.from(zipSync(parts)),
+  });
+  await expect(page.getByRole("alert")).toContainText("Borrower!B10: use a valid calendar date");
+  await expect(page.getByRole("heading", { name: "Review Excel inputs", exact: true })).toHaveCount(0);
+  expect(posts).toEqual([]);
+  expect(problems).toEqual([]);
 });
