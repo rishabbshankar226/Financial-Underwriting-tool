@@ -98,7 +98,9 @@ export function selectWorkspaceView(state: Workspace, pendingWrite: boolean): Wo
         : "UNAVAILABLE",
     decisionNote: decision
       ? `${decision.policy_version} · illustrative score ${decision.score}`
-      : "A current accepted calculation is required",
+      : evaluating && state.action !== "open" && state.action !== "write"
+        ? "The decision appears with its figures."
+        : "A current accepted calculation is required",
     pendingTitle: evaluating
       ? state.action === "open"
         ? "Loading original stored assessment"

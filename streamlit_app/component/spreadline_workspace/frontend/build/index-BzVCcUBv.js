@@ -5940,7 +5940,7 @@ function f(e, t) {
 		modeLabel: n && r ? r.mode === "dated" ? "Dated assessment" : "Legacy · undated input" : null,
 		statusChip: u(e, n),
 		decisionWord: o ? o.outcome.toUpperCase() : c ? e.action === "open" ? "LOADING" : e.action === "write" ? "SAVING" : "CALCULATING" : "UNAVAILABLE",
-		decisionNote: o ? `${o.policy_version} · illustrative score ${o.score}` : "A current accepted calculation is required",
+		decisionNote: o ? `${o.policy_version} · illustrative score ${o.score}` : c && e.action !== "open" && e.action !== "write" ? "The decision appears with its figures." : "A current accepted calculation is required",
 		pendingTitle: c ? e.action === "open" ? "Loading original stored assessment" : e.action === "write" ? "Waiting for saved write confirmation" : "Evaluating draft" : "No current result",
 		previousAccepted: r && !e.saved && (e.action === "evaluate" || !t) ? r : null,
 		previous: !n && e.draft?.edit && l ? l.outcome : null,
@@ -11430,30 +11430,30 @@ function ga({ assessment: e }) {
 	});
 }
 // src/views/WorkspaceStatus.tsx
-function _a({ state: e, view: t, onSubmit: n, onOpen: r }) {
-	let { draft: i, saved: a } = e, o = t.previousAccepted;
+function _a({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i }) {
+	let { draft: a, saved: o } = e, s = t.previousAccepted, c = n && !s && e.action === "evaluate";
 	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
-		!t.ready && /* @__PURE__ */ (0, U.jsxs)("div", {
+		!t.ready && !c && /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "pending",
 			role: "status",
 			children: [
 				/* @__PURE__ */ (0, U.jsx)("strong", { children: t.pendingTitle }),
-				i && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
+				a && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Submitted draft: ",
-					i.filename,
+					a.filename,
 					" · ",
-					i.mode,
+					a.mode,
 					" ·",
 					" ",
-					typeof i.payload.borrower_name == "string" ? i.payload.borrower_name : "Unnamed input",
-					i.edit && ` · ${i.edit.path}: ${i.edit.prior} → ${i.edit.next}`
+					typeof a.payload.borrower_name == "string" ? a.payload.borrower_name : "Unnamed input",
+					a.edit && ` · ${a.edit.path}: ${a.edit.prior} → ${a.edit.next}`
 				] }),
-				o && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
+				s && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Previous accepted case: ",
-					o.input.borrower_name,
+					s.input.borrower_name,
 					" ·",
 					" ",
-					o.filename,
+					s.filename,
 					". Its recommendation is inactive."
 				] })
 			]
@@ -11466,22 +11466,22 @@ function _a({ state: e, view: t, onSubmit: n, onOpen: r }) {
 		e.status === "unavailable" && /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "actions",
 			children: [
-				i && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsx)("button", {
-					onClick: () => n(i),
+				a && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsx)("button", {
+					onClick: () => r(a),
 					children: "Retry submitted draft"
 				}),
-				o && /* @__PURE__ */ (0, U.jsx)("button", {
-					onClick: () => n({
-						mode: o.mode,
-						payload: o.input,
-						filename: o.filename
+				s && /* @__PURE__ */ (0, U.jsx)("button", {
+					onClick: () => r({
+						mode: s.mode,
+						payload: s.input,
+						filename: s.filename
 					}),
 					children: "Re-evaluate last accepted case"
 				}),
-				a && /* @__PURE__ */ (0, U.jsx)("button", {
-					onClick: () => r({
-						caseId: a.view.snapshot.case_id,
-						revision: a.view.snapshot.revision
+				o && /* @__PURE__ */ (0, U.jsx)("button", {
+					onClick: () => i({
+						caseId: o.view.snapshot.case_id,
+						revision: o.view.snapshot.revision
 					}),
 					children: "View previous stored revision"
 				})
@@ -15291,6 +15291,7 @@ function qo({ onDisconnect: e }) {
 					/* @__PURE__ */ (0, U.jsx)(_a, {
 						state: r,
 						view: ne,
+						preparing: !!t.preparation,
 						onSubmit: (e) => void i(e),
 						onOpen: se
 					}),

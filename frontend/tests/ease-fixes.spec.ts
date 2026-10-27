@@ -42,6 +42,17 @@ test("D-1: Edit complete draft is in More, not between the notice and the decisi
   ).toBeVisible();
 });
 
+test("D-4: a first evaluation shows one pending panel and a plain note", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("status", { name: "Assessment preparation", exact: true })).toBeVisible();
+  // Counted at once, inside the hold: a retrying assertion would pass when the reveal removes the panel.
+  expect(await page.getByText(/^Submitted draft:/).count()).toBe(0);
+  await expect(page.getByRole("region", { name: "Illustrative decision", exact: true })).toContainText(
+    "The decision appears with its figures.",
+  );
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

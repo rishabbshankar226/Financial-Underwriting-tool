@@ -395,6 +395,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             <WorkspaceStatus
               state={state}
               view={view}
+              preparing={!!workspace.preparation}
               onSubmit={(draft) => void submit(draft)}
               onOpen={openSaved}
             />
