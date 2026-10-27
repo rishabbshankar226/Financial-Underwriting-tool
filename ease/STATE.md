@@ -4,7 +4,7 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 ## Position
 
-- **Phase:** 1 (find, refute, STOP A)
+- **Phase:** 2 (fix). STOP A was answered; see below.
 - **Done:** Phase 0 committed as `c413b80` (`ease: baseline`), and the path check is empty. The sweep is done and `REGISTER.md` is drafted:
   20 class A rows and 9 class B rows.
 - **Step:** 7.4 STOP A. The refuter killed 0 rows and rewrote 9 to pass (applied in `REGISTER.md`). The STOP A message was sent;
@@ -75,7 +75,18 @@ which the 2026-10-16 approval settled against. T1's saving is in wait (N-9, clas
 
 ## STOP A answer (verbatim)
 
-(pending)
+2026-10-27. The owner first wrote "keep going to STOP A" (not a pick). Asked again, the owner chose the option labelled:
+
+> "Take recommendations (Recommended)": Animation holds only on a case's first evaluation (N-9a); Overview by default for
+> dated cases (N-7); example first on start screen (N-2); allow ExcelImport.tsx (G-1); hide Consumer/SBA nav on Streamlit
+> (N-5); primary 'Open workspace' (N-10); accept Done 5 exceptions (N-13); accept analysis.py as a definition source (L-4).
+> Leave N-8 and E-3.
+
+Consequences:
+- N-8 and E-3 are QUEUED.
+- N-6 is superseded by N-5 (the Streamlit Consumer/SBA screens become unreachable).
+- The path check now also admits `frontend/src/excel/ExcelImport.tsx`, `frontend/src/decisionPreparation.ts`,
+  `frontend/src/useAnalystWorkspace.ts`, `streamlit_app/app.py` and `README.md` for the rows that name them (N-9, N-10, G-1).
 
 ## Commits
 
