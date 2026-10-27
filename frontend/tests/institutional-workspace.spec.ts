@@ -66,7 +66,7 @@ test("commercial sample preserves exact input strings and maps server errors to 
   await expect(field).toHaveAttribute("aria-invalid", "true");
   await expect(
     page.getByRole("region", { name: "Validation summary", exact: true }),
-  ).toContainText("too_small");
+  ).toContainText("Review this reported amount.");
   await field.fill("4300000");
   await expect(field).not.toHaveAttribute("aria-invalid", "true");
 });

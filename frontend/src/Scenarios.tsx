@@ -548,6 +548,20 @@ function Archive({
     </section>
   );
 }
+/** A scenario issue named by its scenario and field, not its JSON pointer. */
+function issueLabel(pointer: string): string {
+  const match = /^\/scenarios\/(\d+)\/([a-z_]+)/.exec(pointer);
+  if (!match) return pointer || "Comparison";
+  return `Scenario ${Number(match[1]) + 1} ${match[2].replace(/_/g, " ")}`;
+}
+
+/** The contract message without its system prefix, and blank-text limits in plain words. */
+function issueMessage(message: string): string {
+  const text = message.replace(/^Invalid saved-case response or command: /, "");
+  const blank = /^nonblank scenario text, at most ([\d,]+) characters\.?$/.exec(text);
+  return blank ? `Enter text of up to ${blank[1]} characters.` : text;
+}
+
 export function Scenarios({
   model,
   onSaveBaseline,
@@ -713,12 +727,9 @@ export function Scenarios({
                           focusPointer(issue.pointer, root.current)
                         }
                       >
-                        {issue.pointer}: {issue.message}
+                        {issueLabel(issue.pointer)}: {issueMessage(issue.message)}
                       </button>
-                      <small>
-                        {issue.code}
-                        {issue.limit !== null ? ` · limit ${issue.limit}` : ""}
-                      </small>
+                      {issue.limit !== null && <small>Limit {issue.limit}</small>}
                     </li>
                   ))}
                 </ul>

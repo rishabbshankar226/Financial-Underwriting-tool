@@ -156,10 +156,7 @@ export function ValidationSummary({
                 (error.pointer || "Complete document")}
               : {error.message}
             </button>
-            <small>
-              {error.code}
-              {error.limit !== null ? ` · limit ${error.limit}` : ""}
-            </small>
+            {error.limit !== null && <small>Limit {error.limit}</small>}
           </li>
         ))}
       </ul>
