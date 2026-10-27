@@ -6,6 +6,21 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### Phase 3, latest (2026-10-27)
+
+- Done:
+  - `after` metrics: figures 78/78 equal; T3 wait 5.4 s → 0.2 s; no steps rise.
+  - Same-machine T1 A/B: equal.
+  - Ceilings are in the task specs.
+  - `after` screenshots.
+  - Page-level primary audit, which led to the N-14 refinement `f0a49a6` and queued row N-15.
+  - Fresh-eyes walkthrough: all six tasks finished. E-4 `836ccce` and E-5 `589b8eb` fixed; seven rows queued.
+- Running: `steps.sh final`.
+- Then:
+  - `python3 ease/tools/build_report.py "<final summary>"`;
+  - add the dated entry at the top of `docs/VERIFICATION.md`;
+  - commit, then STOP B.
+
 ### Phase 3 progress
 
 - Step 1, `steps.sh after`: everything matched the baseline except standalone e2e, at **409 passed / 4 failed**. All four were in
