@@ -597,6 +597,7 @@ export function RecoveryPanel({
           <div className="actions">
             {w.operation && (
               <button
+                className="primary"
                 disabled={
                   w.inFlight ||
                   (w.writeError?.status === 409 && !w.writeError.certain)

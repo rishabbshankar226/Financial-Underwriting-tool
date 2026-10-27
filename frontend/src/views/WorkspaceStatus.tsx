@@ -57,7 +57,7 @@ export function WorkspaceStatus({
       {state.status === "unavailable" && (
         <div className="actions">
           {draft && state.action === "evaluate" && (
-            <button onClick={() => onSubmit(draft)}>
+            <button className="primary" onClick={() => onSubmit(draft)}>
               Retry submitted draft
             </button>
           )}

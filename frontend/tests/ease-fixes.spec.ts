@@ -143,6 +143,27 @@ test("D-3: calculation details are folded under History & Audit until asked for"
   await expect(details.getByText(/^Policy version:/)).toBeVisible();
 });
 
+test("N-11: each recovery state's next action is the primary one", async ({ page }) => {
+  await connect(page);
+  await page.route("**/commercial/assessment", (route) => route.abort());
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Retry submitted draft", exact: true })).toHaveClass(/\bprimary\b/, {
+    timeout: 30_000,
+  });
+  await page.unroute("**/commercial/assessment");
+  await page.getByRole("button", { name: "Retry submitted draft", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.route("**/cases", (route) => (route.request().method() === "POST" ? route.abort() : route.continue()));
+  await page.getByRole("button", { name: "Save case", exact: true }).click();
+  await page.getByLabel("Save rationale").fill("Saved for the N-11 check");
+  await page.getByRole("dialog").getByRole("button").last().click();
+  await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveClass(/\bprimary\b/, {
+    timeout: 30_000,
+  });
+  await page.getByRole("button", { name: /^Stop tracking|^Review discarding tracking/ }).click();
+  await expect(page.getByRole("dialog").getByRole("button", { name: "Keep tracking", exact: true })).toHaveClass(/\bprimary\b/);
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

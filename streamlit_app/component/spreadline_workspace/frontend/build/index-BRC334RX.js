@@ -7823,6 +7823,7 @@ function Xn({ onDiscard: e, onCancel: t, restoreFocus: n }) {
 			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "actions",
 				children: [/* @__PURE__ */ (0, U.jsx)("button", {
+					className: "primary",
 					autoFocus: !0,
 					onClick: t,
 					children: "Keep tracking"
@@ -8620,6 +8621,7 @@ function xr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 					className: "actions",
 					children: [
 						e.operation && /* @__PURE__ */ (0, U.jsx)("button", {
+							className: "primary",
 							disabled: e.inFlight || e.writeError?.status === 409 && !e.writeError.certain,
 							onClick: () => {
 								try {
@@ -11475,6 +11477,7 @@ function _a({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i }) {
 			className: "actions",
 			children: [
 				a && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsx)("button", {
+					className: "primary",
 					onClick: () => r(a),
 					children: "Retry submitted draft"
 				}),

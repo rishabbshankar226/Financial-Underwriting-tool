@@ -153,7 +153,7 @@ export function DiscardTrackingDialog({
       </p>
       {error && <p role="alert">{error}</p>}
       <div className="actions">
-        <button autoFocus onClick={onCancel}>
+        <button className="primary" autoFocus onClick={onCancel}>
           Keep tracking
         </button>
         <button
