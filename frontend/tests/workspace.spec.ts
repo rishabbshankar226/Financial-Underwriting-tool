@@ -61,7 +61,7 @@ test("overrides recalculate decision, coverage, memo and audit", async ({
   await override(page, "1");
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(
-    page.locator(".metric").filter({ hasText: /^DSCR/ }),
+    page.locator(".metric").filter({ hasText: /^Business DSCR/ }),
   ).not.toContainText("3.13x");
   await openView(page, "memo");
   await expect(page.locator(".memo")).toContainText("Decline");

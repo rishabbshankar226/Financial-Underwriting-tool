@@ -130,7 +130,7 @@ test("workspace on the example: header, decision, tiles and every tab", async ({
     await page.getByRole("button", { name: "Read full notice", exact: true }).click();
   });
   await capture.attempt("S31", async () => {
-    await page.getByRole("button", { name: "DSCR", exact: true }).first().click();
+    await page.getByRole("button", { name: "Business DSCR", exact: true }).first().click();
     const inspector = page.getByRole("region", { name: "Calculation inspector", exact: true });
     await expect(inspector).toBeVisible();
     await inspector.scrollIntoViewIfNeeded();

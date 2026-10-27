@@ -354,7 +354,7 @@ test("unavailable ratios and absent guarantors have explicit explanations", asyn
     .setInputFiles(uploadJson("no-debt.json", input));
   await expect(page.locator(".decision strong")).toHaveText("REVIEW");
   await expect(
-    page.locator(".metric").filter({ hasText: /^DSCR/ }),
+    page.locator(".metric").filter({ hasText: /^Business DSCR/ }),
   ).toContainText("Not applicable");
   await openView(page, "details");
   const calculations = page.getByRole("region", { name: "Calculation details", exact: true });

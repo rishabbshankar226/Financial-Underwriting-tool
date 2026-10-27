@@ -25,7 +25,7 @@ test("zero-denominator coverage is explicitly unavailable while preserving the s
   await expect(page.locator(".decision strong")).toHaveText("REVIEW");
   await page
     .locator(".metric")
-    .getByRole("button", { name: "DSCR", exact: true })
+    .getByRole("button", { name: "Business DSCR", exact: true })
     .click();
   const inspector = page.getByRole("region", {
     name: "Calculation inspector",
