@@ -11,8 +11,14 @@ kind="$1"; title="$2"; spec="$3"; shift 3
 fix="${FIX:-HEAD}"
 script="test:e2e"; [ "$kind" = streamlit ] && script="test:e2e:streamlit"
 
+streamlit_bundle() {
+  # The host serves the component installed in the venv, so rebuild and reinstall it.
+  npm --prefix frontend run build:streamlit > /dev/null 2>&1
+  uv pip install --python "$repo/.venv/bin/python" --reinstall-package spreadline-workspace --no-deps ./streamlit_app/component > /dev/null 2>&1
+}
+
 run() {
-  if [ "$kind" = streamlit ]; then npm --prefix frontend run build:streamlit > /dev/null 2>&1; fi
+  if [ "$kind" = streamlit ]; then streamlit_bundle; fi
   npm --prefix frontend run "$script" -- "$spec" --grep "$title" --reporter=line 2>&1
 }
 
@@ -22,5 +28,5 @@ run | grep -E 'Expected|Received|passed|failed|Error:' | head -8
 echo "== restored from HEAD"
 git checkout HEAD -- "$@"
 run | grep -E 'passed|failed|Error:' | head -4
-if [ "$kind" = streamlit ]; then npm --prefix frontend run build:streamlit > /dev/null 2>&1; fi
+if [ "$kind" = streamlit ]; then streamlit_bundle; fi
 git status --porcelain | head -5
