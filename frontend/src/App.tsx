@@ -1,3 +1,4 @@
+import { isEmbeddedWorkspace } from "./transport";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { selectWorkspaceView } from "./workspaceSelectors";
 import { useEditController } from "./useEditController";
@@ -225,28 +226,33 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           >
             Commercial Decision
           </button>
-          <button
-            type="button"
-            aria-current={domain === "consumer" ? "page" : undefined}
-            onClick={() => {
-              setExcel(false);
-              setDomain("consumer");
-              setShowCases(false);
-            }}
-          >
-            Consumer Decision
-          </button>
-          <button
-            type="button"
-            aria-current={domain === "sba" ? "page" : undefined}
-            onClick={() => {
-              setExcel(false);
-              setDomain("sba");
-              setShowCases(false);
-            }}
-          >
-            SBA Screen
-          </button>
+          {/* The Streamlit host has no Consumer or SBA routes, so it does not offer them. */}
+          {!isEmbeddedWorkspace() && (
+            <>
+            <button
+              type="button"
+              aria-current={domain === "consumer" ? "page" : undefined}
+              onClick={() => {
+                setExcel(false);
+                setDomain("consumer");
+                setShowCases(false);
+              }}
+            >
+              Consumer Decision
+            </button>
+            <button
+              type="button"
+              aria-current={domain === "sba" ? "page" : undefined}
+              onClick={() => {
+                setExcel(false);
+                setDomain("sba");
+                setShowCases(false);
+              }}
+            >
+              SBA Screen
+            </button>
+            </>
+          )}
           <button
             type="button"
             aria-expanded={showCases}

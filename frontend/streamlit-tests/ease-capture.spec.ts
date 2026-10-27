@@ -103,18 +103,8 @@ test("intake and the Consumer and SBA boundary on the Streamlit host", async ({ 
     await capture.shot("S69", "excel-review", { fullPage: true });
     await page.getByRole("button", { name: "Cancel Excel import", exact: true }).click();
   });
-  await capture.attempt("S72", async () => {
-    await page.getByRole("button", { name: "Consumer Decision", exact: true }).click();
-    await expect(page.getByRole("heading", { name: "Consumer DTI review", exact: true })).toBeVisible();
-    await capture.shot("S71", "consumer-on-streamlit");
-    await page.getByLabel("Load sample case", { exact: true }).selectOption("consumer");
-    await page.getByRole("button", { name: "Evaluate consumer", exact: true }).click();
-    await expect(page.getByRole("alert").first()).toBeVisible();
-    capture.probe("consumer.streamlitSubmit", (await page.getByRole("alert").allInnerTexts()).join(" | "));
-    await capture.shot("S72", "consumer-boundary");
-    await page.getByRole("button", { name: "SBA Screen", exact: true }).click();
-    await capture.shot("S74", "sba-on-streamlit");
-  });
+  // Ease N-5: the Streamlit host no longer offers Consumer or SBA workflows.
+  for (const id of ["S71", "S72", "S74"]) capture.skip(id, "not offered on the Streamlit host (ease N-5)");
   for (const id of ["S01", "S02", "S04"]) capture.skip(id, "needs a misconfigured or failed host; not produced by the test launcher");
   capture.skip("S07", "bridge rejection states need a failing bridge; not produced on demand");
   for (const id of ["S08", "S09"]) capture.skip(id, "standalone host only (the Streamlit host has no token screen)");
