@@ -106,7 +106,7 @@ test("a completed assessment cannot close a newer decision draft", async ({ page
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();
   const progress = page.getByRole("status", { name: "Assessment preparation" });
   await expect(progress).toContainText("Calculation received");
-  await page.getByRole("button", { name: "Commercial Decision", exact: true }).click();
+  await page.getByRole("button", { name: "Undated decision", exact: true }).click();
   await page.getByLabel("Borrower name", { exact: true }).fill("Keep this newer draft");
   await page.clock.runFor(5000);
   await expect(progress).toHaveCount(0);

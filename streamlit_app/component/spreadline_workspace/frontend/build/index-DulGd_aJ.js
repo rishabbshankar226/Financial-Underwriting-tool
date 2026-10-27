@@ -15219,7 +15219,7 @@ function Xo({ onDisconnect: e }) {
 							onClick: () => {
 								g(!1), u("commercial"), m("legacy"), f(!0), C(!1);
 							},
-							children: "Commercial Decision"
+							children: "Undated decision"
 						}),
 						!re() && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",

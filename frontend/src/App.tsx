@@ -227,7 +227,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
               setShowCases(false);
             }}
           >
-            Commercial Decision
+            Undated decision
           </button>
           {/* The Streamlit host has no Consumer or SBA routes, so it does not offer them. */}
           {!isEmbeddedWorkspace() && (
