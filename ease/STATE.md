@@ -13,8 +13,16 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
    The test's `data-testid` pattern `stBaseButton-primaryFormSubmit` is **unverified** for Streamlit 1.66, so fix the locator
    if it fails on the id rather than the style. Then run `bash ease/tools/revert-proof.sh streamlit "N-10" streamlit-tests/ease-fixes.spec.ts streamlit_app/app.py`,
    run `python3 -m pytest -q streamlit_app/tests`, record the row FIXED, and amend the WIP commit message.
-2. **Unfinished check:** the batch `tests/decision-preparation.spec.ts tests/analysis.spec.ts tests/assessment.spec.ts
-   tests/saved-workspace.spec.ts tests/ease-fixes.spec.ts` was running when the session paused. Its result was never read, so rerun it.
+0. **FIRST: a possible regression.** The batch `tests/decision-preparation.spec.ts tests/analysis.spec.ts tests/assessment.spec.ts
+   tests/saved-workspace.spec.ts tests/ease-fixes.spec.ts` (run after N-9, at `31f3728`) gave **57 passed, 1 failed**:
+   `tests/saved-workspace.spec.ts:154` "two contexts require explicit conflict review before a fresh saved edit". It passed in
+   the baseline (392/392).
+   - Rerun it alone.
+   - If it fails, bisect over the Phase 2 commits with `git checkout <sha> -- frontend/src`. Prime suspects: **N-9**
+     (`useAnalystWorkspace.ts`, which skips the hold whenever `draft.edit` is set, possibly also on saved-edit paths) and
+     **D-4** (the pending panel hidden while preparing).
+   - Not investigated before the pause.
+2. (Superseded by step 0.) The batch above was the "unfinished check".
 3. **Then continue Phase 2 in primary-path order:**
    - T2: L-2, L-3, N-7, L-4.
    - T3: N-4, L-5, L-6, L-7, D-2, D-3, E-1, E-2.
