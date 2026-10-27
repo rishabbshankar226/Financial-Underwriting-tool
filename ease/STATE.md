@@ -10,7 +10,7 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - Final full run green: `ease/logs/final`, recorded in `docs/VERIFICATION.md`.
 - `ease/REPORT.md` written. The path check shows only the owner-picked files.
-- The run waits for the owner: push the branch and open a pull request? Neither happens without a yes.
+- The owner answered "Push + open PR (Recommended)" on 2026-10-27. Branch pushed as `claude/ease-of-use` (local `worktree-ease-of-use`). **PR #25** opened into `main`: https://github.com/rishabbshankar226/Financial-Underwriting-tool/pull/25. Not merged; merging is the owner's call.
 
 ### Phase 3, latest (2026-10-27)
 
