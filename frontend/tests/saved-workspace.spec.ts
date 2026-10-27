@@ -306,6 +306,7 @@ test("edits and exact saved-write retry work when browser storage is unavailable
   });
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   const field = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
     exact: true,
@@ -461,6 +462,7 @@ test("accepted receipt remains readable and read-only when latest refresh fails"
   );
   await expect(page.locator(".writeNotice")).toContainText("Write accepted");
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await expect(
     page.getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -678,6 +680,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await page
     .getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -766,6 +769,7 @@ test("unsaved edits preserve the existing session rationale behavior", async ({
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await page
     .getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",

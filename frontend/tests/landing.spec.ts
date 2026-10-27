@@ -149,6 +149,12 @@ test("workspace views follow the ARIA tabs pattern with roving focus", async ({ 
   const tabs = tablist.getByRole("tab");
   await expect(tabs).toHaveText(workspaceTabLabels);
   const spread = tablist.getByRole("tab", { name: "Spread", exact: true });
+  // A fresh dated case opens on Overview (ease N-7); the roving sequence below starts from Spread.
+  const opened = tablist.getByRole("tab", { name: "Overview", exact: true });
+  await expect(opened).toHaveAttribute("aria-selected", "true");
+  await expect(opened).toHaveAttribute("tabindex", "0");
+  await expect(tablist.locator('[role="tab"][tabindex="-1"]')).toHaveCount(workspaceTabLabels.length - 1);
+  await openView(page, "spread");
   await expect(spread).toHaveAttribute("aria-selected", "true");
   await expect(spread).toHaveAttribute("tabindex", "0");
   await expect(tablist.locator('[role="tab"][tabindex="-1"]')).toHaveCount(workspaceTabLabels.length - 1);

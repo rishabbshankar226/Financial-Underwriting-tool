@@ -1,5 +1,5 @@
 import { test, expect } from "./authenticatedTest";
-import { connectWorkspace } from "./testCredentials";
+import { connectWorkspace, openView } from "./testCredentials";
 
 test("the assessment overview labels current coverage separately from the selected historical spread", async ({
   page,
@@ -9,6 +9,7 @@ test("the assessment overview labels current coverage separately from the select
   const overview = page.getByRole("region", { name: "Assessment overview" });
   await expect(overview).toContainText("$630,000");
   await expect(overview).toContainText("3.13x");
+  await openView(page, "spread");
   await page
     .getByRole("button", { name: "2024-01-01 – 2024-12-31", exact: true })
     .click();

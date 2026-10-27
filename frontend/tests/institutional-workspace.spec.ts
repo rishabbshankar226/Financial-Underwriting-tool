@@ -76,6 +76,7 @@ test("all four spread modes use server data and a keyboard trace exposes context
 }) => {
   await page.goto("/");
   await connectWorkspace(page);
+  await openView(page, "spread");
   const modes = page.getByLabel("Spread presentation", { exact: true });
   await modes.selectOption("raw");
   await expect(page.getByRole("table")).toContainText("4,200,000");

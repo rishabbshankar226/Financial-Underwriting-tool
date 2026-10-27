@@ -351,6 +351,7 @@ test("a recalculating draft edit keeps its previous outcome visible as inactive"
     await held;
     await route.fulfill({ response }).catch(() => {});
   });
+  await openView(page, "spread");
   await page.getByRole("button", { name: "Edit Gross receipts for 2025-01-01 – 2025-12-31", exact: true }).click();
   await page.getByLabel("New value").fill("1");
   await page.getByLabel("Rationale").fill("Synthetic recalculation");
@@ -429,6 +430,7 @@ test("a request larger than the coverage minimums support reads as a shortfall, 
   await expect(service).not.toContainText("($647,015)");
   // FCCR is 1.0004 against a 1.00x decline floor: it must not read as equal to the floor.
   await expect(tiles.locator(".kpiTile").filter({ has: page.locator(".kpiLabel", { hasText: /^FCCR$/ }) })).toContainText("1.0004x");
+  await openView(page, "spread");
   await expect(page.locator(".metric").filter({ hasText: "Simplified FCCR" })).toContainText("1.0004x");
   await openView(page, "overview");
   const capacity = page.getByRole("tabpanel").getByRole("region", { name: "Debt capacity", exact: true });

@@ -6,6 +6,64 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### Resumed after the second pause (2026-10-27)
+
+N-7 was reworked in the working tree, on top of WIP commit `a063238`:
+- The tab is now chosen **when a fresh dated evaluation starts**, not when it completes. The failure detail showed completion
+  overriding a tab the user had picked during the hold (`review-workspace.spec.ts:259`).
+- Legacy cases keep the current tab (`scenarios-workspace.spec.ts:349`).
+- Twenty spec insertions of `openView(page, "spread")` via `ease/tools/n7_specs.py`. `landing.spec.ts:143` now asserts Overview as
+  the default, then selects Spread for its unchanged keyboard sequence.
+- The CALCULATING timeouts in scenarios :106/:230/:415 and saved :968/:1019 came from a 35-minute run on a slow (likely sleeping)
+  machine; they passed in the earlier full run.
+- Next: confirm the 11-file run, then amend into the N-7 commit, run the revert proof, then the T3 rows.
+
+### PAUSED AGAIN 2026-10-27 (owner going offline)
+
+N-7 is committed as a **WIP commit that breaks 23 standalone specs** (listed below), on purpose so nothing is lost. On resume:
+1. Rerun those 10 spec files to get error lines. That collection run was cut off by the pause, so scratchpad `n7-failures.txt` may
+   be missing or partial.
+2. Add `openView(page, "spread")` where each test touches Spread after a fresh dated evaluation. landing.spec:143's default
+   tab expectation becomes Overview. Change expected values only; never loosen.
+3. Amend into the N-7 commit (or follow up with `ease(N-7): specs follow the Overview default`). Then run the revert proof
+   (`ease-fixes.spec.ts` "N-7") and both full suites.
+
+The failing tests at the pause:
+- analysis.spec.ts:341, :414
+- assessment.spec.ts:4, :54, :173, :342
+- institutional-quality.spec.ts:9, :38, :260, :335 (375px and 1280px)
+- institutional-workspace.spec.ts:74, :103
+- interface.spec.ts:4
+- landing.spec.ts:143
+- review-workspace.spec.ts:259
+- saved-workspace.spec.ts:297, :427, :675, :764
+- scenarios-workspace.spec.ts:340
+- trace-accessibility.spec.ts:5 (375px and 1280px)
+
+### Current position (resumed 2026-10-27)
+
+- **Fixed and committed:** L-1, L-10, N-1, N-2, N-3, D-1, D-4, N-9, N-10 (verified), L-2, L-3. E-2 REFUTED (blur validation
+  already exists at `EditDialog.tsx:110`). Step 0 below is resolved as a flake.
+- **In progress: N-7 (uncommitted in the working tree):**
+  - `App.tsx` effect: a fresh dated evaluation goes to the Overview tab.
+  - `views/workspaceTabs.ts` comment, `docs/WORKSPACE.md` Views line, and the `ease-fixes.spec.ts` N-7 test.
+  - The full standalone suite then gave **23 failures** (382 passed): specs that assume Spread is selected after a fresh dated
+    evaluation. Streamlit is 12/12.
+  - Fix each by adding `await openView(page, "spread")` before its Spread interaction (and landing.spec:143's expected default
+    becomes Overview). Error detail is being collected in scratchpad `n7-failures.txt`.
+  - Then: rebuild, commit N-7 with those spec updates, revert proof, full suite again.
+- **Then the T3 rows:**
+  - N-4: `EditDialog.tsx:80` passes `{ requireRationale: saved }`; the label reads "Rationale (optional)" for drafts; HistoryView shows
+    "No rationale given" when empty.
+  - L-5: Save dialog title "Save case", eyebrow dropped, plain fine print. The button becomes **"Save"**, not "Save case", to avoid
+    a name clash with the brand-bar "Save case" (about 25 spec texts to update).
+  - E-1: a blank-rationale check in `SaveCaseDialog` before the contract call.
+  - L-6: edit help "Dollar amount, such as 600,000" for USD fields; eyebrow dropped.
+  - L-7: "Latest when fetched" becomes "latest when last refreshed", and "Check replay" becomes "Replay this revision (read-only)"
+    (about 18 spec texts plus `docs/WORKSPACE.md`).
+  - D-2, D-3.
+- **Rule learned:** never edit `frontend/src` while a Vite-backed browser suite runs (hot reload corrupts the run).
+
 ### Resume here (paused 2026-10-27)
 
 1. **DONE on resume:** N-10 verified (see REGISTER). Original note: **N-10, unverified WIP commit.** `streamlit_app/app.py` has `type="primary"` on "Open workspace"; ruff and mypy pass.

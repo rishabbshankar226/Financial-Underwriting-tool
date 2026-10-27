@@ -69,6 +69,14 @@ test("L-2: each KPI tile label carries its server definition", async ({ page }) 
     await expect(tiles.getByText(label, { exact: true })).toHaveAccessibleDescription(new RegExp(`^${starts}`));
 });
 
+test("N-7: a fresh dated case opens on Overview, its explanation", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await expect(page.getByRole("tab", { name: "Overview", exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("heading", { name: "Why this decision", exact: true })).toBeVisible();
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

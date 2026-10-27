@@ -15115,7 +15115,7 @@ function Jo({ onDisconnect: e }) {
 	]);
 	let O = (0, c.useRef)(null), k = (0, c.useRef)(null), A = p(O, t.edit), ne = f(r, !!t.operation), { ready: j, accepted: M, input: N, assessment: re, decision: ie } = ne, P = N ? Math.min(x, N.years.length - 1) : 0, ae = r.status === "idle";
 	(0, c.useEffect)(() => {
-		r.status === "evaluating" && (A.dismiss(), w(!1)), r.status === "ready" && r.resetPeriod && r.accepted && S(r.accepted.input.years.length - 1), r.status === "ready" && r.saved?.view.compatibility && l("audit");
+		r.status === "evaluating" && (A.dismiss(), w(!1), r.action === "evaluate" && r.draft?.resetHistory && r.draft.mode === "dated" && l("overview")), r.status === "ready" && r.resetPeriod && r.accepted && S(r.accepted.input.years.length - 1), r.status === "ready" && r.saved?.view.compatibility && l("audit");
 	}, [
 		r.id,
 		r.status,

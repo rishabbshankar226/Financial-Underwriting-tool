@@ -23,6 +23,7 @@ test("zero-denominator coverage is explicitly unavailable while preserving the s
     buffer: Buffer.from(JSON.stringify(input)),
   });
   await expect(page.locator(".decision strong")).toHaveText("REVIEW");
+  await openView(page, "spread");
   await page
     .locator(".metric")
     .getByRole("button", { name: "Business DSCR", exact: true })
@@ -40,6 +41,7 @@ test("trace money uses cents for annual units and labels business service plainl
 }) => {
   await page.goto("/");
   await connectWorkspace(page);
+  await openView(page, "spread");
   await page
     .getByText("Inspect current calculated facts", { exact: true })
     .click();
@@ -296,6 +298,7 @@ test("a field-mapped saved rejection keeps its proposal and requires fresh revie
       }),
     });
   });
+  await openView(page, "spread");
   await page
     .getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -338,6 +341,7 @@ for (const width of [375, 1280])
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
     await connectWorkspace(page);
+    await openView(page, "spread");
     await page
       .getByRole("button", {
         name: "Inspect Gross profit for 2025-01-01 – 2025-12-31",

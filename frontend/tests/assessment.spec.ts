@@ -9,6 +9,7 @@ test("dated workspace shows all periods, server facts and policy trace", async (
   await expect(
     page.getByText("Dated assessment", { exact: true }),
   ).toBeVisible();
+  await openView(page, "spread");
   await expect(page.locator("table")).toContainText("2024-01-01");
   await expect(page.locator("table")).toContainText("2025-12-31");
   await expect(page.locator("table")).toContainText("Section 179");
@@ -56,6 +57,7 @@ test("failed edits remain drafts and retry records the edit once", async ({
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await page.route("**/commercial/assessment", (route) => route.abort());
   await page
     .getByRole("button", {
@@ -175,6 +177,7 @@ test("dialog validation, keyboard focus and cancellation preserve the accepted r
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   const edit = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
     exact: true,
@@ -353,6 +356,7 @@ test("unavailable ratios and absent guarantors have explicit explanations", asyn
     .locator("input[type=file]")
     .setInputFiles(uploadJson("no-debt.json", input));
   await expect(page.locator(".decision strong")).toHaveText("REVIEW");
+  await openView(page, "spread");
   await expect(
     page.locator(".metric").filter({ hasText: /^Business DSCR/ }),
   ).toContainText("Not applicable");

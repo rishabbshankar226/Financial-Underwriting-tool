@@ -1,5 +1,5 @@
 import { test, expect } from "./authenticatedTest";
-import { connectWorkspace, collectConsoleProblems } from "./testCredentials";
+import { connectWorkspace, collectConsoleProblems, openView } from "./testCredentials";
 
 for (const width of [375, 1280]) {
   test(`keyboard trace opens in view and returns focus at ${width}px`, async ({
@@ -9,6 +9,7 @@ for (const width of [375, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
     await connectWorkspace(page);
+    await openView(page, "spread");
     const opener = page.getByRole("button", {
       name: "Inspect Gross profit for 2025-01-01 – 2025-12-31",
       exact: true,
