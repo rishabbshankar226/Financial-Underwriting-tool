@@ -55,7 +55,7 @@ async function probeEdit(capture: ScreenCapture, page: Page, button: string, key
         await page.getByRole("button", { name: button, exact: true }).first().click();
         await expect(dialog).toBeVisible();
         await dialog.getByLabel("New value").fill(value);
-        await dialog.getByLabel("Rationale", { exact: true }).fill("Probe");
+        await dialog.getByLabel(/^Rationale/).fill("Probe");
         const live = await alerts(page);
         await dialog.getByRole("button", { name: /^(Evaluate edit|Save revision)$/ }).click();
         await page.waitForTimeout(150);
@@ -244,7 +244,7 @@ test("edits: a draft edit without a rationale, then session history", async ({ p
     capture.probe("edit.draft.noRationale", (await alerts(page)) || "(accepted without a rationale)");
     await capture.shot("S57", "edit-dialog-rationale");
     if (await page.getByRole("dialog").isVisible()) {
-      await page.getByLabel("Rationale", { exact: true }).fill("Probe");
+      await page.getByLabel(/^Rationale/).fill("Probe");
       await page.getByRole("button", { name: "Evaluate edit", exact: true }).click();
     }
     await decisionReady(page).waitFor({ timeout: 30_000 });

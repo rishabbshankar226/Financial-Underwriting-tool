@@ -77,8 +77,6 @@ test("T3 adjust and save: new loan amount, recalculated decision, saved revision
   await meter.click(page.getByRole("tab", { name: "Debt & Loan", exact: true }));
   await meter.click(page.getByRole("button", { name: "Proposed principal", exact: true }));
   await meter.fill(page.getByLabel("New value"), "600000");
-  // At baseline an unsaved draft edit still demands a rationale before it is evaluated.
-  await meter.fill(page.getByLabel("Rationale", { exact: true }), "Larger request for review");
   await meter.click(page.getByRole("button", { name: "Evaluate edit", exact: true }));
   await meter.answer("recalculated decision", [decisionReady(page)], { server: preparationReceived(page) });
   await recordDecision(meter, "T3.recalculated");

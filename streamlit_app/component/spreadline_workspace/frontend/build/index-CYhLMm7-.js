@@ -7873,7 +7873,7 @@ function Qn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 			onSubmit: (t) => {
 				t.preventDefault();
 				try {
-					let t = Hn(e, s, u);
+					let t = Hn(e, s, u, { requireRationale: i });
 					i && Bt(u), n({
 						path: e.path,
 						prior: e.value,
@@ -7926,7 +7926,7 @@ function Qn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 					]
 				}),
 				/* @__PURE__ */ (0, U.jsxs)("label", { children: [
-					"Rationale",
+					i ? "Rationale" : "Rationale (optional)",
 					" ",
 					/* @__PURE__ */ (0, U.jsx)("textarea", {
 						value: u,
@@ -12453,7 +12453,7 @@ function Ja({ saved: e, ready: t, history: n, input: r, onOpen: i }) {
 						e.next
 					] }),
 					/* @__PURE__ */ (0, U.jsxs)("small", { children: [
-						e.rationale,
+						e.rationale || "No rationale given",
 						" · ",
 						e.at
 					] })

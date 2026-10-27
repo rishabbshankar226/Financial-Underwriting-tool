@@ -36,7 +36,7 @@ export function HistoryView({
               {e.prior} → {e.next}
             </span>
             <small>
-              {e.rationale} · {e.at}
+              {e.rationale || "No rationale given"} · {e.at}
             </small>
           </div>
         ))

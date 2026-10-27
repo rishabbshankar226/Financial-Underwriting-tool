@@ -77,6 +77,28 @@ test("N-7: a fresh dated case opens on Overview, its explanation", async ({ page
   await expect(page.getByRole("heading", { name: "Why this decision", exact: true })).toBeVisible();
 });
 
+test("N-4: a draft edit needs no rationale; a saved revision still does", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("tab", { name: "Debt & Loan", exact: true }).click();
+  await page.getByRole("button", { name: "Proposed principal", exact: true }).click();
+  await page.getByLabel("New value").fill("600000");
+  await expect(page.getByLabel(/^Rationale/)).toHaveValue("");
+  await page.getByRole("button", { name: "Evaluate edit", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByLabel(/^Rationale/)).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Save case", exact: true }).click();
+  await page.getByLabel("Save rationale").fill("Saved for the N-4 check");
+  await page.getByRole("dialog").getByRole("button").last().click();
+  await expect(page.getByRole("region", { name: "Saved revision context", exact: true })).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Proposed principal", exact: true }).click();
+  await page.getByLabel("New value").fill("650000");
+  await page.getByRole("button", { name: "Save revision", exact: true }).click();
+  await expect(page.getByRole("dialog").getByRole("alert")).toBeVisible();
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

@@ -77,7 +77,8 @@ export default function EditDialog({
         onSubmit={(event) => {
           event.preventDefault();
           try {
-            const next = validateEdit(field, value, rationale);
+            // Only a saved revision needs a rationale; an unsaved draft edit does not.
+            const next = validateEdit(field, value, rationale, { requireRationale: saved });
             if (saved) savedRationale(rationale);
             onSubmit({
               path: field.path,
@@ -129,7 +130,7 @@ export default function EditDialog({
             : ""}
         </small>
         <label>
-          Rationale{" "}
+          {saved ? "Rationale" : "Rationale (optional)"}{" "}
           <textarea
             value={rationale}
             placeholder="Explain the source or reason for this edit"
