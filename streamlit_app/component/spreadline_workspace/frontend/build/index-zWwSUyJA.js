@@ -7762,8 +7762,8 @@ function Xn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 		restoreFocus: r,
 		children: /* @__PURE__ */ (0, U.jsxs)("form", {
 			onSubmit: (e) => {
-				e.preventDefault();
-				try {
+				if (e.preventDefault(), !i.trim()) s("Enter a rationale for this save (up to 2,000 characters).");
+				else try {
 					Bt(i), t(i), n();
 				} catch (e) {
 					s(e instanceof Error ? e.message : String(e));

@@ -84,6 +84,11 @@ export function SaveCaseDialog({
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          // Say what is missing in plain words; the contract check below stays as the backstop.
+          if (!reason.trim()) {
+            setError("Enter a rationale for this save (up to 2,000 characters).");
+            return;
+          }
           try {
             rationale(reason);
             onSave(reason);

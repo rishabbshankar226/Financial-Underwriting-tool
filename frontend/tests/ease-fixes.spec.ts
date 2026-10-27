@@ -99,6 +99,16 @@ test("N-4: a draft edit needs no rationale; a saved revision still does", async 
   await expect(page.getByRole("dialog").getByRole("alert")).toBeVisible();
 });
 
+test("E-1: a blank save rationale gets a plain message", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Save case", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByRole("button").last().click();
+  await expect(dialog.getByRole("alert")).toHaveText("Enter a rationale for this save (up to 2,000 characters).");
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });
