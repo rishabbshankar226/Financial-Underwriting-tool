@@ -4,7 +4,26 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 ## Position
 
-- **Phase:** 2 (fix). STOP A was answered; see below.
+- **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
+
+### Resume here (paused 2026-10-27)
+
+1. **N-10, unverified WIP commit.** `streamlit_app/app.py` has `type="primary"` on "Open workspace"; ruff and mypy pass.
+   Run `npm --prefix frontend run test:e2e:streamlit -- streamlit-tests/ease-fixes.spec.ts` (with `PATH="$PWD/.venv/bin:$PATH"`).
+   The test's `data-testid` pattern `stBaseButton-primaryFormSubmit` is **unverified** for Streamlit 1.66, so fix the locator
+   if it fails on the id rather than the style. Then run `bash ease/tools/revert-proof.sh streamlit "N-10" streamlit-tests/ease-fixes.spec.ts streamlit_app/app.py`,
+   run `python3 -m pytest -q streamlit_app/tests`, record the row FIXED, and amend the WIP commit message.
+2. **Unfinished check:** the batch `tests/decision-preparation.spec.ts tests/analysis.spec.ts tests/assessment.spec.ts
+   tests/saved-workspace.spec.ts tests/ease-fixes.spec.ts` was running when the session paused. Its result was never read, so rerun it.
+3. **Then continue Phase 2 in primary-path order:**
+   - T2: L-2, L-3, N-7, L-4.
+   - T3: N-4, L-5, L-6, L-7, D-2, D-3, E-1, E-2.
+   - Rest: N-5, N-11, N-12, L-8, L-9, L-11, then G-1 (Excel/T4 copy rows to add first).
+   - N-13 needs no code (accepted exceptions).
+4. **Per-commit routine:** edit; `bash ease/tools/rebuild.sh`; stage the build dir **and** `streamlit_app/requirements.txt`; commit
+   `ease(<ID>): …`; run `bash ease/tools/revert-proof.sh …` for behaviour rows; `bash ease/tools/pathcheck.sh`; run the reachable specs;
+   then `python3 ease/tools/status.py <ID> 'FIXED …'`. Behaviour tests go in `frontend/tests/ease-fixes.spec.ts`.
+5. **Phase 3** after that, per the prompt §9.
 - **Done:** Phase 0 committed as `c413b80` (`ease: baseline`), and the path check is empty. The sweep is done and `REGISTER.md` is drafted:
   20 class A rows and 9 class B rows.
 - **Step:** 7.4 STOP A. The refuter killed 0 rows and rewrote 9 to pass (applied in `REGISTER.md`). The STOP A message was sent;

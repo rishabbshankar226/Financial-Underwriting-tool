@@ -50,7 +50,7 @@ if st.session_state.get("_spreadline_access") is not True:
     st.subheader("Testing workspace access")
     with st.form("spreadline_access", clear_on_submit=True):
         supplied = st.text_input("Access password", type="password")
-        submitted = st.form_submit_button("Open workspace")
+        submitted = st.form_submit_button("Open workspace", type="primary")
     if submitted and hmac.compare_digest(supplied.encode("utf-8"), access_password.encode("utf-8")):
         st.session_state["_spreadline_access"] = True
         st.rerun()
