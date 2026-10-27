@@ -13101,8 +13101,8 @@ function so({ actor: e }) {
 				className: "connectionBadge",
 				children: St() ? "Testing host connected" : "API access verified"
 			}),
-			/* @__PURE__ */ (0, U.jsxs)("span", { children: ["Active operator identity unavailable", e ? ` · selected record attributed to ${e}` : ""] }),
-			/* @__PURE__ */ (0, U.jsx)("span", { children: "Page memory only · reload clears drafts and retry tracking" }),
+			/* @__PURE__ */ (0, U.jsxs)("span", { children: ["Operator identity not provided", e ? ` · selected record attributed to ${e}` : ""] }),
+			/* @__PURE__ */ (0, U.jsx)("span", { children: "Reload clears drafts and retry tracking" }),
 			/* @__PURE__ */ (0, U.jsx)(oo, { startedAt: t.startedAt })
 		]
 	}), n && /* @__PURE__ */ (0, U.jsxs)("div", {
