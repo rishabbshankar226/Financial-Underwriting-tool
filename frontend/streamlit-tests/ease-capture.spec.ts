@@ -50,6 +50,8 @@ test("access, start and the workspace inside the Streamlit host", async ({ page 
       .filter({ hasNotText: "Cushion pending" })
       .waitFor();
     await capture.shot("S20", "workspace-first-screen");
+    // A fresh dated case opens on Overview (ease N-7); the Spread shot selects Spread.
+    await tab(page, "Spread");
     await capture.shot("S29", "spread-full", { fullPage: true });
     capture.cover(["S16", "S17", "S21", "S22", "S23", "S28", "S30", "S76"], "S20-workspace-first-screen");
   });

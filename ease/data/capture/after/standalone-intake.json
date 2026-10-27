@@ -1,0 +1,117 @@
+{
+  "screens": {
+    "S67-excel-intake": {
+      "controls": 12,
+      "primaryActions": 1,
+      "primaryLabels": [
+        ""
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          ""
+        ],
+        "disabled": []
+      }
+    },
+    "S68-excel-wrong-file": {
+      "controls": 13,
+      "primaryActions": 1,
+      "primaryLabels": [
+        ""
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          ""
+        ],
+        "disabled": []
+      }
+    },
+    "S69-excel-review": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate Excel inputs"
+        ],
+        "disabled": []
+      }
+    },
+    "S70-json-import-invalid": {
+      "controls": 22,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S33L-legacy-workspace": {
+      "controls": 24,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S33-overview-legacy": {
+      "controls": 19,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S66-commercial-composer": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate assessment"
+        ],
+        "disabled": []
+      }
+    },
+    "S65-composer-validation": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate assessment"
+        ],
+        "disabled": []
+      }
+    }
+  },
+  "coveredBy": {},
+  "probes": {
+    "excel.wrongType": "Choose an .xlsx workbook. Save legacy .xls or macro-enabled files as a values-only .xlsx copy first.",
+    "json.invalid": "This file can't be imported: it is not valid JSON.",
+    "composer.emptySubmit": "Review 25 input issues Borrower name: Enter a value for this field. Geography: Enter a value for this field. Assessment as of: Enter a value for this field. Period start · Period 1: Enter a value for this field. Period end · Period 1: Enter a value for this field. Gross receipts · Period 1: Enter a value for this field. COGS · Period 1: Enter a value for this field. Operating expenses · Period 1: Enter a value for this field. Officer compensation · Period 1: Enter a value for this field. Depreciation · Period 1: Enter a value for this field. Amortization · Period 1: Enter a value for this field. Interest expense · Period 1: Enter a value for this field. Section 179 · Period 1: Enter a value for this field. K-1 distributions · Period 1: Enter a value for this field. Annual CPLTD: Enter a value for this field. Annual operating lease: Enter a value for this field. Requested principal: Enter a value for this field. Annual nominal rate: Enter a value for this field. Loan term: Enter a value for this field. Working capital period start: Enter a value for this field. Working capital period end: Enter a value for this field. AR increase: Enter a value for this field. Inventory increase: Enter a value for this field. AP increase: Enter a value for this field. Cash taxes paid: Enter a value for this field."
+  },
+  "notCaptured": {}
+}

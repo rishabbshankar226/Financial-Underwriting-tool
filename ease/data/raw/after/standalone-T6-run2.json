@@ -1,0 +1,37 @@
+{
+  "host": "standalone",
+  "task": "T6",
+  "run": 2,
+  "steps": 4,
+  "inputs": 2,
+  "wait": 118,
+  "segments": [
+    {
+      "name": "consumer screen",
+      "ms": 2
+    },
+    {
+      "name": "consumer outcome",
+      "ms": 31
+    },
+    {
+      "name": "SBA screen",
+      "ms": 2
+    },
+    {
+      "name": "SBA incomplete eligibility",
+      "ms": 83
+    }
+  ],
+  "controls": 12,
+  "primaryActions": 1,
+  "figures": {
+    "T6.consumer.heading": "Consumer result · APPROVE",
+    "T6.consumer.totalDti": "33.7500%",
+    "T6.sba.heading": "Incomplete Eligibility — Manual Underwriter Review Required",
+    "T6.sba.Server outcome": "Server outcome: Review required · eligibility_status: incomplete",
+    "T6.sba.Size screen": "Size screen: Pass · average receipts <= 24.5M",
+    "T6.sba.Coverage screen": "Coverage screen: Pass · supplied DSCR 1.31 · configured floor 1.15"
+  },
+  "notes": {}
+}

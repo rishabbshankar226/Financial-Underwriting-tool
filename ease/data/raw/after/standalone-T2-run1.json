@@ -1,0 +1,36 @@
+{
+  "host": "standalone",
+  "task": "T2",
+  "run": 1,
+  "steps": 0,
+  "inputs": 0,
+  "wait": 0,
+  "segments": [],
+  "controls": 10,
+  "primaryActions": 1,
+  "figures": {
+    "T2.outcome": "APPROVE",
+    "T2.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+    "T2.Business DSCR.value": "3.13x",
+    "T2.Business DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+    "T2.Business DSCR.status": "Meets approval",
+    "T2.Business DSCR.cushion": "Cushion +1.88x",
+    "T2.Global DSCR.value": "2.90x",
+    "T2.Global DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+    "T2.Global DSCR.status": "Meets approval",
+    "T2.Global DSCR.cushion": "Cushion +1.65x",
+    "T2.FCCR.value": "2.80x",
+    "T2.FCCR.policy": "Minimum 1.20x, decline below 1.00x",
+    "T2.FCCR.status": "Meets approval",
+    "T2.FCCR.cushion": "Cushion +1.60x"
+  },
+  "notes": {
+    "reasonInFirstViewport": true,
+    "Business DSCR inFirstViewport": true,
+    "Business DSCR description": "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan's annual payments.",
+    "Global DSCR inFirstViewport": true,
+    "Global DSCR description": "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments.",
+    "FCCR inFirstViewport": true,
+    "FCCR description": "EBITDA divided by annual debt service plus annual operating leases."
+  }
+}

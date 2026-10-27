@@ -115,6 +115,8 @@ test("workspace on the example: header, decision, tiles and every tab", async ({
       .filter({ hasNotText: "Cushion pending" })
       .waitFor();
     await capture.shot("S20", "workspace-first-screen");
+    // A fresh dated case opens on Overview (ease N-7); the Spread shot selects Spread.
+    await tab(page, "Spread");
     await capture.shot("S29", "spread-full", { fullPage: true });
     capture.cover(["S10", "S12", "S14", "S16", "S17", "S21", "S22", "S23", "S28", "S30", "S76"], "S20-workspace-first-screen");
   });
@@ -175,6 +177,7 @@ test("edits: every Spread input with bad values", async ({ page }) => {
   const capture = new ScreenCapture(page, HOST);
   await connect(page);
   await example(page);
+  await tab(page, "Spread");
   try {
     for (const field of [
       "Gross receipts",

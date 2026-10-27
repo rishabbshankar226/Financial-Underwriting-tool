@@ -1,0 +1,26 @@
+{
+  "host": "standalone",
+  "task": "T4",
+  "run": 2,
+  "steps": 3,
+  "inputs": 1,
+  "wait": 5411,
+  "segments": [
+    {
+      "name": "review inputs",
+      "ms": 82
+    },
+    {
+      "name": "decision and reason",
+      "ms": 5329,
+      "serverMs": 29
+    }
+  ],
+  "controls": 12,
+  "primaryActions": 1,
+  "figures": {
+    "T4.outcome": "APPROVE",
+    "T4.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+  },
+  "notes": {}
+}

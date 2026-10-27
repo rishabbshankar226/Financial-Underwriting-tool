@@ -1,0 +1,106 @@
+{
+  "standalone": {
+    "T1": {
+      "T1.outcome": "APPROVE",
+      "T1.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+    },
+    "T2": {
+      "T2.outcome": "APPROVE",
+      "T2.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+      "T2.Business DSCR.value": "3.13x",
+      "T2.Business DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T2.Business DSCR.status": "Meets approval",
+      "T2.Business DSCR.cushion": "Cushion +1.88x",
+      "T2.Global DSCR.value": "2.90x",
+      "T2.Global DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T2.Global DSCR.status": "Meets approval",
+      "T2.Global DSCR.cushion": "Cushion +1.65x",
+      "T2.FCCR.value": "2.80x",
+      "T2.FCCR.policy": "Minimum 1.20x, decline below 1.00x",
+      "T2.FCCR.status": "Meets approval",
+      "T2.FCCR.cushion": "Cushion +1.60x"
+    },
+    "T3": {
+      "T3.recalculated.outcome": "APPROVE",
+      "T3.recalculated.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+      "T3.recalculated.Business DSCR.value": "2.90x",
+      "T3.recalculated.Business DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T3.recalculated.Business DSCR.status": "Meets approval",
+      "T3.recalculated.Business DSCR.cushion": "Cushion +1.65x",
+      "T3.recalculated.Global DSCR.value": "2.72x",
+      "T3.recalculated.Global DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T3.recalculated.Global DSCR.status": "Meets approval",
+      "T3.recalculated.Global DSCR.cushion": "Cushion +1.47x",
+      "T3.recalculated.FCCR.value": "2.61x",
+      "T3.recalculated.FCCR.policy": "Minimum 1.20x, decline below 1.00x",
+      "T3.recalculated.FCCR.status": "Meets approval",
+      "T3.recalculated.FCCR.cushion": "Cushion +1.41x",
+      "T3.revision": "Open revision 1"
+    },
+    "T4": {
+      "T4.outcome": "APPROVE",
+      "T4.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+    },
+    "T5": {
+      "T5.outcome": "APPROVE",
+      "T5.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+      "T5.memo.recommendation": "Approve for prototype demonstration based on the accepted inputs."
+    },
+    "T6": {
+      "T6.consumer.heading": "Consumer result · APPROVE",
+      "T6.consumer.totalDti": "33.7500%",
+      "T6.sba.heading": "Incomplete Eligibility — Manual Underwriter Review Required",
+      "T6.sba.Server outcome": "Server outcome: Review required · eligibility_status: incomplete",
+      "T6.sba.Size screen": "Size screen: Pass · average receipts <= 24.5M",
+      "T6.sba.Coverage screen": "Coverage screen: Pass · supplied DSCR 1.31 · configured floor 1.15"
+    }
+  },
+  "streamlit": {
+    "T1": {
+      "T1.outcome": "APPROVE",
+      "T1.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+    },
+    "T2": {
+      "T2.outcome": "APPROVE",
+      "T2.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+      "T2.Business DSCR.value": "3.13x",
+      "T2.Business DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T2.Business DSCR.status": "Meets approval",
+      "T2.Business DSCR.cushion": "Cushion +1.88x",
+      "T2.Global DSCR.value": "2.90x",
+      "T2.Global DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T2.Global DSCR.status": "Meets approval",
+      "T2.Global DSCR.cushion": "Cushion +1.65x",
+      "T2.FCCR.value": "2.80x",
+      "T2.FCCR.policy": "Minimum 1.20x, decline below 1.00x",
+      "T2.FCCR.status": "Meets approval",
+      "T2.FCCR.cushion": "Cushion +1.60x"
+    },
+    "T3": {
+      "T3.recalculated.outcome": "APPROVE",
+      "T3.recalculated.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+      "T3.recalculated.Business DSCR.value": "2.90x",
+      "T3.recalculated.Business DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T3.recalculated.Business DSCR.status": "Meets approval",
+      "T3.recalculated.Business DSCR.cushion": "Cushion +1.65x",
+      "T3.recalculated.Global DSCR.value": "2.72x",
+      "T3.recalculated.Global DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+      "T3.recalculated.Global DSCR.status": "Meets approval",
+      "T3.recalculated.Global DSCR.cushion": "Cushion +1.47x",
+      "T3.recalculated.FCCR.value": "2.61x",
+      "T3.recalculated.FCCR.policy": "Minimum 1.20x, decline below 1.00x",
+      "T3.recalculated.FCCR.status": "Meets approval",
+      "T3.recalculated.FCCR.cushion": "Cushion +1.41x",
+      "T3.revision": "Open revision 1"
+    },
+    "T4": {
+      "T4.outcome": "APPROVE",
+      "T4.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+    },
+    "T5": {
+      "T5.outcome": "APPROVE",
+      "T5.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+      "T5.memo.recommendation": "Approve for prototype demonstration based on the accepted inputs."
+    }
+  }
+}

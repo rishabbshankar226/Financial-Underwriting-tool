@@ -6,6 +6,16 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### Phase 3 progress
+
+- Step 1, `steps.sh after`: everything matched the baseline except standalone e2e, at **409 passed / 4 failed**. All four were in
+  `workspace.spec.ts`:
+  - three were a legacy case left on Overview, fixed in the product by `43e69f8` (a legacy case leaves Overview for Spread);
+  - one still expected a blank draft rationale to be rejected (N-4), fixed in the spec by `e16947e`.
+  The affected files now pass. A **final full `steps.sh` rerun is still owed** after the remaining Phase 3 changes (ceilings).
+- Gate 55/4/19, backend 1501, host 40, Streamlit e2e 13 passed (+2 gated skips), audit clean, and the build dir reproduces.
+- Step 2: `tasks.sh after` running.
+
 ### PHASE 2 COMPLETE (2026-10-27); now Phase 3
 
 All rows are FIXED, REFUTED (E-2), QUEUED (N-8, E-3, N-6) or ACCEPTED (N-13). Latest fix: `ce65a1c` (N-14).

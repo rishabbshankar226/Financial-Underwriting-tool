@@ -1,0 +1,62 @@
+{
+  "standalone": {
+    "T1": {
+      "steps": 2,
+      "inputs": 1,
+      "wait": 5611,
+      "waitRuns": [
+        5506,
+        5626,
+        5611
+      ],
+      "segments": {
+        "start screen": {
+          "medianMs": 287
+        },
+        "decision and reason": {
+          "medianMs": 5324,
+          "serverMedianMs": 29
+        }
+      },
+      "controls": 2,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": null,
+        "judged": true,
+        "terms": []
+      }
+    }
+  },
+  "streamlit": {
+    "T1": {
+      "steps": 2,
+      "inputs": 1,
+      "wait": 6619,
+      "waitRuns": [
+        6122,
+        6697,
+        6619
+      ],
+      "segments": {
+        "start screen": {
+          "medianMs": 1295
+        },
+        "decision and reason": {
+          "medianMs": 5318,
+          "serverMedianMs": 186
+        }
+      },
+      "controls": 5,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": null,
+        "judged": true,
+        "terms": []
+      }
+    }
+  }
+}

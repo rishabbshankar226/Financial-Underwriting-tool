@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 /** Ease-of-use task measurement. Specs act only through `TaskMeter`, so every click, key and
  * submit counts as a step and every field filled or chosen counts as an input. Results are
@@ -19,6 +19,29 @@ const RAW_DIR = fileURLToPath(new URL("../../ease/data/raw/", import.meta.url));
 const CONTROL_QUERY = "button, a[href], input, select, textarea, [role], [onclick], [tabindex]";
 
 type Segment = { name: string; ms: number; serverMs?: number };
+
+type Ceiling = { steps: number; inputs: number; controls: number; wait: number };
+/** Regression ceilings from the Phase 3 "after" measurement (ease/data/metrics-after.json). Steps, inputs and
+ * first-screen controls are exact; wait adds 2,500 ms because wall-clock time varies with machine load, which
+ * still catches the five-second presentation hold returning on an edit (T3). */
+const WAIT_HEADROOM_MS = 2500;
+const CEILINGS: Record<Host, Partial<Record<TaskId, Ceiling>>> = {
+  standalone: {
+    T1: { steps: 2, inputs: 1, controls: 2, wait: 5707 },
+    T2: { steps: 0, inputs: 0, controls: 10, wait: 0 },
+    T3: { steps: 6, inputs: 2, controls: 10, wait: 184 },
+    T4: { steps: 3, inputs: 1, controls: 12, wait: 5411 },
+    T5: { steps: 3, inputs: 0, controls: 12, wait: 89 },
+    T6: { steps: 4, inputs: 2, controls: 12, wait: 112 },
+  },
+  streamlit: {
+    T1: { steps: 2, inputs: 1, controls: 5, wait: 6614 },
+    T2: { steps: 0, inputs: 0, controls: 10, wait: 0 },
+    T3: { steps: 6, inputs: 2, controls: 10, wait: 557 },
+    T4: { steps: 3, inputs: 1, controls: 12, wait: 5331 },
+    T5: { steps: 3, inputs: 0, controls: 12, wait: 292 },
+  },
+};
 
 export class TaskMeter {
   steps = 0;
@@ -109,13 +132,21 @@ export class TaskMeter {
     this.figures[key] = text.replace(/\s+/g, " ").trim();
   }
 
+  /** Asserts the task's ceilings, then writes its record when EASE_LABEL is set. */
   save(): void {
+    const wait = this.segments.reduce((sum, segment) => sum + segment.ms, 0);
+    const ceiling = CEILINGS[this.host][this.task];
+    if (ceiling) {
+      expect(this.steps, `${this.host} ${this.task} steps`).toBeLessThanOrEqual(ceiling.steps);
+      expect(this.inputs, `${this.host} ${this.task} inputs`).toBeLessThanOrEqual(ceiling.inputs);
+      expect(this.controls ?? 0, `${this.host} ${this.task} first-screen controls`).toBeLessThanOrEqual(ceiling.controls);
+      expect(wait, `${this.host} ${this.task} wait (ms)`).toBeLessThanOrEqual(ceiling.wait + WAIT_HEADROOM_MS);
+    }
     const label = process.env.EASE_LABEL;
     if (!label) return;
     const run = process.env.EASE_RUN ?? "1";
     const dir = `${RAW_DIR}${label}/`;
     mkdirSync(dir, { recursive: true });
-    const wait = this.segments.reduce((sum, segment) => sum + segment.ms, 0);
     writeFileSync(
       `${dir}${this.host}-${this.task}-run${run}.json`,
       `${JSON.stringify(
