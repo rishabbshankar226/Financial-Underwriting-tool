@@ -213,6 +213,13 @@ test("N-7: a fresh legacy case leaves Overview for Spread", async ({ page }) => 
   await expect(page.getByRole("tab", { name: "Spread", exact: true })).toHaveAttribute("aria-selected", "true");
 });
 
+test("E-4: Overview says the explanation is coming while the decision calculates", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("status", { name: "Assessment preparation", exact: true })).toBeVisible();
+  await expect(page.getByRole("tabpanel")).toContainText("The explanation appears here with the decision.");
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

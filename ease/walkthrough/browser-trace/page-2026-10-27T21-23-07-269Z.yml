@@ -1,0 +1,191 @@
+- main [ref=e15]:
+  - generic [ref=e16]:
+    - generic [ref=e17]: Spreadline
+    - generic [ref=e21]:
+      - text: Commercial underwriting
+      - generic [ref=e22]: USD
+    - generic [ref=e23]:
+      - button "Open case" [ref=e311] [cursor=pointer]
+      - button "Save case" [disabled] [ref=e312]
+      - button "More" [ref=e25] [cursor=pointer]
+  - generic "Connection status" [ref=e28]:
+    - generic [ref=e29]: API access verified
+    - generic [ref=e30]: Operator identity not provided · selected record attributed to playwright_operator
+    - generic [ref=e31]: Reload clears drafts and retry tracking
+  - navigation "Underwriting workflows" [ref=e32]:
+    - button "Excel intake" [ref=e33] [cursor=pointer]
+    - button "Commercial Assessment" [ref=e34] [cursor=pointer]
+    - button "Commercial Decision" [ref=e35] [cursor=pointer]
+    - button "Consumer Decision" [ref=e36] [cursor=pointer]
+    - button "SBA Screen" [ref=e37] [cursor=pointer]
+    - button "Saved Cases" [ref=e38] [cursor=pointer]
+  - generic [ref=e313]:
+    - heading "Alpine Fabrication" [level=1] [ref=e314]
+    - generic [ref=e315]:
+      - generic [ref=e316]: Dated assessment
+      - generic [ref=e494]: Saved · revision 1 · latest
+      - generic [ref=e318]: Saved case f1d89dcb-e925-453c-9772-66d8592b8833 · synthetic only
+  - generic [ref=e55]:
+    - generic [ref=e56]: Prototype
+    - paragraph [ref=e57]:
+      - text: Synthetic data only. Not validated for lending decisions.
+      - button "Read full notice" [ref=e58] [cursor=pointer]
+  - status [ref=e495]: Saved revision 1.
+  - region "Illustrative decision" [ref=e319]:
+    - generic [ref=e320]:
+      - generic [ref=e321]: Illustrative decision
+      - strong [ref=e322]: APPROVE
+    - generic [ref=e323]:
+      - paragraph [ref=e324]: "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+      - generic "The score is the weight share of factors that meet policy. It is illustrative, never changes the outcome, and is not a probability of default." [ref=e325]: prototype-2026-10-03 · illustrative score 1
+  - region "Assessment overview" [ref=e496]:
+    - generic [ref=e497]:
+      - 'generic "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan''s annual payments." [ref=e498]': Business DSCR
+      - strong [ref=e499]: 2.90x
+      - generic [ref=e500]: Meets approval
+      - generic [ref=e501]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=e502]: Cushion +1.65x
+    - generic [ref=e503]:
+      - generic "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments." [ref=e504]: Global DSCR
+      - strong [ref=e505]: 2.72x
+      - generic [ref=e506]: Meets approval
+      - generic [ref=e507]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=e508]: Cushion +1.47x
+    - generic [ref=e509]:
+      - generic "EBITDA divided by annual debt service plus annual operating leases." [ref=e510]: FCCR
+      - strong [ref=e511]: 2.61x
+      - generic [ref=e512]: Meets approval
+      - generic [ref=e513]: Minimum 1.20x, decline below 1.00x
+      - generic [ref=e514]: Cushion +1.41x
+    - generic [ref=e515]:
+      - generic "EBITDA minus cash taxes paid minus the net increase in working capital (receivables plus inventory minus payables)." [ref=e516]: UCA cash flow
+      - strong [ref=e517]: $385,000
+      - generic [ref=e518]: Meets approval
+      - generic [ref=e519]: Must exceed $0
+      - generic [ref=e520]: Cushion +$385,000
+    - generic [ref=e521]:
+      - generic "Ordinary business income with interest, depreciation, amortization and Section 179 added back." [ref=e522]: EBITDA
+      - strong [ref=e523]: $630,000
+      - generic [ref=e524]: Above approval breakeven
+      - generic [ref=e525]: Year ended 2025-12-31
+      - generic [ref=e526]: Approval breakeven $289,384 (FCCR)
+      - generic [ref=e527]: Cushion 54.1% of EBITDA
+    - generic [ref=e528]:
+      - generic "Existing interest plus annual CPLTD plus the proposed loan's annual payments." [ref=e529]: Annual debt service
+      - strong [ref=e530]: $217,153
+      - generic [ref=e531]: Within capacity
+      - generic [ref=e532]: Includes proposed $97,153 a year
+      - generic [ref=e533]: New payments up to $381,000 a year (FCCR)
+      - generic [ref=e534]: Principal headroom $1,752,985
+  - generic [ref=e535]:
+    - generic [ref=e536]: "Assessment as of: 2026-10-06 · USD · dollars · nominal annual rate"
+    - generic [ref=e537]: "Coverage period: 2025-01-01 – 2025-12-31"
+    - generic [ref=e538]: Current pro forma coverage · fixed rate · fully amortizing · monthly payments
+  - region "Saved revision context" [ref=e539]:
+    - strong [ref=e540]: Revision 1 · Latest when last refreshed
+    - group [ref=e541]:
+      - generic "Record details" [ref=e542] [cursor=pointer]
+    - button "Open latest" [ref=e543] [cursor=pointer]
+  - region "Model scope and policy limitations" [ref=e544]:
+    - paragraph [ref=e545]:
+      - strong [ref=e546]: Capacity is policy arithmetic, not a credit approval.
+      - text: Default rules are illustrative and require institutional validation. The weighted-rule score is not a probability of default.
+    - group [ref=e547]:
+      - generic "Methodology scope" [ref=e548] [cursor=pointer]
+  - tablist "Workspace views" [ref=e374]:
+    - tab "Spread" [ref=e375] [cursor=pointer]
+    - tab "Overview" [ref=e376] [cursor=pointer]
+    - tab "Debt & Loan" [ref=e377] [cursor=pointer]
+    - tab "Global Cash Flow" [ref=e378] [cursor=pointer]
+    - tab "Stress Tests" [ref=e379] [cursor=pointer]
+    - tab "Credit Memo" [ref=e380] [cursor=pointer]
+    - tab "History & Audit" [active] [selected] [ref=e381] [cursor=pointer]
+  - tabpanel "History & Audit" [ref=e549]:
+    - generic [ref=e550]:
+      - generic [ref=e551]:
+        - generic [ref=e552]:
+          - heading "Saved revision history" [level=2] [ref=e553]
+          - button "Refresh revisions" [ref=e554] [cursor=pointer]
+        - paragraph [ref=e555]: "Original accepted revisions and server-recorded events. Recorded actor: playwright_operator. Configured credential identity."
+        - article [ref=e557]:
+          - generic [ref=e558]:
+            - strong [ref=e559]: Revision 1
+            - paragraph [ref=e560]: "Tester run: principal raised to 600k2026-10-27T21:22:56.053828+00:00 · Run 35c925da-a716-4202-ae3f-bc738c93838a"
+          - button "Open revision 1" [pressed] [ref=e561] [cursor=pointer]: Revision 1
+        - article "Selected recorded event" [ref=e562]:
+          - heading "Selected recorded event · revision 1" [level=3] [ref=e563]
+          - strong [ref=e564]: Case creation
+          - paragraph [ref=e565]: "Tester run: principal raised to 600k"
+          - paragraph [ref=e566]: case_creation · as of 2026-10-06
+          - paragraph [ref=e567]: Recorded 2026-10-27T21:22:56.053828+00:00 · playwright_operator
+        - button "Replay this revision (read-only)" [ref=e569] [cursor=pointer]
+        - status [ref=e570]: Replay is read-only; the original result stays selected.
+        - group [ref=e571]:
+          - generic "Stored run and recording metadata" [ref=e572] [cursor=pointer]
+      - region [ref=e573]:
+        - heading "Calculation details" [level=2] [ref=e574]
+        - button "Definitions, operands and policy snapshot" [ref=e575] [cursor=pointer]
+      - generic [ref=e576]:
+        - generic [ref=e577]:
+          - paragraph [ref=e578]: ORIGINAL RECORD · REVIEW PACKAGE
+          - heading "Saved-run review" [level=2] [ref=e579]
+          - heading "Alpine Fabrication" [level=3] [ref=e580]
+          - generic [ref=e581]:
+            - generic [ref=e582]:
+              - term [ref=e583]: Case
+              - definition [ref=e584]: f1d89dcb-e925-453c-9772-66d8592b8833
+            - generic [ref=e585]:
+              - term [ref=e586]: Selected revision / run
+              - definition [ref=e587]: 1 / 35c925da-a716-4202-ae3f-bc738c93838a
+            - generic [ref=e588]:
+              - term [ref=e589]: Recorded at
+              - definition [ref=e590]: 2026-10-27T21:22:56.053828+00:00
+            - generic [ref=e591]:
+              - term [ref=e592]: Selection
+              - definition [ref=e593]: Latest when last refreshed · known head 1
+            - generic [ref=e594]:
+              - term [ref=e595]: Financial definitions
+              - definition [ref=e596]: commercial-assessment-v2 / commercial-calculation-v2 / assessment-json-v2
+            - generic [ref=e597]:
+              - term [ref=e598]: Recording
+              - definition [ref=e599]: "Actor: prototype demo, unverified · development build, unverified"
+          - paragraph [ref=e600]: "Operating period: 2025-01-01 – 2025-12-31 · assumptions as of 2026-10-06 · USD dollars."
+          - paragraph [ref=e601]:
+            - text: "Original outcome:"
+            - strong [ref=e602]: APPROVE
+            - text: · policy prototype-2026-10-03. Current pro forma coverage; observed history remains separate.
+          - generic [ref=e603]:
+            - generic [ref=e604]:
+              - text: EBITDA
+              - strong [ref=e605]: 630,000.00 USD
+            - generic [ref=e606]:
+              - text: UCA cash flow
+              - strong [ref=e607]: 385,000.00 USD
+            - generic [ref=e608]:
+              - text: DSCR
+              - strong [ref=e609]: 2.9012 ratio
+            - generic [ref=e610]:
+              - text: FCCR
+              - strong [ref=e611]: 2.6124 ratio
+            - generic [ref=e612]:
+              - text: Global DSCR
+              - strong [ref=e613]: 2.7186 ratio
+            - generic [ref=e614]:
+              - text: Observed K-1 history
+              - strong [ref=e615]: stable
+          - paragraph [ref=e616]: "Recorded reasons: 0. Factors and calculations are in Calculation details above and in the Credit Memo."
+        - generic [ref=e617]:
+          - heading "Retained comparison" [level=2] [ref=e618]
+          - paragraph [ref=e619]: Open a retained original in Stress Tests to include its full batch. A live preview or pending save is excluded.
+          - generic [ref=e620]:
+            - checkbox "Include this retained comparison" [disabled] [ref=e621]
+            - text: Include this retained comparison
+        - generic [ref=e622]:
+          - heading "JSON review package" [level=2] [ref=e623]
+          - paragraph [ref=e624]: Contains parsed originals and recorded hashes with explicit unverified provenance; does not claim original server bytes or independently verified hashes.
+          - paragraph [ref=e625]: "Includes the full selected original: financial inputs, guarantor details, assessment, policy, trace, reasons, its revision event and recording metadata. This is one revision event, not the entire case history."
+          - paragraph [ref=e626]: Browser-parsed JSON representation; formatting and numeric spellings can differ from server bytes. Recorded hashes are carried unchanged, not verified by this export or calculated over the downloaded file.
+          - button "Download JSON review package" [ref=e627] [cursor=pointer]
+          - status [ref=e628]: "Maximum complete file: 16 MiB. No evidence is truncated."
+          - paragraph [ref=e629]: Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.
+  - generic [ref=e59]: Spreadline · Synthetic analyst demonstration · Saved revisions · recorded credential playwright_operator

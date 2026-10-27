@@ -12180,7 +12180,7 @@ function Ua({ view: e }) {
 	});
 	if (!r) return /* @__PURE__ */ (0, U.jsx)(La, {
 		title: "Overview",
-		children: /* @__PURE__ */ (0, U.jsx)("p", { children: "No current assessment is available. Resolve or choose a case to see its explanation." })
+		children: /* @__PURE__ */ (0, U.jsx)("p", { children: e.decisionWord === "CALCULATING" ? "The explanation appears here with the decision." : "No current assessment is available. Resolve or choose a case to see its explanation." })
 	});
 	let i = t.status === "ready" ? t.analysis : null;
 	return /* @__PURE__ */ (0, U.jsxs)("div", {

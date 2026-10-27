@@ -1,0 +1,58 @@
+- main [ref=e15]:
+  - generic [ref=e16]:
+    - generic [ref=e17]: Spreadline
+    - generic [ref=e21]:
+      - text: Commercial underwriting
+      - generic [ref=e22]: USD
+    - generic [ref=e23]:
+      - button "Open case" [ref=e60] [cursor=pointer]
+      - button "Save case" [disabled] [ref=e61]
+      - button "More" [ref=e25] [cursor=pointer]
+  - generic "Connection status" [ref=e28]:
+    - generic [ref=e29]: API access verified
+    - generic [ref=e30]: Operator identity not provided
+    - generic [ref=e31]: Reload clears drafts and retry tracking
+  - navigation "Underwriting workflows" [ref=e32]:
+    - button "Excel intake" [ref=e33] [cursor=pointer]
+    - button "Commercial Assessment" [ref=e34] [cursor=pointer]
+    - button "Commercial Decision" [ref=e35] [cursor=pointer]
+    - button "Consumer Decision" [ref=e36] [cursor=pointer]
+    - button "SBA Screen" [ref=e37] [cursor=pointer]
+    - button "Saved Cases" [ref=e38] [cursor=pointer]
+  - status "Assessment preparation" [ref=e62]:
+    - generic [ref=e64]:
+      - strong [ref=e65]: Preparing your assessment
+      - paragraph [ref=e66]: Calculation received. Preparing your decision summary…
+      - text: Your recommendation and supporting figures will appear together.
+  - generic [ref=e69]:
+    - heading "Assessment workspace" [level=1] [ref=e70]
+    - generic [ref=e71]:
+      - generic [ref=e72]: Evaluating selected draft
+      - generic [ref=e73]: alpine_dated_v2.json · synthetic only
+  - generic [ref=e55]:
+    - generic [ref=e56]: Prototype
+    - paragraph [ref=e57]:
+      - text: Synthetic data only. Not validated for lending decisions.
+      - button "Read full notice" [ref=e58] [cursor=pointer]
+  - region "Illustrative decision" [ref=e74]:
+    - generic [ref=e75]:
+      - generic [ref=e76]: Illustrative decision
+      - strong [ref=e77]: CALCULATING
+    - generic [ref=e78]:
+      - paragraph [ref=e79]: Evaluating draft
+      - generic [ref=e80]: The decision appears with its figures.
+  - tablist "Workspace views" [ref=e81]:
+    - tab "Spread" [ref=e82] [cursor=pointer]
+    - tab "Overview" [selected] [ref=e83] [cursor=pointer]
+    - tab "Debt & Loan" [ref=e84] [cursor=pointer]
+    - tab "Global Cash Flow" [ref=e85] [cursor=pointer]
+    - tab "Stress Tests" [ref=e86] [cursor=pointer]
+    - tab "Credit Memo" [ref=e87] [cursor=pointer]
+    - tab "History & Audit" [ref=e88] [cursor=pointer]
+  - tabpanel "Overview" [ref=e89]:
+    - region [ref=e90]:
+      - heading "Overview" [level=2] [ref=e91]
+      - paragraph [ref=e92]: No current assessment is available. Resolve or choose a case to see its explanation.
+    - group [ref=e93]:
+      - generic "Policy breakevens" [ref=e94] [cursor=pointer]
+  - generic [ref=e59]: Spreadline · Synthetic analyst demonstration · Unsaved session workspace

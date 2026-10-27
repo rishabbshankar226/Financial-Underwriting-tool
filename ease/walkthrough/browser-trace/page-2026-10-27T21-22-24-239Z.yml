@@ -1,0 +1,136 @@
+- main [ref=e15]:
+  - generic [ref=e16]:
+    - generic [ref=e17]: Spreadline
+    - generic [ref=e21]:
+      - text: Commercial underwriting
+      - generic [ref=e22]: USD
+    - generic [ref=e23]:
+      - button "Open case" [ref=e311] [cursor=pointer]
+      - button "Save case" [ref=e312] [cursor=pointer]
+      - button "More" [ref=e25] [cursor=pointer]
+  - generic "Connection status" [ref=e28]:
+    - generic [ref=e29]: API access verified
+    - generic [ref=e30]: Operator identity not provided
+    - generic [ref=e31]: Reload clears drafts and retry tracking
+  - navigation "Underwriting workflows" [ref=e32]:
+    - button "Excel intake" [active] [ref=e33] [cursor=pointer]
+    - button "Commercial Assessment" [ref=e34] [cursor=pointer]
+    - button "Commercial Decision" [ref=e35] [cursor=pointer]
+    - button "Consumer Decision" [ref=e36] [cursor=pointer]
+    - button "SBA Screen" [ref=e37] [cursor=pointer]
+    - button "Saved Cases" [ref=e38] [cursor=pointer]
+  - generic [ref=e313]:
+    - heading "Alpine Fabrication" [level=1] [ref=e314]
+    - generic [ref=e315]:
+      - generic [ref=e316]: Dated assessment
+      - generic [ref=e317]: Draft — not saved
+      - generic [ref=e318]: alpine_dated_v2.json · synthetic only
+  - generic [ref=e55]:
+    - generic [ref=e56]: Prototype
+    - paragraph [ref=e57]:
+      - text: Synthetic data only. Not validated for lending decisions.
+      - button "Read full notice" [ref=e58] [cursor=pointer]
+  - region "Illustrative decision" [ref=e319]:
+    - generic [ref=e320]:
+      - generic [ref=e321]: Illustrative decision
+      - strong [ref=e322]: APPROVE
+    - generic [ref=e323]:
+      - paragraph [ref=e324]: "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+      - generic "The score is the weight share of factors that meet policy. It is illustrative, never changes the outcome, and is not a probability of default." [ref=e325]: prototype-2026-10-03 · illustrative score 1
+  - region "Assessment overview" [ref=e326]:
+    - generic [ref=e327]:
+      - 'generic "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan''s annual payments." [ref=e328]': Business DSCR
+      - strong [ref=e329]: 3.13x
+      - generic [ref=e330]: Meets approval
+      - generic [ref=e331]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=e332]: Cushion +1.88x
+    - generic [ref=e333]:
+      - generic "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments." [ref=e334]: Global DSCR
+      - strong [ref=e335]: 2.90x
+      - generic [ref=e336]: Meets approval
+      - generic [ref=e337]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=e338]: Cushion +1.65x
+    - generic [ref=e339]:
+      - generic "EBITDA divided by annual debt service plus annual operating leases." [ref=e340]: FCCR
+      - strong [ref=e341]: 2.80x
+      - generic [ref=e342]: Meets approval
+      - generic [ref=e343]: Minimum 1.20x, decline below 1.00x
+      - generic [ref=e344]: Cushion +1.60x
+    - generic [ref=e345]:
+      - generic "EBITDA minus cash taxes paid minus the net increase in working capital (receivables plus inventory minus payables)." [ref=e346]: UCA cash flow
+      - strong [ref=e347]: $385,000
+      - generic [ref=e348]: Meets approval
+      - generic [ref=e349]: Must exceed $0
+      - generic [ref=e350]: Cushion +$385,000
+    - generic [ref=e351]:
+      - generic "Ordinary business income with interest, depreciation, amortization and Section 179 added back." [ref=e352]: EBITDA
+      - strong [ref=e353]: $630,000
+      - generic [ref=e354]: Above approval breakeven
+      - generic [ref=e355]: Year ended 2025-12-31
+      - generic [ref=e356]: Approval breakeven $269,953 (FCCR)
+      - generic [ref=e357]: Cushion 57.2% of EBITDA
+    - generic [ref=e358]:
+      - generic "Existing interest plus annual CPLTD plus the proposed loan's annual payments." [ref=e359]: Annual debt service
+      - strong [ref=e360]: $200,961
+      - generic [ref=e361]: Within capacity
+      - generic [ref=e362]: Includes proposed $80,961 a year
+      - generic [ref=e363]: New payments up to $381,000 a year (FCCR)
+      - generic [ref=e364]: Principal headroom $1,852,985
+  - generic [ref=e365]:
+    - generic [ref=e366]: "Assessment as of: 2026-10-06 · USD · dollars · nominal annual rate"
+    - generic [ref=e367]: "Coverage period: 2025-01-01 – 2025-12-31"
+    - generic [ref=e368]: Current pro forma coverage · fixed rate · fully amortizing · monthly payments
+  - region "Model scope and policy limitations" [ref=e369]:
+    - paragraph [ref=e370]:
+      - strong [ref=e371]: Capacity is policy arithmetic, not a credit approval.
+      - text: Default rules are illustrative and require institutional validation. The weighted-rule score is not a probability of default.
+    - group [ref=e372]:
+      - generic "Methodology scope" [ref=e373] [cursor=pointer]
+  - tablist "Workspace views" [ref=e374]:
+    - tab "Spread" [ref=e375] [cursor=pointer]
+    - tab "Overview" [ref=e376] [cursor=pointer]
+    - tab "Debt & Loan" [selected] [ref=e377] [cursor=pointer]
+    - tab "Global Cash Flow" [ref=e378] [cursor=pointer]
+    - tab "Stress Tests" [ref=e379] [cursor=pointer]
+    - tab "Credit Memo" [ref=e380] [cursor=pointer]
+    - tab "History & Audit" [ref=e381] [cursor=pointer]
+  - tabpanel "Debt & Loan" [ref=e382]:
+    - generic [ref=e383]:
+      - paragraph [ref=e384]: Annual assumptions used by the backend. Select an amount to propose an edit.
+      - generic [ref=e385]:
+        - generic [ref=e386]:
+          - heading "Existing debt" [level=2] [ref=e387]
+          - generic [ref=e388]:
+            - button "Annual CPLTD" [ref=e389] [cursor=pointer]
+            - strong [ref=e390]: $58,000.00
+          - generic [ref=e391]:
+            - button "Annual operating leases" [ref=e392] [cursor=pointer]
+            - strong [ref=e393]: $24,000.00
+        - generic [ref=e394]:
+          - heading "Proposed fixed monthly loan" [level=2] [ref=e395]
+          - generic [ref=e396]:
+            - button "Proposed principal" [ref=e397] [cursor=pointer]
+            - strong [ref=e398]: $500,000.00
+          - generic [ref=e399]:
+            - button "Annual nominal rate" [ref=e400] [cursor=pointer]
+            - strong [ref=e401]: 10.50%
+          - generic [ref=e402]:
+            - button "Loan term" [ref=e403] [cursor=pointer]
+            - strong [ref=e404]: 120 months
+        - generic [ref=e405]:
+          - heading "Working capital" [level=2] [ref=e406]
+          - generic [ref=e407]:
+            - button "AR increase" [ref=e408] [cursor=pointer]
+            - strong [ref=e409]: $140,000.00
+          - generic [ref=e410]:
+            - button "Inventory increase" [ref=e411] [cursor=pointer]
+            - strong [ref=e412]: $60,000.00
+          - generic [ref=e413]:
+            - button "AP increase" [ref=e414] [cursor=pointer]
+            - strong [ref=e415]: $50,000.00
+          - generic [ref=e416]:
+            - button "Cash taxes paid" [ref=e417] [cursor=pointer]
+            - strong [ref=e418]: $95,000.00
+    - group [ref=e419]:
+      - generic "Cent-rounded proposed-loan schedule" [ref=e420] [cursor=pointer]
+  - generic [ref=e59]: Spreadline · Synthetic analyst demonstration · Unsaved session workspace

@@ -1,0 +1,209 @@
+- main [ref=e15]:
+  - generic [ref=e16]:
+    - generic [ref=e17]: Spreadline
+    - generic [ref=e21]:
+      - text: Commercial underwriting
+      - generic [ref=e22]: USD
+    - generic [ref=e23]:
+      - button "Open case" [ref=e60] [cursor=pointer]
+      - button "Save case" [ref=e61] [cursor=pointer]
+      - button "More" [ref=e25] [cursor=pointer]
+  - generic "Connection status" [ref=e28]:
+    - generic [ref=e29]: API access verified
+    - generic [ref=e30]: Operator identity not provided
+    - generic [ref=e31]: Reload clears drafts and retry tracking
+  - navigation "Underwriting workflows" [ref=e32]:
+    - button "Excel intake" [ref=e33] [cursor=pointer]
+    - button "Commercial Assessment" [ref=e34] [cursor=pointer]
+    - button "Commercial Decision" [ref=e35] [cursor=pointer]
+    - button "Consumer Decision" [ref=e36] [cursor=pointer]
+    - button "SBA Screen" [ref=e37] [cursor=pointer]
+    - button "Saved Cases" [ref=e38] [cursor=pointer]
+  - generic [ref=e69]:
+    - heading "Alpine Fabrication" [level=1] [ref=e95]
+    - generic [ref=e71]:
+      - generic [ref=e72]: Dated assessment
+      - generic [ref=e96]: Draft — not saved
+      - generic [ref=e73]: alpine_dated_v2.json · synthetic only
+  - generic [ref=e55]:
+    - generic [ref=e56]: Prototype
+    - paragraph [ref=e57]:
+      - text: Synthetic data only. Not validated for lending decisions.
+      - button "Read full notice" [ref=e58] [cursor=pointer]
+  - region "Illustrative decision" [ref=e74]:
+    - generic [ref=e75]:
+      - generic [ref=e76]: Illustrative decision
+      - strong [ref=e77]: APPROVE
+    - generic [ref=e78]:
+      - paragraph [ref=e79]: "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+      - generic "The score is the weight share of factors that meet policy. It is illustrative, never changes the outcome, and is not a probability of default." [ref=e97]: prototype-2026-10-03 · illustrative score 1
+  - region "Assessment overview" [ref=e98]:
+    - generic [ref=e99]:
+      - 'generic "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan''s annual payments." [ref=e100]': Business DSCR
+      - strong [ref=e101]: 3.13x
+      - generic [ref=e102]: Meets approval
+      - generic [ref=e103]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=e104]: Cushion +1.88x
+    - generic [ref=e105]:
+      - generic "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments." [ref=e106]: Global DSCR
+      - strong [ref=e107]: 2.90x
+      - generic [ref=e108]: Meets approval
+      - generic [ref=e109]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=e110]: Cushion +1.65x
+    - generic [ref=e111]:
+      - generic "EBITDA divided by annual debt service plus annual operating leases." [ref=e112]: FCCR
+      - strong [ref=e113]: 2.80x
+      - generic [ref=e114]: Meets approval
+      - generic [ref=e115]: Minimum 1.20x, decline below 1.00x
+      - generic [ref=e116]: Cushion +1.60x
+    - generic [ref=e117]:
+      - generic "EBITDA minus cash taxes paid minus the net increase in working capital (receivables plus inventory minus payables)." [ref=e118]: UCA cash flow
+      - strong [ref=e119]: $385,000
+      - generic [ref=e120]: Meets approval
+      - generic [ref=e121]: Must exceed $0
+      - generic [ref=e122]: Cushion +$385,000
+    - generic [ref=e123]:
+      - generic "Ordinary business income with interest, depreciation, amortization and Section 179 added back." [ref=e124]: EBITDA
+      - strong [ref=e125]: $630,000
+      - generic [ref=e126]: Above approval breakeven
+      - generic [ref=e127]: Year ended 2025-12-31
+      - generic [ref=e128]: Approval breakeven $269,953 (FCCR)
+      - generic [ref=e129]: Cushion 57.2% of EBITDA
+    - generic [ref=e130]:
+      - generic "Existing interest plus annual CPLTD plus the proposed loan's annual payments." [ref=e131]: Annual debt service
+      - strong [ref=e132]: $200,961
+      - generic [ref=e133]: Within capacity
+      - generic [ref=e134]: Includes proposed $80,961 a year
+      - generic [ref=e135]: New payments up to $381,000 a year (FCCR)
+      - generic [ref=e136]: Principal headroom $1,852,985
+  - generic [ref=e137]:
+    - generic [ref=e138]: "Assessment as of: 2026-10-06 · USD · dollars · nominal annual rate"
+    - generic [ref=e139]: "Coverage period: 2025-01-01 – 2025-12-31"
+    - generic [ref=e140]: Current pro forma coverage · fixed rate · fully amortizing · monthly payments
+  - region "Model scope and policy limitations" [ref=e141]:
+    - paragraph [ref=e142]:
+      - strong [ref=e143]: Capacity is policy arithmetic, not a credit approval.
+      - text: Default rules are illustrative and require institutional validation. The weighted-rule score is not a probability of default.
+    - group [ref=e144]:
+      - generic "Methodology scope" [ref=e145] [cursor=pointer]
+  - tablist "Workspace views" [ref=e81]:
+    - tab "Spread" [ref=e82] [cursor=pointer]
+    - tab "Overview" [selected] [ref=e83] [cursor=pointer]
+    - tab "Debt & Loan" [ref=e84] [cursor=pointer]
+    - tab "Global Cash Flow" [ref=e85] [cursor=pointer]
+    - tab "Stress Tests" [ref=e86] [cursor=pointer]
+    - tab "Credit Memo" [ref=e87] [cursor=pointer]
+    - tab "History & Audit" [ref=e88] [cursor=pointer]
+  - tabpanel "Overview" [ref=e89]:
+    - generic [ref=e146]:
+      - region [ref=e147]:
+        - heading "Why this decision" [level=2] [ref=e148]
+        - paragraph [ref=e149]: "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+        - paragraph [ref=e150]: "Rule applied: Approve when every coverage ratio and UCA cash flow meet approval and K-1 history is stable."
+        - heading "Outcome conditions" [level=3] [ref=e151]
+        - list [ref=e152]:
+          - listitem [ref=e153]:
+            - generic [ref=e154]: Business DSCR, FCCR and global DSCR each meet their approval minimums
+            - strong [ref=e155]: "Yes"
+          - listitem [ref=e156]:
+            - generic [ref=e157]: UCA cash flow is above its required minimum
+            - strong [ref=e158]: "Yes"
+          - listitem [ref=e159]:
+            - generic [ref=e160]: K-1 distribution history is stable
+            - strong [ref=e161]: "Yes"
+          - listitem [ref=e162]:
+            - generic [ref=e163]: At least one coverage ratio is below its decline floor
+            - strong [ref=e164]: "No"
+        - heading "Policy factors" [level=3] [ref=e165]
+        - list [ref=e166]:
+          - listitem [ref=e167]:
+            - generic [ref=e168]:
+              - strong [ref=e169]: Business DSCR
+              - generic [ref=e170]: Meets approval
+            - paragraph [ref=e171]: Business DSCR of 3.1349x meets the approval minimum of 1.25x.
+            - generic [ref=e172]: Approval cushion +1.88x, decline cushion +2.13x
+          - listitem [ref=e173]:
+            - generic [ref=e174]:
+              - strong [ref=e175]: Fixed-charge coverage (FCCR)
+              - generic [ref=e176]: Meets approval
+            - paragraph [ref=e177]: Fixed-charge coverage (FCCR) of 2.8005x meets the approval minimum of 1.2x.
+            - generic [ref=e178]: Approval cushion +1.60x, decline cushion +1.80x
+          - listitem [ref=e179]:
+            - generic [ref=e180]:
+              - strong [ref=e181]: Global DSCR
+              - generic [ref=e182]: Meets approval
+            - paragraph [ref=e183]: Global DSCR of 2.9016x meets the approval minimum of 1.25x.
+            - generic [ref=e184]: Approval cushion +1.65x, decline cushion +1.90x
+          - listitem [ref=e185]:
+            - generic [ref=e186]:
+              - strong [ref=e187]: K-1 distribution history
+              - generic [ref=e188]: Meets approval
+            - paragraph [ref=e189]: K-1 distribution history is stable; approval requires stable history.
+          - listitem [ref=e190]:
+            - generic [ref=e191]:
+              - strong [ref=e192]: UCA cash flow
+              - generic [ref=e193]: Meets approval
+            - paragraph [ref=e194]: UCA cash flow of 385000.00 is above the required minimum of 0.
+            - generic [ref=e195]: Approval cushion +$385,000
+        - paragraph [ref=e196]: Illustrative score 1.0000. The score is the weight share of factors that meet policy. It is illustrative, never changes the outcome, and is not a probability of default.
+      - region [ref=e197]:
+        - heading "Debt capacity" [level=2] [ref=e198]
+        - paragraph [ref=e199]: The requested principal fits within the illustrative coverage minimums. FCCR binds first.
+        - generic [ref=e200]:
+          - generic [ref=e201]:
+            - term [ref=e202]: Binding constraint
+            - definition [ref=e203]: FCCR
+          - generic [ref=e204]:
+            - term [ref=e205]: Maximum principal at 10.50% for 120 months
+            - definition [ref=e206]: $2,352,984.83
+          - generic [ref=e207]:
+            - term [ref=e208]: Requested principal
+            - definition [ref=e209]: $500,000.00
+          - generic [ref=e210]:
+            - term [ref=e211]: Principal headroom
+            - definition [ref=e212]: $1,852,984.83
+          - generic [ref=e213]:
+            - term [ref=e214]: Largest new payment
+            - definition [ref=e215]: $381,000.00 a year ($31,750.00 a month)
+          - generic [ref=e216]:
+            - term [ref=e217]: Revenue cushion to the FCCR approval minimum
+            - definition [ref=e218]: 8.57%
+          - generic [ref=e219]:
+            - term [ref=e220]: Revenue cushion to the FCCR decline floor
+            - definition [ref=e221]: 9.64%
+        - heading "New annual payment allowed by each minimum" [level=3] [ref=e222]
+        - list [ref=e223]:
+          - listitem [ref=e224]:
+            - generic [ref=e225]: Business DSCR at 1.25x
+            - strong [ref=e226]: $384,000.00
+          - listitem [ref=e227]:
+            - generic [ref=e228]: FCCR at 1.20x (binding)
+            - strong [ref=e229]: $381,000.00
+          - listitem [ref=e230]:
+            - generic [ref=e231]: Global DSCR at 1.25x
+            - strong [ref=e232]: $398,800.00
+        - paragraph [ref=e233]: Policy arithmetic at the approval minimums, holding every other input fixed. It is not a credit approval.
+      - region [ref=e234]:
+        - heading "Trends" [level=2] [ref=e235]
+        - generic [ref=e236]:
+          - figure "Gross receipts" [ref=e237]:
+            - 'img "Gross receipts: $3,900,000 for 2024-01-01 – 2024-12-31; $4,200,000 for 2025-01-01 – 2025-12-31" [ref=e239]'
+            - list [aria-hidden] [ref=e242]:
+              - listitem [ref=e243]:
+                - text: 2024-12-31
+                - strong [ref=e244]: $3,900,000
+              - listitem [ref=e245]:
+                - text: 2025-12-31
+                - strong [ref=e246]: $4,200,000
+          - figure "EBITDA" [ref=e247]:
+            - 'img "EBITDA: $548,000 for 2024-01-01 – 2024-12-31; $630,000 for 2025-01-01 – 2025-12-31" [ref=e249]'
+            - list [aria-hidden] [ref=e252]:
+              - listitem [ref=e253]:
+                - text: 2024-12-31
+                - strong [ref=e254]: $548,000
+              - listitem [ref=e255]:
+                - text: 2025-12-31
+                - strong [ref=e256]: $630,000
+    - group [ref=e93]:
+      - generic "Policy breakevens" [ref=e94] [cursor=pointer]
+  - generic [ref=e59]: Spreadline · Synthetic analyst demonstration · Unsaved session workspace
