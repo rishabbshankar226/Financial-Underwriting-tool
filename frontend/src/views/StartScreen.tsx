@@ -18,18 +18,18 @@ export function StartScreen({
   const id = useId();
   const options = [
     {
-      key: "excel",
-      title: "Import Excel workbook",
-      detail:
-        "Download the standard template, review its inputs and evaluate a commercial assessment.",
-      onClick: onExcel,
-    },
-    {
       key: "example",
       title: "Try the example case",
       detail:
         "Alpine Fabrication: two fiscal years and a $500,000 ten-year term loan request.",
       onClick: onExample,
+    },
+    {
+      key: "excel",
+      title: "Import Excel workbook",
+      detail:
+        "Download the standard template, review its inputs and evaluate a commercial assessment.",
+      onClick: onExcel,
     },
     {
       key: "open",

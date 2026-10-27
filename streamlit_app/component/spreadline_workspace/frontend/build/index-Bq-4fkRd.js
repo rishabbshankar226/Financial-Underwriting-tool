@@ -11188,16 +11188,16 @@ function na({ view: e, filename: t, legacy: n }) {
 function ra({ showCases: e, onExample: t, onToggleCases: n, onImport: r, onExcel: i }) {
 	let a = (0, c.useId)(), o = [
 		{
-			key: "excel",
-			title: "Import Excel workbook",
-			detail: "Download the standard template, review its inputs and evaluate a commercial assessment.",
-			onClick: i
-		},
-		{
 			key: "example",
 			title: "Try the example case",
 			detail: "Alpine Fabrication: two fiscal years and a $500,000 ten-year term loan request.",
 			onClick: t
+		},
+		{
+			key: "excel",
+			title: "Import Excel workbook",
+			detail: "Download the standard template, review its inputs and evaluate a commercial assessment.",
+			onClick: i
 		},
 		{
 			key: "open",

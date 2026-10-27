@@ -17,3 +17,9 @@ test("N-1: the example case is the start screen's one primary action", async ({ 
   await expect(start.getByRole("button", { name: startActions.example, exact: true })).toHaveClass(/\bprimary\b/);
   await expect(start.locator(".primary")).toHaveCount(1);
 });
+
+test("N-2: the example case is the first start option", async ({ page }) => {
+  await connect(page);
+  const start = page.getByRole("region", { name: startScreenTitle, exact: true });
+  await expect(start.getByRole("button").first()).toHaveAccessibleName(startActions.example);
+});
