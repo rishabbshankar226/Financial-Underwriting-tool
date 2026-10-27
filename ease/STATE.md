@@ -4,11 +4,15 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 ## Position
 
-- **Phase:** 0 (baseline)
-- **Done:** steps 1–5. Checks are in `BASELINE.md`, all green on the existing suites. Inventory, primary path, and task metrics
-  `base` (three runs per host, stable).
-- **Step 6:** capture running (`EASE_CAPTURE=1 EASE_LABEL=base`).
-- **Next:** check the capture output, judge unexplained terms, commit `ease: baseline`, then Phase 1 sweep.
+- **Phase:** 1 (find, refute, STOP A)
+- **Done:** Phase 0 committed as `c413b80` (`ease: baseline`), and the path check is empty. The sweep is done and `REGISTER.md` is drafted:
+  20 class A rows and 9 class B rows.
+- **Step:** 7.4 STOP A. The refuter killed 0 rows and rewrote 9 to pass (applied in `REGISTER.md`). The STOP A message was sent;
+  the run is **waiting for the owner's class B picks**.
+- **Next:** record the answer verbatim below, mark unpicked class B rows QUEUED, then run Phase 2 in register order
+  (N-4, L-1, L-2, …), one root cause per commit.
+- **Resume note:** the worktree guard refuses commands it can't verify, including heredocs containing the letters "git"
+  (as in "digits"). Write scripts to `ease/tools/` and run them.
 
 ## Measured animation share (for STOP A)
 
@@ -54,8 +58,18 @@ The server answers in 25–190 ms, and the decision appears at about 5,320 ms on
 
 ## Known baseline failures
 
-(filled from `ease/BASELINE.md` when step 3 finishes)
+None in the existing suites (`BASELINE.md`). Counts to reproduce in Phase 3: gate selftest 55 values / 4 flags / 19 mutations,
+backend 1501, host 40, standalone e2e 392 (+ ease specs), Streamlit e2e 6 (+ ease specs).
+
+## Done 6 note
+
+T1 is at its floor of 2 steps and 1 input (token, Connect, Try the example case). The only shorter path is auto-loading Alpine,
+which the 2026-10-16 approval settled against. T1's saving is in wait (N-9, class B) and terms (L-1, L-10).
+
+## STOP A answer (verbatim)
+
+(pending)
 
 ## Commits
 
-(none yet)
+- `c413b80` ease: baseline
