@@ -13,7 +13,7 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
    The test's `data-testid` pattern `stBaseButton-primaryFormSubmit` is **unverified** for Streamlit 1.66, so fix the locator
    if it fails on the id rather than the style. Then run `bash ease/tools/revert-proof.sh streamlit "N-10" streamlit-tests/ease-fixes.spec.ts streamlit_app/app.py`,
    run `python3 -m pytest -q streamlit_app/tests`, record the row FIXED, and amend the WIP commit message.
-0. **FIRST: a possible regression.** The batch `tests/decision-preparation.spec.ts tests/analysis.spec.ts tests/assessment.spec.ts
+0. **RESOLVED on resume: it was a flake, not a regression.** `saved-workspace.spec.ts:154` passed alone, in its file (21/21) and in a stable-tree batch (71/72; the 1 failure there was a missed L-3 text update, fixed in `85f0603`). A second batch failure was caused by editing `frontend/src` while a Vite-backed suite ran: **never edit served source during a browser run.** Original note follows. **FIRST: a possible regression.** The batch `tests/decision-preparation.spec.ts tests/analysis.spec.ts tests/assessment.spec.ts
    tests/saved-workspace.spec.ts tests/ease-fixes.spec.ts` (run after N-9, at `31f3728`) gave **57 passed, 1 failed**:
    `tests/saved-workspace.spec.ts:154` "two contexts require explicit conflict review before a fresh saved edit". It passed in
    the baseline (392/392).
