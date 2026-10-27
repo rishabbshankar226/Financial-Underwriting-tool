@@ -9,4 +9,5 @@ export PATH="$repo/.venv/bin:$PATH"
 npm --prefix frontend run build 2>&1 | grep -E 'error|built in' | head -5
 npm --prefix frontend run build:streamlit 2>&1 | grep -E 'error|built in' | head -5
 python3 scripts/streamlit_assets.py check
-git status --porcelain -- streamlit_app/component/spreadline_workspace/frontend/build | head -5
+# build:streamlit also rewrites the bundle stamp on the last line of streamlit_app/requirements.txt; commit both.
+git status --porcelain -- streamlit_app/component/spreadline_workspace/frontend/build streamlit_app/requirements.txt | head -6

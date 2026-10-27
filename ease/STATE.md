@@ -45,6 +45,14 @@ The server answers in 25–190 ms, and the decision appears at about 5,320 ms on
 - Playwright 1.63.0 with Chromium installed.
 - Ports 8000 / 5173 / 8501: check that they're free before every browser suite. Never run two browser suites at once.
 
+## Streamlit bundle stamp
+
+`build:streamlit` rewrites the last line of `streamlit_app/requirements.txt` (`# component-bundle: <file> <sha256>`), so
+hosts reinstall the new bundle (`scripts/streamlit_assets.py:11-14, 51-70`). Repo convention commits it with every bundle
+change (e.g. `ac6f3a1`, `b0c245f`). This run commits it with each rebuild. `ease/tools/pathcheck.sh` accepts a diff in that file
+only when every changed line is the stamp. L-1, L-10 and N-1 were committed without it; it was caught here and committed
+in `ease: commit the Streamlit bundle stamp`.
+
 ## Path classes (section 3's regex)
 
 - Class A possible: `frontend/src/views/*`, `components/*`, top-level `frontend/src/*.tsx` (App, AccessGate, SavedCases,
