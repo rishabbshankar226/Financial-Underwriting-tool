@@ -4,6 +4,33 @@ Target: `rishabbshankar226/Financial-Underwriting-tool` only.
 Baseline: `1b59a90f715853a41c5791edf6dce03c1a77839e`.
 Approved Decimal, authentication and SBA contract changes are implemented.
 
+## Ease-of-use pass (2026-10-27)
+
+**Scope.** Branch `worktree-ease-of-use`, based on `main` `2fbfdef`. Presentation-only changes to both hosts: wording,
+order and emphasis, folded working, definitions on hover, clearer errors, and the owner's STOP A picks (N-9, N-7, N-2,
+G-1, N-5, N-10, N-13, L-4). The record is in `ease/` (`REPORT.md`, `REGISTER.md`, `BASELINE.md`, `STATE.md`).
+
+**Commands.**
+- `bash ease/tools/steps.sh final` runs every line of `scripts/run_all_checks.sh`, then of `scripts/run_streamlit_checks.sh`,
+  continuing past failures. It adds a component reinstall after `build:streamlit`, as CI installs after building.
+- `bash ease/tools/pathcheck.sh`.
+- `bash ease/tools/tasks.sh after` and `python3 ease/tools/compare.py`.
+
+**Counts.**
+- All steps exit 0.
+- Gate selftest: 55 fixture values, 4 flags, 19 mutations killed (unchanged).
+- Backend pytest: 1501 passed (unchanged). Host pytest: 40 passed (unchanged).
+- Standalone e2e: 416 passed, 9 skipped (gated capture specs). Streamlit e2e: 13 passed, 2 skipped.
+- `npm audit`: 0 vulnerabilities, with an unchanged lockfile.
+- The Streamlit build directory is byte-identical after rebuild.
+- The task specs' 78 recorded figures equal the baseline's value for value.
+
+**Path check.** No violations. The only files outside the presentation paths are the ones the owner picked by name
+(`README.md`, `frontend/src/useAnalystWorkspace.ts`, `streamlit_app/app.py`, `frontend/src/excel/ExcelImport.tsx`), plus
+the generated bundle stamp in `streamlit_app/requirements.txt`.
+
+Passing software tests does not establish credit-policy approval, model validation or regulatory compliance.
+
 ## Analyst usability PR 3: workspace layout and analysis (2026-10-16)
 
 **Scope.** Branch `claude/usability-3-workspace-layout`, based on `main`

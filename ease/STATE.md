@@ -6,6 +6,12 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### STOP B reached (2026-10-27)
+
+- Final full run green: `ease/logs/final`, recorded in `docs/VERIFICATION.md`.
+- `ease/REPORT.md` written. The path check shows only the owner-picked files.
+- The run waits for the owner: push the branch and open a pull request? Neither happens without a yes.
+
 ### Phase 3, latest (2026-10-27)
 
 - Done:

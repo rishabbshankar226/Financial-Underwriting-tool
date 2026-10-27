@@ -148,7 +148,7 @@ queued. Full record: `ease/walkthrough/REPORT.md`.
 - `streamlit_app/requirements.txt` changes only in its generated bundle-stamp line, which `build:streamlit` rewrites and the
   repo commits with every bundle.
 - No backend, gate, contract, transport or number-helper file changed.
-- Final full run (`bash ease/tools/steps.sh final`, raw logs in `ease/logs/final/`): {FINAL}
+- Final full run (`bash ease/tools/steps.sh final`, raw logs in `ease/logs/final/`): every step exited 0: pip check, ruff, mypy --strict, gate selftest (55 fixture values, 4 flags, 19 mutations killed), precision probe, backend pytest 1501 passed, npm audit 0 vulnerabilities, decimal tests 11/11, build, standalone e2e 416 passed (9 skipped: the gated capture specs), host pytest 40 passed, build:streamlit, assets check, component reinstall, build directory byte-identical, Streamlit e2e 13 passed (2 skipped: gated capture). Baseline was 392 and 6 browser tests; the additions are the ease task, fix and capture specs.
 
 ## Not measured, and why
 
