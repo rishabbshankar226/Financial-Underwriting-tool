@@ -220,6 +220,18 @@ test("E-4: Overview says the explanation is coming while the decision calculates
   await expect(page.getByRole("tabpanel")).toContainText("The explanation appears here with the decision.");
 });
 
+test("E-5: an untouched edit value is not flagged before the user changes it", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("tab", { name: "Debt & Loan", exact: true }).click();
+  await page.getByRole("button", { name: "Proposed principal", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByLabel("New value")).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(dialog.getByRole("alert")).toHaveCount(0);
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

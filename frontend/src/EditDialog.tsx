@@ -20,9 +20,8 @@ export default function EditDialog({
   proposal?: EditEvent;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [value, setValue] = useState(
-    editorText(proposal?.next ?? field.value, field.unit),
-  );
+  const initialValue = editorText(proposal?.next ?? field.value, field.unit);
+  const [value, setValue] = useState(initialValue);
   const [rationale, setRationale] = useState(proposal?.rationale ?? "");
   const [error, setError] = useState("");
   function validateValue(next: string) {
@@ -107,7 +106,8 @@ export default function EditDialog({
               field.unit === "%" ? "10.5%" : field.integer ? "120" : "500000.00"
             }
             aria-describedby="edit-value-help"
-            onBlur={() => setError(validateValue(value))}
+            // An untouched value is not an error yet; submitting it still says to change it or cancel.
+            onBlur={() => setError(value === initialValue ? "" : validateValue(value))}
             onChange={(e) => {
               setValue(e.target.value);
               if (!validateValue(e.target.value)) setError("");

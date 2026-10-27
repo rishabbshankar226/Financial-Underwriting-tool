@@ -7843,8 +7843,8 @@ function Xn({ onDiscard: e, onCancel: t, restoreFocus: n }) {
 }
 // src/EditDialog.tsx
 function Zn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1, proposal: a }) {
-	let o = (0, A.useRef)(null), [s, c] = (0, A.useState)(We(a?.next ?? e.value, e.unit)), [l, u] = (0, A.useState)(a?.rationale ?? ""), [d, f] = (0, A.useState)("");
-	function p(t) {
+	let o = (0, A.useRef)(null), s = We(a?.next ?? e.value, e.unit), [c, l] = (0, A.useState)(s), [u, d] = (0, A.useState)(a?.rationale ?? ""), [f, p] = (0, A.useState)("");
+	function m(t) {
 		try {
 			return Vn(e, t, "", { requireRationale: !1 }), "";
 		} catch (e) {
@@ -7871,16 +7871,16 @@ function Zn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 			onSubmit: (t) => {
 				t.preventDefault();
 				try {
-					let t = Vn(e, s, l, { requireRationale: i });
-					i && H(l), n({
+					let t = Vn(e, c, u, { requireRationale: i });
+					i && H(u), n({
 						path: e.path,
 						prior: e.value,
 						next: t,
-						rationale: l.trim(),
+						rationale: u.trim(),
 						at: (/* @__PURE__ */ new Date()).toISOString()
 					});
 				} catch (e) {
-					f(e instanceof Error ? e.message : String(e));
+					p(e instanceof Error ? e.message : String(e));
 				}
 			},
 			children: [
@@ -7901,12 +7901,12 @@ function Zn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 					" ",
 					/* @__PURE__ */ (0, U.jsx)("input", {
 						autoFocus: !0,
-						value: s,
+						value: c,
 						placeholder: e.unit === "%" ? "10.5%" : e.integer ? "120" : "500000.00",
 						"aria-describedby": "edit-value-help",
-						onBlur: () => f(p(s)),
+						onBlur: () => p(c === s ? "" : m(c)),
 						onChange: (e) => {
-							c(e.target.value), p(e.target.value) || f("");
+							l(e.target.value), m(e.target.value) || p("");
 						},
 						inputMode: "decimal"
 					})
@@ -7923,17 +7923,17 @@ function Zn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 					i ? "Rationale" : "Rationale (optional)",
 					" ",
 					/* @__PURE__ */ (0, U.jsx)("textarea", {
-						value: l,
+						value: u,
 						placeholder: "Explain the source or reason for this edit",
 						onChange: (e) => {
-							u(e.target.value), e.target.value.trim() && f("");
+							d(e.target.value), e.target.value.trim() && p("");
 						},
 						rows: 3
 					})
 				] }),
-				d && /* @__PURE__ */ (0, U.jsx)("p", {
+				f && /* @__PURE__ */ (0, U.jsx)("p", {
 					role: "alert",
-					children: d
+					children: f
 				}),
 				/* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
