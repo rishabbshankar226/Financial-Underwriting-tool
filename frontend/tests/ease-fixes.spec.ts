@@ -164,6 +164,20 @@ test("N-11: each recovery state's next action is the primary one", async ({ page
   await expect(page.getByRole("dialog").getByRole("button", { name: "Keep tracking", exact: true })).toHaveClass(/\bprimary\b/);
 });
 
+test("N-12: the scenario composer leads with Preview until a preview can be saved", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Save case", exact: true }).click();
+  await page.getByLabel("Save rationale").fill("Saved for the N-12 check");
+  await page.getByRole("dialog").getByRole("button").last().click();
+  await expect(page.getByRole("region", { name: "Saved revision context", exact: true })).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("tab", { name: "Stress Tests", exact: true }).click();
+  const authoring = page.getByRole("region", { name: "Scenario authoring", exact: true });
+  await expect(authoring.getByRole("button", { name: "Preview scenarios", exact: true })).toHaveClass(/\bprimary\b/);
+  await expect(authoring.getByRole("button", { name: "Save reviewed comparison", exact: true })).not.toHaveClass(/\bprimary\b/);
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

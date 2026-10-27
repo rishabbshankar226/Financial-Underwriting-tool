@@ -10175,12 +10175,13 @@ function si({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 									children: "Add scenario"
 								}),
 								/* @__PURE__ */ (0, U.jsx)("button", {
+									className: e.canRetain ? void 0 : "primary",
 									disabled: e.fieldsDisabled || e.busy || !e.rows.length,
 									onClick: h,
 									children: "Preview scenarios"
 								}),
 								/* @__PURE__ */ (0, U.jsx)("button", {
-									className: "primary",
+									className: e.canRetain ? "primary" : void 0,
 									disabled: !e.canRetain,
 									onClick: e.retain,
 									children: "Save reviewed comparison"

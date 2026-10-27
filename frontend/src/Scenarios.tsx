@@ -919,7 +919,9 @@ export function Scenarios({
               >
                 Add scenario
               </button>
+              {/* The primary action is previewing until a reviewed preview can be saved. */}
               <button
+                className={model.canRetain ? undefined : "primary"}
                 disabled={
                   model.fieldsDisabled || model.busy || !model.rows.length
                 }
@@ -928,7 +930,7 @@ export function Scenarios({
                 Preview scenarios
               </button>
               <button
-                className="primary"
+                className={model.canRetain ? "primary" : undefined}
                 disabled={!model.canRetain}
                 onClick={model.retain}
               >
