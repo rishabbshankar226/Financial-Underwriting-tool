@@ -26,6 +26,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await expect(
     page.locator(".kpiTile").filter({ hasText: "Business DSCR" }),
   ).toContainText("Cushion +1.88x");
+  await openView(page, "spread");
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator(".hostingNotice").scrollIntoViewIfNeeded();
   await page.screenshot({
@@ -203,6 +204,7 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
+  await openView(page, "spread");
   const field = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
     exact: true,
