@@ -40,6 +40,27 @@ TERMS = {
                "UCA cash flow", "K-1 history", "illustrative score", "prototype-2026-10-03 (policy version)"],
     },
 }
+AFTER = {
+    "standalone": {
+        "T1": ["Operator identity not provided", "retry tracking", "Commercial Decision vs Commercial Assessment", "SBA",
+               "legacy assessment request", "Dated assessment", "K-1 history", "prototype-2026-10-03 (policy version)"],
+        "T2": ["K-1 history", "Cushion", "Approval breakeven", "(FCCR) suffix on capacity lines", "Principal headroom",
+               "pro forma", "nominal annual rate", "fully amortizing"],
+        "T3": ["Annual CPLTD", "AR increase", "AP increase", "used by the backend", "Replay this revision (read-only)",
+               "Configured credential identity"],
+        "T4": ["values-only .xlsx", "Sheet!Cell references", "K-1 history"],
+        "T5": ["Literal borrower-name search, ASCII case-insensitive", "Archived definition", "Recorded ISO timestamp"],
+        "T6": TERMS["standalone"]["T6"],
+    },
+    "streamlit": {
+        "T1": ["Testing host connected", "Operator identity not provided", "retry tracking",
+               "Commercial Decision vs Commercial Assessment", "legacy assessment request", "Dated assessment", "K-1 history",
+               "prototype-2026-10-03 (policy version)"],
+    },
+}
+for _task in ("T2", "T3", "T4", "T5"):
+    AFTER["streamlit"][_task] = AFTER["standalone"][_task]
+
 RULE = "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
 
 
@@ -48,7 +69,7 @@ def main(label: str) -> None:
     metrics = json.loads(path.read_text(encoding="utf-8"))
     for host, tasks in metrics.items():
         for task, entry in tasks.items():
-            terms = TERMS[host][task]
+            terms = (AFTER if label == "after" else TERMS)[host][task]
             entry["unexplainedTerms"] = {"count": len(terms), "judged": True, "terms": terms, "rule": RULE}
         print(host, {task: entry["unexplainedTerms"]["count"] for task, entry in tasks.items()})
     path.write_text(json.dumps(metrics, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
