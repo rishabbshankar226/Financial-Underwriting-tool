@@ -8,7 +8,7 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 ### Resume here (paused 2026-10-27)
 
-1. **N-10, unverified WIP commit.** `streamlit_app/app.py` has `type="primary"` on "Open workspace"; ruff and mypy pass.
+1. **DONE on resume:** N-10 verified (see REGISTER). Original note: **N-10, unverified WIP commit.** `streamlit_app/app.py` has `type="primary"` on "Open workspace"; ruff and mypy pass.
    Run `npm --prefix frontend run test:e2e:streamlit -- streamlit-tests/ease-fixes.spec.ts` (with `PATH="$PWD/.venv/bin:$PATH"`).
    The test's `data-testid` pattern `stBaseButton-primaryFormSubmit` is **unverified** for Streamlit 1.66, so fix the locator
    if it fails on the id rather than the style. Then run `bash ease/tools/revert-proof.sh streamlit "N-10" streamlit-tests/ease-fixes.spec.ts streamlit_app/app.py`,
