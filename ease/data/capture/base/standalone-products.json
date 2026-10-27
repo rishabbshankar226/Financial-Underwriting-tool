@@ -3,26 +3,54 @@
     "S71-consumer": {
       "controls": 15,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate consumer"
+        ],
+        "disabled": []
+      }
     },
     "S73-consumer-result": {
       "controls": 12,
       "primaryActions": 1,
       "primaryLabels": [
         "Evaluate consumer"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate consumer"
+        ],
+        "disabled": []
+      }
     },
     "S74-sba": {
       "controls": 10,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate SBA screen"
+        ],
+        "disabled": []
+      }
     },
     "S75-sba-result": {
       "controls": 3,
       "primaryActions": 1,
       "primaryLabels": [
         "Evaluate SBA screen"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate SBA screen"
+        ],
+        "disabled": []
+      }
     }
   },
   "coveredBy": {},

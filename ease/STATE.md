@@ -9,8 +9,13 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
   20 class A rows and 9 class B rows.
 - **Step:** 7.4 STOP A. The refuter killed 0 rows and rewrote 9 to pass (applied in `REGISTER.md`). The STOP A message was sent;
   the run is **waiting for the owner's class B picks**.
-- **Next:** record the answer verbatim below, mark unpicked class B rows QUEUED, then run Phase 2 in register order
-  (N-4, L-1, L-2, …), one root cause per commit.
+- **Next:** record the answer verbatim below and mark unpicked class B rows QUEUED. Then run Phase 2 **in primary-path order (§8),
+  not register order**, one root cause per commit:
+  - T1 rows: L-1, L-10, N-1, N-3, D-1, D-4, plus N-2/N-9/N-10 if picked.
+  - T2 rows: L-2, L-3, plus N-7/L-4 if picked.
+  - T3 rows: N-4, L-5, L-6, L-7, D-2, D-3, E-1, E-2.
+  - The rest: N-6, L-8, L-9, L-11, plus G-1/N-5/N-8 if picked.
+  The register's ranking serves STOP A only.
 - **Resume note:** the worktree guard refuses commands it can't verify, including heredocs containing the letters "git"
   (as in "digits"). Write scripts to `ease/tools/` and run them.
 
@@ -52,8 +57,10 @@ The server answers in 25–190 ms, and the decision appears at about 5,320 ms on
 ## Measurement declarations
 
 - Controls: the section 5 query, filtered to visible elements inside the 1440×900 viewport.
-- Primary actions (Done 5): visible elements with class `.primary` (`styles.css:573`). This is a second CSS query, a measurement
-  aid only, and it is checked against the screenshots.
+- Primary actions (Done 5): rendered `.primary` elements (`styles.css:573`) **anywhere on the screen**, enabled vs disabled
+  (`screenPrimary` in `ease/data/capture/<label>/*.json`). **A modal dialog is its own screen: count inside the dialog only.**
+  The viewport-only `primaryActions` figure in the task metrics is kept for comparison; it undercounts after a tab click
+  scrolls the page. This is a second CSS query, a measurement aid only, and it is checked against the screenshots.
 - Wait: real clock, measured from the last acting call resolving to the answer assertion resolving; median of three runs.
 
 ## Known baseline failures

@@ -5,24 +5,48 @@
       "primaryActions": 1,
       "primaryLabels": [
         "Connect workspace"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Connect workspace"
+        ],
+        "disabled": []
+      }
     },
     "S09-connect-error": {
       "controls": 3,
       "primaryActions": 1,
       "primaryLabels": [
         "Connect workspace"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Connect workspace"
+        ],
+        "disabled": []
+      }
     },
     "S15-start": {
       "controls": 12,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": []
+      }
     },
     "S54-open-case-empty": {
       "controls": 14,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": []
+      }
     }
   },
   "coveredBy": {

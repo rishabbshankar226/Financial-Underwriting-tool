@@ -3,29 +3,62 @@
     "S67-excel-intake": {
       "controls": 14,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": []
+      }
     },
     "S69-excel-review": {
       "controls": 14,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate Excel inputs"
+        ],
+        "disabled": []
+      }
     },
     "S71-consumer-on-streamlit": {
       "controls": 12,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate consumer"
+        ],
+        "disabled": []
+      }
     },
     "S72-consumer-boundary": {
       "controls": 11,
       "primaryActions": 1,
       "primaryLabels": [
         "Evaluate consumer"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate consumer"
+        ],
+        "disabled": []
+      }
     },
     "S74-sba-on-streamlit": {
       "controls": 9,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate SBA screen"
+        ],
+        "disabled": []
+      }
     }
   },
   "coveredBy": {},

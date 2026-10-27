@@ -5,85 +5,190 @@
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S20-workspace-first-screen": {
       "controls": 11,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S29-spread-full": {
       "controls": 11,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S11-more-menu": {
       "controls": 17,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S18-prototype-notice-open": {
       "controls": 11,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S31-calculation-inspector": {
       "controls": 18,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S32-overview": {
       "controls": 9,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S34-policy-breakevens": {
       "controls": 3,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S36-debt-loan": {
       "controls": 14,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S37-loan-schedule": {
       "controls": 11,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S38-global-cash-flow": {
       "controls": 13,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S40-stress-no-baseline": {
       "controls": 10,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S39-coverage-grid": {
       "controls": 10,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S47-credit-memo": {
       "controls": 9,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     },
     "S48-history-unsaved": {
       "controls": 9,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     }
   },
   "coveredBy": {

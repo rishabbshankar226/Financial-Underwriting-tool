@@ -3,48 +3,100 @@
     "S67-excel-intake": {
       "controls": 12,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": []
+      }
     },
     "S68-excel-wrong-file": {
       "controls": 13,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": []
+      }
     },
     "S69-excel-review": {
       "controls": 12,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate Excel inputs"
+        ],
+        "disabled": []
+      }
     },
     "S70-json-import-invalid": {
       "controls": 22,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S33L-legacy-workspace": {
       "controls": 23,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S33-overview-legacy": {
       "controls": 20,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S66-commercial-composer": {
       "controls": 12,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate assessment"
+        ],
+        "disabled": []
+      }
     },
     "S65-composer-validation": {
       "controls": 10,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate assessment"
+        ],
+        "disabled": []
+      }
     }
   },
   "coveredBy": {},

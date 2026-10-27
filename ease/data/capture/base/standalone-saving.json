@@ -6,55 +6,124 @@
       "primaryLabels": [
         "Save case",
         "Save accepted case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "dialog",
+        "enabled": [
+          "Save accepted case"
+        ],
+        "disabled": []
+      }
     },
     "S26-saved-context": {
       "controls": 13,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S49-history-saved": {
       "controls": 11,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S51-history-replay-review-package": {
       "controls": 5,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S42-scenario-composer": {
       "controls": 9,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case",
+          "Save reviewed comparison"
+        ]
+      }
     },
     "S43-scenario-validation": {
       "controls": 17,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case",
+          "Save reviewed comparison"
+        ]
+      }
     },
     "S44-scenario-preview": {
       "controls": 19,
       "primaryActions": 1,
       "primaryLabels": [
         "Save reviewed comparison"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save reviewed comparison"
+        ],
+        "disabled": [
+          "Save case"
+        ]
+      }
     },
     "S45-saved-comparison": {
       "controls": 19,
       "primaryActions": 1,
       "primaryLabels": [
         "Save reviewed comparison"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case",
+          "Save reviewed comparison"
+        ]
+      }
     },
     "S53-open-case-list": {
       "controls": 18,
       "primaryActions": 1,
       "primaryLabels": [
         "Save case"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case",
+          "Save reviewed comparison"
+        ]
+      }
     }
   },
   "coveredBy": {

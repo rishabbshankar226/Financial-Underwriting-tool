@@ -5,12 +5,26 @@
       "primaryActions": 1,
       "primaryLabels": [
         "Evaluate edit"
-      ]
+      ],
+      "screenPrimary": {
+        "scope": "dialog",
+        "enabled": [
+          "Evaluate edit"
+        ],
+        "disabled": []
+      }
     },
     "S48b-history-session-edit": {
       "controls": 9,
       "primaryActions": 0,
-      "primaryLabels": []
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
     }
   },
   "coveredBy": {},

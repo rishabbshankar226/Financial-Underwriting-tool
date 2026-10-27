@@ -145,7 +145,15 @@ const DATA_DIR = fileURLToPath(new URL("../../ease/data/", import.meta.url));
 /** Screenshots one inventory screen per call and counts its first-screen controls and primary actions.
  * Probes record what an error or empty state says. Runs only when EASE_CAPTURE is set. */
 export class ScreenCapture {
-  readonly screens: Record<string, { controls: number; primaryActions: number; primaryLabels: string[] }> = {};
+  readonly screens: Record<
+    string,
+    {
+      controls: number;
+      primaryActions: number;
+      primaryLabels: string[];
+      screenPrimary: { scope: "dialog" | "page"; enabled: string[]; disabled: string[] };
+    }
+  > = {};
   readonly probes: Record<string, string> = {};
   readonly notCaptured: Record<string, string> = {};
   /** Inventory rows that are part of a screen shot under another ID. */
@@ -175,7 +183,29 @@ export class ScreenCapture {
         })
         .map((element) => (element as HTMLElement).innerText.replace(/\s+/g, " ").trim()),
     );
-    this.screens[`${id}-${slug}`] = { controls: meter.controls ?? 0, primaryActions: meter.primaryActions ?? 0, primaryLabels };
+    // Done 5 counts per screen, not per viewport: rendered `.primary` actions anywhere on the page, and a
+    // modal dialog as its own screen.
+    const dialogOpen = (await this.page.locator("dialog[open]").count()) > 0;
+    const onScreen = await this.page
+      .locator(dialogOpen ? "dialog[open] .primary" : ".primary")
+      .evaluateAll((elements) =>
+        elements
+          .filter((element) => element.checkVisibility())
+          .map((element) => ({
+            label: (element as HTMLElement).innerText.replace(/\s+/g, " ").trim(),
+            disabled: (element as HTMLButtonElement).disabled === true,
+          })),
+      );
+    this.screens[`${id}-${slug}`] = {
+      controls: meter.controls ?? 0,
+      primaryActions: meter.primaryActions ?? 0,
+      primaryLabels,
+      screenPrimary: {
+        scope: dialogOpen ? "dialog" : "page",
+        enabled: onScreen.filter((item) => !item.disabled).map((item) => item.label),
+        disabled: onScreen.filter((item) => item.disabled).map((item) => item.label),
+      },
+    };
   }
 
   probe(key: string, text: string): void {
