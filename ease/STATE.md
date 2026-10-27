@@ -6,6 +6,18 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### PHASE 2 COMPLETE (2026-10-27); now Phase 3
+
+All rows are FIXED, REFUTED (E-2), QUEUED (N-8, E-3, N-6) or ACCEPTED (N-13). Latest fix: `ce65a1c` (N-14).
+
+Phase 3 plan (prompt §9):
+1. `bash ease/tools/steps.sh after`. Compare with `BASELINE.md`: gate 55/4/19, backend 1501, host 40, no new failures.
+2. `bash ease/tools/tasks.sh after`, then `python3 ease/tools/terms.py after` (after editing TERMS to the after-judgement).
+   Compare figures base vs after value for value, then set ceilings in the task specs.
+3. Capture `EASE_CAPTURE=1 EASE_LABEL=after` on both hosts, saved to `ease/shots/after/`.
+4. Fresh-eyes walkthrough agent (sees neither the register nor the diff).
+5. `ease/REPORT.md`, a dated entry in `docs/VERIFICATION.md`, commit, STOP B.
+
 ### Progress (latest first), 2026-10-27
 
 - **Fixed:** L-1, L-10, N-1, N-2, N-3, D-1, D-4, N-9, N-10, L-2, L-3, N-7, N-4, L-5, E-1, L-6, L-7, D-2, D-3.

@@ -44,6 +44,8 @@ step st-mypy python3 -m mypy --strict streamlit_app/app.py streamlit_app/bridge.
 step st-pytest python3 -m pytest -q streamlit_app/tests
 step build-streamlit bash -c 'cd frontend && npm run build:streamlit'
 step assets-check python3 scripts/streamlit_assets.py check
+# CI installs the host requirements after building, so the browser run serves the fresh bundle.
+step reinstall-component uv pip install --python "$repo/.venv/bin/python" --reinstall-package spreadline-workspace --no-deps ./streamlit_app/component
 # CI's streamlit job fails on any diff in the committed build.
 step build-dir-diff git diff --exit-code --stat -- streamlit_app/component/spreadline_workspace/frontend/build
 step e2e-streamlit bash -c 'cd frontend && npm run test:e2e:streamlit -- --reporter=line'
