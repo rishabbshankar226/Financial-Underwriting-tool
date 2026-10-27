@@ -269,16 +269,19 @@ export function SavedContext({
   return (
     <section className="savedContext" aria-label="Saved revision context">
       <strong>{label}</strong>
-      <span>
-        Case <code>{s.case_id}</code> · Run <code>{s.run_id}</code>
-      </span>
-      <span>
-        Recorded {s.recorded_at} · assessment as of{" "}
-        {s.event.context.assessment_as_of}
-        {saved.headRevision !== null && saved.headRevision > s.revision
-          ? ` · Latest known revision ${saved.headRevision}`
-          : ""}
-      </span>
+      <details className="recordDetails">
+        <summary>Record details</summary>
+        <span>
+          Case <code>{s.case_id}</code> · Run <code>{s.run_id}</code>
+        </span>
+        <span>
+          Recorded {s.recorded_at} · assessment as of{" "}
+          {s.event.context.assessment_as_of}
+          {saved.headRevision !== null && saved.headRevision > s.revision
+            ? ` · Latest known revision ${saved.headRevision}`
+            : ""}
+        </span>
+      </details>
       <button onClick={() => onOpen({ caseId: s.case_id, revision: "latest" })}>
         Open latest
       </button>

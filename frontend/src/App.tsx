@@ -389,13 +389,6 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           )}
         {domain === "commercial" && !composer && !excel && !idle && (
           <>
-            {state.saved && (
-              <SavedContext
-                saved={state.saved}
-                active={ready}
-                onOpen={openSaved}
-              />
-            )}
             <WorkspaceStatus
               state={state}
               view={view}
@@ -406,6 +399,14 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             <DecisionBar view={view} />
             {assessment && <KpiTiles assessment={assessment} />}
             {assessment && <ContextStrip assessment={assessment} />}
+            {/* The saved revision's record follows the answer and its figures, not ahead of them. */}
+            {state.saved && (
+              <SavedContext
+                saved={state.saved}
+                active={ready}
+                onOpen={openSaved}
+              />
+            )}
             {assessment && <ModelScope />}
             {ready && state.saved?.view.compatibility && (
               <CompatibilityPanel view={state.saved.view} />

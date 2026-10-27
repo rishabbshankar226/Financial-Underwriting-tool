@@ -109,6 +109,26 @@ test("E-1: a blank save rationale gets a plain message", async ({ page }) => {
   await expect(dialog.getByRole("alert")).toHaveText("Enter a rationale for this save (up to 2,000 characters).");
 });
 
+test("D-2: the saved revision follows the figures and folds its identifiers", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Save case", exact: true }).click();
+  await page.getByLabel("Save rationale").fill("Saved for the D-2 check");
+  await page.getByRole("dialog").getByRole("button").last().click();
+  const context = page.getByRole("region", { name: "Saved revision context", exact: true });
+  await expect(context).toBeVisible({ timeout: 30_000 });
+  const tiles = page.getByRole("region", { name: "Assessment overview", exact: true });
+  const tilesFirst = await tiles.evaluate(
+    (element, other) => !!(element.compareDocumentPosition(other as Node) & Node.DOCUMENT_POSITION_FOLLOWING),
+    await context.elementHandle(),
+  );
+  expect(tilesFirst).toBe(true);
+  await expect(context.getByText(/^Case /)).toBeHidden();
+  await context.getByText("Record details", { exact: true }).click();
+  await expect(context.getByText(/^Case /)).toBeVisible();
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

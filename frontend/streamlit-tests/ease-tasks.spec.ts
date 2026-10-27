@@ -86,7 +86,8 @@ test("T3 adjust and save: new loan amount, recalculated decision, saved revision
   await meter.click(page.getByRole("button", { name: "Save", exact: true }));
   const context = page.getByRole("region", { name: "Saved revision context", exact: true });
   await meter.answer("saved", [context]);
-  savedCaseId = /Case (\S+) ·/.exec(await context.innerText())?.[1] ?? "";
+  // The identifiers sit in a closed "Record details" disclosure, so read the text content.
+  savedCaseId = /Case (\S+) ·/.exec((await context.textContent()) ?? "")?.[1] ?? "";
   expect(savedCaseId).not.toBe("");
   await meter.click(page.getByRole("tab", { name: "History & Audit", exact: true }));
   const revision = page.getByRole("button", { name: /^Open revision \d+$/ }).last();

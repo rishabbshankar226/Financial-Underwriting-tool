@@ -1248,6 +1248,11 @@ summary {
 
 /* 9. Saved cases ------------------------------------------------------------------------------- */
 
+/* Case and run identifiers and the recording time fold under the revision label. */
+.savedContext .recordDetails > span {
+  display: block;
+  margin-top: var(--space-2);
+}
 .savedContext {
   display: flex;
   flex-direction: column;
