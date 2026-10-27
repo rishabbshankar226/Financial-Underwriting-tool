@@ -137,7 +137,7 @@ test("unreadable recovery tracking stays visible on the start screen", async ({ 
   await writeWorkspaceMemory(page, RECOVERY_KEY, "{invalid");
   await connectWorkspace(page, { example: false });
   await expect(page.getByRole("heading", { name: "Saved write recovery unavailable" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Review discarding tracking", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Stop tracking this unconfirmed write…", exact: true })).toBeEnabled();
 });
 
 test("workspace views follow the ARIA tabs pattern with roving focus", async ({ page }) => {

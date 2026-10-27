@@ -868,7 +868,7 @@ test("invalid recovery tracking never auto-posts and needs explicit discard", as
     page.getByRole("button", { name: "Save case", exact: true }),
   ).toBeDisabled();
   const review = page.getByRole("button", {
-    name: "Review discarding tracking",
+    name: "Stop tracking this unconfirmed write…",
     exact: true,
   });
   await review.click();

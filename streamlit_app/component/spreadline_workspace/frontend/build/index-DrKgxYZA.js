@@ -8586,7 +8586,7 @@ function xr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 				/* @__PURE__ */ (0, U.jsx)("h2", { children: e.inFlight ? e.operation?.kind === "comparison" ? "Saving comparison" : "Saving revision" : e.operation ? "Unconfirmed saved write" : "Saved write recovery unavailable" }),
 				!e.inFlight && e.operation && /* @__PURE__ */ (0, U.jsxs)("p", {
 					className: "recoveryState",
-					children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: e.writeError?.status === 409 ? "Conflicting operation key (409)" : "Unresolved browser tracking" }), e.writeError?.status === 409 ? " · Inspect saved records before explicitly discarding or creating a new operation key." : " · A timeout, network drop, or credential rejection does not prove the write rolled back."]
+					children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: e.writeError?.status === 409 ? "Conflicting operation key (409)" : "Not confirmed by the server" }), e.writeError?.status === 409 ? " · Inspect saved records before explicitly discarding or creating a new operation key." : " · A timeout, network drop or rejected credential does not mean the write was undone."]
 				}),
 				e.operation && /* @__PURE__ */ (0, U.jsx)(br, { operation: e.operation }),
 				e.operation && /* @__PURE__ */ (0, U.jsxs)("details", { children: [
@@ -8651,7 +8651,7 @@ function xr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 						/* @__PURE__ */ (0, U.jsx)("button", {
 							disabled: e.inFlight,
 							onClick: (e) => t(e.currentTarget),
-							children: "Review discarding tracking"
+							children: "Stop tracking this unconfirmed write…"
 						})
 					]
 				}),

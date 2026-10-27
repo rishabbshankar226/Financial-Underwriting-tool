@@ -160,7 +160,7 @@ test("N-11: each recovery state's next action is the primary one", async ({ page
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveClass(/\bprimary\b/, {
     timeout: 30_000,
   });
-  await page.getByRole("button", { name: /^Stop tracking|^Review discarding tracking/ }).click();
+  await page.getByRole("button", { name: "Stop tracking this unconfirmed write…", exact: true }).click();
   await expect(page.getByRole("dialog").getByRole("button", { name: "Keep tracking", exact: true })).toHaveClass(/\bprimary\b/);
 });
 

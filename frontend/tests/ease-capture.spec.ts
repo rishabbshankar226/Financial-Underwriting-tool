@@ -348,7 +348,7 @@ test("failures: evaluation, analysis and a saved write that is not confirmed", a
     await expect(recovery).toBeVisible({ timeout: 30_000 });
     capture.probe("save.networkFailure", await recovery.innerText());
     await capture.shot("S58", "saved-write-recovery", { fullPage: true });
-    await page.getByRole("button", { name: "Review discarding tracking", exact: true }).click();
+    await page.getByRole("button", { name: "Stop tracking this unconfirmed write…", exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await capture.shot("S59", "discard-tracking-dialog");
     await page.getByRole("button", { name: "Keep tracking", exact: true }).click();

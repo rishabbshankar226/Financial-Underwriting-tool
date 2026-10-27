@@ -254,11 +254,11 @@ test("operation conflicts keep the key until explicit discard review and Escape 
     await page.getByRole("button", { name: "Save reviewed comparison", exact: true }).click();
     await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeDisabled();
     const journal = await readWorkspaceMemory(page, RECOVERY_KEY);
-    await page.getByRole("button", { name: "Review discarding tracking", exact: true }).click();
+    await page.getByRole("button", { name: "Stop tracking this unconfirmed write…", exact: true }).click();
     await page.getByRole("dialog").press("Escape");
     expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBe(journal);
-    await expect(page.getByRole("button", { name: "Review discarding tracking", exact: true })).toBeFocused();
-    await page.getByRole("button", { name: "Review discarding tracking", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Stop tracking this unconfirmed write…", exact: true })).toBeFocused();
+    await page.getByRole("button", { name: "Stop tracking this unconfirmed write…", exact: true }).click();
     await page.getByRole("button", { name: "Discard tracking", exact: true }).click();
     await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
     expect(await readWorkspaceMemory(page, RECOVERY_KEY)).toBeNull();

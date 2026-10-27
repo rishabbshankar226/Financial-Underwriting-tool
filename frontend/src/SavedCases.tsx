@@ -553,11 +553,11 @@ export function RecoveryPanel({
               <strong>
                 {w.writeError?.status === 409
                   ? "Conflicting operation key (409)"
-                  : "Unresolved browser tracking"}
+                  : "Not confirmed by the server"}
               </strong>
               {w.writeError?.status === 409
                 ? " · Inspect saved records before explicitly discarding or creating a new operation key."
-                : " · A timeout, network drop, or credential rejection does not prove the write rolled back."}
+                : " · A timeout, network drop or rejected credential does not mean the write was undone."}
             </p>
           )}
           {w.operation && <Proposal operation={w.operation} />}
@@ -647,7 +647,7 @@ export function RecoveryPanel({
               disabled={w.inFlight}
               onClick={(e) => onDiscard(e.currentTarget)}
             >
-              Review discarding tracking
+              Stop tracking this unconfirmed write…
             </button>
           </div>
           {error && <p role="alert">{error}</p>}
