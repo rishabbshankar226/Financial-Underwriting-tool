@@ -14937,7 +14937,7 @@ function Jo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 					children: "Cancel Excel import"
 				})]
 			}),
-			/* @__PURE__ */ (0, U.jsx)("p", { children: "Use the five-sheet Spreadline template for one to ten complete fiscal years, loan assumptions and optional guarantors. Review all inputs before evaluation. Use synthetic data only." }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "Fill in the Spreadline template with one to ten complete fiscal years, the loan and any guarantors, then choose it below. You review every input before it is evaluated. Use synthetic data only." }),
 			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "excelDownloads",
 				children: [/* @__PURE__ */ (0, U.jsx)("a", {
@@ -14975,7 +14975,7 @@ function Jo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 					}),
 					/* @__PURE__ */ (0, U.jsx)("small", {
 						id: `${o}-file-help`,
-						children: ".xlsx · maximum 2 MB · five-second import limit · processed in page memory"
+						children: ".xlsx up to 2 MB · read in this page, not uploaded · reading stops after five seconds"
 					})
 				]
 			}),

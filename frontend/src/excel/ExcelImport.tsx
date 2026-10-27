@@ -195,9 +195,9 @@ export function ExcelImport({
         </button>
       </div>
       <p>
-        Use the five-sheet Spreadline template for one to ten complete fiscal
-        years, loan assumptions and optional guarantors. Review all inputs
-        before evaluation. Use synthetic data only.
+        Fill in the Spreadline template with one to ten complete fiscal years,
+        the loan and any guarantors, then choose it below. You review every
+        input before it is evaluated. Use synthetic data only.
       </p>
       <div className="excelDownloads">
         <a
@@ -235,8 +235,8 @@ export function ExcelImport({
           }}
         />
         <small id={`${id}-file-help`}>
-          .xlsx · maximum 2 MB · five-second import limit · processed in page
-          memory
+          .xlsx up to 2 MB · read in this page, not uploaded · reading stops
+          after five seconds
         </small>
       </div>
       {parsing && (
