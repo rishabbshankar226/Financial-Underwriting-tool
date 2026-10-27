@@ -232,6 +232,20 @@ test("E-5: an untouched edit value is not flagged before the user changes it", a
   await expect(dialog.getByRole("alert")).toHaveCount(0);
 });
 
+test("N-15: a rejected case file offers choosing another as the primary action", async ({ page }) => {
+  await connect(page);
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: startActions.import, exact: true }).click();
+  await (await chooser).setFiles({ name: "case.json", mimeType: "application/json", buffer: Buffer.from("{not json") });
+  await expect(page.getByRole("alert").first()).toContainText("not valid JSON", { timeout: 30_000 });
+  const again = page.getByRole("button", { name: "Choose another file", exact: true });
+  await expect(again).toHaveCount(1);
+  await expect(again).toHaveClass(/\bprimary\b/);
+  const next = page.waitForEvent("filechooser");
+  await again.click();
+  await next;
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

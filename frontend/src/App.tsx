@@ -402,6 +402,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
               state={state}
               view={view}
               preparing={!!workspace.preparation}
+              onImport={openFile}
               onSubmit={(draft) => void submit(draft)}
               onOpen={openSaved}
             />

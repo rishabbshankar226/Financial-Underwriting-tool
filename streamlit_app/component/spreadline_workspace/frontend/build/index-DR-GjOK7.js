@@ -11449,30 +11449,30 @@ function X({ assessment: e }) {
 	});
 }
 // src/views/WorkspaceStatus.tsx
-function ya({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i }) {
-	let { draft: a, saved: o } = e, s = t.previousAccepted, c = n && !s && e.action === "evaluate";
+function ya({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i, onImport: a }) {
+	let { draft: o, saved: s } = e, c = t.previousAccepted, l = n && !c && e.action === "evaluate";
 	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
-		!t.ready && !c && /* @__PURE__ */ (0, U.jsxs)("div", {
+		!t.ready && !l && /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "pending",
 			role: "status",
 			children: [
 				/* @__PURE__ */ (0, U.jsx)("strong", { children: t.pendingTitle }),
-				a && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
+				o && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Submitted draft: ",
-					a.filename,
+					o.filename,
 					" · ",
-					a.mode,
+					o.mode,
 					" ·",
 					" ",
-					typeof a.payload.borrower_name == "string" ? a.payload.borrower_name : "Unnamed input",
-					a.edit && ` · ${a.edit.path}: ${a.edit.prior} → ${a.edit.next}`
+					typeof o.payload.borrower_name == "string" ? o.payload.borrower_name : "Unnamed input",
+					o.edit && ` · ${o.edit.path}: ${o.edit.prior} → ${o.edit.next}`
 				] }),
-				s && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
+				c && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Previous accepted case: ",
-					s.input.borrower_name,
+					c.input.borrower_name,
 					" ·",
 					" ",
-					s.filename,
+					c.filename,
 					". Its recommendation is inactive."
 				] })
 			]
@@ -11485,23 +11485,28 @@ function ya({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i }) {
 		e.status === "unavailable" && /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "actions",
 			children: [
-				a && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsx)("button", {
+				!o && e.action === "evaluate" && a && /* @__PURE__ */ (0, U.jsx)("button", {
 					className: "primary",
-					onClick: () => r(a),
+					onClick: a,
+					children: "Choose another file"
+				}),
+				o && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsx)("button", {
+					className: "primary",
+					onClick: () => r(o),
 					children: "Retry submitted draft"
 				}),
-				s && /* @__PURE__ */ (0, U.jsx)("button", {
+				c && /* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: () => r({
-						mode: s.mode,
-						payload: s.input,
-						filename: s.filename
+						mode: c.mode,
+						payload: c.input,
+						filename: c.filename
 					}),
 					children: "Re-evaluate last accepted case"
 				}),
-				o && /* @__PURE__ */ (0, U.jsx)("button", {
+				s && /* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: () => i({
-						caseId: o.view.snapshot.case_id,
-						revision: o.view.snapshot.revision
+						caseId: s.view.snapshot.case_id,
+						revision: s.view.snapshot.revision
 					}),
 					children: "View previous stored revision"
 				})
@@ -15319,6 +15324,7 @@ function Xo({ onDisconnect: e }) {
 						state: r,
 						view: D,
 						preparing: !!t.preparation,
+						onImport: ue,
 						onSubmit: (e) => void i(e),
 						onOpen: de
 					}),

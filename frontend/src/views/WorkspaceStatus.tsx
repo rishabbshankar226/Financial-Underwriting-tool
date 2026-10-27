@@ -13,6 +13,7 @@ export function WorkspaceStatus({
   preparing = false,
   onSubmit,
   onOpen,
+  onImport,
 }: {
   state: Workspace;
   view: WorkspaceView;
@@ -20,6 +21,8 @@ export function WorkspaceStatus({
   preparing?: boolean;
   onSubmit: (draft: Draft) => void;
   onOpen: (locator: Locator) => void;
+  /** Opens the case-file chooser again after an import fails before any draft exists. */
+  onImport?: () => void;
 }) {
   const { draft, saved } = state,
     previous = view.previousAccepted;
@@ -56,6 +59,11 @@ export function WorkspaceStatus({
       )}
       {state.status === "unavailable" && (
         <div className="actions">
+          {!draft && state.action === "evaluate" && onImport && (
+            <button className="primary" onClick={onImport}>
+              Choose another file
+            </button>
+          )}
           {draft && state.action === "evaluate" && (
             <button className="primary" onClick={() => onSubmit(draft)}>
               Retry submitted draft
