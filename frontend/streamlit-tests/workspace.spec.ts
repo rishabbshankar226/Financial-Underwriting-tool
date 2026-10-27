@@ -47,7 +47,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic Streamlit baseline");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when fetched",
@@ -106,7 +106,7 @@ test("embedded saves work with browser storage denied and reload requires an exp
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", { timeout: 30_000 });
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic memory-only embedded save");
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
   const caseId = await page.locator(".savedContext code").first().innerText();
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
@@ -159,7 +159,7 @@ test("an embedded acknowledged write with uncleared memory retries the same oper
   try {
     await page.getByRole("button", { name: "Save case", exact: true }).click();
     await page.getByLabel("Save rationale").fill("Synthetic acknowledged memory tracking recovery");
-    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
     await expect(page.locator(".savedContext")).toContainText("Revision 1");
     const caseId = await page.locator(".savedContext code").first().innerText();

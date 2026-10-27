@@ -83,7 +83,7 @@ test("T3 adjust and save: new loan amount, recalculated decision, saved revision
   await recordRatioTiles(meter, "T3.recalculated");
   await meter.click(page.getByRole("button", { name: "Save case", exact: true }));
   await meter.fill(page.getByLabel("Save rationale"), "Saved after the loan amount change");
-  await meter.click(page.getByRole("button", { name: "Save accepted case", exact: true }));
+  await meter.click(page.getByRole("button", { name: "Save", exact: true }));
   const context = page.getByRole("region", { name: "Saved revision context", exact: true });
   await meter.answer("saved", [context]);
   savedCaseId = /Case (\S+) ·/.exec(await context.innerText())?.[1] ?? "";

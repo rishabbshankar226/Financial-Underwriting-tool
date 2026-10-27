@@ -202,7 +202,7 @@ test("a case save cancels the background analysis before the write and analyzes 
   await expect.poll(async () => (await stats()).active).toBe(1);
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic analysis pause");
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await writeStarted;
   let current = await stats();
   expect(current.active).toBe(0);

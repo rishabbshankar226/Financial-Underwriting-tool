@@ -116,7 +116,7 @@ test("shock chips only fill inputs and the explicit preview preserves exact shoc
     .getByLabel("Save rationale")
     .fill("Synthetic scenario quick-fill review");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when fetched",
@@ -269,7 +269,7 @@ test("a field-mapped saved rejection keeps its proposal and requires fresh revie
     .getByLabel("Save rationale")
     .fill("Synthetic mapped rejection baseline");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when fetched",

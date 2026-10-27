@@ -37,7 +37,7 @@ async function alerts(page: Page): Promise<string> {
 async function saveCase(page: Page, rationale: string): Promise<void> {
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill(rationale);
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("region", { name: "Saved revision context", exact: true })).toBeVisible();
 }
 
@@ -262,10 +262,10 @@ test("saving: dialog, saved context, saved history, stress tests and the review 
     await page.getByRole("button", { name: "Save case", exact: true }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await capture.shot("S55", "save-dialog");
-    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     capture.probe("save.blankRationale", (await alerts(page)) || "(none)");
     await page.getByLabel("Save rationale").fill("Capture baseline");
-    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.getByRole("region", { name: "Saved revision context", exact: true })).toBeVisible();
     await capture.shot("S26", "saved-context");
     capture.cover(["S56"], "S26-saved-context");
@@ -343,7 +343,7 @@ test("failures: evaluation, analysis and a saved write that is not confirmed", a
     await page.route("**/cases", (route) => (route.request().method() === "POST" ? route.abort() : route.continue()));
     await page.getByRole("button", { name: "Save case", exact: true }).click();
     await page.getByLabel("Save rationale").fill("Capture failed save");
-    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     const recovery = page.getByRole("region", { name: "Saved write recovery", exact: true });
     await expect(recovery).toBeVisible({ timeout: 30_000 });
     capture.probe("save.networkFailure", await recovery.innerText());

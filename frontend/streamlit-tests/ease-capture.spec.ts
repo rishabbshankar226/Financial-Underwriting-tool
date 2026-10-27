@@ -76,7 +76,7 @@ test("access, start and the workspace inside the Streamlit host", async ({ page 
     await expect(page.getByRole("dialog")).toBeVisible();
     await capture.shot("S55", "save-dialog");
     await page.getByLabel("Save rationale").fill("Capture baseline");
-    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.getByRole("region", { name: "Saved revision context", exact: true })).toBeVisible({ timeout: HOST_START });
     await capture.shot("S26", "saved-context");
     await tab(page, "History & Audit");

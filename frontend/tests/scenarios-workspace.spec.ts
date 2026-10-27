@@ -28,7 +28,7 @@ async function baseline(page: Page) {
     await page.getByRole("button", { name: "Save case", exact: true }).click();
     await page.getByLabel("Save rationale").fill("Synthetic scenario baseline");
     const saved = page.waitForResponse(r => new URL(r.url()).pathname === "/cases" && r.request().method() === "POST" && r.status() === 201);
-    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     const response = await saved;
     const original = guardSavedCase(await response.json(), response.headers().etag).snapshot;
     await expect(page.locator(".savedContext")).toContainText("Latest when fetched");

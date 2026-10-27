@@ -7757,7 +7757,7 @@ function Yn({ title: e, onCancel: t, restoreFocus: n, children: r }) {
 function Xn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 	let [i, a] = (0, c.useState)(""), [o, s] = (0, c.useState)("");
 	return /* @__PURE__ */ (0, U.jsx)(Yn, {
-		title: "Save dated case",
+		title: "Save case",
 		onCancel: n,
 		restoreFocus: r,
 		children: /* @__PURE__ */ (0, U.jsxs)("form", {
@@ -7770,11 +7770,7 @@ function Xn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 				}
 			},
 			children: [
-				/* @__PURE__ */ (0, U.jsx)("div", {
-					className: "eyebrow",
-					children: "SAVE ACCEPTED INPUT"
-				}),
-				/* @__PURE__ */ (0, U.jsx)("h2", { children: "Save dated case" }),
+				/* @__PURE__ */ (0, U.jsx)("h2", { children: "Save case" }),
 				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					e.borrower_name,
 					" · as of ",
@@ -7788,7 +7784,7 @@ function Xn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 				})] }),
 				/* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
-					children: "Saving assesses this accepted input under the server's current policy. The returned stored result becomes the accepted result. Earlier session edits are not added to saved history. Rationale: at most 2,000 characters."
+					children: "Saving re-checks this case under the current policy and stores it as a saved revision. Edits made before saving are not listed separately in its history. Rationale: up to 2,000 characters."
 				}),
 				o && /* @__PURE__ */ (0, U.jsx)("p", {
 					role: "alert",
@@ -7803,7 +7799,7 @@ function Xn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 					}), /* @__PURE__ */ (0, U.jsx)("button", {
 						className: "primary",
 						type: "submit",
-						children: "Save accepted case"
+						children: "Save"
 					})]
 				})
 			]

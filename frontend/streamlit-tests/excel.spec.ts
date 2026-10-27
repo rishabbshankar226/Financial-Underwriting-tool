@@ -47,7 +47,7 @@ test("the installed Streamlit bundle downloads, imports, evaluates and saves the
     .getByLabel("Save rationale")
     .fill("Synthetic Excel import through the installed Streamlit bundle");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when fetched",

@@ -25,7 +25,7 @@ async function save(page: Page, rationale = "Synthetic creation") {
       r.status() === 201,
   );
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   const snapshot = await (await response).json();
   await expect(page.locator(".savedContext")).toContainText(
@@ -126,7 +126,7 @@ test("lost create response survives same-page reconnect and retry creates exactl
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic lost response");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Retry exact write", exact: true }),
@@ -331,7 +331,7 @@ test("edits and exact saved-write retry work when browser storage is unavailable
   });
   await saveButton.click();
   await page.getByLabel("Save rationale").fill("Synthetic save with browser storage disabled");
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
   await page.unroute("**/cases");
   page.on("request", request => {
@@ -455,7 +455,7 @@ test("accepted receipt remains readable and read-only when latest refresh fails"
     .getByLabel("Save rationale")
     .fill("Accepted before refresh failure");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
     "Latest unconfirmed",
@@ -584,7 +584,7 @@ test("malformed successful save keeps its exact recovery key after the real comm
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Invalid receipt headers");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   await expect(
@@ -703,7 +703,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
       r.request().method() === "POST" && new URL(r.url()).pathname === "/cases",
   );
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   const s = await (await response).json();
   expect(s.event.kind).toBe("creation");
@@ -741,20 +741,20 @@ test("save rationale validation and cancellation preserve the accepted input and
   await saveButton.click();
   await expect(page.getByLabel("Save rationale")).toBeFocused();
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
     "nonblank",
   );
   await page.getByLabel("Save rationale").fill("x".repeat(2001));
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
     "2,000",
   );
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .focus();
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("Save rationale")).toBeFocused();
@@ -919,7 +919,7 @@ test("a memory tracking failure stops the write and preserves the accepted resul
   await saveButton.click();
   await page.getByLabel("Save rationale").fill("Preflight storage failure");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
     "Nothing was sent",
