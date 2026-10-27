@@ -426,6 +426,11 @@ pre {
   line-height: 1.6;
   color: var(--muted);
 }
+/* The example case is the start screen's one primary action. */
+.startOption.primary .startOptionTitle,
+.startOption.primary .startOptionDetail {
+  color: var(--on-accent);
+}
 .disclosureMenu {
   position: relative;
 }

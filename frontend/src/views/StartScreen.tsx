@@ -57,7 +57,7 @@ export function StartScreen({
           <button
             key={option.key}
             type="button"
-            className="startOption"
+            className={option.key === "example" ? "startOption primary" : "startOption"}
             aria-label={option.title}
             aria-describedby={`${id}${option.key}`}
             data-focus-fallback={option.key === "open" ? "" : undefined}
