@@ -18,6 +18,19 @@ test("N-1: the example case is the start screen's one primary action", async ({ 
   await expect(start.locator(".primary")).toHaveCount(1);
 });
 
+test("N-3: the current workflow is not filled like the primary action", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  const save = page.getByRole("button", { name: "Save case", exact: true });
+  await expect(save).toBeEnabled({ timeout: 30_000 });
+  const current = page
+    .getByRole("navigation", { name: "Underwriting workflows", exact: true })
+    .getByRole("button", { name: "Commercial Assessment", exact: true });
+  await expect(current).toHaveAttribute("aria-current", "page");
+  const fill = (element: Element) => getComputedStyle(element).backgroundColor;
+  expect(await current.evaluate(fill)).not.toBe(await save.evaluate(fill));
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });
