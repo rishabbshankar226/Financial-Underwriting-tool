@@ -12283,7 +12283,7 @@ function Wa({ ready: e, accepted: t, canEdit: n, onEdit: r }) {
 }
 // src/views/DetailsView.tsx
 function Ga({ ready: e, input: t, assessment: n, decision: r, index: i }) {
-	let a = (0, c.useId)();
+	let a = (0, c.useId)(), o = (0, c.useId)(), [s, l] = (0, c.useState)(!1);
 	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel",
 		"aria-labelledby": a,
@@ -12292,74 +12292,86 @@ function Ga({ ready: e, input: t, assessment: n, decision: r, index: i }) {
 				id: a,
 				children: "Calculation details"
 			}),
-			n ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
-				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
-					"Policy version:",
-					" ",
-					/* @__PURE__ */ (0, U.jsx)("strong", { children: n.policy_snapshot.version })
-				] }),
-				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
-					"K-1 comparison periods:",
-					" ",
-					n.k1_history_periods.map((e, t) => Ue(e, t)).join(" / ")
-				] }),
-				/* @__PURE__ */ (0, U.jsx)("h3", { children: "Current facts" }),
-				Object.values(n.current_facts).map((e) => /* @__PURE__ */ (0, U.jsx)(Ka, {
-					metric: e,
-					assessment: n
-				}, e.fact_id)),
-				/* @__PURE__ */ (0, U.jsxs)("h3", { children: [
-					"Selected historical period:",
-					" ",
-					Ue(t.years[i], i)
-				] }),
-				He.map((e) => /* @__PURE__ */ (0, U.jsx)(Ka, {
-					metric: n.historical_spread[i][e],
-					assessment: n
-				}, e)),
-				/* @__PURE__ */ (0, U.jsx)("h3", { children: "Guarantor contributions" }),
-				n.guarantor_contributions.length ? n.guarantor_contributions.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h4", { children: e.name }), [
-					e.business_ebitda,
-					e.outside_income,
-					e.personal_debt
-				].map((e) => /* @__PURE__ */ (0, U.jsx)(Ka, {
-					metric: e,
-					assessment: n
-				}, e.fact_id))] }, e.guarantor_index)) : /* @__PURE__ */ (0, U.jsx)("p", { children: "Business-only fallback; no guarantor contributions." }),
-				/* @__PURE__ */ (0, U.jsxs)("details", { children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: "Complete policy snapshot" }), /* @__PURE__ */ (0, U.jsx)("pre", { children: JSON.stringify(n.policy_snapshot, null, 2) })] }),
-				/* @__PURE__ */ (0, U.jsxs)("p", {
-					className: "fine",
-					children: [
-						"Calculation: ",
-						n.calculation_version,
-						" · serialization:",
+			!n && /* @__PURE__ */ (0, U.jsx)("p", { children: e ? "Legacy mode has decision factors but no dated spread or trace." : "No current assessment is available." }),
+			(n || r) && /* @__PURE__ */ (0, U.jsx)("button", {
+				type: "button",
+				className: "detailsToggle",
+				"aria-expanded": s,
+				"aria-controls": o,
+				onClick: () => l((e) => !e),
+				children: "Definitions, operands and policy snapshot"
+			}),
+			/* @__PURE__ */ (0, U.jsxs)("div", {
+				id: o,
+				hidden: !s,
+				children: [n ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
+						"Policy version:",
 						" ",
-						n.serialization_version,
-						/* @__PURE__ */ (0, U.jsx)("br", {}),
-						"Content fingerprint (not document authentication):",
-						" ",
-						/* @__PURE__ */ (0, U.jsx)("code", { children: n.fingerprint.value })
-					]
-				})
-			] }) : /* @__PURE__ */ (0, U.jsx)("p", { children: e ? "Legacy mode has decision factors but no dated spread or trace." : "No current assessment is available." }),
-			r && /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h3", { children: "Raw policy comparisons" }), r.factors.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", {
-				className: "operand",
-				children: [
-					/* @__PURE__ */ (0, U.jsx)("strong", { children: Le[e.name] }),
-					/* @__PURE__ */ (0, U.jsxs)("span", { children: [
-						"Raw: ",
-						String(e.raw_value),
-						" ",
-						e.comparison_operator,
-						" ",
-						String(e.threshold),
-						" · decline floor",
-						" ",
-						e.decline_threshold ?? "not applicable"
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: n.policy_snapshot.version })
 					] }),
-					/* @__PURE__ */ (0, U.jsx)("small", { children: e.source })
-				]
-			}, e.name))] })
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
+						"K-1 comparison periods:",
+						" ",
+						n.k1_history_periods.map((e, t) => Ue(e, t)).join(" / ")
+					] }),
+					/* @__PURE__ */ (0, U.jsx)("h3", { children: "Current facts" }),
+					Object.values(n.current_facts).map((e) => /* @__PURE__ */ (0, U.jsx)(Ka, {
+						metric: e,
+						assessment: n
+					}, e.fact_id)),
+					/* @__PURE__ */ (0, U.jsxs)("h3", { children: [
+						"Selected historical period:",
+						" ",
+						Ue(t.years[i], i)
+					] }),
+					He.map((e) => /* @__PURE__ */ (0, U.jsx)(Ka, {
+						metric: n.historical_spread[i][e],
+						assessment: n
+					}, e)),
+					/* @__PURE__ */ (0, U.jsx)("h3", { children: "Guarantor contributions" }),
+					n.guarantor_contributions.length ? n.guarantor_contributions.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h4", { children: e.name }), [
+						e.business_ebitda,
+						e.outside_income,
+						e.personal_debt
+					].map((e) => /* @__PURE__ */ (0, U.jsx)(Ka, {
+						metric: e,
+						assessment: n
+					}, e.fact_id))] }, e.guarantor_index)) : /* @__PURE__ */ (0, U.jsx)("p", { children: "Business-only fallback; no guarantor contributions." }),
+					/* @__PURE__ */ (0, U.jsxs)("details", { children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: "Complete policy snapshot" }), /* @__PURE__ */ (0, U.jsx)("pre", { children: JSON.stringify(n.policy_snapshot, null, 2) })] }),
+					/* @__PURE__ */ (0, U.jsxs)("p", {
+						className: "fine",
+						children: [
+							"Calculation: ",
+							n.calculation_version,
+							" · serialization:",
+							" ",
+							n.serialization_version,
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
+							"Content fingerprint (not document authentication):",
+							" ",
+							/* @__PURE__ */ (0, U.jsx)("code", { children: n.fingerprint.value })
+						]
+					})
+				] }) : null, r && /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h3", { children: "Raw policy comparisons" }), r.factors.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", {
+					className: "operand",
+					children: [
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: Le[e.name] }),
+						/* @__PURE__ */ (0, U.jsxs)("span", { children: [
+							"Raw: ",
+							String(e.raw_value),
+							" ",
+							e.comparison_operator,
+							" ",
+							String(e.threshold),
+							" · decline floor",
+							" ",
+							e.decline_threshold ?? "not applicable"
+						] }),
+						/* @__PURE__ */ (0, U.jsx)("small", { children: e.source })
+					]
+				}, e.name))] })]
+			})
 		]
 	});
 }

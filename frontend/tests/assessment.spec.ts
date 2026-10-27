@@ -25,6 +25,7 @@ test("dated workspace shows all periods, server facts and policy trace", async (
     page.getByText("prototype-2026-10-03", { exact: true }),
   ).toBeVisible();
   const calculations = page.getByRole("region", { name: "Calculation details", exact: true });
+  await calculations.getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true }).click();
   await calculations
     .locator("details")
     .filter({ hasText: "dscr" })
@@ -274,6 +275,9 @@ test("desktop and mobile workflow fits and has no application console errors", a
     await openView(page, "details");
     await page
       .getByRole("region", { name: "Calculation details", exact: true })
+      .getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true }).click();
+    await page
+      .getByRole("region", { name: "Calculation details", exact: true })
       .locator("details")
       .filter({ hasText: "current.dscr" })
       .first()
@@ -363,6 +367,7 @@ test("unavailable ratios and absent guarantors have explicit explanations", asyn
   ).toContainText("Not applicable");
   await openView(page, "details");
   const calculations = page.getByRole("region", { name: "Calculation details", exact: true });
+  await calculations.getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true }).click();
   await calculations
     .locator("details")
     .filter({ hasText: "current.dscr" })

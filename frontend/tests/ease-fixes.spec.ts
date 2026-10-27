@@ -129,6 +129,20 @@ test("D-2: the saved revision follows the figures and folds its identifiers", as
   await expect(context.getByText(/^Case /)).toBeVisible();
 });
 
+test("D-3: calculation details are folded under History & Audit until asked for", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("tab", { name: "History & Audit", exact: true }).click();
+  const details = page.getByRole("region", { name: "Calculation details", exact: true });
+  await expect(details).toBeVisible();
+  await expect(details.getByText(/^Policy version:/)).toBeHidden();
+  const toggle = details.getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true });
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await toggle.click();
+  await expect(details.getByText(/^Policy version:/)).toBeVisible();
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });
