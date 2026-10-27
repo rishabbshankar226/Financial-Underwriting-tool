@@ -15,7 +15,7 @@ browser/host policy. See [security requirements](SECURITY_ARCHITECTURE.md).
 
 ## Layout
 
-- **Brand bar:** **Open case** lists saved cases, **Save case** saves an accepted unsaved dated case, and **More** holds the dated and legacy example cases, **Import case file (JSON)**, the **Dark theme** toggle and **Disconnect workspace**. More is a disclosure: Escape closes the panel and returns focus to its button, a click outside it closes the panel, and the theme toggle leaves it open.
+- **Brand bar:** **Open case** lists saved cases, **Save case** saves an accepted unsaved dated case, and **More** holds **Edit complete draft** (for an accepted commercial case), the dated and legacy example cases, **Import case file (JSON)**, the **Dark theme** toggle and **Disconnect workspace**. More is a disclosure: Escape closes the panel and returns focus to its button, a click outside it closes the panel, and the theme toggle leaves it open.
 - **Case header:** the borrower name (the view's only h1), the mode badge (**Dated assessment** or **Legacy · undated input**), the saved state (**Draft — not saved**, **Saved · revision N · latest**, **Saved · revision N · latest unconfirmed**, **Historical revision N (read-only)** or an inactive previous revision) and the source file or saved case.
 - **Prototype notice:** a short disclaimer that stays on screen, with the full text one click away.
 - **Decision bar:** the illustrative outcome and the server's one-line reason, taken from the matching analysis. While a draft edit recalculates, the bar reads CALCULATING and shows the replaced outcome as **Previous result: … (inactive)**.

@@ -11095,34 +11095,44 @@ function ea({ showCases: e, canSave: t, onToggleCases: n, onSave: r }) {
 		children: "Save case"
 	})] });
 }
-function ta({ onExample: e, onImport: t, onDisconnect: n }) {
-	let { theme: r, setTheme: i } = Qi();
+function ta({ onEditDraft: e, onExample: t, onImport: n, onDisconnect: r }) {
+	let { theme: i, setTheme: a } = Qi();
 	return /* @__PURE__ */ (0, U.jsx)(Ki, {
 		label: "More",
 		panelLabel: "More actions",
 		className: "moreMenu",
-		children: (a) => /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+		children: (o) => /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+			e && /* @__PURE__ */ (0, U.jsx)("div", {
+				className: "menuGroup",
+				children: /* @__PURE__ */ (0, U.jsx)("button", {
+					type: "button",
+					onClick: () => {
+						o(), e();
+					},
+					children: "Edit complete draft"
+				})
+			}),
 			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "menuGroup",
 				children: [
 					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: () => {
-							a(), e("dated");
+							o(), t("dated");
 						},
 						children: "Load example case"
 					}),
 					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: () => {
-							a(), e("legacy");
+							o(), t("legacy");
 						},
 						children: "Load legacy example case"
 					}),
 					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: () => {
-							a(), t();
+							o(), n();
 						},
 						children: "Import case file (JSON)"
 					})
@@ -11133,17 +11143,17 @@ function ta({ onExample: e, onImport: t, onDisconnect: n }) {
 				children: /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					className: "themeToggle",
-					"aria-pressed": r === "dark",
-					onClick: () => i(r === "dark" ? "light" : "dark"),
+					"aria-pressed": i === "dark",
+					onClick: () => a(i === "dark" ? "light" : "dark"),
 					children: "Dark theme"
 				})
 			}),
-			n && /* @__PURE__ */ (0, U.jsx)("div", {
+			r && /* @__PURE__ */ (0, U.jsx)("div", {
 				className: "menuGroup",
 				children: /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					onClick: () => {
-						a(), n();
+						o(), r();
 					},
 					children: "Disconnect workspace"
 				})
@@ -15137,6 +15147,9 @@ function qo({ onDisconnect: e }) {
 						O.current = e, w(!0);
 					}
 				}), /* @__PURE__ */ (0, U.jsx)(ta, {
+					onEditDraft: u === "commercial" && !m && !v && !ae && M ? () => {
+						_(M.mode), h(!0);
+					} : void 0,
 					onExample: (e) => {
 						y(!1), d("commercial"), h(!1), a(e);
 					},
@@ -15270,14 +15283,6 @@ function qo({ onDisconnect: e }) {
 					}
 				}, `${r.id}:${ce?.id ?? "draft"}`),
 				u === "commercial" && !m && !v && !ae && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
-					M && /* @__PURE__ */ (0, U.jsx)("button", {
-						type: "button",
-						className: "editCompleteDraft",
-						onClick: () => {
-							_(M.mode), h(!0);
-						},
-						children: "Edit complete draft"
-					}),
 					r.saved && /* @__PURE__ */ (0, U.jsx)(vr, {
 						saved: r.saved,
 						active: j,

@@ -44,12 +44,15 @@ export function PrimaryActions({
   );
 }
 
-/** Less frequent actions: example cases, import, the theme and, outside the Streamlit host, disconnect. */
+/** Less frequent actions: editing the complete draft, example cases, import, the theme and, outside the
+ * Streamlit host, disconnect. */
 export function MoreMenu({
+  onEditDraft,
   onExample,
   onImport,
   onDisconnect,
 }: {
+  onEditDraft?: () => void;
   onExample: (mode: "dated" | "legacy") => void;
   onImport: () => void;
   onDisconnect?: () => void;
@@ -59,6 +62,13 @@ export function MoreMenu({
     <DisclosureMenu label="More" panelLabel="More actions" className="moreMenu">
       {(close) => (
         <>
+          {onEditDraft && (
+            <div className="menuGroup">
+              <button type="button" onClick={() => { close(); onEditDraft(); }}>
+                Edit complete draft
+              </button>
+            </div>
+          )}
           <div className="menuGroup">
             <button type="button" onClick={() => { close(); onExample("dated"); }}>
               Load example case

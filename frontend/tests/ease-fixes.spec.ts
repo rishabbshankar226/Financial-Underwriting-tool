@@ -31,6 +31,17 @@ test("N-3: the current workflow is not filled like the primary action", async ({
   expect(await current.evaluate(fill)).not.toBe(await save.evaluate(fill));
 });
 
+test("D-1: Edit complete draft is in More, not between the notice and the decision", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await expect(page.getByRole("button", { name: "Edit complete draft", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "More", exact: true }).click();
+  await expect(
+    page.getByRole("group", { name: "More actions", exact: true }).getByRole("button", { name: "Edit complete draft", exact: true }),
+  ).toBeVisible();
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

@@ -159,6 +159,14 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             />
           )}
           <MoreMenu
+            onEditDraft={
+              domain === "commercial" && !composer && !excel && !idle && accepted
+                ? () => {
+                    setComposerMode(accepted.mode);
+                    setComposer(true);
+                  }
+                : undefined
+            }
             onExample={(mode) => {
               setExcel(false);
               setDomain("commercial");
@@ -377,18 +385,6 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           )}
         {domain === "commercial" && !composer && !excel && !idle && (
           <>
-            {accepted && (
-              <button
-                type="button"
-                className="editCompleteDraft"
-                onClick={() => {
-                  setComposerMode(accepted.mode);
-                  setComposer(true);
-                }}
-              >
-                Edit complete draft
-              </button>
-            )}
             {state.saved && (
               <SavedContext
                 saved={state.saved}

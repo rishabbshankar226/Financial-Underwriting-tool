@@ -33,6 +33,7 @@ test("commercial sample preserves exact input strings and maps server errors to 
     "4200000.000000000000000001",
   );
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await page.getByRole("button", { name: "More", exact: true }).click();
   await page
     .getByRole("button", { name: "Edit complete draft", exact: true })
     .click();
