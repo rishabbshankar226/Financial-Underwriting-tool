@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { enterWorkspace, moreAction, openCaseBrowser, openView } from "../tests/testCredentials";
+import { enterWorkspace, moreAction, openCaseBrowser, openView, unlockStreamlitHost } from "../tests/testCredentials";
 
 test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews a scenario", async ({
   page,
@@ -11,6 +11,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
       errors.push(message.text());
   });
   await page.goto("/");
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.getByRole("status", { name: "Assessment preparation" })).toBeVisible();
@@ -53,6 +54,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   );
   const savedCaseId = await page.locator(".savedContext code").first().innerText();
   await page.reload();
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await expect(page.locator(".savedContext")).toHaveCount(0);
   await openCaseBrowser(page);
@@ -98,6 +100,7 @@ test("embedded saves work with browser storage denied and reload requires an exp
       });
   });
   await page.goto("/");
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", { timeout: 30_000 });
@@ -108,6 +111,7 @@ test("embedded saves work with browser storage denied and reload requires an exp
   const caseId = await page.locator(".savedContext code").first().innerText();
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
   await page.reload();
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await expect(page.locator(".decision, .savedContext")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
@@ -122,6 +126,7 @@ test("embedded saves work with browser storage denied and reload requires an exp
 
 test("an embedded acknowledged write with uncleared memory retries the same operation and returns its original revision", async ({ page }) => {
   await page.goto("/");
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", { timeout: 30_000 });
@@ -192,6 +197,7 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
   browser,
 }) => {
   await page.goto("/");
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
@@ -225,6 +231,7 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
   try {
     const other = await context.newPage();
     await other.goto("http://127.0.0.1:8501");
+    await unlockStreamlitHost(other);
     await expect(other.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
     await enterWorkspace(other, { timeout: 30_000 });
     await expect(other.locator(".decision strong")).toHaveText("APPROVE", {
@@ -240,6 +247,7 @@ test("the embedded theme is page-only and leaves the Streamlit page untouched", 
   page,
 }) => {
   await page.goto("/");
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
@@ -260,6 +268,7 @@ test("the embedded theme is page-only and leaves the Streamlit page untouched", 
     ]),
   ).toEqual([[], [], null]);
   await page.reload();
+  await unlockStreamlitHost(page);
   // An unsaved example leaves nothing to restore, so the reload returns to the start screen.
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await enterWorkspace(page, { timeout: 30_000 });

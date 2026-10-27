@@ -3,6 +3,8 @@ import { expect, type Page } from "@playwright/test";
 export const TEST_API_ORIGIN = "http://127.0.0.1:8000";
 export const TEST_API_TOKEN = "spreadline-playwright-only-credential-20261014";
 export const TEST_OPERATOR_ID = "playwright_operator";
+// Matches the viewer password that tests/start_streamlit.py gives the Streamlit host.
+export const TEST_STREAMLIT_ACCESS_PASSWORD = "synthetic-streamlit-viewer-password";
 
 // Workspace copy that specs act on lives here, so a rename touches only this file.
 export const startScreenTitle = "Start a credit analysis";
@@ -39,6 +41,12 @@ export async function connectWorkspace(page: Page, options: { example?: boolean 
   await page.getByLabel("API token", { exact: true }).fill(TEST_API_TOKEN);
   await page.getByRole("button", { name: "Connect workspace", exact: true }).click();
   await enterWorkspace(page, options);
+}
+
+/** Passes the Streamlit host's access screen. Every load or reload starts a new session that asks again. */
+export async function unlockStreamlitHost(page: Page): Promise<void> {
+  await page.getByLabel("Access password", { exact: true }).fill(TEST_STREAMLIT_ACCESS_PASSWORD);
+  await page.getByRole("button", { name: "Open workspace", exact: true }).click();
 }
 
 export type WorkspaceView =

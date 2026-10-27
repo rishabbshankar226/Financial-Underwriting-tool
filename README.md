@@ -125,7 +125,9 @@ Capacity is policy arithmetic, not an approval. See
 For a temporary private Streamlit deployment, see the
 [Streamlit testing host](docs/STREAMLIT_TESTING.md). It packages the same React
 workspace and invokes the existing backend in-process. It is disabled by
-default, uses synthetic data, and labels local testing records as temporary.
+default, asks viewers for a shared access password once enabled, uses synthetic
+data, and labels local testing records as temporary. `render.yaml` deploys it to
+Render.
 
 Prerequisites: Python 3.12, Node.js 22.12 or later in the supported Node 22 line,
 SQLite from Python 3.12, and free ports 8000/5173 for browser tests. CI uses
