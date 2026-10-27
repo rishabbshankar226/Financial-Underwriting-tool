@@ -695,7 +695,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await expect(page.getByRole("dialog")).toContainText(
-    "Earlier session edits are not added",
+    "Edits made before saving are not listed separately",
   );
   await page.getByLabel("Save rationale").fill("Save changed input");
   const response = page.waitForResponse(
@@ -744,7 +744,7 @@ test("save rationale validation and cancellation preserve the accepted input and
     .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
-    "nonblank",
+    "Enter a rationale for this save",
   );
   await page.getByLabel("Save rationale").fill("x".repeat(2001));
   await page

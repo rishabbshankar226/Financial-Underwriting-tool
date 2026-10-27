@@ -6,6 +6,15 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### Stale Streamlit component (found 2026-10-27, fixed in `ease/tools/rebuild.sh`)
+
+The Streamlit host serves `spreadline_workspace` **as installed in `.venv`** from `./streamlit_app/component`. It was installed once,
+at setup, with the baseline bundle `index-KxsPhx50.js`. **Every Streamlit browser run in Phase 2 before this note tested the
+baseline component**, not the rebuilt one. That includes "Streamlit 12/12" after N-7 and the Streamlit specs run alongside other
+rows. N-10 is unaffected (`app.py` runs from source).
+- `rebuild.sh` now reinstalls the component after every build (`uv pip install --reinstall-package spreadline-workspace --no-deps`), as CI installs after building.
+- Phase 3 must rerun the full Streamlit suite against the current bundle. Treat no earlier Phase 2 Streamlit result as evidence.
+
 ### Resumed after the second pause (2026-10-27)
 
 N-7 was reworked in the working tree, on top of WIP commit `a063238`:
