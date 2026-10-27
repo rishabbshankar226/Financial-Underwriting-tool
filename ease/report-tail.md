@@ -19,7 +19,7 @@ auto-loading the example, which the 2026-10-16 approval settled against.
 - The start screen, the Excel intake and review, every error and recovery state, the edit and save dialogs, the scenario
   composer and the Consumer and SBA screens now have exactly one enabled primary action.
 - Accepted exceptions (N-13, owner): saved-case, legacy and waiting screens, where nothing is pending.
-- Still zero: a rejected JSON import (S70, row N-15, QUEUED because the fix adds a control).
+- A rejected JSON import (S70) had none at the after capture. N-15, taken afterwards at the owner's word, adds "Choose another file" as its primary action.
 - The Streamlit access page reads 0 to the `.primary` count because Streamlit styles its own primary button. The N-10 test
   checks Streamlit's primary kind directly.
 

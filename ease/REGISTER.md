@@ -75,7 +75,7 @@ N-4 is not a re-finding: it implements the settled "no rationale on draft edits"
 ## Refuted
 
 The refuter pass (one general-purpose agent) saw only this register and the cited screenshots. It asked §7.3's two questions of all 29 rows, then of the three rows a page-level Done 5 audit added (N-11, N-12, N-13), and kept all three.
-Totals at STOP A: 32 rows, 22 class A (N 6, L 10, D 4, E 2) and 10 class B (N 7, L 1, E 1, G 1). **Final: 44 rows. 31 FIXED, 12 QUEUED, 1 REFUTED.** Phase 2 and 3 added L-12 and N-14 after G-1, N-15 from the page-level audit, and E-4, E-5, N-16 to N-18 and L-13 to L-16 from the walkthrough.
+Totals at STOP A: 32 rows, 22 class A (N 6, L 10, D 4, E 2) and 10 class B (N 7, L 1, E 1, G 1). **Final: 44 rows. 35 FIXED, 8 QUEUED, 1 REFUTED** (31 fixed at STOP B, plus L-13, N-16, L-14 and N-15 after PR #25 was opened, at the owner's word). Phase 2 and 3 added L-12 and N-14 after G-1, N-15 from the page-level audit, and E-4, E-5, N-16 to N-18 and L-13 to L-16 from the walkthrough.
 
 - **Killed outright: 0.** No row hides a figure or threshold the decision uses.
 - **Rewritten to pass: 9.** L-2, L-7, D-3, L-10, N-3, D-4, L-9, N-9 and L-4 now carry the refuter's defensible versions, marked *Rewritten after refuter* in each row.

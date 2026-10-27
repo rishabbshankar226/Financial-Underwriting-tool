@@ -29,6 +29,8 @@ G-1, N-5, N-10, N-13, L-4). The record is in `ease/` (`REPORT.md`, `REGISTER.md`
 (`README.md`, `frontend/src/useAnalystWorkspace.ts`, `streamlit_app/app.py`, `frontend/src/excel/ExcelImport.tsx`), plus
 the generated bundle stamp in `streamlit_app/requirements.txt`.
 
+**Follow-ups after PR #25 (owner picks).** L-13 (FCCR everywhere), N-16 ("Undated decision"), L-14 (plain no-reasons wording) and N-15 ("Choose another file" after a rejected case file). A second full run, `bash ease/tools/steps.sh followup`, had every step exit 0: gate 55/4/19, backend 1501, host 40, standalone e2e 417 passed (9 gated skips), Streamlit e2e 13 passed (2 gated skips), audit clean, and the build dir byte-identical.
+
 Passing software tests does not establish credit-policy approval, model validation or regulatory compliance.
 
 ## Analyst usability PR 3: workspace layout and analysis (2026-10-16)

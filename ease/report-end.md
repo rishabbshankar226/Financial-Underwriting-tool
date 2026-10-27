@@ -30,11 +30,17 @@ queued. Full record: `ease/walkthrough/REPORT.md`.
   browser runs served the baseline bundle. Every Streamlit result in Phase 3 uses the current bundle (`rebuild.sh` and `steps.sh`
   reinstall it).
 - **Streamlit T5's wait** was not A/B-tested.
+- **The after metrics and screenshots predate the four follow-ups** (L-13, N-16, L-14, N-15). Those are wording changes plus one error-state button. Their tests and the follow-up full run cover them; the task metrics were not re-measured.
 - **Wait ceilings may flake in CI.** The task specs' wait ceilings are the after numbers plus 2.5 s, measured on this machine. T3's ceiling (under 3.1 s) guards the real regression, the five-second hold returning on an edit. The T1 and T4 ceilings (about 8 to 9 s) include the hold by design and could flake on slower CI runners; if they do, widen or drop those two wait ceilings.
 
 ## Queued for the owner
 
-Each row in the "Queued" table above carries its evidence and a recommendation. In short:
-- Take N-15 (a primary "Choose another file" after a rejected JSON import) and L-14 ("No reasons beyond the decision summary.").
-- Decide the FCCR name (L-13) and the "Commercial Assessment" / "Commercial Decision" naming (N-16).
-- Keep N-8 and E-3 left as you chose.
+After PR #25 was opened, the owner took the four rows that needed a call:
+- L-13: "FCCR" everywhere.
+- N-16: "Undated decision".
+- L-14 and N-15: as recommended.
+
+All four are fixed. The 8 rows still queued:
+- No change wanted: N-8, E-3 and N-13 (left or accepted at STOP A), N-6 (superseded by N-5), and N-18 (by design).
+- Off the primary path: L-15 and L-16.
+- Observation, not reproduced: N-17.

@@ -19,6 +19,11 @@ Spreadline now reads more simply to someone opening it cold.
 - **Labels and messages.** Wording that read like system internals ("Latest when fetched", "Check replay", "Invalid saved-case
   response or command", raw error codes and JSON pointers) now reads plainly, and every distinct saved, recovery and
   revision state keeps its own label.
+- **Follow-ups after the pull request (owner's picks).**
+  - One name for FCCR everywhere.
+  - "Commercial Decision" is renamed "Undated decision".
+  - A rejected case file now offers "Choose another file".
+  - The memo no longer says "no reasons" beside a clear reason.
 - **Server output unchanged.** No number changed: the 78 figures the task specs read are identical before and after.
 
 ## Before and after, T1 to T6
@@ -60,13 +65,13 @@ auto-loading the example, which the 2026-10-16 approval settled against.
 - The start screen, the Excel intake and review, every error and recovery state, the edit and save dialogs, the scenario
   composer and the Consumer and SBA screens now have exactly one enabled primary action.
 - Accepted exceptions (N-13, owner): saved-case, legacy and waiting screens, where nothing is pending.
-- Still zero: a rejected JSON import (S70, row N-15, QUEUED because the fix adds a control).
+- A rejected JSON import (S70) had none at the after capture. N-15, taken afterwards at the owner's word, adds "Choose another file" as its primary action.
 - The Streamlit access page reads 0 to the `.primary` count because Streamlit styles its own primary button. The N-10 test
   checks Streamlit's primary kind directly.
 
 ## Fixed, queued and refuted rows
 
-### Fixed (31)
+### Fixed (35)
 
 | ID | Screen | Outcome, commit and test |
 | --- | --- | --- |
@@ -92,8 +97,12 @@ auto-loading the example, which the 2026-10-16 approval settled against.
 | N-12 | Stress Tests composer (S42, S43) | FIXED `87d58ac`. Test N-12. Revert: Expected /\bprimary\b/, Received "" ("Preview scenarios"); restored: 1 passed |
 | L-12 | Excel intake (S67) | FIXED `fd875f7`. Wording row; "Use synthetic data only." unchanged; no spec asserted the old text |
 | N-14 | Excel intake (S67, S68) | FIXED `ce65a1c`, refined in `f0a49a6` (primary only until a workbook is loaded). Test N-14. Revert of the refinement: Expected not /\bprimary\b/, Received "primary"; restored: 1 passed |
+| N-15 | Rejected JSON import (S70) | FIXED `cbbfde1`. Test `ease-fixes.spec.ts` N-15. Revert: Expected 1, Received 0 "Choose another file"; restored: 1 passed |
 | E-4 | Overview during the hold | FIXED `836ccce`. Test `ease-fixes.spec.ts` E-4. Revert: Expected "The explanation appears here with the decision.", Received the old empty state then the revealed Overview; restored: 1 passed |
 | E-5 | Edit dialog | FIXED `589b8eb`. Test E-5. Revert: Expected 0, Received 1 alert on an untouched value; restored: 1 passed |
+| N-16 | Primary navigation | FIXED `721fe29` (owner pick after PR #25): the nav button "Commercial Decision" becomes "Undated decision"; decision-preparation.spec updated (expected text only) |
+| L-13 | Memo, coverage panel | FIXED `514d498` (owner pick after PR #25: "FCCR" everywhere). Wording row; analysis.spec and field-catalog.spec updated (expected text only); README methodology note unchanged |
+| L-14 | Memo, Review package | FIXED `df69752`. Wording row: memo "No reasons beyond the factors above."; review package "Recorded reasons: none beyond the factors." when there are none; no spec asserted the old text |
 | N-9 | Decision preparation | FIXED `31f3728`. Test `decision-preparation.spec.ts` "N-9: an unsaved edit shows its decline without the five-second sequence". Revert: Expected "DECLINE", Received "CALCULATING"; restored: 1 passed |
 | N-7 | View tabs | FIXED `fa29e07`, with follow-ups `5abcd64` (Streamlit specs select Spread) and `43e69f8` (a fresh legacy case leaves Overview for Spread). Tests `ease-fixes.spec.ts` "N-7: a fresh dated case opens on Overview" (revert: Expected aria-selected "true", Received "false") and "N-7: a fresh legacy case leaves Overview for Spread" (revert: Expected "true", Received "false"). The tab is chosen when the evaluation starts |
 | N-2 | Start screen | FIXED `9c504c2`. Test `ease-fixes.spec.ts` N-2. Revert: Expected "Try the example case", Received "Import Excel workbook"; restored: 1 passed |
@@ -102,15 +111,11 @@ auto-loading the example, which the 2026-10-16 approval settled against.
 | N-10 | Access page (S03) | FIXED `e807b35` (committed as WIP; verified after the pause). Test `streamlit-tests/ease-fixes.spec.ts` N-10. Revert (FIX=e807b35): Expected /stBaseButton-primaryFormSubmit/, Received "stBaseButton-secondaryFormSubmit"; restored: 1 passed. Host pytest 40 passed |
 | L-4 | Decision bar (S20) | FIXED `060bb45`. Test `ease-fixes.spec.ts` L-4. Revert: Expected /^The score is the weight share…/, Received ""; restored: 1 passed. Source `backend/app/analysis.py:133-136` (owner accepted) |
 
-### Queued (12)
+### Queued (8)
 
 | ID | Screen | Outcome, commit and test |
 | --- | --- | --- |
 | N-6 | Consumer / SBA (S71, S72) | QUEUED (superseded by N-5, which the owner took) |
-| N-15 | Rejected JSON import (S70) | QUEUED: the fix adds an element; recommend taking it, since a dead-end error is worse than one more button |
-| N-16 | Primary navigation | QUEUED: recommend a one-line description under each, or renaming "Commercial Decision" to "Undated decision" |
-| L-13 | Memo, coverage panel | QUEUED: owner decision on the name |
-| L-14 | Memo, Review package | QUEUED: recommend "No reasons beyond the decision summary." |
 | N-17 | Workspace tabs | QUEUED for observation |
 | L-15 | Consumer DTI review | QUEUED (off the primary path) |
 | L-16 | Brand bar | QUEUED (off the primary path) |
@@ -143,7 +148,7 @@ queued. Full record: `ease/walkthrough/REPORT.md`.
 - `streamlit_app/requirements.txt` changes only in its generated bundle-stamp line, which `build:streamlit` rewrites and the
   repo commits with every bundle.
 - No backend, gate, contract, transport or number-helper file changed.
-- Final full run (`bash ease/tools/steps.sh final`, raw logs in `ease/logs/final/`): every step exited 0: pip check, ruff, mypy --strict, gate selftest (55 fixture values, 4 flags, 19 mutations killed), precision probe, backend pytest 1501 passed, npm audit 0 vulnerabilities, decimal tests 11/11, build, standalone e2e 416 passed (9 skipped: the gated capture specs), host pytest 40 passed, build:streamlit, assets check, component reinstall, build directory byte-identical, Streamlit e2e 13 passed (2 skipped: gated capture). Baseline was 392 and 6 browser tests; the additions are the ease task, fix and capture specs.
+- Final full run (`bash ease/tools/steps.sh final`, raw logs in `ease/logs/final/`): every step exited 0 on the follow-up run (ease/logs/followup): pip check, ruff, mypy --strict, gate selftest (55 fixture values, 4 flags, 19 mutations killed), precision probe, backend pytest 1501 passed, npm audit 0 vulnerabilities, decimal tests 11/11, build, standalone e2e 417 passed (9 skipped: gated capture specs), host pytest 40 passed, build:streamlit, assets check, component reinstall, build directory byte-identical, Streamlit e2e 13 passed (2 skipped: gated capture). Baseline was 392 and 6 browser tests; the additions are the ease task, fix and capture specs.
 
 ## Not measured, and why
 
@@ -156,11 +161,17 @@ queued. Full record: `ease/walkthrough/REPORT.md`.
   browser runs served the baseline bundle. Every Streamlit result in Phase 3 uses the current bundle (`rebuild.sh` and `steps.sh`
   reinstall it).
 - **Streamlit T5's wait** was not A/B-tested.
+- **The after metrics and screenshots predate the four follow-ups** (L-13, N-16, L-14, N-15). Those are wording changes plus one error-state button. Their tests and the follow-up full run cover them; the task metrics were not re-measured.
 - **Wait ceilings may flake in CI.** The task specs' wait ceilings are the after numbers plus 2.5 s, measured on this machine. T3's ceiling (under 3.1 s) guards the real regression, the five-second hold returning on an edit. The T1 and T4 ceilings (about 8 to 9 s) include the hold by design and could flake on slower CI runners; if they do, widen or drop those two wait ceilings.
 
 ## Queued for the owner
 
-Each row in the "Queued" table above carries its evidence and a recommendation. In short:
-- Take N-15 (a primary "Choose another file" after a rejected JSON import) and L-14 ("No reasons beyond the decision summary.").
-- Decide the FCCR name (L-13) and the "Commercial Assessment" / "Commercial Decision" naming (N-16).
-- Keep N-8 and E-3 left as you chose.
+After PR #25 was opened, the owner took the four rows that needed a call:
+- L-13: "FCCR" everywhere.
+- N-16: "Undated decision".
+- L-14 and N-15: as recommended.
+
+All four are fixed. The 8 rows still queued:
+- No change wanted: N-8, E-3 and N-13 (left or accepted at STOP A), N-6 (superseded by N-5), and N-18 (by design).
+- Off the primary path: L-15 and L-16.
+- Observation, not reproduced: N-17.

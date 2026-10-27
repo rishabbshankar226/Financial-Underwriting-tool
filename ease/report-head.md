@@ -19,6 +19,11 @@ Spreadline now reads more simply to someone opening it cold.
 - **Labels and messages.** Wording that read like system internals ("Latest when fetched", "Check replay", "Invalid saved-case
   response or command", raw error codes and JSON pointers) now reads plainly, and every distinct saved, recovery and
   revision state keeps its own label.
+- **Follow-ups after the pull request (owner's picks).**
+  - One name for FCCR everywhere.
+  - "Commercial Decision" is renamed "Undated decision".
+  - A rejected case file now offers "Choose another file".
+  - The memo no longer says "no reasons" beside a clear reason.
 - **Server output unchanged.** No number changed: the 78 figures the task specs read are identical before and after.
 
 ## Before and after, T1 to T6
