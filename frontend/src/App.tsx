@@ -81,10 +81,13 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
     if (state.status === "evaluating") {
       edits.dismiss();
       setSaving(false);
-      // A fresh dated case opens on its explanation. The tab is chosen as the evaluation starts, so a view
-      // picked while it runs is kept. Legacy cases, edits, saved opens and saves keep the current tab.
-      if (state.action === "evaluate" && state.draft?.resetHistory && state.draft.mode === "dated")
-        setTab("overview");
+      // A fresh dated case opens on its explanation. A fresh legacy case has no Overview analysis, so it
+      // leaves Overview for Spread and otherwise keeps the chosen view. The tab is chosen as the evaluation
+      // starts, so a view picked while it runs is kept. Edits, saved opens and saves keep the current tab.
+      if (state.action === "evaluate" && state.draft?.resetHistory) {
+        if (state.draft.mode === "dated") setTab("overview");
+        else setTab((current) => (current === "overview" ? "spread" : current));
+      }
     }
     if (state.status === "ready" && state.resetPeriod && state.accepted)
       setSelectedPeriod(state.accepted.input.years.length - 1);

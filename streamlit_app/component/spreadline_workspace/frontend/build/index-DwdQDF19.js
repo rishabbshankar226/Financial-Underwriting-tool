@@ -15143,7 +15143,7 @@ function Xo({ onDisconnect: e }) {
 	]);
 	let T = (0, A.useRef)(null), ne = (0, A.useRef)(null), E = j(T, t.edit), D = se(r, !!t.operation), { ready: O, accepted: ie, input: k, assessment: ae, decision: oe } = D, ce = k ? Math.min(v, k.years.length - 1) : 0, le = r.status === "idle";
 	(0, A.useEffect)(() => {
-		r.status === "evaluating" && (E.dismiss(), x(!1), r.action === "evaluate" && r.draft?.resetHistory && r.draft.mode === "dated" && c("overview")), r.status === "ready" && r.resetPeriod && r.accepted && y(r.accepted.input.years.length - 1), r.status === "ready" && r.saved?.view.compatibility && c("audit");
+		r.status === "evaluating" && (E.dismiss(), x(!1), r.action === "evaluate" && r.draft?.resetHistory && (r.draft.mode === "dated" ? c("overview") : c((e) => e === "overview" ? "spread" : e))), r.status === "ready" && r.resetPeriod && r.accepted && y(r.accepted.input.years.length - 1), r.status === "ready" && r.saved?.view.compatibility && c("audit");
 	}, [
 		r.id,
 		r.status,

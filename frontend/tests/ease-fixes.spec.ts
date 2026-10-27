@@ -195,6 +195,19 @@ test("N-14: choosing the workbook is the Excel intake's primary action", async (
   await expect(intake.locator(".primary")).toHaveCount(1);
 });
 
+test("N-7: a fresh legacy case leaves Overview for Spread", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  await expect(page.getByRole("tab", { name: "Overview", exact: true })).toHaveAttribute("aria-selected", "true", {
+    timeout: 30_000,
+  });
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "More", exact: true }).click();
+  await page.getByRole("button", { name: "Load legacy example case", exact: true }).click();
+  await expect(page.getByText("Legacy · undated input", { exact: true })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("tab", { name: "Spread", exact: true })).toHaveAttribute("aria-selected", "true");
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });
