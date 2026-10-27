@@ -1,0 +1,106 @@
+{
+  "screens": {
+    "S19-preparation": {
+      "controls": 21,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S20-workspace-first-screen": {
+      "controls": 11,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S29-spread-full": {
+      "controls": 11,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S11-more-menu": {
+      "controls": 17,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S18-prototype-notice-open": {
+      "controls": 11,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S31-calculation-inspector": {
+      "controls": 18,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S32-overview": {
+      "controls": 9,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S34-policy-breakevens": {
+      "controls": 3,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S36-debt-loan": {
+      "controls": 14,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S37-loan-schedule": {
+      "controls": 11,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S38-global-cash-flow": {
+      "controls": 13,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S40-stress-no-baseline": {
+      "controls": 10,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S39-coverage-grid": {
+      "controls": 10,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S47-credit-memo": {
+      "controls": 9,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S48-history-unsaved": {
+      "controls": 9,
+      "primaryActions": 0,
+      "primaryLabels": []
+    }
+  },
+  "coveredBy": {
+    "S10": "S20-workspace-first-screen",
+    "S12": "S20-workspace-first-screen",
+    "S14": "S20-workspace-first-screen",
+    "S16": "S20-workspace-first-screen",
+    "S17": "S20-workspace-first-screen",
+    "S21": "S20-workspace-first-screen",
+    "S22": "S20-workspace-first-screen",
+    "S23": "S20-workspace-first-screen",
+    "S28": "S20-workspace-first-screen",
+    "S30": "S20-workspace-first-screen",
+    "S76": "S20-workspace-first-screen",
+    "S50": "S48-history-unsaved",
+    "S52": "S48-history-unsaved"
+  },
+  "probes": {},
+  "notCaptured": {}
+}

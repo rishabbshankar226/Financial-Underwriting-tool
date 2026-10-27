@@ -1,0 +1,70 @@
+{
+  "screens": {
+    "S55-save-dialog": {
+      "controls": 14,
+      "primaryActions": 2,
+      "primaryLabels": [
+        "Save case",
+        "Save accepted case"
+      ]
+    },
+    "S26-saved-context": {
+      "controls": 13,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S49-history-saved": {
+      "controls": 11,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S51-history-replay-review-package": {
+      "controls": 5,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S42-scenario-composer": {
+      "controls": 9,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S43-scenario-validation": {
+      "controls": 17,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S44-scenario-preview": {
+      "controls": 19,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save reviewed comparison"
+      ]
+    },
+    "S45-saved-comparison": {
+      "controls": 19,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save reviewed comparison"
+      ]
+    },
+    "S53-open-case-list": {
+      "controls": 18,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    }
+  },
+  "coveredBy": {
+    "S56": "S26-saved-context",
+    "S50": "S49-history-saved",
+    "S46": "S45-saved-comparison"
+  },
+  "probes": {
+    "save.blankRationale": "Invalid saved-case response or command: nonblank rationale, at most 2,000 characters.",
+    "scenario.validation": "Review scenario inputs /scenarios/0/name: Invalid saved-case response or command: nonblank scenario text, at most 120 characters. invalid_input /scenarios/0/rationale: Invalid saved-case response or command: nonblank scenario text, at most 2000 characters. invalid_input"
+  },
+  "notCaptured": {}
+}

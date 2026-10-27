@@ -1,0 +1,38 @@
+{
+  "screens": {
+    "S08-connect": {
+      "controls": 2,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Connect workspace"
+      ]
+    },
+    "S09-connect-error": {
+      "controls": 3,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Connect workspace"
+      ]
+    },
+    "S15-start": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S54-open-case-empty": {
+      "controls": 14,
+      "primaryActions": 0,
+      "primaryLabels": []
+    }
+  },
+  "coveredBy": {
+    "S10": "S15-start",
+    "S12": "S15-start",
+    "S14": "S15-start"
+  },
+  "probes": {
+    "connect.wrongToken": "Credential rejected. Check the API token and try again.",
+    "savedCases.empty": "Saved cases Newest creations first · local saved assessments Refresh saved cases Close saved cases Search saved cases Literal borrower-name search · ASCII case-insensitive Filter by outcome All outcomes Approve Review Decline Sort saved cases Newest creation Latest update No saved cases yet. Save an accepted dated assessment to begin."
+  },
+  "notCaptured": {}
+}

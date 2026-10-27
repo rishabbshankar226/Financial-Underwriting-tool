@@ -1,0 +1,51 @@
+{
+  "screens": {
+    "S71-consumer": {
+      "controls": 15,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S73-consumer-result": {
+      "controls": 12,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Evaluate consumer"
+      ]
+    },
+    "S74-sba": {
+      "controls": 10,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S75-sba-result": {
+      "controls": 3,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Evaluate SBA screen"
+      ]
+    }
+  },
+  "coveredBy": {},
+  "probes": {
+    "consumer.badIncome": "(none)",
+    "sba.incomplete": "Incomplete Eligibility — Manual Underwriter Review Required Server outcome: Review required · eligibility_status: incomplete Size screen: Pass · average receipts <= 24.5M Coverage screen: Pass · supplied DSCR 1.31 · configured floor 1.15 Unresolved eligibility requirements Lender credit elsewhere determination Industry selection and affiliation review Alternative size standards and program eligibility Approved lender credit policy Owner-resource arithmetic never establishes credit elsewhere. Limited supplied owner-resource arithmetic; applicant, family, conventional credit and lender evidence remain unresolved. Policy prototype-2026-10-03 Source workbook row 867 Source effective / verified through 2023-03-17 / 2026-10-15 Recorded workbook SHA-256 1e0777f83f6cc34767b97957a8e617b951d347f560538687e6bdfef32209bd74 Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice."
+  },
+  "notCaptured": {
+    "S01": "Streamlit host only",
+    "S02": "Streamlit host only",
+    "S03": "Streamlit host only",
+    "S04": "Streamlit host only",
+    "S05": "Streamlit host only",
+    "S06": "Streamlit host only",
+    "S07": "Streamlit host only",
+    "S72": "Streamlit host only",
+    "S13": "needs a server state the standalone test backend does not produce on demand",
+    "S27": "needs a server state the standalone test backend does not produce on demand",
+    "S41": "needs a server state the standalone test backend does not produce on demand",
+    "S60": "needs a server state the standalone test backend does not produce on demand",
+    "S61": "needs a server state the standalone test backend does not produce on demand",
+    "S62": "needs a server state the standalone test backend does not produce on demand",
+    "S63": "needs a server state the standalone test backend does not produce on demand",
+    "S64": "needs a server state the standalone test backend does not produce on demand"
+  }
+}

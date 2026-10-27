@@ -1,0 +1,57 @@
+{
+  "screens": {
+    "S67-excel-intake": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S68-excel-wrong-file": {
+      "controls": 13,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S69-excel-review": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S70-json-import-invalid": {
+      "controls": 22,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S33L-legacy-workspace": {
+      "controls": 23,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S33-overview-legacy": {
+      "controls": 20,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S66-commercial-composer": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S65-composer-validation": {
+      "controls": 10,
+      "primaryActions": 0,
+      "primaryLabels": []
+    }
+  },
+  "coveredBy": {},
+  "probes": {
+    "excel.wrongType": "Choose an .xlsx workbook. Save legacy .xls or macro-enabled files as a values-only .xlsx copy first.",
+    "json.invalid": "This file can't be imported: it is not valid JSON.",
+    "composer.emptySubmit": "Review 25 input issues Borrower name: Enter a value for this field. invalid_input Geography: Enter a value for this field. invalid_input Assessment as of: Enter a value for this field. invalid_input Period start · Period 1: Enter a value for this field. invalid_input Period end · Period 1: Enter a value for this field. invalid_input Gross receipts · Period 1: Enter a value for this field. invalid_input COGS · Period 1: Enter a value for this field. invalid_input Operating expenses · Period 1: Enter a value for this field. invalid_input Officer compensation · Period 1: Enter a value for this field. invalid_input Depreciation · Period 1: Enter a value for this field. invalid_input Amortization · Period 1: Enter a value for this field. invalid_input Interest expense · Period 1: Enter a value for this field. invalid_input Section 179 · Period 1: Enter a value for this field. invalid_input K-1 distributions · Period 1: Enter a value for this field. invalid_input Annual CPLTD: Enter a value for this field. invalid_input Annual operating lease: Enter a value for this field. invalid_input Requested principal: Enter a value for this field. invalid_input Annual nominal rate: Enter a value for this field. invalid_input Loan term: Enter a value for this field. invalid_input Working capital period start: Enter a value for this field. invalid_input Working capital period end: Enter a value for this field. invalid_input AR increase: Enter a value for this field. invalid_input Inventory increase: Enter a value for this field. invalid_input AP increase: Enter a value for this field. invalid_input Cash taxes paid: Enter a value for this field. invalid_input"
+  },
+  "notCaptured": {}
+}

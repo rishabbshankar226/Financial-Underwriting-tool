@@ -1,0 +1,21 @@
+{
+  "screens": {
+    "S57-edit-dialog-rationale": {
+      "controls": 19,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Evaluate edit"
+      ]
+    },
+    "S48b-history-session-edit": {
+      "controls": 9,
+      "primaryActions": 0,
+      "primaryLabels": []
+    }
+  },
+  "coveredBy": {},
+  "probes": {
+    "edit.draft.noRationale": "A nonblank rationale is required."
+  },
+  "notCaptured": {}
+}

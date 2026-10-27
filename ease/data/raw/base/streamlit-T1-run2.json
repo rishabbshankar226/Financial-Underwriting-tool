@@ -1,0 +1,26 @@
+{
+  "host": "streamlit",
+  "task": "T1",
+  "run": 2,
+  "steps": 2,
+  "inputs": 1,
+  "wait": 6665,
+  "segments": [
+    {
+      "name": "start screen",
+      "ms": 1311
+    },
+    {
+      "name": "decision and reason",
+      "ms": 5354,
+      "serverMs": 206
+    }
+  ],
+  "controls": 5,
+  "primaryActions": 0,
+  "figures": {
+    "T1.outcome": "APPROVE",
+    "T1.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+  },
+  "notes": {}
+}

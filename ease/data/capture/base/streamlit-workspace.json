@@ -1,0 +1,123 @@
+{
+  "screens": {
+    "S03-access": {
+      "controls": 5,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S03b-access-wrong-password": {
+      "controls": 6,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S15-start": {
+      "controls": 14,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S19-preparation": {
+      "controls": 14,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S20-workspace-first-screen": {
+      "controls": 13,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S29-spread-full": {
+      "controls": 13,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S11-more-menu": {
+      "controls": 18,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S32-overview": {
+      "controls": 11,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S36-debt-loan": {
+      "controls": 16,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S38-global-cash-flow": {
+      "controls": 15,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S40-stress-tests": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S47-credit-memo": {
+      "controls": 11,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S48-history-audit": {
+      "controls": 11,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S55-save-dialog": {
+      "controls": 16,
+      "primaryActions": 2,
+      "primaryLabels": [
+        "Save case",
+        "Save accepted case"
+      ]
+    },
+    "S26-saved-context": {
+      "controls": 15,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S49-history-saved": {
+      "controls": 13,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S57-edit-dialog-bad-amount": {
+      "controls": 23,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save revision"
+      ]
+    }
+  },
+  "coveredBy": {
+    "S05": "S15-start",
+    "S06": "S15-start",
+    "S10": "S15-start",
+    "S12": "S15-start",
+    "S14": "S15-start",
+    "S16": "S20-workspace-first-screen",
+    "S17": "S20-workspace-first-screen",
+    "S21": "S20-workspace-first-screen",
+    "S22": "S20-workspace-first-screen",
+    "S23": "S20-workspace-first-screen",
+    "S28": "S20-workspace-first-screen",
+    "S30": "S20-workspace-first-screen",
+    "S76": "S20-workspace-first-screen"
+  },
+  "probes": {
+    "access.wrongPassword": "The access password is not correct."
+  },
+  "notCaptured": {}
+}

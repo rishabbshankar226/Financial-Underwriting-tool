@@ -1,0 +1,45 @@
+{
+  "screens": {
+    "S67-excel-intake": {
+      "controls": 14,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S69-excel-review": {
+      "controls": 14,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S71-consumer-on-streamlit": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S72-consumer-boundary": {
+      "controls": 11,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Evaluate consumer"
+      ]
+    },
+    "S74-sba-on-streamlit": {
+      "controls": 9,
+      "primaryActions": 0,
+      "primaryLabels": []
+    }
+  },
+  "coveredBy": {},
+  "probes": {
+    "consumer.streamlitSubmit": "This testing host does not expose Consumer or SBA routes. Use the standalone workspace connected to the existing API."
+  },
+  "notCaptured": {
+    "S01": "needs a misconfigured or failed host; not produced by the test launcher",
+    "S02": "needs a misconfigured or failed host; not produced by the test launcher",
+    "S04": "needs a misconfigured or failed host; not produced by the test launcher",
+    "S07": "bridge rejection states need a failing bridge; not produced on demand",
+    "S08": "standalone host only (the Streamlit host has no token screen)",
+    "S09": "standalone host only (the Streamlit host has no token screen)",
+    "S73": "unreachable on the Streamlit host",
+    "S75": "unreachable on the Streamlit host"
+  }
+}

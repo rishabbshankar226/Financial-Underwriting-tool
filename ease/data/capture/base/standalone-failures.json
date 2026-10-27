@@ -1,0 +1,47 @@
+{
+  "screens": {
+    "S24-evaluation-failed": {
+      "controls": 23,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S35-analysis-failed": {
+      "controls": 11,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S33-overview-analysis-failed": {
+      "controls": 14,
+      "primaryActions": 0,
+      "primaryLabels": []
+    },
+    "S58-saved-write-recovery": {
+      "controls": 13,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    },
+    "S59-discard-tracking-dialog": {
+      "controls": 15,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ]
+    }
+  },
+  "coveredBy": {
+    "S25": "S24-evaluation-failed"
+  },
+  "probes": {
+    "evaluation.networkFailure": "The calculation service could not be reached. Nothing was recalculated; check the connection, then retry.",
+    "analysis.networkFailure.decisionBar": "Illustrative decision APPROVE The analysis service could not be reached. prototype-2026-10-03 · illustrative score 1",
+    "analysis.networkFailure.overview": "The analysis service could not be reached. Retry analysis | The analysis service could not be reached.",
+    "save.networkFailure": "Unconfirmed saved write Unresolved browser tracking · A timeout, network drop, or credential rejection does not prove the write rolled back. Proposed creation: Alpine Fabrication · as of 2026-10-06 Rationale: Capture failed save Inspect pending payload Tracking is held only in page memory. Reloading or closing this page loses the exact retry key; inspect saved records before making another write. The response was lost or unavailable. Retry the exact saved write if one is pending. Retry exact write Review discarding tracking"
+  },
+  "notCaptured": {}
+}
