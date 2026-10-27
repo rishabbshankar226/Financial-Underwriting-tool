@@ -53,6 +53,22 @@ test("D-4: a first evaluation shows one pending panel and a plain note", async (
   );
 });
 
+test("L-2: each KPI tile label carries its server definition", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  const tiles = page.getByRole("region", { name: "Assessment overview", exact: true });
+  await expect(tiles).toBeVisible({ timeout: 30_000 });
+  for (const [label, starts] of [
+    ["Business DSCR", "EBITDA divided by annual debt service"],
+    ["Global DSCR", "Owner-weighted business EBITDA"],
+    ["FCCR", "EBITDA divided by annual debt service plus annual operating leases"],
+    ["UCA cash flow", "EBITDA minus cash taxes paid"],
+    ["EBITDA", "Ordinary business income"],
+    ["Annual debt service", "Existing interest plus annual CPLTD"],
+  ])
+    await expect(tiles.getByText(label, { exact: true })).toHaveAccessibleDescription(new RegExp(`^${starts}`));
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });
