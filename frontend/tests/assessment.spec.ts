@@ -184,11 +184,12 @@ test("dialog validation, keyboard focus and cancellation preserve the accepted r
   });
   await edit.click();
   await expect(page.getByLabel("New value")).toBeFocused();
-  await page.getByLabel("New value").fill("1");
+  // A draft edit needs no rationale (ease N-4), so validation is exercised with an invalid amount.
+  await page.getByLabel("New value").fill("12abc");
   await page
     .getByRole("button", { name: "Evaluate edit", exact: true })
     .click();
-  await expect(page.getByRole("alert")).toContainText("rationale");
+  await expect(page.getByRole("alert")).toContainText("Enter a finite number");
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page
     .getByRole("button", { name: "Evaluate edit", exact: true })
