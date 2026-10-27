@@ -50,7 +50,7 @@ test("the installed Streamlit bundle downloads, imports, evaluates and saves the
     .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   const caseId = await page.locator(".savedContext code").first().innerText();
   await page.reload();

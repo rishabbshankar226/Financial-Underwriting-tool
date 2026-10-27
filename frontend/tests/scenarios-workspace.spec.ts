@@ -31,7 +31,7 @@ async function baseline(page: Page) {
     await page.getByRole("button", { name: "Save", exact: true }).click();
     const response = await saved;
     const original = guardSavedCase(await response.json(), response.headers().etag).snapshot;
-    await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
+    await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
     await openView(page, "scenarios");
     return original;
 }

@@ -78,7 +78,7 @@ export function Review({
                 <dt>Selection</dt>
                 <dd>
                   {selection === "latest"
-                    ? "Latest when fetched"
+                    ? "Latest when last refreshed"
                     : "Original selected revision"}
                   {headRevision !== null
                     ? ` · known head ${headRevision}`

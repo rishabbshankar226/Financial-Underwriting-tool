@@ -119,7 +119,7 @@ test("shock chips only fill inputs and the explicit preview preserves exact shoc
     .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   await openView(page, "stress");
   let previews = 0,
@@ -272,7 +272,7 @@ test("a field-mapped saved rejection keeps its proposal and requires fresh revie
     .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   let writes = 0;
   await page.route("**/cases/*/revisions", (route) => {

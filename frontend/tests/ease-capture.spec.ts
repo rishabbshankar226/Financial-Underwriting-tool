@@ -273,7 +273,7 @@ test("saving: dialog, saved context, saved history, stress tests and the review 
   await capture.attempt("S49", async () => {
     await tab(page, "History & Audit");
     await capture.shot("S49", "history-saved", { fullPage: true });
-    await page.getByRole("button", { name: "Check replay", exact: true }).click();
+    await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
     await expect(page.getByRole("status").filter({ hasText: /Matched|Mismatch|Replay unavailable/ })).toBeVisible();
     await capture.shot("S51", "history-replay-review-package", { fullPage: true });
     capture.cover(["S50"], "S49-history-saved");

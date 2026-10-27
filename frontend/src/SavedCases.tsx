@@ -262,7 +262,7 @@ export function SavedContext({
   const label = !active
     ? `Previous saved revision ${s.revision} (inactive)`
     : saved.selection === "latest"
-      ? `Revision ${s.revision} · Latest when fetched`
+      ? `Revision ${s.revision} · Latest when last refreshed`
       : saved.selection === "revision"
         ? `Historical revision ${s.revision}`
         : `Acknowledged revision ${s.revision} · Latest unconfirmed`;
@@ -443,7 +443,7 @@ export function SavedHistory({
       </article>
       <div className="actions">
         <button disabled={replay.loading} onClick={() => void checkReplay()}>
-          Check replay
+          Replay this revision (read-only)
         </button>
       </div>
       {replay.key === s.run_id && (

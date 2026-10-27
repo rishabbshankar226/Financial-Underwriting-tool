@@ -29,7 +29,7 @@ async function save(page: Page, rationale = "Synthetic creation") {
     .click();
   const snapshot = await (await response).json();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   await expect(page.locator(".caseSource")).toContainText(
     `Saved case ${snapshot.case_id}`,
@@ -233,7 +233,7 @@ test("saved controls retain keyboard focus, fit mobile and replay without changi
   });
   const snapshot = await save(page);
   await openView(page, "history");
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText("Matched");
   await expect(page.locator(".savedContext")).toContainText(snapshot.run_id);
   for (const width of [1440, 390]) {
@@ -475,7 +475,7 @@ test("accepted receipt remains readable and read-only when latest refresh fails"
   await page.unroute("**/cases/*");
   await page.getByRole("button", { name: "Open latest", exact: true }).click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   expect(writes).toBe(1);
 });
@@ -555,7 +555,7 @@ test("unsupported stored definition stays original JSON and replay cannot replac
     "retained-unknown",
   );
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText(
     "Replay unavailable",
   );
@@ -1047,7 +1047,7 @@ test("mismatch replay stays separate and a delayed old replay cannot cross revis
     },
   );
   await openView(page, "history");
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText("Mismatch");
   await expect(page.locator(".replayResult")).toContainText(
     "/decision/outcome",
@@ -1084,7 +1084,7 @@ test("mismatch replay stays separate and a delayed old replay cannot cross revis
     .getByRole("button", { name: "Open revision 1", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(initial.run_id);
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await started;
   await page
     .getByRole("button", { name: "Open revision 2", exact: true })

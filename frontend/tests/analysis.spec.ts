@@ -213,7 +213,7 @@ test("a case save cancels the background analysis before the write and analyzes 
     (request) => isAnalysis(request) && /^\/cases\/[^/]+\/revisions\/1\/analysis$/.test(new URL(request.url()).pathname),
   );
   releaseWrite();
-  await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
+  await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
   expect((await savedAnalysis).postData()).toBe("{}");
   current = await stats();
   expect(current.max).toBe(1);

@@ -8315,7 +8315,7 @@ function _r({ onOpen: e, onClose: t }) {
 	});
 }
 function vr({ saved: e, active: t, onOpen: n }) {
-	let r = e.view.snapshot, i = t ? e.selection === "latest" ? `Revision ${r.revision} · Latest when fetched` : e.selection === "revision" ? `Historical revision ${r.revision}` : `Acknowledged revision ${r.revision} · Latest unconfirmed` : `Previous saved revision ${r.revision} (inactive)`;
+	let r = e.view.snapshot, i = t ? e.selection === "latest" ? `Revision ${r.revision} · Latest when last refreshed` : e.selection === "revision" ? `Historical revision ${r.revision}` : `Acknowledged revision ${r.revision} · Latest unconfirmed` : `Previous saved revision ${r.revision} (inactive)`;
 	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "savedContext",
 		"aria-label": "Saved revision context",
@@ -8501,7 +8501,7 @@ function br({ saved: e, active: t, onOpen: n }) {
 				children: /* @__PURE__ */ (0, U.jsx)("button", {
 					disabled: s.loading,
 					onClick: () => void f(),
-					children: "Check replay"
+					children: "Replay this revision (read-only)"
 				})
 			}),
 			s.key === i.run_id && /* @__PURE__ */ (0, U.jsx)("div", {
@@ -10404,7 +10404,7 @@ function _i({ view: e, selection: t, headRevision: n, sourceScope: r, original: 
 									g.run_id
 								] })] }),
 								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Recorded at" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: g.recorded_at })] }),
-								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Selection" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [t === "latest" ? "Latest when fetched" : "Original selected revision", n === null ? " · current head not confirmed" : ` · known head ${n}`] })] }),
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Selection" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [t === "latest" ? "Latest when last refreshed" : "Original selected revision", n === null ? " · current head not confirmed" : ` · known head ${n}`] })] }),
 								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Financial definitions" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [
 									gi(g.assessment.schema_version),
 									" /",

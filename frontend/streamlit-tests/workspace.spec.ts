@@ -51,7 +51,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
     .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   const savedCaseId = await page.locator(".savedContext code").first().innerText();
   await page.reload();
@@ -61,7 +61,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await openCaseBrowser(page);
   await page.locator(".caseRow").filter({ hasText: savedCaseId }).getByRole("button", { name: /^Open / }).click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
     { timeout: 30_000 },
   );
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
@@ -108,7 +108,7 @@ test("embedded saves work with browser storage denied and reload requires an exp
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic memory-only embedded save");
   await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
+  await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
   const caseId = await page.locator(".savedContext code").first().innerText();
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
   await page.reload();
@@ -161,7 +161,7 @@ test("an embedded acknowledged write with uncleared memory retries the same oper
     await page.getByRole("button", { name: "Save case", exact: true }).click();
     await page.getByLabel("Save rationale").fill("Synthetic acknowledged memory tracking recovery");
     await page.getByRole("button", { name: "Save", exact: true }).click();
-    await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
+    await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
     await expect(page.locator(".savedContext")).toContainText("Revision 1");
     const caseId = await page.locator(".savedContext code").first().innerText();
     const recovery = page.getByRole("region", { name: "Saved write recovery", exact: true });

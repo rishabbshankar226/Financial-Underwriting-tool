@@ -87,7 +87,7 @@ Unsaved history is local React state and reload clears it. Saved history belongs
 
 **Open case** (or **Open saved case** on the start screen) lists 25 creation-ordered metadata rows per page, with explicit loading, empty, unavailable, refresh and load-more states. Opening a row reads the latest stored snapshot. A small tab-local locator can reopen the selected case after reload; it contains only the backend identity, case ID and requested revision. The browser never restores a result or ETag from this hint.
 
-The selected view labels its case, revision, run, recording time and assessment as-of date. **Latest when fetched** means the latest accepted head at that read; another writer may advance it afterward. Only a supported latest selection is editable. Each numeric edit uses the selected strong ETag, a fresh UUID operation key and the server's command allowlist. Rate/ownership display percentages are converted once to decimal API units. The server derives the event and evaluates the accepted revision; the browser performs no financial arithmetic.
+The selected view labels its case, revision, run, recording time and assessment as-of date. **Latest when last refreshed** means the latest accepted head at that read; another writer may advance it afterward. Only a supported latest selection is editable. Each numeric edit uses the selected strong ETag, a fresh UUID operation key and the server's command allowlist. Rate/ownership display percentages are converted once to decimal API units. The server derives the event and evaluates the accepted revision; the browser performs no financial arithmetic.
 
 Historical revisions and acknowledged receipts whose latest status cannot be confirmed remain read-only. **Open latest** is explicit. A recovered original receipt can be older than today's head; its result is preserved and labeled historical rather than replaced with the newer run. Opening a revision, reloading it, and checking replay do not recalculate or migrate it. Unsupported retained assessment definitions show read-only original JSON and recording metadata instead of a typed decision.
 
@@ -157,7 +157,7 @@ a database.
 
 ## Read-only replay and metadata
 
-**Check replay** compares the selected stored run using its retained calculation definition and policy. Matched, mismatch and unavailable results display separately and cannot overwrite the original assessment, event, run or policy. Replay responses and paginated reads are scoped to the selected resource, so delayed completion cannot cross into a newer selection. Metadata exposes original hash identifiers, storage version, actual runtime packages, and the recorded source status. Local hashes detect consistency problems; they do not authenticate documents, people or offline database edits.
+**Replay this revision (read-only)** compares the selected stored run using its retained calculation definition and policy. Matched, mismatch and unavailable results display separately and cannot overwrite the original assessment, event, run or policy. Replay responses and paginated reads are scoped to the selected resource, so delayed completion cannot cross into a newer selection. Metadata exposes original hash identifiers, storage version, actual runtime packages, and the recorded source status. Local hashes detect consistency problems; they do not authenticate documents, people or offline database edits.
 
 ## Verification
 
