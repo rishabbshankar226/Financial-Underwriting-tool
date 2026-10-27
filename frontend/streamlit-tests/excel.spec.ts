@@ -52,7 +52,7 @@ test("the installed Streamlit bundle downloads, imports, evaluates and saves the
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when last refreshed",
   );
-  const caseId = await page.locator(".savedContext code").first().innerText();
+  const caseId = await (await page.locator(".savedContext code").first().textContent()) ?? "";
   await page.reload();
   await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });

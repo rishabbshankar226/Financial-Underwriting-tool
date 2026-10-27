@@ -53,7 +53,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await expect(page.locator(".savedContext")).toContainText(
     "Latest when last refreshed",
   );
-  const savedCaseId = await page.locator(".savedContext code").first().innerText();
+  const savedCaseId = await (await page.locator(".savedContext code").first().textContent()) ?? "";
   await page.reload();
   await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
@@ -109,7 +109,7 @@ test("embedded saves work with browser storage denied and reload requires an exp
   await page.getByLabel("Save rationale").fill("Synthetic memory-only embedded save");
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
-  const caseId = await page.locator(".savedContext code").first().innerText();
+  const caseId = await (await page.locator(".savedContext code").first().textContent()) ?? "";
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
   await page.reload();
   await unlockStreamlitHost(page);
@@ -163,7 +163,7 @@ test("an embedded acknowledged write with uncleared memory retries the same oper
     await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
     await expect(page.locator(".savedContext")).toContainText("Revision 1");
-    const caseId = await page.locator(".savedContext code").first().innerText();
+    const caseId = await (await page.locator(".savedContext code").first().textContent()) ?? "";
     const recovery = page.getByRole("region", { name: "Saved write recovery", exact: true });
     await expect(recovery.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
     await expect(recovery).toContainText("could not clear");

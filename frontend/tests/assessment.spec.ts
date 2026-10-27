@@ -21,11 +21,14 @@ test("dated workspace shows all periods, server facts and policy trace", async (
     page.getByText("Coverage period: 2025-01-01 – 2025-12-31", { exact: true }),
   ).toBeVisible();
   await openView(page, "details");
+  await page
+    .getByRole("region", { name: "Calculation details", exact: true })
+    .getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true })
+    .click();
   await expect(
     page.getByText("prototype-2026-10-03", { exact: true }),
   ).toBeVisible();
   const calculations = page.getByRole("region", { name: "Calculation details", exact: true });
-  await calculations.getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true }).click();
   await calculations
     .locator("details")
     .filter({ hasText: "dscr" })
