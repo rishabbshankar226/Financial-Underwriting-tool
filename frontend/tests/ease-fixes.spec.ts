@@ -1,6 +1,7 @@
 import { test, expect } from "./authenticatedTest";
 import { TEST_API_TOKEN, startActions, startScreenTitle } from "./testCredentials";
 import type { Page } from "@playwright/test";
+import { ALPINE_EXCEL } from "./easeHarness";
 
 // Regression tests for the ease-of-use register rows (ease/REGISTER.md). Each test names its row.
 
@@ -193,6 +194,10 @@ test("N-14: choosing the workbook is the Excel intake's primary action", async (
   const intake = page.getByRole("region", { name: "Excel intake", exact: true });
   await expect(intake.getByLabel("Excel workbook", { exact: true })).toHaveClass(/\bprimary\b/);
   await expect(intake.locator(".primary")).toHaveCount(1);
+  // Once a workbook is loaded, evaluating it is the one primary action.
+  await intake.getByLabel("Excel workbook", { exact: true }).setInputFiles(ALPINE_EXCEL);
+  await expect(page.getByRole("heading", { name: "Review Excel inputs", exact: true })).toBeVisible();
+  await expect(intake.getByLabel("Excel workbook", { exact: true })).not.toHaveClass(/\bprimary\b/);
 });
 
 test("N-7: a fresh legacy case leaves Overview for Spread", async ({ page }) => {

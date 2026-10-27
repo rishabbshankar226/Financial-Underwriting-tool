@@ -14965,7 +14965,7 @@ function Jo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 					}),
 					/* @__PURE__ */ (0, U.jsx)("input", {
 						id: `${o}-file`,
-						className: "primary",
+						className: f ? void 0 : "primary",
 						type: "file",
 						accept: ".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 						disabled: e,

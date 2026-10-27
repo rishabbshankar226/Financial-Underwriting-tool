@@ -225,7 +225,8 @@ export function ExcelImport({
         <label htmlFor={`${id}-file`}>Excel workbook</label>
         <input
           id={`${id}-file`}
-          className="primary"
+          // Choosing the workbook is primary until one is loaded; then evaluating it is.
+          className={review ? undefined : "primary"}
           type="file"
           accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           disabled={busy}
