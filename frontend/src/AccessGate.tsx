@@ -41,14 +41,13 @@ export default function AccessGate() {
         <div className="eyebrow">SPREADLINE / API ACCESS</div>
         <h1 id="access-title">Connect the workspace</h1>
         <p>
-          The server verifies your operator token before mounting the workspace.
-          It stays only in this page's memory and is cleared on reload,
-          disconnect, or a 401 response.
+          Enter this workspace's access token. It stays only in this page and
+          is cleared when you reload, disconnect, or the server rejects it.
         </p>
         <p className="fine">
-          Pending write tracking remains in memory for explicit review after
-          reconnecting. Reloading clears drafts and exact retry tracking.
-          Connecting never resubmits a write.
+          Connecting never resends a save. A save still waiting for
+          confirmation stays here for you to review after you reconnect.
+          Reloading clears drafts and that tracking.
         </p>
         <form
           onSubmit={(event) => {
@@ -91,7 +90,7 @@ export default function AccessGate() {
             minLength={32}
             maxLength={4096}
             value={token}
-            placeholder="32–4,096 ASCII bearer characters"
+            placeholder="Paste the access token"
             aria-describedby="token-help"
             onChange={(event) => {
               setToken(event.target.value);
@@ -105,8 +104,8 @@ export default function AccessGate() {
             disabled={loading}
           />
           <small id="token-help">
-            32–4,096 ASCII bearer characters · sent only to the configured API
-            origin · 30-second deadline
+            32 to 4,096 characters · sent only to this workspace's server ·
+            30-second time limit
           </small>
           {(error || access.message) && (
             <p role="alert">{error || access.message}</p>
