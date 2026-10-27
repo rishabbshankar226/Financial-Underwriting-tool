@@ -11791,19 +11791,19 @@ function Ta({ ready: e, canEdit: t, input: n, legacy: r, assessment: i, decision
 						children: [
 							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "raw",
-								children: "Accepted Raw Inputs"
+								children: "Accepted raw inputs"
 							}),
 							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "reported",
-								children: "ROUND_HALF_EVEN Reported Amounts"
+								children: "Reported amounts (rounded half to even)"
 							}),
 							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "common",
-								children: "Common-Size (%)"
+								children: "Common-size (%)"
 							}),
 							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "change",
-								children: "YoY Change"
+								children: "Year-over-year change"
 							})
 						]
 					})]

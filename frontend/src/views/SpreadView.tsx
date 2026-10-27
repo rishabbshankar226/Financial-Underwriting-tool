@@ -115,10 +115,10 @@ export function SpreadView({
             value={presentation}
             onChange={(event) => setPresentation(event.target.value)}
           >
-            <option value="raw">Accepted Raw Inputs</option>
-            <option value="reported">ROUND_HALF_EVEN Reported Amounts</option>
-            <option value="common">Common-Size (%)</option>
-            <option value="change">YoY Change</option>
+            <option value="raw">Accepted raw inputs</option>
+            <option value="reported">Reported amounts (rounded half to even)</option>
+            <option value="common">Common-size (%)</option>
+            <option value="change">Year-over-year change</option>
           </select>
         </label>
         {presentation === "raw" && (
