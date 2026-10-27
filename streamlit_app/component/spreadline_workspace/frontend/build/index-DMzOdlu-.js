@@ -7882,10 +7882,6 @@ function Qn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 				}
 			},
 			children: [
-				/* @__PURE__ */ (0, U.jsx)("div", {
-					className: "eyebrow",
-					children: "INPUT REVIEW"
-				}),
 				/* @__PURE__ */ (0, U.jsxs)("h2", {
 					id: "edit-title",
 					children: ["Edit ", e.label]
@@ -7916,7 +7912,7 @@ function Qn({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 				/* @__PURE__ */ (0, U.jsxs)("small", {
 					id: "edit-value-help",
 					children: [
-						e.unit === "%" ? "Percentage · converted once to a decimal fraction" : e.integer ? "Integer months" : "USD decimal · up to 34 significant digits",
+						e.unit === "%" ? "Percentage, such as 10.5" : e.integer ? "Whole months, such as 120" : "Dollar amount, such as 600,000",
 						e.min === void 0 ? "" : ` · minimum ${ve(e.min, e.unit)}`,
 						e.max === void 0 ? "" : ` · maximum ${ve(e.max, e.unit)}`
 					]

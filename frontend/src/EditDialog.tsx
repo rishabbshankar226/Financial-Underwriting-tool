@@ -92,7 +92,6 @@ export default function EditDialog({
           }
         }}
       >
-        <div className="eyebrow">INPUT REVIEW</div>
         <h2 id="edit-title">Edit {field.label}</h2>
         <p>
           {field.period} · {field.unit}
@@ -118,10 +117,10 @@ export default function EditDialog({
         </label>
         <small id="edit-value-help">
           {field.unit === "%"
-            ? "Percentage · converted once to a decimal fraction"
+            ? "Percentage, such as 10.5"
             : field.integer
-              ? "Integer months"
-              : "USD decimal · up to 34 significant digits"}
+              ? "Whole months, such as 120"
+              : "Dollar amount, such as 600,000"}
           {field.min !== undefined
             ? ` · minimum ${editorText(field.min, field.unit)}`
             : ""}
