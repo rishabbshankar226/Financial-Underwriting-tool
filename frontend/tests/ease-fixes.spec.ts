@@ -178,6 +178,15 @@ test("N-12: the scenario composer leads with Preview until a preview can be save
   await expect(authoring.getByRole("button", { name: "Save reviewed comparison", exact: true })).not.toHaveClass(/\bprimary\b/);
 });
 
+test("L-4: the illustrative score note carries the server's definition", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: startActions.example, exact: true }).click();
+  const bar = page.getByRole("region", { name: "Illustrative decision", exact: true });
+  const note = bar.getByText(/illustrative score/);
+  await expect(note).toBeVisible({ timeout: 30_000 });
+  await expect(note).toHaveAccessibleDescription(/^The score is the weight share of factors that meet policy\./);
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });

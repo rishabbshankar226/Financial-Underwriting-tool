@@ -18,6 +18,11 @@ function reason(view: WorkspaceView, analysis: AnalysisState): string {
   }
 }
 
+/** The server's own definition of the illustrative score (backend/app/analysis.py:133-136, SCORE_NOTE),
+ * shown on hover and read as the note's description. */
+const scoreDefinition =
+  "The score is the weight share of factors that meet policy. It is illustrative, never changes the outcome, and is not a probability of default.";
+
 /** `.decision strong` holds only the status word; specs and the Streamlit host read it. */
 export function DecisionBar({ view }: { view: WorkspaceView }) {
   const { state } = useAnalysis();
@@ -34,7 +39,7 @@ export function DecisionBar({ view }: { view: WorkspaceView }) {
       </div>
       <div className="decisionReason">
         <p>{reason(view, state)}</p>
-        <small>{view.decisionNote}</small>
+        <small title={view.decision ? scoreDefinition : undefined}>{view.decisionNote}</small>
         {view.previous && <small className="previousResult">Previous result: {view.previous.toUpperCase()} (inactive)</small>}
       </div>
     </section>
