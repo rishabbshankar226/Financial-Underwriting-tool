@@ -225,6 +225,7 @@ export function ExcelImport({
         <label htmlFor={`${id}-file`}>Excel workbook</label>
         <input
           id={`${id}-file`}
+          className="primary"
           type="file"
           accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           disabled={busy}

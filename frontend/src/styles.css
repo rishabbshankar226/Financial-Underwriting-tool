@@ -426,6 +426,24 @@ pre {
   line-height: 1.6;
   color: var(--muted);
 }
+/* The workbook chooser is the Excel intake's primary action; only its button is filled. */
+input[type="file"].primary,
+input[type="file"].primary:hover {
+  color: var(--text);
+  background: transparent;
+  border-color: transparent;
+  font-weight: 400;
+}
+input[type="file"].primary::file-selector-button {
+  margin-right: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+  cursor: pointer;
+}
 /* The example case is the start screen's one primary action. */
 .startOption.primary .startOptionTitle,
 .startOption.primary .startOptionDetail {

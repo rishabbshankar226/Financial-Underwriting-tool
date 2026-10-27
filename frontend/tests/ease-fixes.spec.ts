@@ -187,6 +187,14 @@ test("L-4: the illustrative score note carries the server's definition", async (
   await expect(note).toHaveAccessibleDescription(/^The score is the weight share of factors that meet policy\./);
 });
 
+test("N-14: choosing the workbook is the Excel intake's primary action", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: "Import Excel workbook", exact: true }).click();
+  const intake = page.getByRole("region", { name: "Excel intake", exact: true });
+  await expect(intake.getByLabel("Excel workbook", { exact: true })).toHaveClass(/\bprimary\b/);
+  await expect(intake.locator(".primary")).toHaveCount(1);
+});
+
 test("N-2: the example case is the first start option", async ({ page }) => {
   await connect(page);
   const start = page.getByRole("region", { name: startScreenTitle, exact: true });
