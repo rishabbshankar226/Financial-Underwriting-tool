@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { test, expect } from "@playwright/test";
-import { openCaseBrowser } from "../tests/testCredentials";
+import { openCaseBrowser, unlockStreamlitHost } from "../tests/testCredentials";
 
 test("the installed Streamlit bundle downloads, imports, evaluates and saves the Excel example", async ({
   page,
@@ -12,6 +12,7 @@ test("the installed Streamlit bundle downloads, imports, evaluates and saves the
       problems.push(message.text());
   });
   await page.goto("/");
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await page
     .getByRole("button", { name: "Import Excel workbook", exact: true })
@@ -53,6 +54,7 @@ test("the installed Streamlit bundle downloads, imports, evaluates and saves the
   );
   const caseId = await page.locator(".savedContext code").first().innerText();
   await page.reload();
+  await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
   await openCaseBrowser(page);
   await page

@@ -18,6 +18,7 @@ def main():
                 "SPREADLINE_CASE_DB": str(Path(directory) / "cases.sqlite3"),
                 "SPREADLINE_API_TOKEN": "synthetic-streamlit-browser-" + "x" * 48,
                 "SPREADLINE_OPERATOR_ID": "streamlit-browser-regression",
+                "SPREADLINE_ACCESS_PASSWORD": "synthetic-streamlit-viewer-password",
             }
         )
         process = subprocess.Popen(

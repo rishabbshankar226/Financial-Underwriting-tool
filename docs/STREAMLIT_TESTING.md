@@ -1,6 +1,7 @@
 # Streamlit testing host
 
-Spreadline can run as one Streamlit Community Cloud app. Its React workspace is
+Spreadline can run as one Streamlit app, hosted on Render (previously Streamlit
+Community Cloud). Its React workspace is
 packaged as a v2 custom component; a bounded Python bridge invokes the existing
 FastAPI ASGI application inside the same deployment. Financial formulas, intake
 validation, authentication middleware, policies and saved-write receipts remain
@@ -29,21 +30,80 @@ python -m pip install -r streamlit_app/requirements.txt
 Copy `.streamlit/secrets.example.toml` to the ignored `.streamlit/secrets.toml`.
 Use a cryptographically random operator token from your credential manager
 meeting the existing 32–4,096 ASCII Bearer-character contract. Use a separate
-testing credential; never place it in frontend variables or a commit. For local
-testing, enable the flag and run:
+testing credential; never place it in frontend variables or a commit. Set
+`SPREADLINE_ACCESS_PASSWORD` to a viewer password of at least 16 characters that
+differs from the token. For local testing, enable the flag and run:
 
 ```bash
 streamlit run streamlit_app/app.py --server.address=127.0.0.1
 ```
 
-Open `http://127.0.0.1:8501`. The component uses the host credential on the Python
-side; it does not ask the browser for that credential or start a second API
-server. For iterative development, install the component in editable mode with
+Open `http://127.0.0.1:8501` and enter the access password. The component uses the
+host credential on the Python side; it does not ask the browser for that credential
+or start a second API server. For iterative development, install the component in editable mode with
 `python -m pip install -e streamlit_app/component --no-deps`, then rebuild after
 frontend changes. A normal installation includes the built assets in its wheel;
 reinstall that package after rebuilding if it is not editable.
 
-## Community Cloud deployment
+## Access password
+
+Render has no viewer sign-in, so the app has its own gate. When the workspace is
+enabled, `streamlit_app/app.py` requires `SPREADLINE_ACCESS_PASSWORD`: at least
+16 characters, different from `SPREADLINE_API_TOKEN`. A missing or invalid value
+fails closed with an error that names the variable without showing it. Until a
+viewer enters the password, the app opens no case store and the bridge
+dispatches nothing.
+
+The password is shared by trusted testers and compared in constant time. Access is
+held in server-side session state, so a reload or new tab asks again. The gate
+limits who can use the operator credential; it does not identify individual
+viewers. Rotate the password by changing the variable, which restarts the service
+and ends every session.
+
+## Render deployment
+
+`render.yaml` is a Render Blueprint for one free Python web service named
+`spreadline-testing`, built from `main`:
+- `autoDeployTrigger: checksPass` deploys a `main` commit only after its GitHub
+  Actions checks pass.
+- `.python-version` pins Python 3.12. Render otherwise defaults to a newer
+  version that these pins were not resolved for.
+- The build runs from repository root:
+  `pip install -r streamlit_app/requirements.txt`, then a forced reinstall of
+  `./streamlit_app/component`, so each build serves the committed bundle.
+- The start command binds Streamlit to `0.0.0.0:$PORT` and runs headless. Render
+  health-checks `/_stcore/health`.
+
+Environment variables:
+- `SPREADLINE_TESTING_ENABLED` is prompted at creation (`sync: false`), and later
+  syncs leave it unchanged.
+- `SPREADLINE_OPERATOR_ID` is `render-testing`.
+- Render generates `SPREADLINE_API_TOKEN` and `SPREADLINE_ACCESS_PASSWORD` (random
+  256-bit base64 values). The token is used only on the server; nobody needs to
+  read it. Testers get the access password from the service's **Environment** tab.
+
+Rollout:
+1. In the Render dashboard, choose **New → Blueprint**, connect this repository
+   and select `main`. Enter `false` for `SPREADLINE_TESTING_ENABLED` and apply.
+2. Confirm the build used Python 3.12, `/_stcore/health` returns 200, and the URL
+   shows only the disabled setup screen.
+3. Set `SPREADLINE_TESTING_ENABLED` to `true`. After the redeploy, confirm the
+   access screen appears and rejects a wrong password.
+4. Unlock with the generated password and run the hosted smoke test below. Record
+   the deployed commit and URL here.
+
+The free instance sleeps after 15 minutes without traffic and takes about a minute
+to wake. Its filesystem is temporary: a restart, sleep or redeploy deletes the case
+store. Persistent records would need a paid instance with a disk mounted at
+`SPREADLINE_CASE_DB`.
+
+## Previous host: Community Cloud (retiring)
+
+The Community Cloud app remains available until the Render deployment passes the
+hosted smoke test; it is then deleted from Community Cloud. Its deployment record
+is kept below.
+
+### Community Cloud deployment
 
 1. Use the tested repository branch. The entry point is `streamlit_app/app.py`.
 2. Select Python 3.12 in advanced deployment settings. Community Cloud discovers
@@ -73,7 +133,7 @@ No credential or case database belongs in the public component asset directory.
 Only generated JavaScript and a build manifest are packaged there. The root
 Streamlit configuration uses supported theme and viewer-toolbar settings.
 
-## Verified testing deployment
+### Verified testing deployment
 
 The app was deployed on October 16, 2026 at
 <https://spreadline-testing.streamlit.app/> from
@@ -96,7 +156,7 @@ On the initial build, Community Cloud replaced PyArrow 26.0.0 with 24.0.0. The
 runtime constraint now matches that working host version; the 23 Python host
 tests and three packaged browser workflows also passed with PyArrow 24.0.0.
 
-## Updating the hosted app
+### Updating the hosted app
 
 Deploy by fast-forwarding `codex/streamlit-testing-workspace` to a `main` commit
 whose CI passed; Community Cloud builds that branch. The workspace reaches the host
@@ -121,7 +181,7 @@ deployed commit here.
 
 The default store is `.spreadline-data/streamlit/cases.sqlite3`, outside served
 assets and ignored by git. `SPREADLINE_CASE_DB` can select another operator-owned
-path. Community Cloud does **not** guarantee local-file persistence. Case saves
+path. Neither Render's free instance nor Community Cloud keeps local files. Case saves
 and comparisons therefore last only as long as this testing store; a host reset
 can delete them. Do not rely on this host for real records.
 
@@ -215,7 +275,8 @@ are local verification output, not published customer data.
 
 ## Hosted smoke test and rollback
 
-- Confirm uninvited access is blocked before using configured operations.
+- Confirm uninvited access is blocked before using configured operations: on
+  Render, the access screen appears first and rejects a wrong password.
 - A fresh session opens on the start screen with nothing evaluated. Choose
   **Try the example case**; inspect the decision bar, KPI tiles and Overview,
   then select an earlier spread column. The current coverage period must remain
@@ -230,7 +291,8 @@ are local verification output, not published customer data.
   errors. Measure cold startup separately from warm requests.
 
 Rollback selects the prior tested source and matching generated assets, then
-rebuilds the deployment. It does not recover a deleted temporary database. If
+rebuilds the deployment. On Render, roll back to an earlier deploy from the
+service's **Events** page, or revert the commit on `main`. It does not recover a deleted temporary database. If
 records must survive resets, host the existing API and SQLite database on
 persistent storage before depending on them; that is a separate deployment
 change rather than an implicit database migration.
