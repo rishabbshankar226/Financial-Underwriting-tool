@@ -102,7 +102,7 @@ auto-loading the example, which the 2026-10-16 approval settled against.
 | N-10 | Access page (S03) | FIXED `e807b35` (committed as WIP; verified after the pause). Test `streamlit-tests/ease-fixes.spec.ts` N-10. Revert (FIX=e807b35): Expected /stBaseButton-primaryFormSubmit/, Received "stBaseButton-secondaryFormSubmit"; restored: 1 passed. Host pytest 40 passed |
 | L-4 | Decision bar (S20) | FIXED `060bb45`. Test `ease-fixes.spec.ts` L-4. Revert: Expected /^The score is the weight share…/, Received ""; restored: 1 passed. Source `backend/app/analysis.py:133-136` (owner accepted) |
 
-### Queued (11)
+### Queued (12)
 
 | ID | Screen | Outcome, commit and test |
 | --- | --- | --- |
@@ -116,6 +116,7 @@ auto-loading the example, which the 2026-10-16 approval settled against.
 | L-16 | Brand bar | QUEUED (off the primary path) |
 | N-18 | Saved history | QUEUED: recommend keeping; the dialog already warns |
 | N-8 | Primary navigation | QUEUED (owner left it at STOP A) |
+| N-13 | Saved case, legacy case, waiting (S26, S49, S51, S45, S53, S33L, S19) | QUEUED: the owner accepted these screens as Done 5 exceptions at STOP A (no code change) |
 | E-3 | Edit dialog | QUEUED (owner left it at STOP A) |
 
 ### Refuted (1)
@@ -123,12 +124,6 @@ auto-loading the example, which the 2026-10-16 approval settled against.
 | ID | Screen | Outcome, commit and test |
 | --- | --- | --- |
 | E-2 | Edit dialog | REFUTED (Phase 2 check): the edit dialog already validates the value on blur (`EditDialog.tsx:110`, `onBlur={() => setError(validateValue(value))}`). The baseline probe filled the field and read alerts without ever leaving it, so its "live: (none)" evidence was wrong. No change made. |
-
-### Accepted (1)
-
-| ID | Screen | Outcome, commit and test |
-| --- | --- | --- |
-| N-13 | Saved case, legacy case, waiting (S26, S49, S51, S45, S53, S33L, S19) | ACCEPTED by the owner at STOP A: saved-case, legacy and waiting screens are exceptions to Done 5 (no code) |
 
 Refuter pass (§7.3) on the 32 STOP A rows: **0 refuted outright, 9 rewritten to pass**. The most common reason was a fix
 that risked blurring a distinct state, or moving a disclosure behind a click. E-2 was refuted later, in Phase 2, on
@@ -161,6 +156,7 @@ queued. Full record: `ease/walkthrough/REPORT.md`.
   browser runs served the baseline bundle. Every Streamlit result in Phase 3 uses the current bundle (`rebuild.sh` and `steps.sh`
   reinstall it).
 - **Streamlit T5's wait** was not A/B-tested.
+- **Wait ceilings may flake in CI.** The task specs' wait ceilings are the after numbers plus 2.5 s, measured on this machine. T3's ceiling (under 3.1 s) guards the real regression, the five-second hold returning on an edit. The T1 and T4 ceilings (about 8 to 9 s) include the hold by design and could flake on slower CI runners; if they do, widen or drop those two wait ceilings.
 
 ## Queued for the owner
 

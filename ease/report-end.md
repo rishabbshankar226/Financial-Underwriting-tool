@@ -30,6 +30,7 @@ queued. Full record: `ease/walkthrough/REPORT.md`.
   browser runs served the baseline bundle. Every Streamlit result in Phase 3 uses the current bundle (`rebuild.sh` and `steps.sh`
   reinstall it).
 - **Streamlit T5's wait** was not A/B-tested.
+- **Wait ceilings may flake in CI.** The task specs' wait ceilings are the after numbers plus 2.5 s, measured on this machine. T3's ceiling (under 3.1 s) guards the real regression, the five-second hold returning on an edit. The T1 and T4 ceilings (about 8 to 9 s) include the hold by design and could flake on slower CI runners; if they do, widen or drop those two wait ceilings.
 
 ## Queued for the owner
 
