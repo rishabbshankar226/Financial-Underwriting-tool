@@ -10474,11 +10474,7 @@ function vi({ view: e, selection: t, headRevision: n, sourceScope: r, original: 
 									t.explanation && /* @__PURE__ */ (0, U.jsx)("small", { children: _i(t.explanation) })
 								] }, e))
 							}),
-							/* @__PURE__ */ (0, U.jsxs)("p", { children: [
-								"Recorded reasons: ",
-								m.decision.reasons.length,
-								". Factors and calculations are in Calculation details above and in the Credit Memo."
-							] })
+							/* @__PURE__ */ (0, U.jsxs)("p", { children: [m.decision.reasons.length ? `Recorded reasons: ${m.decision.reasons.length}.` : "Recorded reasons: none beyond the factors.", "Factors and calculations are in Calculation details above and in the Credit Memo."] })
 						] }) : /* @__PURE__ */ (0, U.jsx)("p", {
 							className: "warning",
 							children: "Original JSON only. These financial definitions are not supported for typed conclusions. The guarded original can still be downloaded."
@@ -12450,7 +12446,7 @@ function Ya({ decision: e }) {
 					e.passed === null ? "manual review required" : e.passed ? "meets configured policy" : "does not meet configured policy"
 				] }, e.name)) }),
 				/* @__PURE__ */ (0, U.jsx)("h3", { children: "Recorded reasons" }),
-				e.reasons.length ? /* @__PURE__ */ (0, U.jsx)("ul", { children: e.reasons.map((e, t) => /* @__PURE__ */ (0, U.jsx)("li", { children: e.message }, t)) }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No additional reasons returned." })
+				e.reasons.length ? /* @__PURE__ */ (0, U.jsx)("ul", { children: e.reasons.map((e, t) => /* @__PURE__ */ (0, U.jsx)("li", { children: e.message }, t)) }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No reasons beyond the factors above." })
 			] }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No current decision is available." }),
 			/* @__PURE__ */ (0, U.jsx)("p", {
 				className: "fine",

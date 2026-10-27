@@ -140,7 +140,9 @@ export function Review({
                   ))}
                 </div>
                 <p>
-                  Recorded reasons: {assessment.decision.reasons.length}.
+                  {assessment.decision.reasons.length
+                    ? `Recorded reasons: ${assessment.decision.reasons.length}.`
+                    : "Recorded reasons: none beyond the factors."}
                   Factors and calculations are in Calculation details above and
                   in the Credit Memo.
                 </p>
