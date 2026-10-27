@@ -83,7 +83,7 @@ test("a newer request replaces the pending result and disconnect cancels prepara
   await expect(progress).toHaveCount(0);
 });
 
-test("an edit hides the old approval until its decline finishes the same five-second sequence", async ({ page }) => {
+test("N-9: an unsaved edit shows its decline without the five-second sequence", async ({ page }) => {
   await start(page);
   await moreAction(page, "legacyExample");
   const progress = page.getByRole("status", { name: "Assessment preparation" });
@@ -94,11 +94,7 @@ test("an edit hides the old approval until its decline finishes the same five-se
   await page.getByLabel("New value").fill("1");
   await page.getByLabel("Rationale").fill("Synthetic declining preparation check");
   await page.getByRole("button", { name: "Evaluate edit", exact: true }).click();
-  await expect(progress).toContainText("Calculation received");
-  await expect(page.locator(".decision strong")).toHaveText("CALCULATING");
-  await page.clock.runFor(4999);
-  await expect(page.locator(".decision strong")).toHaveText("CALCULATING");
-  await page.clock.runFor(1);
+  // The clock stays paused: the decline must appear without any presentation time passing.
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(progress).toHaveCount(0);
 });

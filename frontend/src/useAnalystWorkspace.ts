@@ -100,12 +100,17 @@ export function useAnalystWorkspace() {
     const controller = new AbortController();
     read.current = controller;
     const startedAt = performance.now();
-    setPreparation({ id, received: false });
+    // A new case is presented with the preparation sequence; an unsaved single-field edit recalculates
+    // without it, so an adjusted figure shows its result as soon as the server answers.
+    const presented = !draft.edit;
+    if (presented) setPreparation({ id, received: false });
     try {
       const accepted = await evaluate(draft, controller.signal);
       if (id !== sequence.current || controller.signal.aborted) return;
-      setPreparation({ id, received: true });
-      await finishDecisionTransition(startedAt, controller.signal);
+      if (presented) {
+        setPreparation({ id, received: true });
+        await finishDecisionTransition(startedAt, controller.signal);
+      }
       if (id === sequence.current && !controller.signal.aborted) {
         dispatch({ type: "success", id, accepted });
         return accepted;

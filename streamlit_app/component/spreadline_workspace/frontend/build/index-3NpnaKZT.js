@@ -12745,18 +12745,18 @@ function ao() {
 		});
 		let a = new AbortController();
 		i.current = a;
-		let o = performance.now();
-		w({
+		let o = performance.now(), s = !e.edit;
+		s && w({
 			id: n,
 			received: !1
 		});
 		try {
 			let i = await jt(e, a.signal);
 			if (n !== r.current || a.signal.aborted) return;
-			if (w({
+			if (s && (w({
 				id: n,
 				received: !0
-			}), await no(o, a.signal), n === r.current && !a.signal.aborted) return t({
+			}), await no(o, a.signal)), n === r.current && !a.signal.aborted) return t({
 				type: "success",
 				id: n,
 				accepted: i
