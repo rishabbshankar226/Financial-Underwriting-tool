@@ -18,7 +18,7 @@ const oracleLabels: Record<string, string> = {
   operating_expense_excl_dna_interest_comp: "Operating expenses", officer_compensation: "Officer compensation",
   depreciation: "Depreciation", amortization: "Amortization", interest_expense: "Interest expense",
   section_179: "Section 179", k1_distribution: "K-1 distributions", ordinary_business_income: "Ordinary business income",
-  ebitda: "EBITDA", dscr: "Business DSCR", fccr: "Simplified FCCR", global_dscr: "Global DSCR", uca_positive: "UCA cash flow",
+  ebitda: "EBITDA", dscr: "Business DSCR", fccr: "FCCR", global_dscr: "Global DSCR", uca_positive: "UCA cash flow",
   k1_history: "K-1 distribution history", cpltd_annual: "Annual CPLTD", operating_lease_annual: "Annual operating leases",
   amount: "Proposed principal", annual_rate: "Annual nominal rate", term_months: "Loan term", ownership_percentage: "Ownership",
   wages: "Annual wages", interest_dividend_income: "Annual interest/dividend income", mortgage_pi_annual: "Annual mortgage P&I",

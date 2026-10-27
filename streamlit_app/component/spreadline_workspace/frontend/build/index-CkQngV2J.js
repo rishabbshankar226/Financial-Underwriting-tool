@@ -6665,7 +6665,7 @@ var lt = {
 	ordinary_business_income: "Ordinary business income",
 	ebitda: "EBITDA",
 	dscr: "Business DSCR",
-	fccr: "Simplified FCCR",
+	fccr: "FCCR",
 	global_dscr: "Global DSCR",
 	uca_positive: "UCA cash flow",
 	k1_history: "K-1 distribution history",
@@ -6697,7 +6697,7 @@ var lt = {
 	global_cash_flow: "Global cash flow",
 	global_debt_service: "Global debt service",
 	dscr: "Business DSCR",
-	fccr: "Simplified FCCR",
+	fccr: "FCCR",
 	global_dscr: "Global DSCR",
 	net_working_capital_increase: "Working capital increase",
 	uca_cash_flow: "UCA cash flow",
@@ -11597,7 +11597,7 @@ var wa = {
 	"annualized-payment-v2": "Proposed annual service = 12 unrounded monthly payments",
 	"annual-debt-service-v2": "Business service = existing interest + annual CPLTD + proposed annual service",
 	"dscr-v2": "DSCR = EBITDA / business service",
-	"fccr-v2": "Simplified FCCR = EBITDA / (business service + operating leases)",
+	"fccr-v2": "FCCR = EBITDA / (business service + operating leases)",
 	"global-dscr-v2": "Global DSCR = (ownership-weighted EBITDA + outside income) / (business service + personal service). Empty guarantors use 100% of business EBITDA. K-1 distributions are never added a second time.",
 	"uca-cash-flow-v2": "Simplified UCA = EBITDA − cash taxes − (AR increase + inventory increase − AP increase)"
 }, Ta = {

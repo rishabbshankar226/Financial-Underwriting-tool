@@ -431,7 +431,7 @@ test("a request larger than the coverage minimums support reads as a shortfall, 
   // FCCR is 1.0004 against a 1.00x decline floor: it must not read as equal to the floor.
   await expect(tiles.locator(".kpiTile").filter({ has: page.locator(".kpiLabel", { hasText: /^FCCR$/ }) })).toContainText("1.0004x");
   await openView(page, "spread");
-  await expect(page.locator(".metric").filter({ hasText: "Simplified FCCR" })).toContainText("1.0004x");
+  await expect(page.locator(".metric").filter({ hasText: /^FCCR/ })).toContainText("1.0004x");
   await openView(page, "overview");
   const capacity = page.getByRole("tabpanel").getByRole("region", { name: "Debt capacity", exact: true });
   await expect(capacity).toContainText("$647,015.17");

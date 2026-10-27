@@ -6,6 +6,14 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### Follow-up after PR #25 (owner, 2026-10-27)
+
+After "continue", the owner answered:
+- L-13: "\"FCCR\" everywhere (Recommended)".
+- N-16: "Rename to \"Undated decision\" (Recommended)".
+
+N-15 and L-14 (recommended) are taken under the same "continue". All four ship as follow-up commits on `claude/ease-of-use` (PR #25).
+
 ### STOP B reached (2026-10-27)
 
 - Final full run green: `ease/logs/final`, recorded in `docs/VERIFICATION.md`.
