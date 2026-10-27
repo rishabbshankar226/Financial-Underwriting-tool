@@ -6,6 +6,14 @@ Read this first on resume. Plan: `~/.claude/plans/snoopy-leaping-cook.md`. Promp
 
 - **Phase:** 2 (fix). STOP A was answered; see below. **PAUSED 2026-10-27 at the owner's word (going offline).**
 
+### Progress (latest first), 2026-10-27
+
+- **Fixed:** L-1, L-10, N-1, N-2, N-3, D-1, D-4, N-9, N-10, L-2, L-3, N-7, N-4, L-5, E-1, L-6, L-7, D-2, D-3.
+- **Refuted:** E-2. **Queued:** N-8, E-3, N-6 (superseded by N-5). **No code:** N-13.
+- **Remaining class A:** N-11, N-12, L-8, L-9, L-11. **Remaining class B (picked):** N-5, G-1 (T4 copy rows), L-4.
+- **Then Phase 3.**
+- **Revert-proof rule:** a locator miss is not a catch; order each test so its first failing line is a real assertion.
+
 ### Stale Streamlit component (found 2026-10-27, fixed in `ease/tools/rebuild.sh`)
 
 The Streamlit host serves `spreadline_workspace` **as installed in `.venv`** from `./streamlit_app/component`. It was installed once,
