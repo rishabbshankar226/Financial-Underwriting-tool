@@ -70,24 +70,22 @@ export function useGuidedForm(initial: FormValue) {
       /* Show new errors on blur or evaluation. */
     }
   }
+  /** Shows `message` as the field's error. A listed error is replaced in place: moving it would reorder the
+   * summary under a click on one of its links. */
+  function flag(spec: FieldSpec, message: string) {
+    const error: FieldError = { pointer: spec.pointer, code: "invalid_input", message, limit: null };
+    setErrors((previous) =>
+      previous.some((item) => item.pointer === spec.pointer)
+        ? previous.map((item) => (item.pointer === spec.pointer ? error : item))
+        : [...previous, error],
+    );
+  }
   function blur(spec: FieldSpec) {
     if (!typed.current.has(spec.pointer)) return;
     try {
       parseField(spec, formValue(values, spec.pointer));
     } catch (reason) {
-      const error: FieldError = {
-        pointer: spec.pointer,
-        code: "invalid_input",
-        message:
-          reason instanceof Error ? reason.message : "Review this field.",
-        limit: null,
-      };
-      // Replace a listed error in place: moving it would reorder the summary under a click on one of its links.
-      setErrors((previous) =>
-        previous.some((item) => item.pointer === spec.pointer)
-          ? previous.map((item) => (item.pointer === spec.pointer ? error : item))
-          : [...previous, error],
-      );
+      flag(spec, reason instanceof Error ? reason.message : "Review this field.");
     }
   }
   function reject(items: FieldError[]) {
@@ -129,6 +127,7 @@ export function useGuidedForm(initial: FormValue) {
     replace,
     change,
     blur,
+    flag,
     reject,
     prepare,
   };
@@ -190,9 +189,12 @@ const helpers: Record<FieldKind, string> = {
 export function FormField({
   form,
   spec,
+  pasteHint,
 }: {
   form: GuidedFormModel;
   spec: FieldSpec;
+  /** Said after a several-line paste is refused, e.g. where a column of figures can go instead. */
+  pasteHint?: string;
 }) {
   const id = useId(),
     error = form.errors.find((item) => item.pointer === spec.pointer);
@@ -216,6 +218,19 @@ export function FormField({
         aria-describedby={`${id}-help${error ? ` ${id}-error` : ""}`}
         onBlur={() => form.blur(spec)}
         onChange={(event) => form.change(spec, event.target.value)}
+        onPaste={(event) => {
+          // A copied column would land as one value with its lines joined; refuse it and say what to do.
+          const lines = event.clipboardData
+            .getData("text")
+            .split(/\r?\n/)
+            .filter((line) => line.trim());
+          if (lines.length < 2) return;
+          event.preventDefault();
+          form.flag(
+            spec,
+            `This field takes one value, and the paste had ${lines.length} lines. Paste one figure at a time${pasteHint ? `, or ${pasteHint}` : "."}`,
+          );
+        }}
       />
       <small id={`${id}-help`}>
         {spec.helper ??

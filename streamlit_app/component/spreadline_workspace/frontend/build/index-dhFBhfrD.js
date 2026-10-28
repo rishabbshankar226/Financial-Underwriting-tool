@@ -9327,23 +9327,26 @@ function ei(e) {
 			Xr(e, t), i((t) => t.filter((t) => t.pointer !== e.pointer));
 		} catch {}
 	}
-	function d(e) {
+	function d(e, t) {
+		let n = {
+			pointer: e.pointer,
+			code: "invalid_input",
+			message: t,
+			limit: null
+		};
+		i((t) => t.some((t) => t.pointer === e.pointer) ? t.map((t) => t.pointer === e.pointer ? n : t) : [...t, n]);
+	}
+	function f(e) {
 		if (c.current.has(e.pointer)) try {
 			Xr(e, Jr(t, e.pointer));
 		} catch (t) {
-			let n = {
-				pointer: e.pointer,
-				code: "invalid_input",
-				message: t instanceof Error ? t.message : "Review this field.",
-				limit: null
-			};
-			i((t) => t.some((t) => t.pointer === e.pointer) ? t.map((t) => t.pointer === e.pointer ? n : t) : [...t, n]);
+			d(e, t instanceof Error ? t.message : "Review this field.");
 		}
 	}
-	function f(e) {
+	function p(e) {
 		i(e), o((e) => e + 1);
 	}
-	function p(e) {
+	function m(e) {
 		let n = Kr(t), r = [];
 		for (let i of e) try {
 			n = Yr(n, i.pointer, Xr(i, Jr(t, i.pointer)));
@@ -9355,7 +9358,7 @@ function ei(e) {
 				limit: null
 			});
 		}
-		return r.length ? (f(r), null) : (i([]), n);
+		return r.length ? (p(r), null) : (i([]), n);
 	}
 	return {
 		values: t,
@@ -9364,9 +9367,10 @@ function ei(e) {
 		root: s,
 		replace: l,
 		change: u,
-		blur: d,
-		reject: f,
-		prepare: p
+		blur: f,
+		flag: d,
+		reject: p,
+		prepare: m
 	};
 }
 function ti({ form: e, specs: t }) {
@@ -9405,35 +9409,39 @@ var ni = {
 	text: "Text",
 	date: "Date as YYYY-MM-DD"
 };
-function ii({ form: e, spec: t }) {
-	let n = (0, k.useId)(), r = e.errors.find((e) => e.pointer === t.pointer);
+function ii({ form: e, spec: t, pasteHint: n }) {
+	let r = (0, k.useId)(), i = e.errors.find((e) => e.pointer === t.pointer);
 	return /* @__PURE__ */ (0, H.jsxs)("div", {
 		className: "formField",
 		children: [
 			/* @__PURE__ */ (0, H.jsx)("label", {
-				htmlFor: n,
+				htmlFor: r,
 				children: t.label
 			}),
 			/* @__PURE__ */ (0, H.jsx)("input", {
-				id: n,
+				id: r,
 				"data-pointer": t.pointer,
 				type: "text",
 				inputMode: ["money", "rate"].includes(t.kind) ? "decimal" : t.kind === "integer" ? "numeric" : "text",
 				value: String(Jr(e.values, t.pointer) ?? ""),
 				placeholder: t.placeholder ?? ni[t.kind],
-				"aria-invalid": r ? "true" : void 0,
-				"aria-describedby": `${n}-help${r ? ` ${n}-error` : ""}`,
+				"aria-invalid": i ? "true" : void 0,
+				"aria-describedby": `${r}-help${i ? ` ${r}-error` : ""}`,
 				onBlur: () => e.blur(t),
-				onChange: (n) => e.change(t, n.target.value)
+				onChange: (n) => e.change(t, n.target.value),
+				onPaste: (r) => {
+					let i = r.clipboardData.getData("text").split(/\r?\n/).filter((e) => e.trim());
+					i.length < 2 || (r.preventDefault(), e.flag(t, `This field takes one value, and the paste had ${i.length} lines. Paste one figure at a time${n ? `, or ${n}` : "."}`));
+				}
 			}),
 			/* @__PURE__ */ (0, H.jsx)("small", {
-				id: `${n}-help`,
+				id: `${r}-help`,
 				children: t.helper ?? `${ri[t.kind]}${t.min === void 0 ? "" : ` · minimum ${t.min}`}${t.max === void 0 ? "" : ` · maximum ${t.max}`}`
 			}),
-			r && /* @__PURE__ */ (0, H.jsxs)("span", {
-				id: `${n}-error`,
+			i && /* @__PURE__ */ (0, H.jsxs)("span", {
+				id: `${r}-error`,
 				className: "fieldError",
-				children: [r.message, r.limit === null ? "" : ` · limit ${r.limit}`]
+				children: [i.message, i.limit === null ? "" : ` · limit ${i.limit}`]
 			})
 		]
 	});
@@ -13333,7 +13341,8 @@ function wo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 		className: "formGrid",
 		children: e.map((e) => /* @__PURE__ */ (0, H.jsx)(ii, {
 			form: s,
-			spec: e
+			spec: e,
+			pasteHint: "use Excel intake with the standard template to enter a whole column."
 		}, e.pointer))
 	});
 	return /* @__PURE__ */ (0, H.jsxs)("section", {

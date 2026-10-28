@@ -207,7 +207,12 @@ export function CommercialComposer({
   const fields = (rows: FieldSpec[]) => (
     <div className="formGrid">
       {rows.map((field) => (
-        <FormField key={field.pointer} form={form} spec={field} />
+        <FormField
+          key={field.pointer}
+          form={form}
+          spec={field}
+          pasteHint="use Excel intake with the standard template to enter a whole column."
+        />
       ))}
     </div>
   );

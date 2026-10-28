@@ -82,6 +82,27 @@ test("F-3: memo reasons name the factor and show its formatted value and line", 
   expect(await memo.innerText()).not.toMatch(/\d{20}/);
 });
 
+test.describe("F-11", () => {
+  test.use({ permissions: ["clipboard-read", "clipboard-write"] });
+
+  test("F-11: a pasted column is refused with the way to enter one; a single figure still pastes", async ({ page }) => {
+    await openComposer(page);
+    const gross = page.getByLabel("Gross receipts · Period 1", { exact: true });
+    await page.evaluate(() => navigator.clipboard.writeText("3900000\n2570000\n607000\n"));
+    await gross.click();
+    await page.keyboard.press("ControlOrMeta+V");
+    await expect(gross).toHaveValue("");
+    await expect(gross).toHaveAttribute("aria-invalid", "true");
+    await expect(gross).toHaveAccessibleDescription(
+      /This field takes one value, and the paste had 3 lines\. Paste one figure at a time, or use Excel intake with the standard template to enter a whole column\./,
+    );
+    await page.evaluate(() => navigator.clipboard.writeText("$3,900,000"));
+    await page.keyboard.press("ControlOrMeta+V");
+    await expect(gross).toHaveValue("$3,900,000");
+    await expect(gross).not.toHaveAttribute("aria-invalid");
+  });
+});
+
 test.describe("F-4", () => {
   test.use({ permissions: ["clipboard-read", "clipboard-write"] });
 
