@@ -1,0 +1,35 @@
+{
+  "task": "T3",
+  "host": "streamlit",
+  "run": 3,
+  "status": "completed",
+  "screens": [
+    "Overview",
+    "Credit Memo"
+  ],
+  "clicks": 1,
+  "keystrokes": 0,
+  "scrolls": 1,
+  "waitMs": 0,
+  "waits": [],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Credit Memo tab (where reason codes are listed)",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "read",
+      "target": "first recorded reason",
+      "inViewport": false
+    }
+  ],
+  "notes": {
+    "decision": "Illustrative decision DECLINE Preparing the plain-language explanation\u2026 prototype-2026-10-03 \u00b7 illustrative score 0.15",
+    "firstReason": "Business DSCR of 0.6777x is below the decline floor of 1.00x.\nRecorded message",
+    "reasonNamesFactor": true,
+    "factor": "Business DSCR of 0.6777x is below the decline floor of 1.00x.\nRecorded message"
+  }
+}

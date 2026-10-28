@@ -1,0 +1,52 @@
+{
+  "task": "T6",
+  "host": "standalone",
+  "run": 2,
+  "status": "blocked: the screen never says what failed (unsupported NAICS row)",
+  "screens": [
+    "Start",
+    "SBA"
+  ],
+  "clicks": 5,
+  "keystrokes": 7,
+  "scrolls": 2,
+  "waitMs": 76,
+  "waits": [
+    {
+      "name": "SBA outcome",
+      "ms": 76
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "SBA Screen (nav)",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "choose",
+      "target": "Load sample case",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "click",
+      "target": "NAICS code",
+      "inViewport": false
+    },
+    {
+      "n": 4,
+      "kind": "click",
+      "target": "Evaluate SBA screen",
+      "inViewport": false
+    }
+  ],
+  "notes": {
+    "messages": [
+      "The server rejected these inputs. Review the highlighted fields; your draft is preserved."
+    ],
+    "namesTheCause": false
+  }
+}

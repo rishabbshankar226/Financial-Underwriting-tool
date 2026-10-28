@@ -1,0 +1,42 @@
+{
+  "task": "T7",
+  "host": "standalone",
+  "run": 3,
+  "status": "completed",
+  "screens": [
+    "Workspace",
+    "Credit Memo"
+  ],
+  "clicks": 2,
+  "keystrokes": 0,
+  "scrolls": 1,
+  "waitMs": 25,
+  "waits": [
+    {
+      "name": "copied",
+      "ms": 25
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Credit Memo tab",
+      "inViewport": false
+    },
+    {
+      "n": 2,
+      "kind": "click",
+      "target": "Copy memo as text",
+      "inViewport": true
+    }
+  ],
+  "notes": {
+    "inAppOutActions": 2,
+    "anyOutActionOnPage": [
+      "Copy memo as text",
+      "Print memo"
+    ],
+    "copied": "Recommendation\n\nApprove for prototype demonstration based on the accepted inputs.\n\nPrimary factors considered\nBusiness DSCR: 3.1349x \u2014 meets configured policy\nF"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "task": "T6",
+  "host": "standalone",
+  "run": 1,
+  "status": "completed",
+  "screens": [
+    "Start",
+    "SBA"
+  ],
+  "clicks": 5,
+  "keystrokes": 7,
+  "scrolls": 2,
+  "waitMs": 77,
+  "waits": [
+    {
+      "name": "SBA outcome",
+      "ms": 77
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "SBA Screen (nav)",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "choose",
+      "target": "Load sample case",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "click",
+      "target": "NAICS code",
+      "inViewport": false
+    },
+    {
+      "n": 4,
+      "kind": "click",
+      "target": "Evaluate SBA screen",
+      "inViewport": false
+    }
+  ],
+  "notes": {
+    "messages": [
+      "This case couldn't be screened: NAICS 115310 is unsupported: Source contains industry exceptions requiring a separate applicability review. That is a known limit of the prototype's pinned SBA size table, so correct the code if it is wrong or review the case manually; your draft is preserved."
+    ],
+    "namesTheCause": true
+  }
+}

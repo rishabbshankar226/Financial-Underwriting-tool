@@ -1,0 +1,96 @@
+{
+  "task": "T2",
+  "host": "streamlit",
+  "run": 3,
+  "status": "completed",
+  "screens": [
+    "Start",
+    "Composer",
+    "Workspace"
+  ],
+  "clicks": 2,
+  "keystrokes": 282,
+  "scrolls": 0,
+  "waitMs": 5305,
+  "waits": [
+    {
+      "name": "EBITDA and DSCR",
+      "ms": 5305
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Commercial Assessment (nav)",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "click",
+      "target": "Borrower name",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "key",
+      "target": "Add financial period",
+      "inViewport": null
+    },
+    {
+      "n": 4,
+      "kind": "key",
+      "target": "Evaluate assessment",
+      "inViewport": null
+    }
+  ],
+  "notes": {
+    "focusAfterAdd": "Period start \u00b7 Period 2",
+    "workingCapitalOpenByDefault": true,
+    "workingCapitalLabels": [
+      "Working capital period start",
+      "Working capital period end",
+      "AR increase",
+      "Inventory increase",
+      "AP increase",
+      "Cash taxes paid"
+    ],
+    "tabsPerField": {
+      "Geography": 1,
+      "Assessment as of": 1,
+      "Period start \u00b7 Period 1": 2,
+      "Period end \u00b7 Period 1": 1,
+      "Gross receipts \u00b7 Period 1": 1,
+      "COGS \u00b7 Period 1": 1,
+      "Operating expenses \u00b7 Period 1": 1,
+      "Officer compensation \u00b7 Period 1": 1,
+      "Depreciation \u00b7 Period 1": 1,
+      "Amortization \u00b7 Period 1": 1,
+      "Interest expense \u00b7 Period 1": 1,
+      "Section 179 \u00b7 Period 1": 1,
+      "K-1 distributions \u00b7 Period 1": 1,
+      "Add financial period": 1,
+      "Period start \u00b7 Period 2 (back)": 0,
+      "Period end \u00b7 Period 2": 1,
+      "Gross receipts \u00b7 Period 2": 1,
+      "COGS \u00b7 Period 2": 1,
+      "Operating expenses \u00b7 Period 2": 1,
+      "Officer compensation \u00b7 Period 2": 1,
+      "Depreciation \u00b7 Period 2": 1,
+      "Amortization \u00b7 Period 2": 1,
+      "Interest expense \u00b7 Period 2": 1,
+      "Section 179 \u00b7 Period 2": 1,
+      "K-1 distributions \u00b7 Period 2": 1,
+      "Annual CPLTD": 4,
+      "Annual operating lease": 1,
+      "Requested principal": 1,
+      "Annual nominal rate": 1,
+      "Loan term": 1,
+      "Working capital and cash taxes": 1,
+      "Evaluate assessment": 2
+    },
+    "extraTabs": 4,
+    "ebitda": "EBITDA $630,000 Above approval breakeven Year ended 2025-12-31 Approval breakeven $269,953 (FCCR) Cushion 57.2% of EBITDA",
+    "dscr": "Business DSCR 3.13x Meets approval Minimum 1.25x, decline below 1.00x Cushion +1.88x"
+  }
+}

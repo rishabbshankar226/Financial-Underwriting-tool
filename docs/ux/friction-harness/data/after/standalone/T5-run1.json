@@ -1,0 +1,51 @@
+{
+  "task": "T5",
+  "host": "standalone",
+  "run": 1,
+  "status": "partly blocked: front-end (housing) DTI is not returned, so it cannot be read",
+  "screens": [
+    "Start",
+    "Consumer"
+  ],
+  "clicks": 4,
+  "keystrokes": 0,
+  "scrolls": 2,
+  "waitMs": 25,
+  "waits": [
+    {
+      "name": "consumer result",
+      "ms": 25
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Consumer Decision (nav)",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "choose",
+      "target": "Load sample case",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "click",
+      "target": "Evaluate consumer",
+      "inViewport": false
+    },
+    {
+      "n": 4,
+      "kind": "read",
+      "target": "Consumer result",
+      "inViewport": false
+    }
+  ],
+  "notes": {
+    "result": "Consumer result \u00b7 APPROVE Policy prototype-2026-10-03 \u00b7 weighted-rule score 1. The score is not a probability of default. Total DTI 33.8% Inspect Total DTI Housing DTI Not returned by this prototype's consumer decision. Only total (back-end) DTI is compared with the DTI policy lines; Inspect shows how housing DTI is worked out. Inspect Housing DTI Total DTI \u00b7 approval rule Pass \u00b7 33.8% \u00b7 policy below 50.0% Ability-to-repay documentation Pass \u00b7 complete Synthetic credit score Pass \u00b7 720 \u00b7 policy at least 620 Total DTI \u00b7 review rule Pass \u00b7 33.8% \u00b7 policy below 43.0% Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice. DTI boundaries are illustrative policy settings, not a claim about legal lending ceilings.",
+    "backEndPolicyLineShown": true,
+    "frontEndShown": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "task": "T1",
+  "host": "streamlit",
+  "run": 1,
+  "status": "completed",
+  "screens": [
+    "Start",
+    "Workspace"
+  ],
+  "clicks": 1,
+  "keystrokes": 0,
+  "scrolls": 0,
+  "waitMs": 6738,
+  "waits": [
+    {
+      "name": "start screen",
+      "ms": 1432
+    },
+    {
+      "name": "first DSCR",
+      "ms": 5306
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Try the example case",
+      "inViewport": true
+    }
+  ],
+  "notes": {
+    "dscr": "Business DSCR 3.13x Meets approval Minimum 1.25x, decline below 1.00x Cushion +1.88x"
+  }
+}

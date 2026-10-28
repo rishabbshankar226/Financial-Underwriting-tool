@@ -1,0 +1,35 @@
+{
+  "task": "T3",
+  "host": "standalone",
+  "run": 3,
+  "status": "completed",
+  "screens": [
+    "Overview",
+    "Credit Memo"
+  ],
+  "clicks": 1,
+  "keystrokes": 0,
+  "scrolls": 2,
+  "waitMs": 0,
+  "waits": [],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Credit Memo tab (where reason codes are listed)",
+      "inViewport": false
+    },
+    {
+      "n": 2,
+      "kind": "read",
+      "target": "first recorded reason",
+      "inViewport": false
+    }
+  ],
+  "notes": {
+    "decision": "Illustrative decision DECLINE Decline: Business DSCR, Fixed-charge coverage (FCCR) and Global DSCR are below the decline floor. prototype-2026-10-03 \u00b7 illustrative score 0.15",
+    "firstReason": "Business DSCR of 0.6777x is below the decline floor of 1.00x.\nRecorded message",
+    "reasonNamesFactor": true,
+    "factor": "Business DSCR of 0.6777x is below the decline floor of 1.00x.\nRecorded message"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "task": "T7",
+  "host": "standalone",
+  "run": 2,
+  "status": "completed only via the browser's print command; no in-app print, copy or export",
+  "screens": [
+    "Workspace",
+    "Credit Memo"
+  ],
+  "clicks": 1,
+  "keystrokes": 1,
+  "scrolls": 1,
+  "waitMs": 0,
+  "waits": [],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Credit Memo tab",
+      "inViewport": false
+    }
+  ],
+  "notes": {
+    "inAppOutActions": 0,
+    "anyOutActionOnPage": []
+  }
+}
