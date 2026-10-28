@@ -115,3 +115,22 @@ test("multiples keep enough places to compare honestly with every line shown bes
   expect(factorValueText({ ...factor("fccr", "1.0004"), threshold: "1.2", decline_threshold: "1" })).toBe("1.0004x");
   expect(factorValueText({ ...factor("dscr", "0.996"), threshold: "1.25", decline_threshold: "1" })).toBe("0.996x");
 });
+
+test("C-1: a figure beside a policy line never rounds onto the line or past it", () => {
+  // Four places were the ceiling, so these read "1.2500x" beside a 1.25x minimum they miss.
+  expect(multipleText("1.24996", ["1.25", "1"])).toBe("1.24996x");
+  expect(multipleText("1.249996", ["1.25", "1"])).toBe("1.249996x");
+  expect(multipleText("0.99999", ["1.25", "1"])).toBe("0.99999x");
+  // Every line is checked at the same places: 1.2445 needs three, and at three 1.2449 lands on 1.245.
+  expect(multipleText("1.2449", ["1.2445", "1.245"])).toBe("1.2449x");
+  expect(multipleText(`1.${"2".repeat(40)}`, ["1.25"])).toBe("1.22x");
+  expect(multipleText(`1.24${"9".repeat(40)}`, ["1.25"])).toBe(`1.24${"9".repeat(40)}x`);
+  expect(metricValueText(metric("1.24996", "1.2500", "ratio", 4), "multiple", WHOLE_DOLLARS, "1.25")).toBe("1.24996x");
+  // Whole dollars put +0.40 and -0.40 both on "$0" beside "Must exceed $0".
+  expect(metricValueText(metric("0.40", "0.40", "USD", 2), "money", WHOLE_DOLLARS, "0")).toBe("$0.40");
+  expect(metricValueText(metric("-0.40", "-0.40", "USD", 2), "money", WHOLE_DOLLARS, "0")).toBe("($0.40)");
+  expect(metricValueText(metric("385000", "385000.00", "USD", 2), "money", WHOLE_DOLLARS, "0")).toBe("$385,000");
+  expect(factorValueText({ ...factor("uca_positive", "0.004"), threshold: "0" })).toBe("$0.004");
+  expect(legacyFactorText({ ...factor("dscr", "1.249996"), threshold: "1.25", decline_threshold: "1" })).toBe("1.249996x");
+  expect(legacyFactorText({ ...factor("dscr", "3.134936659675626479525752"), threshold: "1.25" })).toBe("3.1349x");
+});

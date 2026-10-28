@@ -1,7 +1,6 @@
 import type { Factor, Metric } from "./contracts";
 import {
   compareDecimal,
-  disambiguatingPlaces,
   formatAccounting,
   formatDecimal,
   formatMultiple,
@@ -36,6 +35,31 @@ export function scaleCaption(display: MoneyDisplay): string {
   return display.scale === "units" ? "USD" : `USD ${display.scale}`;
 }
 
+/** The most places a figure beside a policy line shows before it falls back to its exact string. */
+const MAX_PLACES = 30;
+
+/** Fewest places, from `min`, at which the rounded value compares with every line beside it as the exact value
+ * does; null when no rounding up to MAX_PLACES keeps every comparison. */
+function placesBeside(value: string, lines: readonly unknown[], min: number): number | null {
+  const decimals = lines.filter(isDecimal);
+  for (let places = min; places <= MAX_PLACES; places++) {
+    const shown = formatDecimal(value, places, false);
+    if (decimals.every((line) => compareDecimal(shown, line) === compareDecimal(value, line))) return places;
+  }
+  return null;
+}
+
+/** Money beside a policy line: more places when whole dollars would compare with the line differently from the
+ * exact value, so 0.40 beside "Must exceed $0" reads "$0.40", never "$0". */
+function moneyBeside(value: string, display: MoneyDisplay, lines: readonly unknown[]): string {
+  if (display.scale !== "units") return moneyText(value, display);
+  const base = moneyPlaces(display),
+    places = placesBeside(value, lines, base);
+  if (places === null) return value.startsWith("-") ? `($${value.slice(1)})` : `$${value}`;
+  // Past whole dollars, show at least cents.
+  return formatAccounting(value, { places: places > base ? Math.max(places, 2) : places, currency: true });
+}
+
 /** Shown values round once: from the raw value when showing fewer places than the server reported. */
 export function metricValueText(
   metric: Metric,
@@ -48,24 +72,23 @@ export function metricValueText(
   if (kind === "category" || !isDecimal(reported)) return String(reported);
   const raw = isDecimal(metric.raw_value) ? metric.raw_value : reported;
   if (kind === "money") {
+    if (threshold !== undefined) return moneyBeside(raw, display, [threshold]);
     // Dollar places actually shown: thousands and millions remove three and six.
     const shown = moneyPlaces(display) - (display.scale === "thousands" ? 3 : display.scale === "millions" ? 6 : 0);
     return moneyText(shown < (metric.display_precision ?? 0) ? raw : reported, display);
   }
   if (kind === "percent") return formatRatioPercent(raw, 1);
-  return formatMultiple(raw, { threshold });
+  return multipleText(raw, [threshold]);
 }
 
 export const WITH_CENTS: MoneyDisplay = { scale: "units", cents: true };
 
-/** A multiple with enough places (2 to 4) to compare with every policy line shown beside it as the exact
- * value does, so 1.0004 beside a 1.00x decline floor reads "1.0004x", never "1.00x". */
+/** A multiple with enough places (2 or more) to compare with every policy line shown beside it as the exact
+ * value does, so 1.0004 beside a 1.00x decline floor reads "1.0004x" and 1.24996 beside 1.25x reads
+ * "1.24996x", never "1.00x" or "1.2500x". */
 export function multipleText(value: string, thresholds: readonly (string | boolean | null | undefined)[]): string {
-  const places = thresholds.reduce<number>(
-    (most, threshold) => (isDecimal(threshold) ? Math.max(most, disambiguatingPlaces(value, threshold, 2, 4)) : most),
-    2,
-  );
-  return formatMultiple(value, { places });
+  const places = placesBeside(value, thresholds, 2);
+  return places === null ? `${value}x` : formatMultiple(value, { places });
 }
 
 /** A money amount without its sign, for a figure already labeled as a shortfall: "$647,015". */
@@ -89,7 +112,7 @@ export function factorValueText(factor: Factor): string {
   const value = factor.raw_value;
   if (value === null) return "Not applicable";
   if (!isDecimal(value)) return String(value);
-  if (factor.name === "uca_positive") return moneyText(value);
+  if (factor.name === "uca_positive") return moneyBeside(value, WHOLE_DOLLARS, [factor.threshold]);
   return multipleText(value, [factor.threshold, factor.decline_threshold]);
 }
 
@@ -131,7 +154,11 @@ export function legacyFactorText(factor: Factor): string {
   const value = factor.raw_value;
   if (value === null) return "Not applicable";
   if (!isDecimal(value)) return String(value);
-  return factor.name === "uca_positive" ? `$${legacyMoney(value)}` : `${formatDecimal(value, 4)}x`;
+  // Four places (two for UCA dollars), or more when fewer would compare with the factor's lines differently.
+  const lines = [factor.threshold, factor.decline_threshold];
+  if (factor.name === "uca_positive") return `$${formatDecimal(value, placesBeside(value, lines, 2) ?? MAX_PLACES)}`;
+  const places = placesBeside(value, lines, 4);
+  return places === null ? `${value}x` : `${formatDecimal(value, places)}x`;
 }
 
 export function legacySummaryAmount(metric: Metric, currency = false): string {
