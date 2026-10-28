@@ -103,8 +103,9 @@ export function signedMetricText(metric: Metric, kind: "multiple" | "money"): st
   if (metric.status !== "available" || !isDecimal(metric.raw_value)) return "Not applicable";
   const raw = metric.raw_value,
     positive = compareDecimal(raw, "0") > 0;
-  if (kind === "money") return `${positive ? "+" : ""}${moneyText(raw)}`;
-  return `${positive ? "+" : ""}${formatMultiple(raw, { threshold: "0" })}`;
+  // A cushion is a distance from zero: it keeps enough places never to read as zero, or lose its sign, unless it is.
+  if (kind === "money") return `${positive ? "+" : ""}${moneyBeside(raw, WHOLE_DOLLARS, ["0"])}`;
+  return `${positive ? "+" : ""}${multipleText(raw, ["0"])}`;
 }
 
 /** A policy factor's measured value: UCA in whole dollars, coverage as a multiple that keeps enough places
@@ -175,7 +176,10 @@ export function legacyFactorText(factor: Factor): string {
   if (!isDecimal(value)) return String(value);
   // Four places (two for UCA dollars), or more when fewer would compare with the factor's lines differently.
   const lines = [factor.threshold, factor.decline_threshold];
-  if (factor.name === "uca_positive") return `$${formatDecimal(value, placesBeside(value, lines, 2) ?? MAX_PLACES)}`;
+  if (factor.name === "uca_positive") {
+    const cents = placesBeside(value, lines, 2);
+    return cents === null ? `$${value}` : `$${formatDecimal(value, cents)}`;
+  }
   const places = placesBeside(value, lines, 4);
   return places === null ? `${value}x` : `${formatDecimal(value, places)}x`;
 }

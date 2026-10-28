@@ -6342,7 +6342,7 @@ function He(e, t = Ne) {
 function Ue(e, t) {
 	if (e.status !== "available" || !N(e.raw_value)) return "Not applicable";
 	let n = e.raw_value, r = P(n, "0") > 0;
-	return t === "money" ? `${r ? "+" : ""}${Fe(n)}` : `${r ? "+" : ""}${Se(n, { threshold: "0" })}`;
+	return t === "money" ? `${r ? "+" : ""}${Re(n, Ne, ["0"])}` : `${r ? "+" : ""}${Ve(n, ["0"])}`;
 }
 function We(e) {
 	let t = e.raw_value;
@@ -6380,7 +6380,10 @@ function Ze(e) {
 	if (t === null) return "Not applicable";
 	if (!N(t)) return String(t);
 	let n = [e.threshold, e.decline_threshold];
-	if (e.name === "uca_positive") return `$${F(t, Le(t, n, 2) ?? Ie)}`;
+	if (e.name === "uca_positive") {
+		let e = Le(t, n, 2);
+		return e === null ? `$${t}` : `$${F(t, e)}`;
+	}
 	let r = Le(t, n, 4);
 	return r === null ? `${t}x` : `${F(t, r)}x`;
 }

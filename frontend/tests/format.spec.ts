@@ -86,7 +86,11 @@ test("calendar dates are formatted without a time-zone shift", () => {
 test("cushions are signed distances from the policy line and never read as zero when positive", () => {
   expect(signedMetricText(metric("1.884936659675626479525751", "1.8849", "ratio", 4), "multiple")).toBe("+1.88x");
   expect(signedMetricText(metric("-0.1234", "-0.1234", "ratio", 4), "multiple")).toBe("-0.12x");
-  expect(signedMetricText(metric("0.00004", "0.0000", "ratio", 4), "multiple")).toBe("+0.0000x");
+  expect(signedMetricText(metric("0.00004", "0.0000", "ratio", 4), "multiple")).toBe("+0.00004x");
+  // C-1 follow-up: a cushion never rounds onto zero or loses its sign.
+  expect(signedMetricText(metric("-0.00001", "0.0000", "ratio", 4), "multiple")).toBe("-0.00001x");
+  expect(signedMetricText(metric("0.40", "0.40", "USD", 2), "money")).toBe("+$0.40");
+  expect(signedMetricText(metric("-0.40", "-0.40", "USD", 2), "money")).toBe("($0.40)");
   expect(signedMetricText(metric("0.004", "0.0040", "ratio", 4), "multiple")).toBe("+0.004x");
   expect(signedMetricText(metric("0", "0.0000", "ratio", 4), "multiple")).toBe("0.00x");
   expect(signedMetricText(metric("385000", "385000.00", "USD", 2), "money")).toBe("+$385,000");
@@ -133,4 +137,6 @@ test("C-1: a figure beside a policy line never rounds onto the line or past it",
   expect(factorValueText({ ...factor("uca_positive", "0.004"), threshold: "0" })).toBe("$0.004");
   expect(legacyFactorText({ ...factor("dscr", "1.249996"), threshold: "1.25", decline_threshold: "1" })).toBe("1.249996x");
   expect(legacyFactorText({ ...factor("dscr", "3.134936659675626479525752"), threshold: "1.25" })).toBe("3.1349x");
+  // Past 30 places the exact value shows, never a rounded zero beside "> $0".
+  expect(legacyFactorText({ ...factor("uca_positive", "1E-31"), threshold: "0" })).toBe("$1E-31");
 });
