@@ -79,6 +79,19 @@ const consumerFactorLabels: Record<string, string> = {
   synthetic_credit_score: "Synthetic credit score",
 };
 
+/** A rejection in plain words. When the server names no field, its own reason is the message: "Review the
+ * highlighted fields" would point at nothing. */
+function rejectionMessage(status: number, detail: unknown, fieldErrors: number): string {
+  if (status !== 422)
+    return `The evaluation could not be completed (${status}). Your draft is preserved.`;
+  if (fieldErrors || typeof detail !== "string" || !detail.trim())
+    return "The server rejected these inputs. Review the highlighted fields; your draft is preserved.";
+  const reason = detail.trim().replace(/\.$/, "");
+  if (/^NAICS \d{6} is unsupported:/.test(reason))
+    return `This case couldn't be screened: ${reason}. That is a known limit of the prototype's pinned SBA size table, so correct the code if it is wrong or review the case manually; your draft is preserved.`;
+  return `This case couldn't be evaluated: ${reason}. Your draft is preserved.`;
+}
+
 function useDomainRequest<T>(
   form: GuidedFormModel,
   guard: (body: unknown) => T,
@@ -130,12 +143,9 @@ function useDomainRequest<T>(
           body && typeof body === "object" && "detail" in body
             ? body.detail
             : null;
-        form.reject(fieldErrorsFrom(body, detail));
-        throw new Error(
-          response.status === 422
-            ? "The server rejected these inputs. Review the highlighted fields; your draft is preserved."
-            : `The evaluation could not be completed (${response.status}). Your draft is preserved.`,
-        );
+        const fieldErrors = fieldErrorsFrom(body, detail);
+        form.reject(fieldErrors);
+        throw new Error(rejectionMessage(response.status, detail, fieldErrors.length));
       }
       const accepted = guard(body);
       if (!controller.signal.aborted && currentContext.current === context)

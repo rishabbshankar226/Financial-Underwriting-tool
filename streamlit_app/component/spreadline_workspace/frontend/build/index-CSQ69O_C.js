@@ -1439,16 +1439,16 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	function hn(e, t, n, r) {
 		if (fn) {
 			var i = _n(e, t, n, r);
-			if (i === null) ci(e, t, r, gn, n), tn(e, r);
+			if (i === null) li(e, t, r, gn, n), tn(e, r);
 			else if (rn(i, e, t, n, r)) r.stopPropagation();
 			else if (tn(e, r), t & 4 && -1 < en.indexOf(e)) {
 				for (; i !== null;) {
 					var a = Fi(i);
-					if (a !== null && Vt(a), a = _n(e, t, n, r), a === null && ci(e, t, r, gn, n), a === i) break;
+					if (a !== null && Vt(a), a = _n(e, t, n, r), a === null && li(e, t, r, gn, n), a === i) break;
 					i = a;
 				}
 				i !== null && r.stopPropagation();
-			} else ci(e, t, r, null, n);
+			} else li(e, t, r, null, n);
 		}
 	}
 	var gn = null;
@@ -1567,7 +1567,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	function Tn() {
 		return !1;
 	}
-	function U(e) {
+	function En(e) {
 		function t(t, n, r, i, a) {
 			for (var o in this._reactName = t, this._targetInst = r, this.type = n, this.nativeEvent = i, this.target = a, this.currentTarget = null, e) e.hasOwnProperty(o) && (t = e[o], this[o] = t ? t(i) : i[o]);
 			return this.isDefaultPrevented = (i.defaultPrevented == null ? !1 === i.returnValue : i.defaultPrevented) ? wn : Tn, this.isPropagationStopped = Tn, this;
@@ -1586,7 +1586,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			isPersistent: wn
 		}), t;
 	}
-	var En = {
+	var Dn = {
 		eventPhase: 0,
 		bubbles: 0,
 		cancelable: 0,
@@ -1595,10 +1595,10 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		},
 		defaultPrevented: 0,
 		isTrusted: 0
-	}, Dn = U(En), On = A({}, En, {
+	}, On = En(Dn), kn = A({}, Dn, {
 		view: 0,
 		detail: 0
-	}), kn = U(On), An, jn, Mn, Nn = A({}, On, {
+	}), An = En(kn), jn, Mn, Nn, Pn = A({}, kn, {
 		screenX: 0,
 		screenY: 0,
 		clientX: 0,
@@ -1609,25 +1609,25 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		shiftKey: 0,
 		altKey: 0,
 		metaKey: 0,
-		getModifierState: Wn,
+		getModifierState: Gn,
 		button: 0,
 		buttons: 0,
 		relatedTarget: function(e) {
 			return e.relatedTarget === void 0 ? e.fromElement === e.srcElement ? e.toElement : e.fromElement : e.relatedTarget;
 		},
 		movementX: function(e) {
-			return "movementX" in e ? e.movementX : (e !== Mn && (Mn && e.type === "mousemove" ? (An = e.screenX - Mn.screenX, jn = e.screenY - Mn.screenY) : jn = An = 0, Mn = e), An);
+			return "movementX" in e ? e.movementX : (e !== Nn && (Nn && e.type === "mousemove" ? (jn = e.screenX - Nn.screenX, Mn = e.screenY - Nn.screenY) : Mn = jn = 0, Nn = e), jn);
 		},
 		movementY: function(e) {
-			return "movementY" in e ? e.movementY : jn;
+			return "movementY" in e ? e.movementY : Mn;
 		}
-	}), Pn = U(Nn), Fn = U(A({}, Nn, { dataTransfer: 0 })), In = U(A({}, On, { relatedTarget: 0 })), Ln = U(A({}, En, {
+	}), Fn = En(Pn), In = En(A({}, Pn, { dataTransfer: 0 })), Ln = En(A({}, kn, { relatedTarget: 0 })), Rn = En(A({}, Dn, {
 		animationName: 0,
 		elapsedTime: 0,
 		pseudoElement: 0
-	})), Rn = U(A({}, En, { clipboardData: function(e) {
+	})), zn = En(A({}, Dn, { clipboardData: function(e) {
 		return "clipboardData" in e ? e.clipboardData : window.clipboardData;
-	} })), zn = U(A({}, En, { data: 0 })), Bn = {
+	} })), Bn = En(A({}, Dn, { data: 0 })), Vn = {
 		Esc: "Escape",
 		Spacebar: " ",
 		Left: "ArrowLeft",
@@ -1640,7 +1640,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		Apps: "ContextMenu",
 		Scroll: "ScrollLock",
 		MozPrintableKey: "Unidentified"
-	}, Vn = {
+	}, Hn = {
 		8: "Backspace",
 		9: "Tab",
 		12: "Clear",
@@ -1677,26 +1677,26 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		144: "NumLock",
 		145: "ScrollLock",
 		224: "Meta"
-	}, Hn = {
+	}, Un = {
 		Alt: "altKey",
 		Control: "ctrlKey",
 		Meta: "metaKey",
 		Shift: "shiftKey"
 	};
-	function Un(e) {
+	function Wn(e) {
 		var t = this.nativeEvent;
-		return t.getModifierState ? t.getModifierState(e) : (e = Hn[e]) ? !!t[e] : !1;
+		return t.getModifierState ? t.getModifierState(e) : (e = Un[e]) ? !!t[e] : !1;
 	}
-	function Wn() {
-		return Un;
+	function Gn() {
+		return Wn;
 	}
-	var Gn = U(A({}, On, {
+	var Kn = En(A({}, kn, {
 		key: function(e) {
 			if (e.key) {
-				var t = Bn[e.key] || e.key;
+				var t = Vn[e.key] || e.key;
 				if (t !== "Unidentified") return t;
 			}
-			return e.type === "keypress" ? (e = Cn(e), e === 13 ? "Enter" : String.fromCharCode(e)) : e.type === "keydown" || e.type === "keyup" ? Vn[e.keyCode] || "Unidentified" : "";
+			return e.type === "keypress" ? (e = Cn(e), e === 13 ? "Enter" : String.fromCharCode(e)) : e.type === "keydown" || e.type === "keyup" ? Hn[e.keyCode] || "Unidentified" : "";
 		},
 		code: 0,
 		location: 0,
@@ -1706,7 +1706,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		metaKey: 0,
 		repeat: 0,
 		locale: 0,
-		getModifierState: Wn,
+		getModifierState: Gn,
 		charCode: function(e) {
 			return e.type === "keypress" ? Cn(e) : 0;
 		},
@@ -1716,7 +1716,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		which: function(e) {
 			return e.type === "keypress" ? Cn(e) : e.type === "keydown" || e.type === "keyup" ? e.keyCode : 0;
 		}
-	})), Kn = U(A({}, Nn, {
+	})), qn = En(A({}, Pn, {
 		pointerId: 0,
 		width: 0,
 		height: 0,
@@ -1727,7 +1727,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		twist: 0,
 		pointerType: 0,
 		isPrimary: 0
-	})), qn = U(A({}, On, {
+	})), Jn = En(A({}, kn, {
 		touches: 0,
 		targetTouches: 0,
 		changedTouches: 0,
@@ -1735,12 +1735,12 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		metaKey: 0,
 		ctrlKey: 0,
 		shiftKey: 0,
-		getModifierState: Wn
-	})), Jn = U(A({}, En, {
+		getModifierState: Gn
+	})), Yn = En(A({}, Dn, {
 		propertyName: 0,
 		elapsedTime: 0,
 		pseudoElement: 0
-	})), W = U(A({}, Nn, {
+	})), U = En(A({}, Pn, {
 		deltaX: function(e) {
 			return "deltaX" in e ? e.deltaX : "wheelDeltaX" in e ? -e.wheelDeltaX : 0;
 		},
@@ -1749,17 +1749,17 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		},
 		deltaZ: 0,
 		deltaMode: 0
-	})), Yn = [
+	})), Xn = [
 		9,
 		13,
 		27,
 		32
-	], Xn = u && "CompositionEvent" in window, Zn = null;
-	u && "documentMode" in document && (Zn = document.documentMode);
-	var Qn = u && "TextEvent" in window && !Zn, $n = u && (!Xn || Zn && 8 < Zn && 11 >= Zn), er = " ", tr = !1;
-	function nr(e, t) {
+	], Zn = u && "CompositionEvent" in window, Qn = null;
+	u && "documentMode" in document && (Qn = document.documentMode);
+	var $n = u && "TextEvent" in window && !Qn, er = u && (!Zn || Qn && 8 < Qn && 11 >= Qn), tr = " ", nr = !1;
+	function rr(e, t) {
 		switch (e) {
-			case "keyup": return Yn.indexOf(t.keyCode) !== -1;
+			case "keyup": return Xn.indexOf(t.keyCode) !== -1;
 			case "keydown": return t.keyCode !== 229;
 			case "keypress":
 			case "mousedown":
@@ -1767,20 +1767,20 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			default: return !1;
 		}
 	}
-	function rr(e) {
+	function ir(e) {
 		return e = e.detail, typeof e == "object" && "data" in e ? e.data : null;
 	}
-	var ir = !1;
-	function ar(e, t) {
+	var ar = !1;
+	function or(e, t) {
 		switch (e) {
-			case "compositionend": return rr(t);
-			case "keypress": return t.which === 32 ? (tr = !0, er) : null;
-			case "textInput": return e = t.data, e === er && tr ? null : e;
+			case "compositionend": return ir(t);
+			case "keypress": return t.which === 32 ? (nr = !0, tr) : null;
+			case "textInput": return e = t.data, e === tr && nr ? null : e;
 			default: return null;
 		}
 	}
-	function or(e, t) {
-		if (ir) return e === "compositionend" || !Xn && nr(e, t) ? (e = Sn(), xn = bn = yn = null, ir = !1, e) : null;
+	function sr(e, t) {
+		if (ar) return e === "compositionend" || !Zn && rr(e, t) ? (e = Sn(), xn = bn = yn = null, ar = !1, e) : null;
 		switch (e) {
 			case "paste": return null;
 			case "keypress":
@@ -1789,11 +1789,11 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 					if (t.which) return String.fromCharCode(t.which);
 				}
 				return null;
-			case "compositionend": return $n && t.locale !== "ko" ? null : t.data;
+			case "compositionend": return er && t.locale !== "ko" ? null : t.data;
 			default: return null;
 		}
 	}
-	var sr = {
+	var cr = {
 		color: !0,
 		date: !0,
 		datetime: !0,
@@ -1810,81 +1810,81 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		url: !0,
 		week: !0
 	};
-	function cr(e) {
+	function lr(e) {
 		var t = e && e.nodeName && e.nodeName.toLowerCase();
-		return t === "input" ? !!sr[e.type] : t === "textarea";
+		return t === "input" ? !!cr[e.type] : t === "textarea";
 	}
-	function lr(e, t, n, r) {
-		Ye(r), t = ui(t, "onChange"), 0 < t.length && (n = new Dn("onChange", "change", null, n, r), e.push({
+	function ur(e, t, n, r) {
+		Ye(r), t = di(t, "onChange"), 0 < t.length && (n = new On("onChange", "change", null, n, r), e.push({
 			event: n,
 			listeners: t
 		}));
 	}
-	var ur = null, dr = null;
-	function fr(e) {
-		ri(e, 0);
-	}
+	var dr = null, fr = null;
 	function pr(e) {
+		ii(e, 0);
+	}
+	function mr(e) {
 		if (N(Ii(e))) return e;
 	}
-	function mr(e, t) {
+	function hr(e, t) {
 		if (e === "change") return t;
 	}
-	var hr = !1;
+	var gr = !1;
 	if (u) {
-		var gr;
+		var _r;
 		if (u) {
-			var _r = "oninput" in document;
-			if (!_r) {
-				var vr = document.createElement("div");
-				vr.setAttribute("oninput", "return;"), _r = typeof vr.oninput == "function";
+			var vr = "oninput" in document;
+			if (!vr) {
+				var yr = document.createElement("div");
+				yr.setAttribute("oninput", "return;"), vr = typeof yr.oninput == "function";
 			}
-			gr = _r;
-		} else gr = !1;
-		hr = gr && (!document.documentMode || 9 < document.documentMode);
+			_r = vr;
+		} else _r = !1;
+		gr = _r && (!document.documentMode || 9 < document.documentMode);
 	}
-	function yr() {
-		ur && (ur.detachEvent("onpropertychange", br), dr = ur = null);
+	function br() {
+		dr && (dr.detachEvent("onpropertychange", xr), fr = dr = null);
 	}
-	function br(e) {
-		if (e.propertyName === "value" && pr(dr)) {
+	function xr(e) {
+		if (e.propertyName === "value" && mr(fr)) {
 			var t = [];
-			lr(t, dr, e, We(e)), et(fr, t);
+			ur(t, fr, e, We(e)), et(pr, t);
 		}
 	}
-	function xr(e, t, n) {
-		e === "focusin" ? (yr(), ur = t, dr = n, ur.attachEvent("onpropertychange", br)) : e === "focusout" && yr();
+	function Sr(e, t, n) {
+		e === "focusin" ? (br(), dr = t, fr = n, dr.attachEvent("onpropertychange", xr)) : e === "focusout" && br();
 	}
-	function Sr(e) {
-		if (e === "selectionchange" || e === "keyup" || e === "keydown") return pr(dr);
-	}
-	function Cr(e, t) {
-		if (e === "click") return pr(t);
+	function Cr(e) {
+		if (e === "selectionchange" || e === "keyup" || e === "keydown") return mr(fr);
 	}
 	function wr(e, t) {
-		if (e === "input" || e === "change") return pr(t);
+		if (e === "click") return mr(t);
 	}
 	function Tr(e, t) {
+		if (e === "input" || e === "change") return mr(t);
+	}
+	function Er(e, t) {
 		return e === t && (e !== 0 || 1 / e == 1 / t) || e !== e && t !== t;
 	}
-	var Er = typeof Object.is == "function" ? Object.is : Tr;
-	function Dr(e, t) {
-		if (Er(e, t)) return !0;
+	var Dr = typeof Object.is == "function" ? Object.is : Er;
+	function Or(e, t) {
+		if (Dr(e, t)) return !0;
 		if (typeof e != "object" || !e || typeof t != "object" || !t) return !1;
 		var n = Object.keys(e), r = Object.keys(t);
 		if (n.length !== r.length) return !1;
 		for (r = 0; r < n.length; r++) {
 			var i = n[r];
-			if (!d.call(t, i) || !Er(e[i], t[i])) return !1;
+			if (!d.call(t, i) || !Dr(e[i], t[i])) return !1;
 		}
 		return !0;
 	}
-	function Or(e) {
+	function kr(e) {
 		for (; e && e.firstChild;) e = e.firstChild;
 		return e;
 	}
-	function kr(e, t) {
-		var n = Or(e);
+	function Ar(e, t) {
+		var n = kr(e);
 		e = 0;
 		for (var r; n;) {
 			if (n.nodeType === 3) {
@@ -1904,13 +1904,13 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				}
 				n = void 0;
 			}
-			n = Or(n);
+			n = kr(n);
 		}
 	}
-	function Ar(e, t) {
-		return e && t ? e === t ? !0 : e && e.nodeType === 3 ? !1 : t && t.nodeType === 3 ? Ar(e, t.parentNode) : "contains" in e ? e.contains(t) : e.compareDocumentPosition ? !!(e.compareDocumentPosition(t) & 16) : !1 : !1;
+	function jr(e, t) {
+		return e && t ? e === t ? !0 : e && e.nodeType === 3 ? !1 : t && t.nodeType === 3 ? jr(e, t.parentNode) : "contains" in e ? e.contains(t) : e.compareDocumentPosition ? !!(e.compareDocumentPosition(t) & 16) : !1 : !1;
 	}
-	function jr() {
+	function Mr() {
 		for (var e = window, t = ve(); t instanceof e.HTMLIFrameElement;) {
 			try {
 				var n = typeof t.contentWindow.location.href == "string";
@@ -1923,20 +1923,20 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		}
 		return t;
 	}
-	function Mr(e) {
+	function Nr(e) {
 		var t = e && e.nodeName && e.nodeName.toLowerCase();
 		return t && (t === "input" && (e.type === "text" || e.type === "search" || e.type === "tel" || e.type === "url" || e.type === "password") || t === "textarea" || e.contentEditable === "true");
 	}
-	function Nr(e) {
-		var t = jr(), n = e.focusedElem, r = e.selectionRange;
-		if (t !== n && n && n.ownerDocument && Ar(n.ownerDocument.documentElement, n)) {
-			if (r !== null && Mr(n)) {
+	function Pr(e) {
+		var t = Mr(), n = e.focusedElem, r = e.selectionRange;
+		if (t !== n && n && n.ownerDocument && jr(n.ownerDocument.documentElement, n)) {
+			if (r !== null && Nr(n)) {
 				if (t = r.start, e = r.end, e === void 0 && (e = t), "selectionStart" in n) n.selectionStart = t, n.selectionEnd = Math.min(e, n.value.length);
 				else if (e = (t = n.ownerDocument || document) && t.defaultView || window, e.getSelection) {
 					e = e.getSelection();
 					var i = n.textContent.length, a = Math.min(r.start, i);
-					r = r.end === void 0 ? a : Math.min(r.end, i), !e.extend && a > r && (i = r, r = a, a = i), i = kr(n, a);
-					var o = kr(n, r);
+					r = r.end === void 0 ? a : Math.min(r.end, i), !e.extend && a > r && (i = r, r = a, a = i), i = Ar(n, a);
+					var o = Ar(n, r);
 					i && o && (e.rangeCount !== 1 || e.anchorNode !== i.node || e.anchorOffset !== i.offset || e.focusNode !== o.node || e.focusOffset !== o.offset) && (t = t.createRange(), t.setStart(i.node, i.offset), e.removeAllRanges(), a > r ? (e.addRange(t), e.extend(o.node, o.offset)) : (t.setEnd(o.node, o.offset), e.addRange(t)));
 				}
 			}
@@ -1948,10 +1948,10 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			for (typeof n.focus == "function" && n.focus(), n = 0; n < t.length; n++) e = t[n], e.element.scrollLeft = e.left, e.element.scrollTop = e.top;
 		}
 	}
-	var Pr = u && "documentMode" in document && 11 >= document.documentMode, Fr = null, Ir = null, Lr = null, Rr = !1;
-	function zr(e, t, n) {
+	var Fr = u && "documentMode" in document && 11 >= document.documentMode, Ir = null, Lr = null, Rr = null, zr = !1;
+	function Br(e, t, n) {
 		var r = n.window === n ? n.document : n.nodeType === 9 ? n : n.ownerDocument;
-		Rr || Fr == null || Fr !== ve(r) || (r = Fr, "selectionStart" in r && Mr(r) ? r = {
+		zr || Ir == null || Ir !== ve(r) || (r = Ir, "selectionStart" in r && Nr(r) ? r = {
 			start: r.selectionStart,
 			end: r.selectionEnd
 		} : (r = (r.ownerDocument && r.ownerDocument.defaultView || window).getSelection(), r = {
@@ -1959,49 +1959,49 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			anchorOffset: r.anchorOffset,
 			focusNode: r.focusNode,
 			focusOffset: r.focusOffset
-		}), Lr && Dr(Lr, r) || (Lr = r, r = ui(Ir, "onSelect"), 0 < r.length && (t = new Dn("onSelect", "select", null, t, n), e.push({
+		}), Rr && Or(Rr, r) || (Rr = r, r = di(Lr, "onSelect"), 0 < r.length && (t = new On("onSelect", "select", null, t, n), e.push({
 			event: t,
 			listeners: r
-		}), t.target = Fr)));
+		}), t.target = Ir)));
 	}
-	function Br(e, t) {
+	function Vr(e, t) {
 		var n = {};
 		return n[e.toLowerCase()] = t.toLowerCase(), n["Webkit" + e] = "webkit" + t, n["Moz" + e] = "moz" + t, n;
 	}
-	var Vr = {
-		animationend: Br("Animation", "AnimationEnd"),
-		animationiteration: Br("Animation", "AnimationIteration"),
-		animationstart: Br("Animation", "AnimationStart"),
-		transitionend: Br("Transition", "TransitionEnd")
-	}, Hr = {}, Ur = {};
-	u && (Ur = document.createElement("div").style, "AnimationEvent" in window || (delete Vr.animationend.animation, delete Vr.animationiteration.animation, delete Vr.animationstart.animation), "TransitionEvent" in window || delete Vr.transitionend.transition);
-	function Wr(e) {
-		if (Hr[e]) return Hr[e];
-		if (!Vr[e]) return e;
-		var t = Vr[e], n;
-		for (n in t) if (t.hasOwnProperty(n) && n in Ur) return Hr[e] = t[n];
+	var Hr = {
+		animationend: Vr("Animation", "AnimationEnd"),
+		animationiteration: Vr("Animation", "AnimationIteration"),
+		animationstart: Vr("Animation", "AnimationStart"),
+		transitionend: Vr("Transition", "TransitionEnd")
+	}, Ur = {}, Wr = {};
+	u && (Wr = document.createElement("div").style, "AnimationEvent" in window || (delete Hr.animationend.animation, delete Hr.animationiteration.animation, delete Hr.animationstart.animation), "TransitionEvent" in window || delete Hr.transitionend.transition);
+	function Gr(e) {
+		if (Ur[e]) return Ur[e];
+		if (!Hr[e]) return e;
+		var t = Hr[e], n;
+		for (n in t) if (t.hasOwnProperty(n) && n in Wr) return Ur[e] = t[n];
 		return e;
 	}
-	var Gr = Wr("animationend"), Kr = Wr("animationiteration"), qr = Wr("animationstart"), Jr = Wr("transitionend"), Yr = /* @__PURE__ */ new Map(), Xr = "abort auxClick cancel canPlay canPlayThrough click close contextMenu copy cut drag dragEnd dragEnter dragExit dragLeave dragOver dragStart drop durationChange emptied encrypted ended error gotPointerCapture input invalid keyDown keyPress keyUp load loadedData loadedMetadata loadStart lostPointerCapture mouseDown mouseMove mouseOut mouseOver mouseUp paste pause play playing pointerCancel pointerDown pointerMove pointerOut pointerOver pointerUp progress rateChange reset resize seeked seeking stalled submit suspend timeUpdate touchCancel touchEnd touchStart volumeChange scroll toggle touchMove waiting wheel".split(" ");
-	function Zr(e, t) {
-		Yr.set(e, t), c(t, [e]);
+	var Kr = Gr("animationend"), qr = Gr("animationiteration"), Jr = Gr("animationstart"), Yr = Gr("transitionend"), Xr = /* @__PURE__ */ new Map(), Zr = "abort auxClick cancel canPlay canPlayThrough click close contextMenu copy cut drag dragEnd dragEnter dragExit dragLeave dragOver dragStart drop durationChange emptied encrypted ended error gotPointerCapture input invalid keyDown keyPress keyUp load loadedData loadedMetadata loadStart lostPointerCapture mouseDown mouseMove mouseOut mouseOver mouseUp paste pause play playing pointerCancel pointerDown pointerMove pointerOut pointerOver pointerUp progress rateChange reset resize seeked seeking stalled submit suspend timeUpdate touchCancel touchEnd touchStart volumeChange scroll toggle touchMove waiting wheel".split(" ");
+	function Qr(e, t) {
+		Xr.set(e, t), c(t, [e]);
 	}
-	for (var Qr = 0; Qr < Xr.length; Qr++) {
-		var $r = Xr[Qr];
-		Zr($r.toLowerCase(), "on" + ($r[0].toUpperCase() + $r.slice(1)));
+	for (var $r = 0; $r < Zr.length; $r++) {
+		var ei = Zr[$r];
+		Qr(ei.toLowerCase(), "on" + (ei[0].toUpperCase() + ei.slice(1)));
 	}
-	Zr(Gr, "onAnimationEnd"), Zr(Kr, "onAnimationIteration"), Zr(qr, "onAnimationStart"), Zr("dblclick", "onDoubleClick"), Zr("focusin", "onFocus"), Zr("focusout", "onBlur"), Zr(Jr, "onTransitionEnd"), l("onMouseEnter", ["mouseout", "mouseover"]), l("onMouseLeave", ["mouseout", "mouseover"]), l("onPointerEnter", ["pointerout", "pointerover"]), l("onPointerLeave", ["pointerout", "pointerover"]), c("onChange", "change click focusin focusout input keydown keyup selectionchange".split(" ")), c("onSelect", "focusout contextmenu dragend focusin keydown keyup mousedown mouseup selectionchange".split(" ")), c("onBeforeInput", [
+	Qr(Kr, "onAnimationEnd"), Qr(qr, "onAnimationIteration"), Qr(Jr, "onAnimationStart"), Qr("dblclick", "onDoubleClick"), Qr("focusin", "onFocus"), Qr("focusout", "onBlur"), Qr(Yr, "onTransitionEnd"), l("onMouseEnter", ["mouseout", "mouseover"]), l("onMouseLeave", ["mouseout", "mouseover"]), l("onPointerEnter", ["pointerout", "pointerover"]), l("onPointerLeave", ["pointerout", "pointerover"]), c("onChange", "change click focusin focusout input keydown keyup selectionchange".split(" ")), c("onSelect", "focusout contextmenu dragend focusin keydown keyup mousedown mouseup selectionchange".split(" ")), c("onBeforeInput", [
 		"compositionend",
 		"keypress",
 		"textInput",
 		"paste"
 	]), c("onCompositionEnd", "compositionend focusout keydown keypress keyup mousedown".split(" ")), c("onCompositionStart", "compositionstart focusout keydown keypress keyup mousedown".split(" ")), c("onCompositionUpdate", "compositionupdate focusout keydown keypress keyup mousedown".split(" "));
-	var ei = "abort canplay canplaythrough durationchange emptied encrypted ended error loadeddata loadedmetadata loadstart pause play playing progress ratechange resize seeked seeking stalled suspend timeupdate volumechange waiting".split(" "), ti = new Set("cancel close invalid load scroll toggle".split(" ").concat(ei));
-	function ni(e, t, n) {
+	var ti = "abort canplay canplaythrough durationchange emptied encrypted ended error loadeddata loadedmetadata loadstart pause play playing progress ratechange resize seeked seeking stalled suspend timeupdate volumechange waiting".split(" "), ni = new Set("cancel close invalid load scroll toggle".split(" ").concat(ti));
+	function ri(e, t, n) {
 		var r = e.type || "unknown-event";
 		e.currentTarget = n, ct(r, t, void 0, e), e.currentTarget = null;
 	}
-	function ri(e, t) {
+	function ii(e, t) {
 		t = !!(t & 4);
 		for (var n = 0; n < e.length; n++) {
 			var r = e[n], i = r.event;
@@ -2011,37 +2011,37 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				if (t) for (var o = r.length - 1; 0 <= o; o--) {
 					var s = r[o], c = s.instance, l = s.currentTarget;
 					if (s = s.listener, c !== a && i.isPropagationStopped()) break a;
-					ni(i, s, l), a = c;
+					ri(i, s, l), a = c;
 				}
 				else for (o = 0; o < r.length; o++) {
 					if (s = r[o], c = s.instance, l = s.currentTarget, s = s.listener, c !== a && i.isPropagationStopped()) break a;
-					ni(i, s, l), a = c;
+					ri(i, s, l), a = c;
 				}
 			}
 		}
 		if (it) throw e = at, it = !1, at = null, e;
 	}
-	function G(e, t) {
-		var n = t[ji];
-		n === void 0 && (n = t[ji] = /* @__PURE__ */ new Set());
+	function W(e, t) {
+		var n = t[q];
+		n === void 0 && (n = t[q] = /* @__PURE__ */ new Set());
 		var r = e + "__bubble";
-		n.has(r) || (si(t, e, 2, !1), n.add(r));
+		n.has(r) || (ci(t, e, 2, !1), n.add(r));
 	}
-	function ii(e, t, n) {
+	function ai(e, t, n) {
 		var r = 0;
-		t && (r |= 4), si(n, e, r, t);
+		t && (r |= 4), ci(n, e, r, t);
 	}
-	var ai = "_reactListening" + Math.random().toString(36).slice(2);
-	function oi(e) {
-		if (!e[ai]) {
-			e[ai] = !0, o.forEach(function(t) {
-				t !== "selectionchange" && (ti.has(t) || ii(t, !1, e), ii(t, !0, e));
+	var oi = "_reactListening" + Math.random().toString(36).slice(2);
+	function si(e) {
+		if (!e[oi]) {
+			e[oi] = !0, o.forEach(function(t) {
+				t !== "selectionchange" && (ni.has(t) || ai(t, !1, e), ai(t, !0, e));
 			});
 			var t = e.nodeType === 9 ? e : e.ownerDocument;
-			t === null || t[ai] || (t[ai] = !0, ii("selectionchange", !1, t));
+			t === null || t[oi] || (t[oi] = !0, ai("selectionchange", !1, t));
 		}
 	}
-	function si(e, t, n, r) {
+	function ci(e, t, n, r) {
 		switch (vn(t)) {
 			case 1:
 				var i = pn;
@@ -2056,7 +2056,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			passive: i
 		}) : i === void 0 ? e.addEventListener(t, n, !1) : e.addEventListener(t, n, { passive: i });
 	}
-	function ci(e, t, n, r, i) {
+	function li(e, t, n, r, i) {
 		var a = r;
 		if (!(t & 1) && !(t & 2) && r !== null) a: for (;;) {
 			if (r === null) return;
@@ -2083,24 +2083,24 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		et(function() {
 			var r = a, i = We(n), o = [];
 			a: {
-				var s = Yr.get(e);
+				var s = Xr.get(e);
 				if (s !== void 0) {
-					var c = Dn, l = e;
+					var c = On, l = e;
 					switch (e) {
 						case "keypress": if (Cn(n) === 0) break a;
 						case "keydown":
 						case "keyup":
-							c = Gn;
+							c = Kn;
 							break;
 						case "focusin":
-							l = "focus", c = In;
+							l = "focus", c = Ln;
 							break;
 						case "focusout":
-							l = "blur", c = In;
+							l = "blur", c = Ln;
 							break;
 						case "beforeblur":
 						case "afterblur":
-							c = In;
+							c = Ln;
 							break;
 						case "click": if (n.button === 2) break a;
 						case "auxclick":
@@ -2111,7 +2111,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 						case "mouseout":
 						case "mouseover":
 						case "contextmenu":
-							c = Pn;
+							c = Fn;
 							break;
 						case "drag":
 						case "dragend":
@@ -2121,32 +2121,32 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 						case "dragover":
 						case "dragstart":
 						case "drop":
-							c = Fn;
+							c = In;
 							break;
 						case "touchcancel":
 						case "touchend":
 						case "touchmove":
 						case "touchstart":
-							c = qn;
-							break;
-						case Gr:
-						case Kr:
-						case qr:
-							c = Ln;
-							break;
-						case Jr:
 							c = Jn;
 							break;
+						case Kr:
+						case qr:
+						case Jr:
+							c = Rn;
+							break;
+						case Yr:
+							c = Yn;
+							break;
 						case "scroll":
-							c = kn;
+							c = An;
 							break;
 						case "wheel":
-							c = W;
+							c = U;
 							break;
 						case "copy":
 						case "cut":
 						case "paste":
-							c = Rn;
+							c = zn;
 							break;
 						case "gotpointercapture":
 						case "lostpointercapture":
@@ -2155,14 +2155,14 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 						case "pointermove":
 						case "pointerout":
 						case "pointerover":
-						case "pointerup": c = Kn;
+						case "pointerup": c = qn;
 					}
 					var u = !!(t & 4), d = !u && e === "scroll", f = u ? s === null ? null : s + "Capture" : s;
 					u = [];
 					for (var p = r, m; p !== null;) {
 						m = p;
 						var h = m.stateNode;
-						if (m.tag === 5 && h !== null && (m = h, f !== null && (h = P(p, f), h != null && u.push(li(p, h, m)))), d) break;
+						if (m.tag === 5 && h !== null && (m = h, f !== null && (h = P(p, f), h != null && u.push(ui(p, h, m)))), d) break;
 						p = p.return;
 					}
 					0 < u.length && (s = new c(s, l, null, n, i), o.push({
@@ -2173,59 +2173,59 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			}
 			if (!(t & 7)) {
 				a: {
-					if (s = e === "mouseover" || e === "pointerover", c = e === "mouseout" || e === "pointerout", s && n !== Ue && (l = n.relatedTarget || n.fromElement) && (Pi(l) || l[Ai])) break a;
+					if (s = e === "mouseover" || e === "pointerover", c = e === "mouseout" || e === "pointerout", s && n !== Ue && (l = n.relatedTarget || n.fromElement) && (Pi(l) || l[ji])) break a;
 					if ((c || s) && (s = i.window === i ? i : (s = i.ownerDocument) ? s.defaultView || s.parentWindow : window, c ? (l = n.relatedTarget || n.toElement, c = r, l = l ? Pi(l) : null, l !== null && (d = lt(l), l !== d || l.tag !== 5 && l.tag !== 6) && (l = null)) : (c = null, l = r), c !== l)) {
-						if (u = Pn, h = "onMouseLeave", f = "onMouseEnter", p = "mouse", (e === "pointerout" || e === "pointerover") && (u = Kn, h = "onPointerLeave", f = "onPointerEnter", p = "pointer"), d = c == null ? s : Ii(c), m = l == null ? s : Ii(l), s = new u(h, p + "leave", c, n, i), s.target = d, s.relatedTarget = m, h = null, Pi(i) === r && (u = new u(f, p + "enter", l, n, i), u.target = m, u.relatedTarget = d, h = u), d = h, c && l) b: {
-							for (u = c, f = l, p = 0, m = u; m; m = di(m)) p++;
-							for (m = 0, h = f; h; h = di(h)) m++;
-							for (; 0 < p - m;) u = di(u), p--;
-							for (; 0 < m - p;) f = di(f), m--;
+						if (u = Fn, h = "onMouseLeave", f = "onMouseEnter", p = "mouse", (e === "pointerout" || e === "pointerover") && (u = qn, h = "onPointerLeave", f = "onPointerEnter", p = "pointer"), d = c == null ? s : Ii(c), m = l == null ? s : Ii(l), s = new u(h, p + "leave", c, n, i), s.target = d, s.relatedTarget = m, h = null, Pi(i) === r && (u = new u(f, p + "enter", l, n, i), u.target = m, u.relatedTarget = d, h = u), d = h, c && l) b: {
+							for (u = c, f = l, p = 0, m = u; m; m = fi(m)) p++;
+							for (m = 0, h = f; h; h = fi(h)) m++;
+							for (; 0 < p - m;) u = fi(u), p--;
+							for (; 0 < m - p;) f = fi(f), m--;
 							for (; p--;) {
 								if (u === f || f !== null && u === f.alternate) break b;
-								u = di(u), f = di(f);
+								u = fi(u), f = fi(f);
 							}
 							u = null;
 						}
 						else u = null;
-						c !== null && fi(o, s, c, u, !1), l !== null && d !== null && fi(o, d, l, u, !0);
+						c !== null && pi(o, s, c, u, !1), l !== null && d !== null && pi(o, d, l, u, !0);
 					}
 				}
 				a: {
-					if (s = r ? Ii(r) : window, c = s.nodeName && s.nodeName.toLowerCase(), c === "select" || c === "input" && s.type === "file") var g = mr;
-					else if (cr(s)) {
-						if (hr) g = wr;
+					if (s = r ? Ii(r) : window, c = s.nodeName && s.nodeName.toLowerCase(), c === "select" || c === "input" && s.type === "file") var g = hr;
+					else if (lr(s)) {
+						if (gr) g = Tr;
 						else {
-							g = Sr;
-							var _ = xr;
+							g = Cr;
+							var _ = Sr;
 						}
-					} else (c = s.nodeName) && c.toLowerCase() === "input" && (s.type === "checkbox" || s.type === "radio") && (g = Cr);
+					} else (c = s.nodeName) && c.toLowerCase() === "input" && (s.type === "checkbox" || s.type === "radio") && (g = wr);
 					if (g &&= g(e, r)) {
-						lr(o, g, n, i);
+						ur(o, g, n, i);
 						break a;
 					}
 					_ && _(e, s, r), e === "focusout" && (_ = s._wrapperState) && _.controlled && s.type === "number" && we(s, "number", s.value);
 				}
 				switch (_ = r ? Ii(r) : window, e) {
 					case "focusin":
-						(cr(_) || _.contentEditable === "true") && (Fr = _, Ir = r, Lr = null);
+						(lr(_) || _.contentEditable === "true") && (Ir = _, Lr = r, Rr = null);
 						break;
 					case "focusout":
-						Lr = Ir = Fr = null;
+						Rr = Lr = Ir = null;
 						break;
 					case "mousedown":
-						Rr = !0;
+						zr = !0;
 						break;
 					case "contextmenu":
 					case "mouseup":
 					case "dragend":
-						Rr = !1, zr(o, n, i);
+						zr = !1, Br(o, n, i);
 						break;
-					case "selectionchange": if (Pr) break;
+					case "selectionchange": if (Fr) break;
 					case "keydown":
-					case "keyup": zr(o, n, i);
+					case "keyup": Br(o, n, i);
 				}
 				var v;
-				if (Xn) b: {
+				if (Zn) b: {
 					switch (e) {
 						case "compositionstart":
 							var y = "onCompositionStart";
@@ -2239,71 +2239,71 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 					}
 					y = void 0;
 				}
-				else ir ? nr(e, n) && (y = "onCompositionEnd") : e === "keydown" && n.keyCode === 229 && (y = "onCompositionStart");
-				y && ($n && n.locale !== "ko" && (ir || y !== "onCompositionStart" ? y === "onCompositionEnd" && ir && (v = Sn()) : (yn = i, bn = "value" in yn ? yn.value : yn.textContent, ir = !0)), _ = ui(r, y), 0 < _.length && (y = new zn(y, e, null, n, i), o.push({
+				else ar ? rr(e, n) && (y = "onCompositionEnd") : e === "keydown" && n.keyCode === 229 && (y = "onCompositionStart");
+				y && (er && n.locale !== "ko" && (ar || y !== "onCompositionStart" ? y === "onCompositionEnd" && ar && (v = Sn()) : (yn = i, bn = "value" in yn ? yn.value : yn.textContent, ar = !0)), _ = di(r, y), 0 < _.length && (y = new Bn(y, e, null, n, i), o.push({
 					event: y,
 					listeners: _
-				}), v ? y.data = v : (v = rr(n), v !== null && (y.data = v)))), (v = Qn ? ar(e, n) : or(e, n)) && (r = ui(r, "onBeforeInput"), 0 < r.length && (i = new zn("onBeforeInput", "beforeinput", null, n, i), o.push({
+				}), v ? y.data = v : (v = ir(n), v !== null && (y.data = v)))), (v = $n ? or(e, n) : sr(e, n)) && (r = di(r, "onBeforeInput"), 0 < r.length && (i = new Bn("onBeforeInput", "beforeinput", null, n, i), o.push({
 					event: i,
 					listeners: r
 				}), i.data = v));
 			}
-			ri(o, t);
+			ii(o, t);
 		});
 	}
-	function li(e, t, n) {
+	function ui(e, t, n) {
 		return {
 			instance: e,
 			listener: t,
 			currentTarget: n
 		};
 	}
-	function ui(e, t) {
+	function di(e, t) {
 		for (var n = t + "Capture", r = []; e !== null;) {
 			var i = e, a = i.stateNode;
-			i.tag === 5 && a !== null && (i = a, a = P(e, n), a != null && r.unshift(li(e, a, i)), a = P(e, t), a != null && r.push(li(e, a, i))), e = e.return;
+			i.tag === 5 && a !== null && (i = a, a = P(e, n), a != null && r.unshift(ui(e, a, i)), a = P(e, t), a != null && r.push(ui(e, a, i))), e = e.return;
 		}
 		return r;
 	}
-	function di(e) {
+	function fi(e) {
 		if (e === null) return null;
 		do
 			e = e.return;
 		while (e && e.tag !== 5);
 		return e || null;
 	}
-	function fi(e, t, n, r, i) {
+	function pi(e, t, n, r, i) {
 		for (var a = t._reactName, o = []; n !== null && n !== r;) {
 			var s = n, c = s.alternate, l = s.stateNode;
 			if (c !== null && c === r) break;
-			s.tag === 5 && l !== null && (s = l, i ? (c = P(n, a), c != null && o.unshift(li(n, c, s))) : i || (c = P(n, a), c != null && o.push(li(n, c, s)))), n = n.return;
+			s.tag === 5 && l !== null && (s = l, i ? (c = P(n, a), c != null && o.unshift(ui(n, c, s))) : i || (c = P(n, a), c != null && o.push(ui(n, c, s)))), n = n.return;
 		}
 		o.length !== 0 && e.push({
 			event: t,
 			listeners: o
 		});
 	}
-	var pi = /\r\n?/g, mi = /\u0000|\uFFFD/g;
-	function hi(e) {
-		return (typeof e == "string" ? e : "" + e).replace(pi, "\n").replace(mi, "");
+	var mi = /\r\n?/g, hi = /\u0000|\uFFFD/g;
+	function gi(e) {
+		return (typeof e == "string" ? e : "" + e).replace(mi, "\n").replace(hi, "");
 	}
-	function gi(e, t, n) {
-		if (t = hi(t), hi(e) !== t && n) throw Error(a(425));
+	function _i(e, t, n) {
+		if (t = gi(t), gi(e) !== t && n) throw Error(a(425));
 	}
-	function _i() {}
-	var vi = null, yi = null;
-	function bi(e, t) {
+	function vi() {}
+	var yi = null, bi = null;
+	function xi(e, t) {
 		return e === "textarea" || e === "noscript" || typeof t.children == "string" || typeof t.children == "number" || typeof t.dangerouslySetInnerHTML == "object" && t.dangerouslySetInnerHTML !== null && t.dangerouslySetInnerHTML.__html != null;
 	}
-	var xi = typeof setTimeout == "function" ? setTimeout : void 0, Si = typeof clearTimeout == "function" ? clearTimeout : void 0, Ci = typeof Promise == "function" ? Promise : void 0, wi = typeof queueMicrotask == "function" ? queueMicrotask : Ci === void 0 ? xi : function(e) {
-		return Ci.resolve(null).then(e).catch(Ti);
+	var Si = typeof setTimeout == "function" ? setTimeout : void 0, Ci = typeof clearTimeout == "function" ? clearTimeout : void 0, wi = typeof Promise == "function" ? Promise : void 0, Ti = typeof queueMicrotask == "function" ? queueMicrotask : wi === void 0 ? Si : function(e) {
+		return wi.resolve(null).then(e).catch(Ei);
 	};
-	function Ti(e) {
+	function Ei(e) {
 		setTimeout(function() {
 			throw e;
 		});
 	}
-	function Ei(e, t) {
+	function Di(e, t) {
 		var n = t, r = 0;
 		do {
 			var i = n.nextSibling;
@@ -2320,7 +2320,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		} while (n);
 		un(t);
 	}
-	function Di(e) {
+	function Oi(e) {
 		for (; e != null; e = e.nextSibling) {
 			var t = e.nodeType;
 			if (t === 1 || t === 3) break;
@@ -2331,7 +2331,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		}
 		return e;
 	}
-	function Oi(e) {
+	function ki(e) {
 		e = e.previousSibling;
 		for (var t = 0; e;) {
 			if (e.nodeType === 8) {
@@ -2345,15 +2345,15 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		}
 		return null;
 	}
-	var ki = Math.random().toString(36).slice(2), K = "__reactFiber$" + ki, q = "__reactProps$" + ki, Ai = "__reactContainer$" + ki, ji = "__reactEvents$" + ki, Mi = "__reactListeners$" + ki, Ni = "__reactHandles$" + ki;
+	var Ai = Math.random().toString(36).slice(2), G = "__reactFiber$" + Ai, K = "__reactProps$" + Ai, ji = "__reactContainer$" + Ai, q = "__reactEvents$" + Ai, Mi = "__reactListeners$" + Ai, Ni = "__reactHandles$" + Ai;
 	function Pi(e) {
-		var t = e[K];
+		var t = e[G];
 		if (t) return t;
 		for (var n = e.parentNode; n;) {
-			if (t = n[Ai] || n[K]) {
-				if (n = t.alternate, t.child !== null || n !== null && n.child !== null) for (e = Oi(e); e !== null;) {
-					if (n = e[K]) return n;
-					e = Oi(e);
+			if (t = n[ji] || n[G]) {
+				if (n = t.alternate, t.child !== null || n !== null && n.child !== null) for (e = ki(e); e !== null;) {
+					if (n = e[G]) return n;
+					e = ki(e);
 				}
 				return t;
 			}
@@ -2362,14 +2362,14 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		return null;
 	}
 	function Fi(e) {
-		return e = e[K] || e[Ai], !e || e.tag !== 5 && e.tag !== 6 && e.tag !== 13 && e.tag !== 3 ? null : e;
+		return e = e[G] || e[ji], !e || e.tag !== 5 && e.tag !== 6 && e.tag !== 13 && e.tag !== 3 ? null : e;
 	}
 	function Ii(e) {
 		if (e.tag === 5 || e.tag === 6) return e.stateNode;
 		throw Error(a(33));
 	}
 	function Li(e) {
-		return e[q] || null;
+		return e[K] || null;
 	}
 	var Ri = [], zi = -1;
 	function Bi(e) {
@@ -2475,7 +2475,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		switch (e.tag) {
 			case 5:
 				var n = e.type;
-				return t = t.nodeType !== 1 || n.toLowerCase() !== t.nodeName.toLowerCase() ? null : t, t !== null && (e.stateNode = t, _a = e, va = Di(t.firstChild), !0);
+				return t = t.nodeType !== 1 || n.toLowerCase() !== t.nodeName.toLowerCase() ? null : t, t !== null && (e.stateNode = t, _a = e, va = Oi(t.firstChild), !0);
 			case 6: return t = e.pendingProps === "" || t.nodeType !== 3 ? null : t, t !== null && (e.stateNode = t, _a = e, va = null, !0);
 			case 13: return t = t.nodeType === 8 ? t : null, t !== null && (n = ua === null ? null : {
 				id: da,
@@ -2498,7 +2498,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				var n = t;
 				if (!Sa(e, t)) {
 					if (Ca(e)) throw Error(a(418));
-					t = Di(n.nextSibling);
+					t = Oi(n.nextSibling);
 					var r = _a;
 					t && Sa(e, t) ? xa(r, n) : (e.flags = e.flags & -4097 | 2, ya = !1, _a = e);
 				}
@@ -2516,9 +2516,9 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		if (e !== _a) return !1;
 		if (!ya) return Ta(e), ya = !0, !1;
 		var t;
-		if ((t = e.tag !== 3) && !(t = e.tag !== 5) && (t = e.type, t = t !== "head" && t !== "body" && !bi(e.type, e.memoizedProps)), t &&= va) {
+		if ((t = e.tag !== 3) && !(t = e.tag !== 5) && (t = e.type, t = t !== "head" && t !== "body" && !xi(e.type, e.memoizedProps)), t &&= va) {
 			if (Ca(e)) throw Da(), Error(a(418));
-			for (; t;) xa(e, t), t = Di(t.nextSibling);
+			for (; t;) xa(e, t), t = Oi(t.nextSibling);
 		}
 		if (Ta(e), e.tag === 13) {
 			if (e = e.memoizedState, e = e === null ? null : e.dehydrated, !e) throw Error(a(317));
@@ -2528,7 +2528,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 						var n = e.data;
 						if (n === "/$") {
 							if (t === 0) {
-								va = Di(e.nextSibling);
+								va = Oi(e.nextSibling);
 								break a;
 							}
 							t--;
@@ -2538,11 +2538,11 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				}
 				va = null;
 			}
-		} else va = _a ? Di(e.stateNode.nextSibling) : null;
+		} else va = _a ? Oi(e.stateNode.nextSibling) : null;
 		return !0;
 	}
 	function Da() {
-		for (var e = va; e;) e = Di(e.nextSibling);
+		for (var e = va; e;) e = Oi(e.nextSibling);
 	}
 	function Oa() {
 		va = _a = null, ya = !1;
@@ -3009,7 +3009,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	}
 	function Oo(e, t) {
 		if (t === null) return !1;
-		for (var n = 0; n < t.length && n < e.length; n++) if (!Er(e[n], t[n])) return !1;
+		for (var n = 0; n < t.length && n < e.length; n++) if (!Dr(e[n], t[n])) return !1;
 		return !0;
 	}
 	function ko(e, t, n, r, i, o) {
@@ -3095,7 +3095,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				}
 				u = u.next;
 			} while (u !== null && u !== o);
-			l === null ? s = r : l.next = c, Er(r, t.memoizedState) || (Ms = !0), t.memoizedState = r, t.baseState = s, t.baseQueue = l, n.lastRenderedState = r;
+			l === null ? s = r : l.next = c, Dr(r, t.memoizedState) || (Ms = !0), t.memoizedState = r, t.baseState = s, t.baseQueue = l, n.lastRenderedState = r;
 		}
 		if (e = n.interleaved, e !== null) {
 			i = e;
@@ -3116,13 +3116,13 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			do
 				o = e(o, s.action), s = s.next;
 			while (s !== i);
-			Er(o, t.memoizedState) || (Ms = !0), t.memoizedState = o, t.baseQueue === null && (t.baseState = o), n.lastRenderedState = o;
+			Dr(o, t.memoizedState) || (Ms = !0), t.memoizedState = o, t.baseQueue === null && (t.baseState = o), n.lastRenderedState = o;
 		}
 		return [o, r];
 	}
 	function Io() {}
 	function Lo(e, t) {
-		var n = X, r = Mo(), i = t(), o = !Er(r.memoizedState, i);
+		var n = X, r = Mo(), i = t(), o = !Dr(r.memoizedState, i);
 		if (o && (r.memoizedState = i, Ms = !0), r = r.queue, Yo(Bo.bind(null, n, r, e), [e]), r.getSnapshot !== t || o || So !== null && So.memoizedState.tag & 1) {
 			if (n.flags |= 2048, Wo(9, zo.bind(null, n, r, i, t), void 0, null), Vc === null) throw Error(a(349));
 			xo & 30 || Ro(n, t, i);
@@ -3151,7 +3151,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		e = e.value;
 		try {
 			var n = t();
-			return !Er(e, n);
+			return !Dr(e, n);
 		} catch {
 			return !0;
 		}
@@ -3240,7 +3240,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		return r !== null && t !== null && Oo(t, r[1]) ? r[0] : (e = e(), n.memoizedState = [e, t], e);
 	}
 	function rs(e, t, n) {
-		return xo & 21 ? (Er(n, t) || (n = It(), X.lanes |= n, Jc |= n, e.baseState = !0), t) : (e.baseState && (e.baseState = !1, Ms = !0), e.memoizedState = n);
+		return xo & 21 ? (Dr(n, t) || (n = It(), X.lanes |= n, Jc |= n, e.baseState = !0), t) : (e.baseState && (e.baseState = !1, Ms = !0), e.memoizedState = n);
 	}
 	function is(e, t) {
 		var n = V;
@@ -3283,7 +3283,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			var a = e.alternate;
 			if (e.lanes === 0 && (a === null || a.lanes === 0) && (a = t.lastRenderedReducer, a !== null)) try {
 				var o = t.lastRenderedState, s = a(o, n);
-				if (i.hasEagerState = !0, i.eagerState = s, Er(s, o)) {
+				if (i.hasEagerState = !0, i.eagerState = s, Dr(s, o)) {
 					var c = t.interleaved;
 					c === null ? (i.next = i, qa(t)) : (i.next = c.next, c.next = i), t.interleaved = i;
 					return;
@@ -3479,7 +3479,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		}
 	};
 	function vs(e, t, n, r, i, a, o) {
-		return e = e.stateNode, typeof e.shouldComponentUpdate == "function" ? e.shouldComponentUpdate(r, a, o) : t.prototype && t.prototype.isPureReactComponent ? !Dr(n, r) || !Dr(i, a) : !0;
+		return e = e.stateNode, typeof e.shouldComponentUpdate == "function" ? e.shouldComponentUpdate(r, a, o) : t.prototype && t.prototype.isPureReactComponent ? !Or(n, r) || !Or(i, a) : !0;
 	}
 	function ys(e, t, n) {
 		var r = !1, i = Vi, a = t.contextType;
@@ -3590,14 +3590,14 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		}
 		if (a = e.child, (e.lanes & i) === 0) {
 			var o = a.memoizedProps;
-			if (n = n.compare, n = n === null ? Dr : n, n(o, r) && e.ref === t.ref) return ec(e, t, i);
+			if (n = n.compare, n = n === null ? Or : n, n(o, r) && e.ref === t.ref) return ec(e, t, i);
 		}
 		return t.flags |= 1, e = Yl(a, r), e.ref = t.ref, e.return = t, t.child = e;
 	}
 	function Is(e, t, n, r, i) {
 		if (e !== null) {
 			var a = e.memoizedProps;
-			if (Dr(a, r) && e.ref === t.ref) {
+			if (Or(a, r) && e.ref === t.ref) {
 				if (Ms = !1, t.pendingProps = r = a, (e.lanes & i) !== 0) e.flags & 131072 && (Ms = !0);
 				else return t.lanes = e.lanes, ec(e, t, i);
 			}
@@ -3770,7 +3770,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			}
 			return Ol(), r = Cs(Error(a(421))), Js(e, t, s, r);
 		}
-		return i.data === "$?" ? (t.flags |= 128, t.child = e.child, t = Vl.bind(null, e), i._reactRetry = t, null) : (e = o.treeContext, va = Di(i.nextSibling), _a = t, ya = !0, ba = null, e !== null && (ca[la++] = da, ca[la++] = fa, ca[la++] = ua, da = e.id, fa = e.overflow, ua = t), t = qs(t, r.children), t.flags |= 4096, t);
+		return i.data === "$?" ? (t.flags |= 128, t.child = e.child, t = Vl.bind(null, e), i._reactRetry = t, null) : (e = o.treeContext, va = Oi(i.nextSibling), _a = t, ya = !0, ba = null, e !== null && (ca[la++] = da, ca[la++] = fa, ca[la++] = ua, da = e.id, fa = e.overflow, ua = t), t = qs(t, r.children), t.flags |= 4096, t);
 	}
 	function Xs(e, t, n) {
 		e.lanes |= t;
@@ -3906,7 +3906,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				case "textarea":
 					i = De(e, i), r = De(e, r), a = [];
 					break;
-				default: typeof i.onClick != "function" && typeof r.onClick == "function" && (e.onclick = _i);
+				default: typeof i.onClick != "function" && typeof r.onClick == "function" && (e.onclick = vi);
 			}
 			Ve(n, r);
 			var o;
@@ -3924,7 +3924,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 							for (o in c) !c.hasOwnProperty(o) || l && l.hasOwnProperty(o) || (n ||= {}, n[o] = "");
 							for (o in l) l.hasOwnProperty(o) && c[o] !== l[o] && (n ||= {}, n[o] = l[o]);
 						} else n || (a ||= [], a.push(u, n)), n = l;
-					} else u === "dangerouslySetInnerHTML" ? (l = l ? l.__html : void 0, c = c ? c.__html : void 0, l != null && c !== l && (a ||= []).push(u, l)) : u === "children" ? typeof l != "string" && typeof l != "number" || (a ||= []).push(u, "" + l) : u !== "suppressContentEditableWarning" && u !== "suppressHydrationWarning" && (s.hasOwnProperty(u) ? (l != null && u === "onScroll" && G("scroll", e), a || c === l || (a = [])) : (a ||= []).push(u, l));
+					} else u === "dangerouslySetInnerHTML" ? (l = l ? l.__html : void 0, c = c ? c.__html : void 0, l != null && c !== l && (a ||= []).push(u, l)) : u === "children" ? typeof l != "string" && typeof l != "number" || (a ||= []).push(u, "" + l) : u !== "suppressContentEditableWarning" && u !== "suppressHydrationWarning" && (s.hasOwnProperty(u) ? (l != null && u === "onScroll" && W("scroll", e), a || c === l || (a = [])) : (a ||= []).push(u, l));
 				}
 			}
 			n && (a ||= []).push("style", n);
@@ -3980,41 +3980,41 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 					if (e = lo(oo.current), Ea(t)) {
 						r = t.stateNode, n = t.type;
 						var o = t.memoizedProps;
-						switch (r[K] = t, r[q] = o, e = !!(t.mode & 1), n) {
+						switch (r[G] = t, r[K] = o, e = !!(t.mode & 1), n) {
 							case "dialog":
-								G("cancel", r), G("close", r);
+								W("cancel", r), W("close", r);
 								break;
 							case "iframe":
 							case "object":
 							case "embed":
-								G("load", r);
+								W("load", r);
 								break;
 							case "video":
 							case "audio":
-								for (i = 0; i < ei.length; i++) G(ei[i], r);
+								for (i = 0; i < ti.length; i++) W(ti[i], r);
 								break;
 							case "source":
-								G("error", r);
+								W("error", r);
 								break;
 							case "img":
 							case "image":
 							case "link":
-								G("error", r), G("load", r);
+								W("error", r), W("load", r);
 								break;
 							case "details":
-								G("toggle", r);
+								W("toggle", r);
 								break;
 							case "input":
-								be(r, o), G("invalid", r);
+								be(r, o), W("invalid", r);
 								break;
 							case "select":
-								r._wrapperState = { wasMultiple: !!o.multiple }, G("invalid", r);
+								r._wrapperState = { wasMultiple: !!o.multiple }, W("invalid", r);
 								break;
-							case "textarea": Oe(r, o), G("invalid", r);
+							case "textarea": Oe(r, o), W("invalid", r);
 						}
 						for (var c in Ve(n, o), i = null, o) if (o.hasOwnProperty(c)) {
 							var l = o[c];
-							c === "children" ? typeof l == "string" ? r.textContent !== l && (!0 !== o.suppressHydrationWarning && gi(r.textContent, l, e), i = ["children", l]) : typeof l == "number" && r.textContent !== "" + l && (!0 !== o.suppressHydrationWarning && gi(r.textContent, l, e), i = ["children", "" + l]) : s.hasOwnProperty(c) && l != null && c === "onScroll" && G("scroll", r);
+							c === "children" ? typeof l == "string" ? r.textContent !== l && (!0 !== o.suppressHydrationWarning && _i(r.textContent, l, e), i = ["children", l]) : typeof l == "number" && r.textContent !== "" + l && (!0 !== o.suppressHydrationWarning && _i(r.textContent, l, e), i = ["children", "" + l]) : s.hasOwnProperty(c) && l != null && c === "onScroll" && W("scroll", r);
 						}
 						switch (n) {
 							case "input":
@@ -4025,54 +4025,54 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 								break;
 							case "select":
 							case "option": break;
-							default: typeof o.onClick == "function" && (r.onclick = _i);
+							default: typeof o.onClick == "function" && (r.onclick = vi);
 						}
 						r = i, t.updateQueue = r, r !== null && (t.flags |= 4);
 					} else {
-						c = i.nodeType === 9 ? i : i.ownerDocument, e === "http://www.w3.org/1999/xhtml" && (e = je(n)), e === "http://www.w3.org/1999/xhtml" ? n === "script" ? (e = c.createElement("div"), e.innerHTML = "<script><\/script>", e = e.removeChild(e.firstChild)) : typeof r.is == "string" ? e = c.createElement(n, { is: r.is }) : (e = c.createElement(n), n === "select" && (c = e, r.multiple ? c.multiple = !0 : r.size && (c.size = r.size))) : e = c.createElementNS(e, n), e[K] = t, e[q] = r, nc(e, t, !1, !1), t.stateNode = e;
+						c = i.nodeType === 9 ? i : i.ownerDocument, e === "http://www.w3.org/1999/xhtml" && (e = je(n)), e === "http://www.w3.org/1999/xhtml" ? n === "script" ? (e = c.createElement("div"), e.innerHTML = "<script><\/script>", e = e.removeChild(e.firstChild)) : typeof r.is == "string" ? e = c.createElement(n, { is: r.is }) : (e = c.createElement(n), n === "select" && (c = e, r.multiple ? c.multiple = !0 : r.size && (c.size = r.size))) : e = c.createElementNS(e, n), e[G] = t, e[K] = r, nc(e, t, !1, !1), t.stateNode = e;
 						a: {
 							switch (c = He(n, r), n) {
 								case "dialog":
-									G("cancel", e), G("close", e), i = r;
+									W("cancel", e), W("close", e), i = r;
 									break;
 								case "iframe":
 								case "object":
 								case "embed":
-									G("load", e), i = r;
+									W("load", e), i = r;
 									break;
 								case "video":
 								case "audio":
-									for (i = 0; i < ei.length; i++) G(ei[i], e);
+									for (i = 0; i < ti.length; i++) W(ti[i], e);
 									i = r;
 									break;
 								case "source":
-									G("error", e), i = r;
+									W("error", e), i = r;
 									break;
 								case "img":
 								case "image":
 								case "link":
-									G("error", e), G("load", e), i = r;
+									W("error", e), W("load", e), i = r;
 									break;
 								case "details":
-									G("toggle", e), i = r;
+									W("toggle", e), i = r;
 									break;
 								case "input":
-									be(e, r), i = ye(e, r), G("invalid", e);
+									be(e, r), i = ye(e, r), W("invalid", e);
 									break;
 								case "option":
 									i = r;
 									break;
 								case "select":
-									e._wrapperState = { wasMultiple: !!r.multiple }, i = A({}, r, { value: void 0 }), G("invalid", e);
+									e._wrapperState = { wasMultiple: !!r.multiple }, i = A({}, r, { value: void 0 }), W("invalid", e);
 									break;
 								case "textarea":
-									Oe(e, r), i = De(e, r), G("invalid", e);
+									Oe(e, r), i = De(e, r), W("invalid", e);
 									break;
 								default: i = r;
 							}
 							for (o in Ve(n, i), l = i, l) if (l.hasOwnProperty(o)) {
 								var u = l[o];
-								o === "style" ? ze(e, u) : o === "dangerouslySetInnerHTML" ? (u = u ? u.__html : void 0, u != null && Pe(e, u)) : o === "children" ? typeof u == "string" ? (n !== "textarea" || u !== "") && Fe(e, u) : typeof u == "number" && Fe(e, "" + u) : o !== "suppressContentEditableWarning" && o !== "suppressHydrationWarning" && o !== "autoFocus" && (s.hasOwnProperty(o) ? u != null && o === "onScroll" && G("scroll", e) : u != null && S(e, o, u, c));
+								o === "style" ? ze(e, u) : o === "dangerouslySetInnerHTML" ? (u = u ? u.__html : void 0, u != null && Pe(e, u)) : o === "children" ? typeof u == "string" ? (n !== "textarea" || u !== "") && Fe(e, u) : typeof u == "number" && Fe(e, "" + u) : o !== "suppressContentEditableWarning" && o !== "suppressHydrationWarning" && o !== "autoFocus" && (s.hasOwnProperty(o) ? u != null && o === "onScroll" && W("scroll", e) : u != null && S(e, o, u, c));
 							}
 							switch (n) {
 								case "input":
@@ -4087,7 +4087,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 								case "select":
 									e.multiple = !!r.multiple, o = r.value, o == null ? r.defaultValue != null && Ee(e, !!r.multiple, r.defaultValue, !0) : Ee(e, !!r.multiple, o, !1);
 									break;
-								default: typeof i.onClick == "function" && (e.onclick = _i);
+								default: typeof i.onClick == "function" && (e.onclick = vi);
 							}
 							switch (n) {
 								case "button":
@@ -4112,14 +4112,14 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				else {
 					if (typeof r != "string" && t.stateNode === null) throw Error(a(166));
 					if (n = lo(co.current), lo(oo.current), Ea(t)) {
-						if (r = t.stateNode, n = t.memoizedProps, r[K] = t, (o = r.nodeValue !== n) && (e = _a, e !== null)) switch (e.tag) {
+						if (r = t.stateNode, n = t.memoizedProps, r[G] = t, (o = r.nodeValue !== n) && (e = _a, e !== null)) switch (e.tag) {
 							case 3:
-								gi(r.nodeValue, n, !!(e.mode & 1));
+								_i(r.nodeValue, n, !!(e.mode & 1));
 								break;
-							case 5: !0 !== e.memoizedProps.suppressHydrationWarning && gi(r.nodeValue, n, !!(e.mode & 1));
+							case 5: !0 !== e.memoizedProps.suppressHydrationWarning && _i(r.nodeValue, n, !!(e.mode & 1));
 						}
 						o && (t.flags |= 4);
-					} else r = (n.nodeType === 9 ? n : n.ownerDocument).createTextNode(r), r[K] = t, t.stateNode = r;
+					} else r = (n.nodeType === 9 ? n : n.ownerDocument).createTextNode(r), r[G] = t, t.stateNode = r;
 				}
 				return oc(t), null;
 			case 13:
@@ -4129,14 +4129,14 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 						if (e === null) {
 							if (!o) throw Error(a(318));
 							if (o = t.memoizedState, o = o === null ? null : o.dehydrated, !o) throw Error(a(317));
-							o[K] = t;
+							o[G] = t;
 						} else Oa(), !(t.flags & 128) && (t.memoizedState = null), t.flags |= 4;
 						oc(t), o = !1;
 					} else ba !== null && (vl(ba), ba = null), o = !0;
 					if (!o) return t.flags & 65536 ? t : null;
 				}
 				return t.flags & 128 ? (t.lanes = n, t) : (r = r !== null, r !== (e !== null && e.memoizedState !== null) && r && (t.child.flags |= 8192, t.mode & 1 && (e === null || ho.current & 1 ? Kc === 0 && (Kc = 3) : Ol())), t.updateQueue !== null && (t.flags |= 4), oc(t), null);
-			case 4: return fo(), e === null && oi(t.stateNode.containerInfo), oc(t), null;
+			case 4: return fo(), e === null && si(t.stateNode.containerInfo), oc(t), null;
 			case 10: return Ha(t.type._context), oc(t), null;
 			case 17: return Ki(t.type) && qi(), oc(t), null;
 			case 19:
@@ -4213,7 +4213,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	}
 	var mc = !1;
 	function hc(e, t) {
-		if (vi = fn, e = jr(), Mr(e)) {
+		if (yi = fn, e = Mr(), Nr(e)) {
 			if ("selectionStart" in e) var n = {
 				start: e.selectionStart,
 				end: e.selectionEnd
@@ -4252,7 +4252,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				end: 0
 			};
 		} else n = null;
-		for (yi = {
+		for (bi = {
 			focusedElem: e,
 			selectionRange: n
 		}, fn = !1, Q = t; Q !== null;) if (t = Q, e = t.child, t.subtreeFlags & 1028 && e !== null) e.return = t, Q = e;
@@ -4331,7 +4331,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	}
 	function yc(e) {
 		var t = e.alternate;
-		t !== null && (e.alternate = null, yc(t)), e.child = null, e.deletions = null, e.sibling = null, e.tag === 5 && (t = e.stateNode, t !== null && (delete t[K], delete t[q], delete t[ji], delete t[Mi], delete t[Ni])), e.stateNode = null, e.return = null, e.dependencies = null, e.memoizedProps = null, e.memoizedState = null, e.pendingProps = null, e.stateNode = null, e.updateQueue = null;
+		t !== null && (e.alternate = null, yc(t)), e.child = null, e.deletions = null, e.sibling = null, e.tag === 5 && (t = e.stateNode, t !== null && (delete t[G], delete t[K], delete t[q], delete t[Mi], delete t[Ni])), e.stateNode = null, e.return = null, e.dependencies = null, e.memoizedProps = null, e.memoizedState = null, e.pendingProps = null, e.stateNode = null, e.updateQueue = null;
 	}
 	function bc(e) {
 		return e.tag === 5 || e.tag === 3 || e.tag === 4;
@@ -4351,7 +4351,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	}
 	function Sc(e, t, n) {
 		var r = e.tag;
-		if (r === 5 || r === 6) e = e.stateNode, t ? n.nodeType === 8 ? n.parentNode.insertBefore(e, t) : n.insertBefore(e, t) : (n.nodeType === 8 ? (t = n.parentNode, t.insertBefore(e, n)) : (t = n, t.appendChild(e)), n = n._reactRootContainer, n != null || t.onclick !== null || (t.onclick = _i));
+		if (r === 5 || r === 6) e = e.stateNode, t ? n.nodeType === 8 ? n.parentNode.insertBefore(e, t) : n.insertBefore(e, t) : (n.nodeType === 8 ? (t = n.parentNode, t.insertBefore(e, n)) : (t = n, t.appendChild(e)), n = n._reactRootContainer, n != null || t.onclick !== null || (t.onclick = vi));
 		else if (r !== 4 && (e = e.child, e !== null)) for (Sc(e, t, n), e = e.sibling; e !== null;) Sc(e, t, n), e = e.sibling;
 	}
 	function Cc(e, t, n) {
@@ -4374,7 +4374,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				wc = null, Ec(e, t, n), wc = r, Tc = i, wc !== null && (Tc ? (e = wc, n = n.stateNode, e.nodeType === 8 ? e.parentNode.removeChild(n) : e.removeChild(n)) : wc.removeChild(n.stateNode));
 				break;
 			case 18:
-				wc !== null && (Tc ? (e = wc, n = n.stateNode, e.nodeType === 8 ? Ei(e.parentNode, n) : e.nodeType === 1 && Ei(e, n), un(e)) : Ei(wc, n.stateNode));
+				wc !== null && (Tc ? (e = wc, n = n.stateNode, e.nodeType === 8 ? Di(e.parentNode, n) : e.nodeType === 1 && Di(e, n), un(e)) : Di(wc, n.stateNode));
 				break;
 			case 4:
 				r = wc, i = Tc, wc = n.stateNode.containerInfo, Tc = !0, Ec(e, t, n), wc = r, Tc = i;
@@ -4504,7 +4504,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 								var m = o.value;
 								m == null ? p !== !!o.multiple && (o.defaultValue == null ? Ee(i, !!o.multiple, o.multiple ? [] : "", !1) : Ee(i, !!o.multiple, o.defaultValue, !0)) : Ee(i, !!o.multiple, m, !1);
 						}
-						i[q] = o;
+						i[K] = o;
 					} catch (t) {
 						Rl(e, e.return, t);
 					}
@@ -4836,7 +4836,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		var r = z(e, e === Vc ? Uc : 0);
 		if (r === 0) n !== null && gt(n), e.callbackNode = null, e.callbackPriority = 0;
 		else if (t = r & -r, e.callbackPriority !== t) {
-			if (n != null && gt(n), t === 1) e.tag === 0 ? na(xl.bind(null, e)) : ta(xl.bind(null, e)), wi(function() {
+			if (n != null && gt(n), t === 1) e.tag === 0 ? na(xl.bind(null, e)) : ta(xl.bind(null, e)), Ti(function() {
 				!($ & 6) && ra();
 			}), n = null;
 			else {
@@ -4901,7 +4901,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 								fl(), e.pingedLanes |= e.suspendedLanes & i;
 								break;
 							}
-							e.timeoutHandle = xi(Pl.bind(null, e, Qc, tl), t);
+							e.timeoutHandle = Si(Pl.bind(null, e, Qc, tl), t);
 							break;
 						}
 						Pl(e, Qc, tl);
@@ -4913,7 +4913,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 							o = 1 << s, s = t[s], s > i && (i = s), r &= ~o;
 						}
 						if (r = i, r = L() - r, r = (120 > r ? 120 : 480 > r ? 480 : 1080 > r ? 1080 : 1920 > r ? 1920 : 3e3 > r ? 3e3 : 4320 > r ? 4320 : 1960 * Lc(r / 1960)) - r, 10 < r) {
-							e.timeoutHandle = xi(Pl.bind(null, e, Qc, tl), r);
+							e.timeoutHandle = Si(Pl.bind(null, e, Qc, tl), r);
 							break;
 						}
 						Pl(e, Qc, tl);
@@ -4942,7 +4942,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 					var i = n[r], a = i.getSnapshot;
 					i = i.value;
 					try {
-						if (!Er(a(), i)) return !1;
+						if (!Dr(a(), i)) return !1;
 					} catch {
 						return !1;
 					}
@@ -5006,7 +5006,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	function Tl(e, t) {
 		e.finishedWork = null, e.finishedLanes = 0;
 		var n = e.timeoutHandle;
-		if (n !== -1 && (e.timeoutHandle = -1, Si(n)), Hc !== null) for (n = Hc.return; n !== null;) {
+		if (n !== -1 && (e.timeoutHandle = -1, Ci(n)), Hc !== null) for (n = Hc.return; n !== null;) {
 			var r = n;
 			switch (ga(r), r.tag) {
 				case 1:
@@ -5209,7 +5209,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			var s = V;
 			V = 1;
 			var c = $;
-			$ |= 4, zc.current = null, hc(e, n), Ac(n, e), Nr(yi), fn = !!vi, yi = vi = null, e.current = n, Mc(n, e, i), vt(), $ = c, V = s, Bc.transition = o;
+			$ |= 4, zc.current = null, hc(e, n), Ac(n, e), Pr(bi), fn = !!yi, bi = yi = null, e.current = n, Mc(n, e, i), vt(), $ = c, V = s, Bc.transition = o;
 		} else e.current = n;
 		if (al && (al = !1, ol = e, sl = i), o = e.pendingLanes, o === 0 && (il = null), Dt(n.stateNode, r), hl(e, L()), t !== null) for (r = e.onRecoverableError, n = 0; n < t.length; n++) i = t[n], r(i.value, {
 			componentStack: i.stack,
@@ -5430,7 +5430,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 							i = Ss(Error(a(424)), t), t = Us(e, t, r, n, i);
 							break a;
 						}
-						for (va = Di(t.stateNode.containerInfo.firstChild), _a = t, ya = !0, ba = null, n = Ia(t, null, r, n), t.child = n; n;) n.flags = n.flags & -3 | 4096, n = n.sibling;
+						for (va = Oi(t.stateNode.containerInfo.firstChild), _a = t, ya = !0, ba = null, n = Ia(t, null, r, n), t.child = n; n;) n.flags = n.flags & -3 | 4096, n = n.sibling;
 					} else {
 						if (Oa(), r === i) {
 							t = ec(e, t, n);
@@ -5441,7 +5441,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 					t = t.child;
 				}
 				return t;
-			case 5: return po(t), e === null && wa(t), r = t.type, i = t.pendingProps, o = e === null ? null : e.memoizedProps, s = i.children, bi(r, i) ? s = null : o !== null && bi(r, o) && (t.flags |= 32), Rs(e, t), Ns(e, t, s, n), t.child;
+			case 5: return po(t), e === null && wa(t), r = t.type, i = t.pendingProps, o = e === null ? null : e.memoizedProps, s = i.children, xi(r, i) ? s = null : o !== null && xi(r, o) && (t.flags |= 32), Rs(e, t), Ns(e, t, s, n), t.child;
 			case 6: return e === null && wa(t), null;
 			case 13: return Ks(e, t, n);
 			case 4: return uo(t, t.stateNode.containerInfo), r = t.pendingProps, e === null ? t.child = Fa(t, null, r, n) : Ns(e, t, r, n), t.child;
@@ -5452,7 +5452,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			case 10:
 				a: {
 					if (r = t.type._context, i = t.pendingProps, o = t.memoizedProps, s = i.value, Y(La, r._currentValue), r._currentValue = s, o !== null) {
-						if (Er(o.value, s)) {
+						if (Dr(o.value, s)) {
 							if (o.children === i.children && !Ui.current) {
 								t = ec(e, t, n);
 								break a;
@@ -5678,7 +5678,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			var t = e.containerInfo;
 			Cl(function() {
 				ou(null, e, null, null);
-			}), t[Ai] = null;
+			}), t[ji] = null;
 		}
 	};
 	function pu(e) {
@@ -5713,7 +5713,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 				};
 			}
 			var o = au(t, r, e, 0, null, !1, !1, "", gu);
-			return e._reactRootContainer = o, e[Ai] = o.current, oi(e.nodeType === 8 ? e.parentNode : e), Cl(), o;
+			return e._reactRootContainer = o, e[ji] = o.current, si(e.nodeType === 8 ? e.parentNode : e), Cl(), o;
 		}
 		for (; i = e.lastChild;) e.removeChild(i);
 		if (typeof r == "function") {
@@ -5724,7 +5724,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 			};
 		}
 		var c = nu(e, 0, !1, null, null, !1, !1, "", gu);
-		return e._reactRootContainer = c, e[Ai] = c.current, oi(e.nodeType === 8 ? e.parentNode : e), Cl(function() {
+		return e._reactRootContainer = c, e[ji] = c.current, si(e.nodeType === 8 ? e.parentNode : e), Cl(function() {
 			ou(t, c, n, r);
 		}), c;
 	}
@@ -5851,7 +5851,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	}, e.createRoot = function(e, t) {
 		if (!mu(e)) throw Error(a(299));
 		var n = !1, r = "", i = du;
-		return t != null && (!0 === t.unstable_strictMode && (n = !0), t.identifierPrefix !== void 0 && (r = t.identifierPrefix), t.onRecoverableError !== void 0 && (i = t.onRecoverableError)), t = nu(e, 1, !1, null, null, n, !1, r, i), e[Ai] = t.current, oi(e.nodeType === 8 ? e.parentNode : e), new fu(t);
+		return t != null && (!0 === t.unstable_strictMode && (n = !0), t.identifierPrefix !== void 0 && (r = t.identifierPrefix), t.onRecoverableError !== void 0 && (i = t.onRecoverableError)), t = nu(e, 1, !1, null, null, n, !1, r, i), e[ji] = t.current, si(e.nodeType === 8 ? e.parentNode : e), new fu(t);
 	}, e.findDOMNode = function(e) {
 		if (e == null) return null;
 		if (e.nodeType === 1) return e;
@@ -5866,7 +5866,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 	}, e.hydrateRoot = function(e, t, n) {
 		if (!mu(e)) throw Error(a(405));
 		var r = n != null && n.hydratedSources || null, i = !1, o = "", s = du;
-		if (n != null && (!0 === n.unstable_strictMode && (i = !0), n.identifierPrefix !== void 0 && (o = n.identifierPrefix), n.onRecoverableError !== void 0 && (s = n.onRecoverableError)), t = au(t, null, e, 1, n ?? null, i, !1, o, s), e[Ai] = t.current, oi(e), r) for (e = 0; e < r.length; e++) n = r[e], i = n._getVersion, i = i(n._source), t.mutableSourceEagerHydrationData == null ? t.mutableSourceEagerHydrationData = [n, i] : t.mutableSourceEagerHydrationData.push(n, i);
+		if (n != null && (!0 === n.unstable_strictMode && (i = !0), n.identifierPrefix !== void 0 && (o = n.identifierPrefix), n.onRecoverableError !== void 0 && (s = n.onRecoverableError)), t = au(t, null, e, 1, n ?? null, i, !1, o, s), e[ji] = t.current, si(e), r) for (e = 0; e < r.length; e++) n = r[e], i = n._getVersion, i = i(n._source), t.mutableSourceEagerHydrationData == null ? t.mutableSourceEagerHydrationData = [n, i] : t.mutableSourceEagerHydrationData.push(n, i);
 		return new pu(t);
 	}, e.render = function(e, t, n) {
 		if (!hu(t)) throw Error(a(200));
@@ -5875,7 +5875,7 @@ var e = (e, t) => () => (t || (e((t = { exports: {} }).exports, t, t.exports), e
 		if (!hu(e)) throw Error(a(40));
 		return e._reactRootContainer ? (Cl(function() {
 			vu(null, null, e, !1, function() {
-				e._reactRootContainer = null, e[Ai] = null;
+				e._reactRootContainer = null, e[ji] = null;
 			});
 		}), !0) : !1;
 	}, e.unstable_batchedUpdates = Sl, e.unstable_renderSubtreeIntoContainer = function(e, t, n, r) {
@@ -7403,8 +7403,8 @@ function yn(e, t) {
 var bn = "spreadline.pending-write.v1", xn = "spreadline.case-selection.v1", Sn = 1e6, Cn = 21e5;
 function wn(e, t = w) {
 	let n = z(e, "pending write");
-	if (n.version !== "scenario-comparison-write-v1") return Dn(e, t);
-	R(n.kind === "comparison" && It(n.id) && n.apiBase === t && B(n.body) && En(n.body) <= Sn, "comparison recovery envelope");
+	if (n.version !== "scenario-comparison-write-v1") return On(e, t);
+	R(n.kind === "comparison" && It(n.id) && n.apiBase === t && B(n.body) && Dn(n.body) <= Sn, "comparison recovery envelope");
 	let r = ln(JSON.parse(n.body));
 	R(["commercial-scenario-comparison-create-v1", "commercial-scenario-comparison-create-v2"].includes(r.schema_version) && JSON.stringify(r) === n.body && It(n.caseId) && Lt(n.baselineRevision) && n.baselineRunId === r.baseline_run_id && Rt(n.baselinePayloadHash), "comparison recovery identity/command");
 	let i = z(n.context, "comparison recovery context");
@@ -7453,15 +7453,15 @@ function Tn(e) {
 		}
 	});
 }
-function U() {
+function En() {
 	return ae();
 }
-function En(e) {
+function Dn(e) {
 	return new TextEncoder().encode(e).length;
 }
-function Dn(e, t = w) {
+function On(e, t = w) {
 	let n = z(e, "recovery operation");
-	R(n.version === "case-write-v1" && It(n.id) && n.apiBase === t && B(n.body) && En(n.body) <= Sn, "recovery version, backend or size");
+	R(n.version === "case-write-v1" && It(n.id) && n.apiBase === t && B(n.body) && Dn(n.body) <= Sn, "recovery version, backend or size");
 	let r = JSON.parse(n.body);
 	R(JSON.stringify(r) === n.body, "unchanged canonical browser command");
 	let i = [
@@ -7506,12 +7506,12 @@ function Dn(e, t = w) {
 	let a = n;
 	return a.kind === "edit" && (Object.freeze(a.review), Object.freeze(a.context)), Object.freeze(a);
 }
-function On(e, t) {
+function kn(e, t) {
 	let n = Kt({
 		input: e,
 		rationale: Ht(t)
 	});
-	return Dn({
+	return On({
 		version: "case-write-v1",
 		id: crypto.randomUUID(),
 		apiBase: w,
@@ -7519,7 +7519,7 @@ function On(e, t) {
 		body: JSON.stringify(n)
 	});
 }
-function kn(e, t, n) {
+function An(e, t, n) {
 	R(e.assessment, "supported saved assessment");
 	let r = Gt(e.assessment.normalized_input, t.path);
 	R(ge(r.value, t.prior) && ge(n.value, t.prior) && n.path === t.path && !ge(t.next, t.prior), "reviewed base input");
@@ -7528,7 +7528,7 @@ function kn(e, t, n) {
 		new_value: t.next,
 		rationale: Ht(t.rationale)
 	});
-	return Dn({
+	return On({
 		version: "case-write-v1",
 		id: crypto.randomUUID(),
 		apiBase: w,
@@ -7541,25 +7541,25 @@ function kn(e, t, n) {
 		context: r.context
 	});
 }
-function An(e, t) {
+function jn(e, t) {
 	try {
 		R(e, "browser recovery storage");
 		let n = wn(t), r = e.getItem(bn);
 		r && R(H(wn(JSON.parse(r)), n), "another unresolved operation");
 		let i = JSON.stringify(n);
-		R(En(i) <= Cn, "recovery journal size"), e.setItem(bn, i), R(e.getItem(bn) === i, "retained in-page recovery record");
+		R(Dn(i) <= Cn, "recovery journal size"), e.setItem(bn, i), R(e.getItem(bn) === i, "retained in-page recovery record");
 	} catch {
 		throw Error("This tab could not keep the write for recovery. Nothing was sent. Resolve its pending record or restore in-page recovery tracking before saving.");
 	}
 }
-function jn(e, t = w) {
+function Mn(e, t = w) {
 	try {
 		if (!e) return {
 			operation: null,
 			error: "This browser cannot keep a saved write for recovery. Saved reads and unsaved assessment remain available."
 		};
 		let n = e.getItem(bn);
-		return n ? (R(En(n) <= Cn, "recovery size"), {
+		return n ? (R(Dn(n) <= Cn, "recovery size"), {
 			operation: wn(JSON.parse(n), t),
 			error: ""
 		}) : {
@@ -7573,15 +7573,15 @@ function jn(e, t = w) {
 		};
 	}
 }
-function Mn(e, t) {
+function Nn(e, t) {
 	R(e, "browser recovery storage");
 	let n = e.getItem(bn);
 	n && R(wn(JSON.parse(n)).id === t, "matching recovery record"), e.removeItem(bn), R(e.getItem(bn) === null, "cleared recovery record");
 }
-function Nn(e) {
+function Pn(e) {
 	R(e, "browser recovery storage"), e.removeItem(bn), R(e.getItem(bn) === null, "discarded recovery record");
 }
-function Pn(e) {
+function Fn(e) {
 	try {
 		let t = e?.getItem(xn);
 		if (!t || t.length > 500) return null;
@@ -7594,7 +7594,7 @@ function Pn(e) {
 		return null;
 	}
 }
-function Fn(e, t) {
+function In(e, t) {
 	try {
 		t ? e?.setItem(xn, JSON.stringify({
 			version: "case-selection-v1",
@@ -7604,7 +7604,7 @@ function Fn(e, t) {
 	} catch {}
 }
 // src/workspace.ts
-var In = {
+var Ln = {
 	id: 0,
 	accepted: null,
 	draft: null,
@@ -7615,25 +7615,25 @@ var In = {
 	saved: null,
 	action: "evaluate",
 	resetPeriod: !0
-}, Ln = "A saved write needs confirmation. Retry the exact write; no proposal is accepted locally yet.";
-function Rn(e) {
-	let t = jn(e).operation;
+}, Rn = "A saved write needs confirmation. Retry the exact write; no proposal is accepted locally yet.";
+function zn(e) {
+	let t = Mn(e).operation;
 	if (t && t.kind !== "comparison") return {
-		...In,
+		...Ln,
 		status: "unavailable",
 		action: "write",
 		filename: "Pending saved write",
-		error: Ln
+		error: Rn
 	};
-	let n = Pn(e)?.caseId ?? (t?.kind === "comparison" ? t.caseId : null);
+	let n = Fn(e)?.caseId ?? (t?.kind === "comparison" ? t.caseId : null);
 	return n ? {
-		...In,
+		...Ln,
 		status: "evaluating",
 		action: "open",
 		filename: `Saved case ${n}`
-	} : In;
+	} : Ln;
 }
-function zn(e, t) {
+function Bn(e, t) {
 	if (t.type === "head") return e.id !== t.id || e.status !== "ready" || e.saved?.view.snapshot.case_id !== t.caseId || e.saved.view.snapshot.revision !== t.revision || t.headRevision < t.revision ? e : {
 		...e,
 		saved: {
@@ -7692,19 +7692,19 @@ function zn(e, t) {
 		resetPeriod: !!e.draft?.resetHistory
 	};
 }
-function Bn(e, t) {
+function Vn(e, t) {
 	let n = t.path.split("/").slice(1), r = JSON.parse(JSON.stringify(e)), i = r;
 	for (let e of n.slice(0, -1)) i = i[e];
 	return i[n[n.length - 1]] = t.next, r;
 }
-function Vn(e, t) {
+function Hn(e, t) {
 	return t === "%" ? `${he(String(e), 2)}%` : t === "months" ? `${e} month${String(e) === "1" ? "" : "s"}` : `$${be(String(e))}`;
 }
-function Hn(e) {
+function Un(e) {
 	let { min: t, max: n, unit: r } = e;
-	return t !== void 0 && n !== void 0 ? `${Vn(t, r)} to ${Vn(n, r)}` : t === void 0 ? `up to ${Vn(n, r)}` : `${Vn(t, r)} or more`;
+	return t !== void 0 && n !== void 0 ? `${Hn(t, r)} to ${Hn(n, r)}` : t === void 0 ? `up to ${Hn(n, r)}` : `${Hn(t, r)} or more`;
 }
-function Un(e, t, n, r = {}) {
+function Wn(e, t, n, r = {}) {
 	let i = e.unit === "%" ? je(t) : e.integer ? Ne(t) : ke(t);
 	if (!i.ok) throw Error(i.message);
 	let a = i.value, o = a;
@@ -7712,25 +7712,25 @@ function Un(e, t, n, r = {}) {
 		if (!Number.isSafeInteger(Number(a))) throw Error("Enter a safe whole number of months.");
 		o = Number(a);
 	}
-	if (e.min !== void 0 && M(a, String(e.min)) < 0 || e.max !== void 0 && M(a, String(e.max)) > 0) throw Error(`Value is outside the allowed range: ${Hn(e)}.`);
+	if (e.min !== void 0 && M(a, String(e.min)) < 0 || e.max !== void 0 && M(a, String(e.max)) > 0) throw Error(`Value is outside the allowed range: ${Un(e)}.`);
 	if ((r.requireRationale ?? !0) && !n.trim()) throw Error("A nonblank rationale is required.");
 	if (ge(o, e.value)) throw Error("Enter a changed value or cancel.");
 	return o;
 }
 // src/workspaceDom.ts
-var Wn = document;
-function Gn(e) {
-	Wn = e;
-}
+var Gn = document;
 function Kn(e) {
-	return Wn.querySelector(e);
+	Gn = e;
 }
 function qn(e) {
+	return Gn.querySelector(e);
+}
+function Jn(e) {
 	let t = e.getRootNode();
 	return t instanceof ShadowRoot ? t.activeElement : document.activeElement;
 }
 // node_modules/react/cjs/react-jsx-runtime.production.min.js
-var Jn = /* @__PURE__ */ e(((e) => {
+var Yn = /* @__PURE__ */ e(((e) => {
 	var t = n(), r = Symbol.for("react.element"), i = Symbol.for("react.fragment"), a = Object.prototype.hasOwnProperty, o = t.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, s = {
 		key: !0,
 		ref: !0,
@@ -7751,20 +7751,20 @@ var Jn = /* @__PURE__ */ e(((e) => {
 		};
 	}
 	e.Fragment = i, e.jsx = c, e.jsxs = c;
-})), W = (/* @__PURE__ */ e(((e, t) => {
-	t.exports = Jn();
+})), U = (/* @__PURE__ */ e(((e, t) => {
+	t.exports = Yn();
 })))();
-function Yn(e) {
-	e?.isConnected && !(e instanceof HTMLButtonElement && e.disabled) ? e.focus() : Kn("[data-focus-fallback]")?.focus();
+function Xn(e) {
+	e?.isConnected && !(e instanceof HTMLButtonElement && e.disabled) ? e.focus() : qn("[data-focus-fallback]")?.focus();
 }
-function Xn({ title: e, onCancel: t, restoreFocus: n, children: r }) {
+function Zn({ title: e, onCancel: t, restoreFocus: n, children: r }) {
 	let i = (0, k.useRef)(null);
 	return (0, k.useEffect)(() => {
 		let e = i.current;
 		return e?.showModal(), () => {
-			e?.close(), Yn(n);
+			e?.close(), Xn(n);
 		};
-	}, [n]), /* @__PURE__ */ (0, W.jsx)("dialog", {
+	}, [n]), /* @__PURE__ */ (0, U.jsx)("dialog", {
 		ref: i,
 		"aria-label": e,
 		onCancel: (e) => {
@@ -7773,18 +7773,18 @@ function Xn({ title: e, onCancel: t, restoreFocus: n, children: r }) {
 		onKeyDown: (e) => {
 			if (e.key !== "Tab") return;
 			let t = Array.from(e.currentTarget.querySelectorAll("input:not(:disabled),textarea:not(:disabled),button:not(:disabled)")), n = t[0], r = t[t.length - 1];
-			e.shiftKey && qn(e.currentTarget) === n ? (e.preventDefault(), r?.focus()) : !e.shiftKey && qn(e.currentTarget) === r && (e.preventDefault(), n?.focus());
+			e.shiftKey && Jn(e.currentTarget) === n ? (e.preventDefault(), r?.focus()) : !e.shiftKey && Jn(e.currentTarget) === r && (e.preventDefault(), n?.focus());
 		},
 		children: r
 	});
 }
-function Zn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
+function Qn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 	let [i, a] = (0, k.useState)(""), [o, s] = (0, k.useState)("");
-	return /* @__PURE__ */ (0, W.jsx)(Xn, {
+	return /* @__PURE__ */ (0, U.jsx)(Zn, {
 		title: "Save case",
 		onCancel: n,
 		restoreFocus: r,
-		children: /* @__PURE__ */ (0, W.jsxs)("form", {
+		children: /* @__PURE__ */ (0, U.jsxs)("form", {
 			onSubmit: (e) => {
 				if (e.preventDefault(), !i.trim()) s("Enter a rationale for this save (up to 2,000 characters).");
 				else try {
@@ -7794,33 +7794,33 @@ function Zn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 				}
 			},
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("h2", { children: "Save case" }),
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsx)("h2", { children: "Save case" }),
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					e.borrower_name,
 					" · as of ",
 					e.assessment_as_of
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("label", { children: ["Save rationale", /* @__PURE__ */ (0, W.jsx)("textarea", {
+				/* @__PURE__ */ (0, U.jsxs)("label", { children: ["Save rationale", /* @__PURE__ */ (0, U.jsx)("textarea", {
 					autoFocus: !0,
 					rows: 3,
 					value: i,
 					onChange: (e) => a(e.target.value)
 				})] }),
-				/* @__PURE__ */ (0, W.jsx)("p", {
+				/* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
 					children: "Saving re-checks this case under the current policy and stores it as a saved revision. Edits made before saving are not listed separately in its history. Rationale: up to 2,000 characters."
 				}),
-				o && /* @__PURE__ */ (0, W.jsx)("p", {
+				o && /* @__PURE__ */ (0, U.jsx)("p", {
 					role: "alert",
 					children: o
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("div", {
+				/* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "actions",
-					children: [/* @__PURE__ */ (0, W.jsx)("button", {
+					children: [/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: n,
 						children: "Cancel"
-					}), /* @__PURE__ */ (0, W.jsx)("button", {
+					}), /* @__PURE__ */ (0, U.jsx)("button", {
 						className: "primary",
 						type: "submit",
 						children: "Save"
@@ -7830,27 +7830,27 @@ function Zn({ input: e, onSave: t, onCancel: n, restoreFocus: r }) {
 		})
 	});
 }
-function Qn({ onDiscard: e, onCancel: t, restoreFocus: n }) {
+function $n({ onDiscard: e, onCancel: t, restoreFocus: n }) {
 	let [r, i] = (0, k.useState)("");
-	return /* @__PURE__ */ (0, W.jsxs)(Xn, {
+	return /* @__PURE__ */ (0, U.jsxs)(Zn, {
 		title: "Discard recovery tracking",
 		onCancel: t,
 		restoreFocus: n,
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h2", { children: "Discard recovery tracking?" }),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: "A previous write might already be saved. Discarding this tab's tracking does not undo that write and loses its exact retry key. Check saved cases before creating another case." }),
-			r && /* @__PURE__ */ (0, W.jsx)("p", {
+			/* @__PURE__ */ (0, U.jsx)("h2", { children: "Discard recovery tracking?" }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "A previous write might already be saved. Discarding this tab's tracking does not undo that write and loses its exact retry key. Check saved cases before creating another case." }),
+			r && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "alert",
 				children: r
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "actions",
-				children: [/* @__PURE__ */ (0, W.jsx)("button", {
+				children: [/* @__PURE__ */ (0, U.jsx)("button", {
 					className: "primary",
 					autoFocus: !0,
 					onClick: t,
 					children: "Keep tracking"
-				}), /* @__PURE__ */ (0, W.jsx)("button", {
+				}), /* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: () => {
 						try {
 							e(), t();
@@ -7865,11 +7865,11 @@ function Qn({ onDiscard: e, onCancel: t, restoreFocus: n }) {
 	});
 }
 // src/EditDialog.tsx
-function $n({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1, proposal: a }) {
+function er({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1, proposal: a }) {
 	let o = (0, k.useRef)(null), s = Je(a?.next ?? e.value, e.unit), [c, l] = (0, k.useState)(s), [u, d] = (0, k.useState)(a?.rationale ?? ""), [f, p] = (0, k.useState)("");
 	function m(t) {
 		try {
-			return Un(e, t, "", { requireRationale: !1 }), "";
+			return Wn(e, t, "", { requireRationale: !1 }), "";
 		} catch (e) {
 			return e instanceof Error ? e.message : "Review this value.";
 		}
@@ -7877,24 +7877,24 @@ function $n({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 	return (0, k.useEffect)(() => {
 		let e = o.current;
 		return e?.showModal(), () => {
-			e?.close(), Yn(r);
+			e?.close(), Xn(r);
 		};
-	}, [r]), /* @__PURE__ */ (0, W.jsx)("dialog", {
+	}, [r]), /* @__PURE__ */ (0, U.jsx)("dialog", {
 		ref: o,
 		"aria-labelledby": "edit-title",
 		onKeyDown: (e) => {
 			if (e.key !== "Tab") return;
 			let t = Array.from(e.currentTarget.querySelectorAll("input,textarea,button:not(:disabled)")), n = t[0], r = t[t.length - 1];
-			e.shiftKey && qn(e.currentTarget) === n ? (e.preventDefault(), r.focus()) : !e.shiftKey && qn(e.currentTarget) === r && (e.preventDefault(), n.focus());
+			e.shiftKey && Jn(e.currentTarget) === n ? (e.preventDefault(), r.focus()) : !e.shiftKey && Jn(e.currentTarget) === r && (e.preventDefault(), n.focus());
 		},
 		onCancel: (e) => {
 			e.preventDefault(), t();
 		},
-		children: /* @__PURE__ */ (0, W.jsxs)("form", {
+		children: /* @__PURE__ */ (0, U.jsxs)("form", {
 			onSubmit: (t) => {
 				t.preventDefault();
 				try {
-					let t = Un(e, c, u, { requireRationale: i });
+					let t = Wn(e, c, u, { requireRationale: i });
 					i && Ht(u), n({
 						path: e.path,
 						prior: e.value,
@@ -7907,22 +7907,22 @@ function $n({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 				}
 			},
 			children: [
-				/* @__PURE__ */ (0, W.jsxs)("h2", {
+				/* @__PURE__ */ (0, U.jsxs)("h2", {
 					id: "edit-title",
 					children: ["Edit ", e.label]
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					e.period,
 					" · ",
 					e.unit,
-					/* @__PURE__ */ (0, W.jsx)("br", {}),
+					/* @__PURE__ */ (0, U.jsx)("br", {}),
 					"Current value: ",
 					Je(e.value, e.unit)
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("label", { children: [
+				/* @__PURE__ */ (0, U.jsxs)("label", { children: [
 					"New value",
 					" ",
-					/* @__PURE__ */ (0, W.jsx)("input", {
+					/* @__PURE__ */ (0, U.jsx)("input", {
 						autoFocus: !0,
 						value: c,
 						placeholder: e.unit === "%" ? "10.5%" : e.integer ? "120" : "500000.00",
@@ -7934,7 +7934,7 @@ function $n({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 						inputMode: "decimal"
 					})
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("small", {
+				/* @__PURE__ */ (0, U.jsxs)("small", {
 					id: "edit-value-help",
 					children: [
 						e.unit === "%" ? "Percentage, such as 10.5" : e.integer ? "Whole months, such as 120" : "Dollar amount, such as 600,000",
@@ -7942,10 +7942,10 @@ function $n({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 						e.max === void 0 ? "" : ` · maximum ${Je(e.max, e.unit)}`
 					]
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("label", { children: [
+				/* @__PURE__ */ (0, U.jsxs)("label", { children: [
 					i ? "Rationale" : "Rationale (optional)",
 					" ",
-					/* @__PURE__ */ (0, W.jsx)("textarea", {
+					/* @__PURE__ */ (0, U.jsx)("textarea", {
 						value: u,
 						placeholder: "Explain the source or reason for this edit",
 						onChange: (e) => {
@@ -7954,21 +7954,21 @@ function $n({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 						rows: 3
 					})
 				] }),
-				f && /* @__PURE__ */ (0, W.jsx)("p", {
+				f && /* @__PURE__ */ (0, U.jsx)("p", {
 					role: "alert",
 					children: f
 				}),
-				/* @__PURE__ */ (0, W.jsx)("p", {
+				/* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
 					children: i ? "The edit creates a saved revision only after an accepted server receipt. It uses the server's selected policy; earlier revisions stay unchanged. Rationale: at most 2,000 characters." : "The edit is applied only after a successful backend evaluation."
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("div", {
+				/* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "actions",
-					children: [/* @__PURE__ */ (0, W.jsx)("button", {
+					children: [/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: t,
 						children: "Cancel"
-					}), /* @__PURE__ */ (0, W.jsx)("button", {
+					}), /* @__PURE__ */ (0, U.jsx)("button", {
 						className: "primary",
 						type: "submit",
 						children: i ? "Save revision" : "Evaluate edit"
@@ -7979,7 +7979,7 @@ function $n({ field: e, onCancel: t, onSubmit: n, restoreFocus: r, saved: i = !1
 	});
 }
 // src/components/PagedJson.tsx
-function er({ value: e, className: t, title: n, noun: r }) {
+function tr({ value: e, className: t, title: n, noun: r }) {
 	let i = (0, k.useMemo)(() => {
 		let t = new TextEncoder().encode(JSON.stringify(e, null, 2)), n = [], r = new TextDecoder("utf-8", { fatal: !0 });
 		for (let e = 0; e < t.length;) {
@@ -7989,10 +7989,10 @@ function er({ value: e, className: t, title: n, noun: r }) {
 		}
 		return n;
 	}, [e]), [a, o] = (0, k.useState)(0);
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: t,
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				n,
 				" · page ",
 				a + 1,
@@ -8000,10 +8000,10 @@ function er({ value: e, className: t, title: n, noun: r }) {
 				i.length,
 				" · up to 64 KiB of UTF-8 text per page"
 			] }),
-			/* @__PURE__ */ (0, W.jsx)("pre", { children: i[a] }),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsx)("pre", { children: i[a] }),
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "actions",
-				children: [/* @__PURE__ */ (0, W.jsxs)("button", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("button", {
 					disabled: a === 0,
 					onClick: () => o(a - 1),
 					children: [
@@ -8011,7 +8011,7 @@ function er({ value: e, className: t, title: n, noun: r }) {
 						r,
 						" page"
 					]
-				}), /* @__PURE__ */ (0, W.jsxs)("button", {
+				}), /* @__PURE__ */ (0, U.jsxs)("button", {
 					disabled: a + 1 === i.length,
 					onClick: () => o(a + 1),
 					children: [
@@ -8025,19 +8025,19 @@ function er({ value: e, className: t, title: n, noun: r }) {
 	});
 }
 // src/metricDisplay.ts
-function tr(e) {
+function nr(e) {
 	if (e.status === "not_applicable") return "Not applicable";
 	let t = e.reported_value ?? e.raw_value;
 	return j(t) ? `${N(t, e.display_precision ?? 0)} ${e.unit}` : String(t);
 }
 // src/storageAvailability.ts
-var nr = /* @__PURE__ */ new Set(), rr = !1;
-function ir(e) {
-	rr !== !e && (rr = !e, nr.forEach((e) => e()));
+var rr = /* @__PURE__ */ new Set(), ir = !1;
+function ar(e) {
+	ir !== !e && (ir = !e, rr.forEach((e) => e()));
 }
-var ar = () => rr, or = (e) => (nr.add(e), () => {
-	nr.delete(e);
-}), sr = class extends Error {
+var or = () => ir, sr = (e) => (rr.add(e), () => {
+	rr.delete(e);
+}), cr = class extends Error {
 	status;
 	code;
 	certain;
@@ -8047,25 +8047,25 @@ var ar = () => rr, or = (e) => (nr.add(e), () => {
 		super(e), this.status = t, this.code = n, this.certain = r, this.retryAfter = i, this.fieldErrors = a, this.name = "CaseApiError";
 	}
 };
-function cr(e) {
-	return e instanceof sr ? e : new sr(e instanceof Error ? e.message : String(e));
+function lr(e) {
+	return e instanceof cr ? e : new cr(e instanceof Error ? e.message : String(e));
 }
-async function lr(e, t, n) {
+async function ur(e, t, n) {
 	let r;
 	try {
 		r = await At(e, t, n);
 	} catch {
-		throw new sr("The response was lost or unavailable. Retry the exact saved write if one is pending.");
+		throw new cr("The response was lost or unavailable. Retry the exact saved write if one is pending.");
 	}
 	let i;
 	try {
 		i = await r.json();
 	} catch {
-		throw new sr(`Saved-case service returned an unreadable response (${r.status}).`, r.status);
+		throw new cr(`Saved-case service returned an unreadable response (${r.status}).`, r.status);
 	}
 	if (!r.ok) {
 		let e = i && typeof i == "object" && "detail" in i ? i.detail : null, t = "request_failed", n = `Saved-case request failed (${r.status}).`;
-		throw e && typeof e == "object" && !Array.isArray(e) ? ("code" in e && typeof e.code == "string" && (t = e.code), "message" in e && typeof e.message == "string" && (n = e.message)) : typeof e == "string" ? n = e : Array.isArray(e) && (n = e.map((e) => e && typeof e == "object" ? `${Array.isArray(e.loc) ? e.loc.join(".") : "input"}: ${String(e.msg ?? "Invalid input")}` : "Invalid input").join("; ")), t === "storage_not_configured" && ir(!1), t === "storage_not_configured" && (n = "Saved cases are not enabled for this local workspace. You can continue with unsaved assessments."), new sr(n, r.status, t, [
+		throw e && typeof e == "object" && !Array.isArray(e) ? ("code" in e && typeof e.code == "string" && (t = e.code), "message" in e && typeof e.message == "string" && (n = e.message)) : typeof e == "string" ? n = e : Array.isArray(e) && (n = e.map((e) => e && typeof e == "object" ? `${Array.isArray(e.loc) ? e.loc.join(".") : "input"}: ${String(e.msg ?? "Invalid input")}` : "Invalid input").join("; ")), t === "storage_not_configured" && ar(!1), t === "storage_not_configured" && (n = "Saved cases are not enabled for this local workspace. You can continue with unsaved assessments."), new cr(n, r.status, t, [
 			400,
 			404,
 			412,
@@ -8074,25 +8074,25 @@ async function lr(e, t, n) {
 			428
 		].includes(r.status), r.headers.get("Retry-After"), Mt(i, e));
 	}
-	return ir(!0), {
+	return ar(!0), {
 		response: r,
 		body: i
 	};
 }
-function ur(e, t) {
+function dr(e, t) {
 	return R(It(e) && (t === "latest" || Lt(t)), "requested case/revision"), `/cases/${encodeURIComponent(e)}${t === "latest" ? "" : `/revisions/${t}`}`;
 }
-async function dr(e, t, n, r = fetch) {
-	let { response: i, body: a } = await lr(ur(e, t), { signal: n }, r), o = Jt(a, i.headers.get("ETag"));
+async function fr(e, t, n, r = fetch) {
+	let { response: i, body: a } = await ur(dr(e, t), { signal: n }, r), o = Jt(a, i.headers.get("ETag"));
 	return R(o.snapshot.case_id === e && (t === "latest" || o.snapshot.revision === t), "requested snapshot identity"), o;
 }
-async function fr(e, t, n = fetch) {
-	let r = Dn(e), i = {
+async function pr(e, t, n = fetch) {
+	let r = On(e), i = {
 		"Content-Type": "application/json",
 		"Idempotency-Key": r.id
 	};
 	r.kind === "edit" && (i["If-Match"] = r.etag);
-	let { response: a, body: o } = await lr(r.kind === "create" ? "/cases" : `${ur(r.caseId, "latest")}/revisions`, {
+	let { response: a, body: o } = await ur(r.kind === "create" ? "/cases" : `${dr(r.caseId, "latest")}/revisions`, {
 		method: "POST",
 		headers: i,
 		body: r.body,
@@ -8113,15 +8113,15 @@ async function fr(e, t, n = fetch) {
 			replayed: a.headers.get("Idempotency-Replayed") === "true"
 		};
 	} catch (e) {
-		throw new sr(`The write may be saved, but its receipt could not be verified: ${e instanceof Error ? e.message : String(e)}`, a.status);
+		throw new cr(`The write may be saved, but its receipt could not be verified: ${e instanceof Error ? e.message : String(e)}`, a.status);
 	}
 }
-var pr = (e) => `?${new URLSearchParams({
+var mr = (e) => `?${new URLSearchParams({
 	limit: "25",
 	...e ? { after: e } : {}
 })}`;
-async function mr(e, t, n = fetch, r = {}) {
-	let { body: i } = await lr(`/cases?${new URLSearchParams({
+async function hr(e, t, n = fetch, r = {}) {
+	let { body: i } = await ur(`/cases?${new URLSearchParams({
 		limit: "25",
 		...e ? { after: e } : {},
 		...r.q ? { q: r.q } : {},
@@ -8130,12 +8130,12 @@ async function mr(e, t, n = fetch, r = {}) {
 	})}`, { signal: t }, n);
 	return Qt(i);
 }
-async function hr(e, t, n, r = fetch) {
-	let { body: i } = await lr(`${ur(e, "latest")}/revisions${pr(t)}`, { signal: n }, r);
+async function gr(e, t, n, r = fetch) {
+	let { body: i } = await ur(`${dr(e, "latest")}/revisions${mr(t)}`, { signal: n }, r);
 	return $t(i, e);
 }
-async function gr(e, t, n = fetch) {
-	let { body: r } = await lr(`${ur(e.snapshot.case_id, e.snapshot.revision)}/replay`, {
+async function _r(e, t, n = fetch) {
+	let { body: r } = await ur(`${dr(e.snapshot.case_id, e.snapshot.revision)}/replay`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: "{}",
@@ -8144,7 +8144,7 @@ async function gr(e, t, n = fetch) {
 	return en(r, e);
 }
 // src/SavedCases.tsx
-function _r(e, t, n) {
+function vr(e, t, n) {
 	let r = {
 		key: e,
 		items: [],
@@ -8186,7 +8186,7 @@ function _r(e, t, n) {
 			f === o.current && d === l.current && !i.signal.aborted && a((t) => ({
 				...t,
 				loading: !1,
-				error: cr(e).message
+				error: lr(e).message
 			}));
 		} finally {
 			c.current === i && (c.current = null);
@@ -8202,115 +8202,115 @@ function _r(e, t, n) {
 		}
 	};
 }
-function vr({ onOpen: e, onClose: t }) {
+function yr({ onOpen: e, onClose: t }) {
 	let [n, r] = (0, k.useState)(""), [i, a] = (0, k.useState)(""), [o, s] = (0, k.useState)(""), [c, l] = (0, k.useState)("created");
 	(0, k.useEffect)(() => {
 		let e = setTimeout(() => a(n.trim()), 200);
 		return () => clearTimeout(e);
 	}, [n]);
-	let u = !!(i || o || c !== "created"), d = _r(`cases:${i}:${o}:${c}`, (e, t) => mr(e, t, fetch, {
+	let u = !!(i || o || c !== "created"), d = vr(`cases:${i}:${o}:${c}`, (e, t) => hr(e, t, fetch, {
 		q: i,
 		outcome: o,
 		sort: c
 	}), (e) => e.case_id);
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel caseList",
 		"aria-label": "Saved cases",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "panelTitle",
-				children: [/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("h2", { children: "Saved cases" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "Newest creations first · local saved assessments" })] }), /* @__PURE__ */ (0, W.jsxs)("div", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h2", { children: "Saved cases" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "Newest creations first · local saved assessments" })] }), /* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "actions",
-					children: [/* @__PURE__ */ (0, W.jsx)("button", {
+					children: [/* @__PURE__ */ (0, U.jsx)("button", {
 						onClick: d.refresh,
 						children: "Refresh saved cases"
-					}), /* @__PURE__ */ (0, W.jsx)("button", {
+					}), /* @__PURE__ */ (0, U.jsx)("button", {
 						onClick: t,
 						children: "Close saved cases"
 					})]
 				})]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "caseFilters",
 				children: [
-					/* @__PURE__ */ (0, W.jsxs)("label", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("label", { children: [
 						"Search saved cases",
-						/* @__PURE__ */ (0, W.jsx)("input", {
+						/* @__PURE__ */ (0, U.jsx)("input", {
 							"aria-label": "Search saved cases",
 							value: n,
 							maxLength: 120,
 							placeholder: "Borrower name",
 							onChange: (e) => r(e.target.value)
 						}),
-						/* @__PURE__ */ (0, W.jsx)("small", { children: "Literal borrower-name search · ASCII case-insensitive" })
+						/* @__PURE__ */ (0, U.jsx)("small", { children: "Literal borrower-name search · ASCII case-insensitive" })
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("label", { children: ["Filter by outcome", /* @__PURE__ */ (0, W.jsxs)("select", {
+					/* @__PURE__ */ (0, U.jsxs)("label", { children: ["Filter by outcome", /* @__PURE__ */ (0, U.jsxs)("select", {
 						"aria-label": "Filter by outcome",
 						value: o,
 						onChange: (e) => s(e.target.value),
 						children: [
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "",
 								children: "All outcomes"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "approve",
 								children: "Approve"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "review",
 								children: "Review"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "decline",
 								children: "Decline"
 							})
 						]
 					})] }),
-					/* @__PURE__ */ (0, W.jsxs)("label", { children: ["Sort saved cases", /* @__PURE__ */ (0, W.jsxs)("select", {
+					/* @__PURE__ */ (0, U.jsxs)("label", { children: ["Sort saved cases", /* @__PURE__ */ (0, U.jsxs)("select", {
 						"aria-label": "Sort saved cases",
 						value: c,
 						onChange: (e) => l(e.target.value),
-						children: [/* @__PURE__ */ (0, W.jsx)("option", {
+						children: [/* @__PURE__ */ (0, U.jsx)("option", {
 							value: "created",
 							children: "Newest creation"
-						}), /* @__PURE__ */ (0, W.jsx)("option", {
+						}), /* @__PURE__ */ (0, U.jsx)("option", {
 							value: "updated",
 							children: "Latest update"
 						})]
 					})] })
 				]
 			}),
-			d.loading && /* @__PURE__ */ (0, W.jsx)("p", {
+			d.loading && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "status",
 				children: "Loading saved cases…"
 			}),
-			d.error && /* @__PURE__ */ (0, W.jsx)("p", {
+			d.error && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "alert",
 				children: d.error
 			}),
-			!d.loading && !d.error && !d.items.length && /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("p", { children: u ? "No saved cases match these filters." : "No saved cases yet. Save an accepted dated assessment to begin." }), u && /* @__PURE__ */ (0, W.jsx)("button", {
+			!d.loading && !d.error && !d.items.length && /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("p", { children: u ? "No saved cases match these filters." : "No saved cases yet. Save an accepted dated assessment to begin." }), u && /* @__PURE__ */ (0, U.jsx)("button", {
 				type: "button",
 				onClick: () => {
 					r(""), a(""), s(""), l("created");
 				},
 				children: "Clear filters"
 			})] }),
-			d.items.map((t) => /* @__PURE__ */ (0, W.jsxs)("article", {
+			d.items.map((t) => /* @__PURE__ */ (0, U.jsxs)("article", {
 				className: "caseRow",
-				children: [/* @__PURE__ */ (0, W.jsxs)("div", { children: [
-					/* @__PURE__ */ (0, W.jsx)("h3", { children: t.borrower_name }),
-					/* @__PURE__ */ (0, W.jsx)("code", { children: t.case_id }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				children: [/* @__PURE__ */ (0, U.jsxs)("div", { children: [
+					/* @__PURE__ */ (0, U.jsx)("h3", { children: t.borrower_name }),
+					/* @__PURE__ */ (0, U.jsx)("code", { children: t.case_id }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Created ",
 						t.created_at,
 						" · Revision ",
 						t.revision,
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Last recorded ",
 						t.recorded_at
 					] }),
-					t.definition_supported !== void 0 && /* @__PURE__ */ (0, W.jsx)("p", { children: t.definition_supported ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
+					t.definition_supported !== void 0 && /* @__PURE__ */ (0, U.jsx)("p", { children: t.definition_supported ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
 						t.outcome?.toUpperCase(),
 						" · DSCR",
 						" ",
@@ -8322,7 +8322,7 @@ function vr({ onOpen: e, onClose: t }) {
 						"· as of ",
 						t.assessment_as_of
 					] }) : "Archived definition · original JSON only" })
-				] }), /* @__PURE__ */ (0, W.jsx)("button", {
+				] }), /* @__PURE__ */ (0, U.jsx)("button", {
 					"aria-label": `Open ${t.borrower_name} case ${t.case_id}`,
 					onClick: () => e({
 						caseId: t.case_id,
@@ -8331,7 +8331,7 @@ function vr({ onOpen: e, onClose: t }) {
 					children: "Open case"
 				})]
 			}, t.case_id)),
-			d.next && /* @__PURE__ */ (0, W.jsx)("button", {
+			d.next && /* @__PURE__ */ (0, U.jsx)("button", {
 				disabled: d.loading,
 				onClick: d.more,
 				children: "Load more saved cases"
@@ -8339,24 +8339,24 @@ function vr({ onOpen: e, onClose: t }) {
 		]
 	});
 }
-function yr({ saved: e, active: t, onOpen: n }) {
+function br({ saved: e, active: t, onOpen: n }) {
 	let r = e.view.snapshot, i = t ? e.selection === "latest" ? `Revision ${r.revision} · Latest when last refreshed` : e.selection === "revision" ? `Historical revision ${r.revision}` : `Acknowledged revision ${r.revision} · Latest unconfirmed` : `Previous saved revision ${r.revision} (inactive)`;
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "savedContext",
 		"aria-label": "Saved revision context",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("strong", { children: i }),
-			/* @__PURE__ */ (0, W.jsxs)("details", {
+			/* @__PURE__ */ (0, U.jsx)("strong", { children: i }),
+			/* @__PURE__ */ (0, U.jsxs)("details", {
 				className: "recordDetails",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("summary", { children: "Record details" }),
-					/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+					/* @__PURE__ */ (0, U.jsx)("summary", { children: "Record details" }),
+					/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 						"Case ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: r.case_id }),
+						/* @__PURE__ */ (0, U.jsx)("code", { children: r.case_id }),
 						" · Run ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: r.run_id })
+						/* @__PURE__ */ (0, U.jsx)("code", { children: r.run_id })
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 						"Recorded ",
 						r.recorded_at,
 						" · assessment as of",
@@ -8366,7 +8366,7 @@ function yr({ saved: e, active: t, onOpen: n }) {
 					] })
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("button", {
+			/* @__PURE__ */ (0, U.jsx)("button", {
 				onClick: () => n({
 					caseId: r.case_id,
 					revision: "latest"
@@ -8376,24 +8376,24 @@ function yr({ saved: e, active: t, onOpen: n }) {
 		]
 	});
 }
-function br({ view: e }) {
+function xr({ view: e }) {
 	let t = e.snapshot;
-	return /* @__PURE__ */ (0, W.jsxs)("details", { children: [
-		/* @__PURE__ */ (0, W.jsx)("summary", { children: "Stored run and recording metadata" }),
-		/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+	return /* @__PURE__ */ (0, U.jsxs)("details", { children: [
+		/* @__PURE__ */ (0, U.jsx)("summary", { children: "Stored run and recording metadata" }),
+		/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 			"Original run ",
 			t.run_id,
 			" · recorded ",
 			t.recorded_at
 		] }),
-		/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+		/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 			"Source status: ",
 			t.recording.source_status,
 			" ",
 			t.recording.source_revision ?? "· exact build revision not supplied"
 		] }),
-		/* @__PURE__ */ (0, W.jsx)("p", { children: "Stored hashes are local consistency identifiers; they do not authenticate documents or people." }),
-		/* @__PURE__ */ (0, W.jsx)("pre", { children: JSON.stringify({
+		/* @__PURE__ */ (0, U.jsx)("p", { children: "Stored hashes are local consistency identifiers; they do not authenticate documents or people." }),
+		/* @__PURE__ */ (0, U.jsx)("pre", { children: JSON.stringify({
 			input_hash: t.input_hash,
 			payload_hash: t.payload_hash,
 			storage_serialization_version: t.storage_serialization_version,
@@ -8401,8 +8401,8 @@ function br({ view: e }) {
 		}, null, 2) })
 	] });
 }
-function xr({ saved: e, active: t, onOpen: n }) {
-	let r = e.view, i = r.snapshot, a = i.event, o = _r(`${i.case_id}:${i.revision}`, (e, t) => hr(i.case_id, e, t), (e) => String(e.revision)), [s, c] = (0, k.useState)({
+function Sr({ saved: e, active: t, onOpen: n }) {
+	let r = e.view, i = r.snapshot, a = i.event, o = vr(`${i.case_id}:${i.revision}`, (e, t) => gr(i.case_id, e, t), (e) => String(e.revision)), [s, c] = (0, k.useState)({
 		key: i.run_id,
 		result: null,
 		error: "",
@@ -8428,7 +8428,7 @@ function xr({ saved: e, active: t, onOpen: n }) {
 			loading: !0
 		});
 		try {
-			let n = await gr(r, e.signal);
+			let n = await _r(r, e.signal);
 			u.current === t && !e.signal.aborted && c({
 				key: t,
 				result: n,
@@ -8439,50 +8439,50 @@ function xr({ saved: e, active: t, onOpen: n }) {
 			u.current === t && !e.signal.aborted && c({
 				key: t,
 				result: null,
-				error: cr(n).message,
+				error: lr(n).message,
 				loading: !1
 			});
 		} finally {
 			l.current === e && (l.current = null);
 		}
 	}
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel historyPanel",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "panelTitle",
-				children: [/* @__PURE__ */ (0, W.jsx)("h2", { children: "Saved revision history" }), /* @__PURE__ */ (0, W.jsx)("button", {
+				children: [/* @__PURE__ */ (0, U.jsx)("h2", { children: "Saved revision history" }), /* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: o.refresh,
 					children: "Refresh revisions"
 				})]
 			}),
-			!t && /* @__PURE__ */ (0, W.jsx)("p", { children: "Previous saved selection; its recommendation is inactive." }),
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			!t && /* @__PURE__ */ (0, U.jsx)("p", { children: "Previous saved selection; its recommendation is inactive." }),
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				"Original accepted revisions and server-recorded events. Recorded actor:",
 				" ",
 				a.actor,
 				".",
 				a.actor === "prototype-demo-unverified" ? " Archived demonstration identity." : " Configured credential identity."
 			] }),
-			o.loading && /* @__PURE__ */ (0, W.jsx)("p", {
+			o.loading && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "status",
 				children: "Loading revisions…"
 			}),
-			o.error && /* @__PURE__ */ (0, W.jsx)("p", {
+			o.error && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "alert",
 				children: o.error
 			}),
-			/* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("div", {
 				className: "revisionList",
-				children: o.items.map((e) => /* @__PURE__ */ (0, W.jsxs)("article", {
+				children: o.items.map((e) => /* @__PURE__ */ (0, U.jsxs)("article", {
 					className: "caseRow",
-					children: [/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsxs)("strong", { children: ["Revision ", e.revision] }), /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					children: [/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsxs)("strong", { children: ["Revision ", e.revision] }), /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						e.rationale,
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						e.recorded_at,
 						" · Run ",
 						e.run_id
-					] })] }), /* @__PURE__ */ (0, W.jsxs)("button", {
+					] })] }), /* @__PURE__ */ (0, U.jsxs)("button", {
 						"aria-label": `Open revision ${e.revision}`,
 						"aria-pressed": e.revision === i.revision,
 						onClick: () => n({
@@ -8493,33 +8493,33 @@ function xr({ saved: e, active: t, onOpen: n }) {
 					})]
 				}, e.revision))
 			}),
-			o.next && /* @__PURE__ */ (0, W.jsx)("button", {
+			o.next && /* @__PURE__ */ (0, U.jsx)("button", {
 				disabled: o.loading,
 				onClick: o.more,
 				children: "Load more revisions"
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("article", {
+			/* @__PURE__ */ (0, U.jsxs)("article", {
 				className: "savedEvent",
 				"aria-label": "Selected recorded event",
 				children: [
-					/* @__PURE__ */ (0, W.jsxs)("h3", { children: ["Selected recorded event · revision ", i.revision] }),
-					/* @__PURE__ */ (0, W.jsx)("strong", { children: a.kind === "creation" ? "Case creation" : a.field_path }),
-					a.kind === "edit" && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("h3", { children: ["Selected recorded event · revision ", i.revision] }),
+					/* @__PURE__ */ (0, U.jsx)("strong", { children: a.kind === "creation" ? "Case creation" : a.field_path }),
+					a.kind === "edit" && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						a.before,
 						" → ",
 						a.after,
 						" · ",
 						a.context.unit
 					] }),
-					/* @__PURE__ */ (0, W.jsx)("p", { children: a.rationale }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsx)("p", { children: a.rationale }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						a.context.basis,
 						" · as of ",
 						a.context.assessment_as_of,
 						a.context.period_start ? ` · ${a.context.period_start} – ${a.context.period_end}` : "",
 						a.context.guarantor_name === null ? "" : ` · Guarantor ${a.context.guarantor_index}: ${a.context.guarantor_name}`
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Recorded ",
 						a.recorded_at,
 						" · ",
@@ -8527,48 +8527,48 @@ function xr({ saved: e, active: t, onOpen: n }) {
 					] })
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("div", {
 				className: "actions",
-				children: /* @__PURE__ */ (0, W.jsx)("button", {
+				children: /* @__PURE__ */ (0, U.jsx)("button", {
 					disabled: s.loading,
 					onClick: () => void d(),
 					children: "Replay this revision (read-only)"
 				})
 			}),
-			s.key === i.run_id && /* @__PURE__ */ (0, W.jsx)("div", {
+			s.key === i.run_id && /* @__PURE__ */ (0, U.jsx)("div", {
 				className: "replayResult",
 				role: "status",
-				children: s.loading ? "Checking the retained policy and definition…" : s.error || (s.result ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-					/* @__PURE__ */ (0, W.jsx)("strong", { children: {
+				children: s.loading ? "Checking the retained policy and definition…" : s.error || (s.result ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+					/* @__PURE__ */ (0, U.jsx)("strong", { children: {
 						matched: "Matched",
 						mismatch: "Mismatch",
 						replay_unavailable: "Replay unavailable"
 					}[s.result.status] }),
-					/* @__PURE__ */ (0, W.jsx)("p", { children: s.result.explanation }),
-					s.result.differences.length > 0 && /* @__PURE__ */ (0, W.jsx)("ul", { children: s.result.differences.map((e) => /* @__PURE__ */ (0, W.jsx)("li", { children: e }, e)) })
+					/* @__PURE__ */ (0, U.jsx)("p", { children: s.result.explanation }),
+					s.result.differences.length > 0 && /* @__PURE__ */ (0, U.jsx)("ul", { children: s.result.differences.map((e) => /* @__PURE__ */ (0, U.jsx)("li", { children: e }, e)) })
 				] }) : "Replay is read-only; the original result stays selected.")
 			}),
-			/* @__PURE__ */ (0, W.jsx)(br, { view: r })
+			/* @__PURE__ */ (0, U.jsx)(xr, { view: r })
 		]
 	});
 }
-function Sr({ operation: e }) {
+function Cr({ operation: e }) {
 	let t = JSON.parse(e.body);
-	return e.kind === "comparison" ? /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+	return e.kind === "comparison" ? /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 		"Proposed comparison · Case ",
 		e.caseId,
 		" · revision",
 		" ",
 		e.baselineRevision,
-		/* @__PURE__ */ (0, W.jsx)("br", {}),
+		/* @__PURE__ */ (0, U.jsx)("br", {}),
 		"Run ",
 		e.baselineRunId,
 		" · as of",
 		" ",
 		e.context.assessment_as_of,
-		/* @__PURE__ */ (0, W.jsx)("br", {}),
+		/* @__PURE__ */ (0, U.jsx)("br", {}),
 		t.scenarios.map((e) => `${e.name}: ${e.rationale}`).join("; ")
-	] }) : e.kind === "edit" ? /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+	] }) : e.kind === "edit" ? /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 		"Proposed ",
 		e.review.label,
 		": ",
@@ -8580,70 +8580,70 @@ function Sr({ operation: e }) {
 		e.review.period,
 		" · ",
 		e.context.unit,
-		/* @__PURE__ */ (0, W.jsx)("br", {}),
+		/* @__PURE__ */ (0, U.jsx)("br", {}),
 		"Rationale: ",
 		t.rationale
-	] }) : /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+	] }) : /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 		"Proposed creation: ",
 		t.input.borrower_name,
 		" · as of",
 		" ",
 		t.input.assessment_as_of,
-		/* @__PURE__ */ (0, W.jsx)("br", {}),
+		/* @__PURE__ */ (0, U.jsx)("br", {}),
 		"Rationale: ",
 		t.rationale
 	] });
 }
-function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
+function wr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 	let [i, a] = (0, k.useState)("");
-	return /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-		e.notice && /* @__PURE__ */ (0, W.jsx)("p", {
+	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+		e.notice && /* @__PURE__ */ (0, U.jsx)("p", {
 			className: "writeNotice",
 			role: "status",
 			children: e.notice
 		}),
-		(e.operation || e.recoveryError) && /* @__PURE__ */ (0, W.jsxs)("section", {
+		(e.operation || e.recoveryError) && /* @__PURE__ */ (0, U.jsxs)("section", {
 			className: "pending",
 			"aria-label": "Saved write recovery",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("h2", { children: e.inFlight ? e.operation?.kind === "comparison" ? "Saving comparison" : "Saving revision" : e.operation ? "Unconfirmed saved write" : "Saved write recovery unavailable" }),
-				!e.inFlight && e.operation && /* @__PURE__ */ (0, W.jsxs)("p", {
+				/* @__PURE__ */ (0, U.jsx)("h2", { children: e.inFlight ? e.operation?.kind === "comparison" ? "Saving comparison" : "Saving revision" : e.operation ? "Unconfirmed saved write" : "Saved write recovery unavailable" }),
+				!e.inFlight && e.operation && /* @__PURE__ */ (0, U.jsxs)("p", {
 					className: "recoveryState",
-					children: [/* @__PURE__ */ (0, W.jsx)("strong", { children: e.writeError?.status === 409 ? "Conflicting operation key (409)" : "Not confirmed by the server" }), e.writeError?.status === 409 ? " · Inspect saved records before explicitly discarding or creating a new operation key." : " · A timeout, network drop or rejected credential does not mean the write was undone."]
+					children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: e.writeError?.status === 409 ? "Conflicting operation key (409)" : "Not confirmed by the server" }), e.writeError?.status === 409 ? " · Inspect saved records before explicitly discarding or creating a new operation key." : " · A timeout, network drop or rejected credential does not mean the write was undone."]
 				}),
-				e.operation && /* @__PURE__ */ (0, W.jsx)(Sr, { operation: e.operation }),
-				e.operation && /* @__PURE__ */ (0, W.jsxs)("details", { children: [
-					/* @__PURE__ */ (0, W.jsx)("summary", { children: "Inspect pending payload" }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				e.operation && /* @__PURE__ */ (0, U.jsx)(Cr, { operation: e.operation }),
+				e.operation && /* @__PURE__ */ (0, U.jsxs)("details", { children: [
+					/* @__PURE__ */ (0, U.jsx)("summary", { children: "Inspect pending payload" }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Exact operation UUID: ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.operation.id }),
-						e.operation.kind === "edit" && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-							/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.operation.id }),
+						e.operation.kind === "edit" && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
 							"Original strong ETag: ",
-							/* @__PURE__ */ (0, W.jsx)("code", { children: e.operation.etag })
+							/* @__PURE__ */ (0, U.jsx)("code", { children: e.operation.etag })
 						] })
 					] }),
-					/* @__PURE__ */ (0, W.jsx)(er, {
+					/* @__PURE__ */ (0, U.jsx)(tr, {
 						value: JSON.parse(e.operation.body),
 						title: "Pending command JSON",
 						noun: "payload",
 						className: "pendingPayload"
 					})
 				] }),
-				/* @__PURE__ */ (0, W.jsx)("p", {
+				/* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
 					children: "Tracking is held only in page memory. Reloading or closing this page loses the exact retry key; inspect saved records before making another write."
 				}),
-				/* @__PURE__ */ (0, W.jsx)("p", { children: e.recoveryError || e.writeError?.message || "This tab keeps the original command for exact retry. No new accepted event is recorded until the receipt is verified." }),
-				e.writeError?.retryAfter && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsx)("p", { children: e.recoveryError || e.writeError?.message || "This tab keeps the original command for exact retry. No new accepted event is recorded until the receipt is verified." }),
+				e.writeError?.retryAfter && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Retry after ",
 					e.writeError.retryAfter,
 					" second(s)."
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", {
+				/* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "actions",
 					children: [
-						e.operation && /* @__PURE__ */ (0, W.jsx)("button", {
+						e.operation && /* @__PURE__ */ (0, U.jsx)("button", {
 							className: "primary",
 							disabled: e.inFlight || e.writeError?.status === 409 && !e.writeError.certain,
 							onClick: () => {
@@ -8655,14 +8655,14 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 							},
 							children: "Retry exact write"
 						}),
-						e.operation?.kind === "edit" && /* @__PURE__ */ (0, W.jsx)("button", {
+						e.operation?.kind === "edit" && /* @__PURE__ */ (0, U.jsx)("button", {
 							onClick: () => void e.openSaved({
 								caseId: e.operation.caseId,
 								revision: e.operation.baseRevision
 							}),
 							children: "View stored baseline"
 						}),
-						e.operation?.kind === "comparison" && /* @__PURE__ */ (0, W.jsx)("button", {
+						e.operation?.kind === "comparison" && /* @__PURE__ */ (0, U.jsx)("button", {
 							onClick: () => {
 								e.operation?.kind === "comparison" && e.openSaved({
 									caseId: e.operation.caseId,
@@ -8671,42 +8671,42 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 							},
 							children: "View stored baseline"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							disabled: e.inFlight,
 							onClick: (e) => t(e.currentTarget),
 							children: "Stop tracking this unconfirmed write…"
 						})
 					]
 				}),
-				i && /* @__PURE__ */ (0, W.jsx)("p", {
+				i && /* @__PURE__ */ (0, U.jsx)("p", {
 					role: "alert",
 					children: i
 				})
 			]
 		}),
-		e.conflict && /* @__PURE__ */ (0, W.jsxs)("section", {
+		e.conflict && /* @__PURE__ */ (0, U.jsxs)("section", {
 			className: "pending conflict",
 			"aria-label": "Conflicting saved edit",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("h2", { children: "Review conflicting edit" }),
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [/* @__PURE__ */ (0, W.jsx)("strong", { children: "Stale strong ETag (412)" }), " · The stored revision changed before this new operation was accepted."] }),
-				/* @__PURE__ */ (0, W.jsx)(Sr, { operation: e.conflict.operation }),
-				/* @__PURE__ */ (0, W.jsx)("p", { children: "The case changed. Nothing from this proposal was accepted. Review the latest field before submitting a fresh revision." }),
-				e.conflict.latest ? /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsx)("h2", { children: "Review conflicting edit" }),
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: "Stale strong ETag (412)" }), " · The stored revision changed before this new operation was accepted."] }),
+				/* @__PURE__ */ (0, U.jsx)(Cr, { operation: e.conflict.operation }),
+				/* @__PURE__ */ (0, U.jsx)("p", { children: "The case changed. Nothing from this proposal was accepted. Review the latest field before submitting a fresh revision." }),
+				e.conflict.latest ? /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Latest stored value:",
 					" ",
 					Gt(e.conflict.latest.snapshot.normalized_input, e.conflict.operation.review.path).value,
 					" ",
 					"· Revision ",
 					e.conflict.latest.snapshot.revision
-				] }) : /* @__PURE__ */ (0, W.jsx)("p", {
+				] }) : /* @__PURE__ */ (0, U.jsx)("p", {
 					role: "status",
 					children: e.conflict.error || "Loading latest for review…"
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("details", { children: [
-					/* @__PURE__ */ (0, W.jsx)("summary", { children: "Inspect pending edits vs. latest revision" }),
-					/* @__PURE__ */ (0, W.jsx)(Sr, { operation: e.conflict.operation }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsxs)("details", { children: [
+					/* @__PURE__ */ (0, U.jsx)("summary", { children: "Inspect pending edits vs. latest revision" }),
+					/* @__PURE__ */ (0, U.jsx)(Cr, { operation: e.conflict.operation }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Latest revision:",
 						" ",
 						e.conflict.latest?.snapshot.revision ?? "Not loaded",
@@ -8715,19 +8715,19 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 						e.conflict.latest ? String(Gt(e.conflict.latest.snapshot.normalized_input, e.conflict.operation.review.path).value) : "Unavailable"
 					] })
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", {
+				/* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "actions",
 					children: [
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							disabled: !e.conflict.latest || !!e.operation,
 							onClick: (e) => n(e.currentTarget),
 							children: "Review proposed edit"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							onClick: e.refreshConflict,
 							children: "Refresh conflict baseline"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							onClick: () => {
 								e.conflict && e.openSaved({
 									caseId: e.conflict.operation.caseId,
@@ -8736,7 +8736,7 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 							},
 							children: "Reload latest revision"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							onClick: e.cancelConflict,
 							children: "Cancel proposal"
 						})
@@ -8744,23 +8744,23 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 				})
 			]
 		}),
-		e.rejected && /* @__PURE__ */ (0, W.jsxs)("section", {
+		e.rejected && /* @__PURE__ */ (0, U.jsxs)("section", {
 			className: "pending",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("h2", { children: "Rejected saved proposal" }),
-				/* @__PURE__ */ (0, W.jsx)(Sr, { operation: e.rejected }),
-				/* @__PURE__ */ (0, W.jsx)("p", { children: e.writeError?.message }),
-				/* @__PURE__ */ (0, W.jsx)("button", {
+				/* @__PURE__ */ (0, U.jsx)("h2", { children: "Rejected saved proposal" }),
+				/* @__PURE__ */ (0, U.jsx)(Cr, { operation: e.rejected }),
+				/* @__PURE__ */ (0, U.jsx)("p", { children: e.writeError?.message }),
+				/* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: e.dismissRejected,
 					children: "Dismiss rejected proposal"
 				})
 			]
 		}),
-		e.offer && /* @__PURE__ */ (0, W.jsxs)("section", {
+		e.offer && /* @__PURE__ */ (0, U.jsxs)("section", {
 			className: "pending",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("h2", { children: "Write acknowledged for another selection" }),
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsx)("h2", { children: "Write acknowledged for another selection" }),
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Case ",
 					e.offer.snapshot.case_id,
 					" · revision",
@@ -8768,9 +8768,9 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 					e.offer.snapshot.revision,
 					". The current selection was preserved."
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", {
+				/* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "actions",
-					children: [/* @__PURE__ */ (0, W.jsx)("button", {
+					children: [/* @__PURE__ */ (0, U.jsx)("button", {
 						onClick: () => {
 							e.offer && e.openSaved({
 								caseId: e.offer.snapshot.case_id,
@@ -8778,33 +8778,33 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 							}), e.dismissOffer();
 						},
 						children: "Open acknowledged revision"
-					}), /* @__PURE__ */ (0, W.jsx)("button", {
+					}), /* @__PURE__ */ (0, U.jsx)("button", {
 						onClick: e.dismissOffer,
 						children: "Dismiss acknowledgment"
 					})]
 				})
 			]
 		}),
-		e.comparisonAck && (e.comparisonAck.scope !== e.state.id || e.comparisonAck.view.record.case_id !== e.state.saved?.view.snapshot.case_id || e.comparisonAck.view.record.baseline_revision !== e.state.saved?.view.snapshot.revision) && /* @__PURE__ */ (0, W.jsxs)("section", {
+		e.comparisonAck && (e.comparisonAck.scope !== e.state.id || e.comparisonAck.view.record.case_id !== e.state.saved?.view.snapshot.case_id || e.comparisonAck.view.record.baseline_revision !== e.state.saved?.view.snapshot.revision) && /* @__PURE__ */ (0, U.jsxs)("section", {
 			className: "pending",
 			"aria-label": "Comparison acknowledged for another selection",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("h2", { children: "Comparison acknowledged for another selection" }),
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsx)("h2", { children: "Comparison acknowledged for another selection" }),
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Original comparison ",
 					e.comparisonAck.view.record.comparison_id,
 					" · baseline revision ",
 					e.comparisonAck.view.record.baseline_revision,
 					". The current selection was preserved."
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", {
+				/* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "actions",
-					children: [/* @__PURE__ */ (0, W.jsx)("button", {
+					children: [/* @__PURE__ */ (0, U.jsx)("button", {
 						onClick: () => {
 							e.comparisonAck && r(e.comparisonAck.view);
 						},
 						children: "Open acknowledged comparison"
-					}), /* @__PURE__ */ (0, W.jsx)("button", {
+					}), /* @__PURE__ */ (0, U.jsx)("button", {
 						onClick: e.dismissComparisonAck,
 						children: "Dismiss comparison acknowledgment"
 					})]
@@ -8813,7 +8813,7 @@ function Cr({ workspace: e, onDiscard: t, onReview: n, onOpenComparison: r }) {
 		})
 	] });
 }
-var wr = /* @__PURE__ */ new Set([
+var Tr = /* @__PURE__ */ new Set([
 	"preview_changed",
 	"storage_upgrade_required",
 	"baseline_run_mismatch",
@@ -8821,13 +8821,13 @@ var wr = /* @__PURE__ */ new Set([
 	"baseline_replay_mismatch",
 	"baseline_replay_unavailable"
 ]);
-function Tr(e) {
+function Er(e) {
 	return R(It(e), "comparison case locator"), `/cases/${encodeURIComponent(e)}`;
 }
-function Er(e, t) {
-	return R(Lt(t), "comparison revision locator"), `${Tr(e)}/revisions/${t}`;
+function Dr(e, t) {
+	return R(Lt(t), "comparison revision locator"), `${Er(e)}/revisions/${t}`;
 }
-async function Dr(e, t = "Comparison") {
+async function Or(e, t = "Comparison") {
 	let n = e.body?.getReader();
 	if (!n) throw Error("Missing response body");
 	let r = [], i = new TextDecoder("utf-8", { fatal: !0 }), a = 0;
@@ -8847,18 +8847,18 @@ async function Dr(e, t = "Comparison") {
 	for (let e of r) o.set(e, s), s += e.byteLength;
 	return JSON.parse(i.decode(o));
 }
-async function Or(e, t, n) {
+async function kr(e, t, n) {
 	let r;
 	try {
 		r = await At(e, t, n);
 	} catch {
-		throw new sr("The comparison response was lost or unavailable. Keep and retry the exact pending save if one exists.");
+		throw new cr("The comparison response was lost or unavailable. Keep and retry the exact pending save if one exists.");
 	}
 	let i;
 	try {
-		i = await Dr(r);
+		i = await Or(r);
 	} catch (e) {
-		throw new sr(`Comparison response could not be read: ${e instanceof Error ? e.message : String(e)}.`, r.status);
+		throw new cr(`Comparison response could not be read: ${e instanceof Error ? e.message : String(e)}.`, r.status);
 	}
 	if (!r.ok) {
 		let e = i && typeof i == "object" && "detail" in i ? i.detail : null, t = "request_failed", n = `Comparison request failed (${r.status}).`, a = !1;
@@ -8868,32 +8868,32 @@ async function Or(e, t, n) {
 			404,
 			413,
 			422
-		].includes(r.status) || r.status === 409 && wr.has(t));
-		throw new sr(n, r.status, t, o, r.headers.get("Retry-After"), Mt(i, e));
+		].includes(r.status) || r.status === 409 && Tr.has(t));
+		throw new cr(n, r.status, t, o, r.headers.get("Retry-After"), Mt(i, e));
 	}
 	return {
 		response: r,
 		body: i
 	};
 }
-function kr(e) {
+function Ar(e) {
 	let t = ln(e), n = JSON.stringify(t);
 	return R(new TextEncoder().encode(n).length <= 1e6, "scenario request byte limit"), n;
 }
-async function Ar(e, t, n, r = fetch) {
+async function jr(e, t, n, r = fetch) {
 	R(t.schema_version === "commercial-scenario-preview-v2", "preview command version");
-	let { response: i, body: a } = await Or(`${Er(e.snapshot.case_id, e.snapshot.revision)}/scenarios/preview`, {
+	let { response: i, body: a } = await kr(`${Dr(e.snapshot.case_id, e.snapshot.revision)}/scenarios/preview`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: kr(t),
+		body: Ar(t),
 		signal: n
 	}, r);
 	return R(i.status === 200, "preview status"), hn(a, e, t);
 }
-async function jr(e, t, n = fetch) {
+async function Mr(e, t, n = fetch) {
 	let r = wn(e);
 	R(r.kind === "comparison", "comparison operation kind");
-	let { response: i, body: a } = await Or(`${Er(r.caseId, r.baselineRevision)}/scenario-comparisons`, {
+	let { response: i, body: a } = await kr(`${Dr(r.caseId, r.baselineRevision)}/scenario-comparisons`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -8907,34 +8907,34 @@ async function jr(e, t, n = fetch) {
 		let e = vn(a, i.headers.get("ETag")), t = e.record, n = t.preview, o = ln(JSON.parse(r.body));
 		R(t.case_id === r.caseId && t.baseline_revision === r.baselineRevision && t.baseline_run_id === r.baselineRunId && H(un(n).scenarios, o.scenarios), "original receipt command/baseline");
 		let s = n.baseline, c = n.fingerprint;
-		return R(s.payload_hash === r.baselinePayloadHash && c.value === o.expected_preview_fingerprint && i.headers.get("Location") === `${Tr(t.case_id)}/scenario-comparisons/${t.comparison_id}`, "original receipt fingerprint/location"), {
+		return R(s.payload_hash === r.baselinePayloadHash && c.value === o.expected_preview_fingerprint && i.headers.get("Location") === `${Er(t.case_id)}/scenario-comparisons/${t.comparison_id}`, "original receipt fingerprint/location"), {
 			view: e,
 			replayed: i.headers.get("Idempotency-Replayed") === "true"
 		};
 	} catch (e) {
-		throw new sr(`The comparison may be saved, but its receipt could not be verified: ${e instanceof Error ? e.message : String(e)}`, i.status);
+		throw new cr(`The comparison may be saved, but its receipt could not be verified: ${e instanceof Error ? e.message : String(e)}`, i.status);
 	}
 }
-async function Mr(e, t, n, r = fetch) {
+async function Nr(e, t, n, r = fetch) {
 	R(It(t), "comparison locator");
-	let { response: i, body: a } = await Or(`${Tr(e)}/scenario-comparisons/${encodeURIComponent(t)}`, { signal: n }, r);
+	let { response: i, body: a } = await kr(`${Er(e)}/scenario-comparisons/${encodeURIComponent(t)}`, { signal: n }, r);
 	R(i.status === 200, "original comparison status");
 	let o = vn(a, i.headers.get("ETag"));
 	return R(o.record.case_id === e && o.record.comparison_id === t, "requested original comparison"), o;
 }
-async function Nr(e, t, n, r = fetch) {
+async function Pr(e, t, n, r = fetch) {
 	R(t === null || /^[A-Za-z0-9_-]{1,512}$/.test(t), "comparison cursor");
 	let i = new URLSearchParams({
 		limit: "25",
 		...t ? { after: t } : {}
-	}), { response: a, body: o } = await Or(`${Tr(e)}/scenario-comparisons?${i}`, { signal: n }, r);
+	}), { response: a, body: o } = await kr(`${Er(e)}/scenario-comparisons?${i}`, { signal: n }, r);
 	return R(a.status === 200, "comparison page status"), yn(o, e);
 }
 // src/scenarioSelection.ts
-var Pr = "spreadline.comparison-selection.v1";
-function Fr(e) {
+var Fr = "spreadline.comparison-selection.v1";
+function Ir(e) {
 	try {
-		let t = U()?.getItem(Pr);
+		let t = En()?.getItem(Fr);
 		if (!t || t.length > 500) return null;
 		let n = JSON.parse(t);
 		return Object.keys(n).length !== 4 || n.version !== "comparison-selection-v1" || n.apiBase !== w || n.caseId !== e || !It(n.comparisonId) ? null : n.comparisonId;
@@ -8942,10 +8942,10 @@ function Fr(e) {
 		return null;
 	}
 }
-function Ir(e, t) {
+function Lr(e, t) {
 	try {
-		let n = U();
-		t === null ? n?.removeItem(Pr) : It(e) && It(t) && n?.setItem(Pr, JSON.stringify({
+		let n = En();
+		t === null ? n?.removeItem(Fr) : It(e) && It(t) && n?.setItem(Fr, JSON.stringify({
 			version: "comparison-selection-v1",
 			apiBase: w,
 			caseId: e,
@@ -8954,7 +8954,7 @@ function Ir(e, t) {
 	} catch {}
 }
 // src/useScenarioWorkspace.ts
-var Lr = {
+var Rr = {
 	revenue: {
 		name: "Revenue downside",
 		values: [
@@ -9001,7 +9001,7 @@ var Lr = {
 		]
 	}
 };
-function Rr(e) {
+function zr(e) {
 	return {
 		key: crypto.randomUUID(),
 		name: `Scenario ${e}`,
@@ -9015,12 +9015,12 @@ function Rr(e) {
 		}
 	};
 }
-function zr(e) {
+function Br(e) {
 	let { state: t } = e, n = t.status === "ready" ? t.saved?.view ?? null : null, r = n?.snapshot, i = `${t.id}:${t.status}:${r?.case_id ?? ""}:${r?.revision ?? ""}:${r?.run_id ?? ""}:${r?.payload_hash ?? ""}`, a = (0, k.useRef)(i);
 	a.current = i;
 	let o = (0, k.useRef)(0), s = (0, k.useRef)(null), c = (0, k.useRef)(null), l = (0, k.useRef)(0), [u, d] = (0, k.useState)({
 		context: i,
-		rows: [Rr(1)]
+		rows: [zr(1)]
 	}), [f, p] = (0, k.useState)(null), m = (0, k.useRef)(f);
 	m.current = f;
 	let [h, g] = (0, k.useState)(!1), [_, v] = (0, k.useState)(""), [y, b] = (0, k.useState)([]), [x, S] = (0, k.useState)({
@@ -9046,7 +9046,7 @@ function zr(e) {
 	function ce() {
 		if (O || ne.length >= 10) return null;
 		oe();
-		let e = Rr(ne.length + 1);
+		let e = zr(ne.length + 1);
 		return d({
 			context: i,
 			rows: [...ne, e]
@@ -9060,7 +9060,7 @@ function zr(e) {
 	}
 	function le(e, t) {
 		se(e, (e) => {
-			let n = Lr[t];
+			let n = Rr[t];
 			return n ? {
 				...e,
 				preset: t,
@@ -9089,7 +9089,7 @@ function zr(e) {
 				}))
 			});
 			g(!0);
-			let s = await Ar(n, i, r.signal);
+			let s = await jr(n, i, r.signal);
 			if (t !== a.current || e !== o.current || r.signal.aborted) return;
 			let c = {
 				context: t,
@@ -9099,7 +9099,7 @@ function zr(e) {
 			};
 			m.current = c, p(c);
 		} catch (n) {
-			t === a.current && e === o.current && !r.signal.aborted && (v(cr(n).message), b(cr(n).fieldErrors));
+			t === a.current && e === o.current && !r.signal.aborted && (v(lr(n).message), b(lr(n).fieldErrors));
 		} finally {
 			s.current === r && (s.current = null, g(!1));
 		}
@@ -9114,19 +9114,19 @@ function zr(e) {
 			};
 			m.current = n, p(n), v("");
 		} catch (e) {
-			v(cr(e).message);
+			v(lr(e).message);
 		}
 	}
 	function fe() {
 		ae || (oe(), d({
 			context: i,
-			rows: [Rr(1)]
+			rows: [zr(1)]
 		}), c.current?.abort(), l.current++, S({
 			context: i,
 			loading: !1,
 			error: "",
 			view: null
-		}), r && Ir(r.case_id, null));
+		}), r && Lr(r.case_id, null));
 	}
 	async function pe(e) {
 		if (!r) return;
@@ -9141,19 +9141,19 @@ function zr(e) {
 			view: null
 		});
 		try {
-			let i = await Mr(r.case_id, e, t.signal);
+			let i = await Nr(r.case_id, e, t.signal);
 			if (o !== a.current || n !== l.current || t.signal.aborted) return;
 			S({
 				context: o,
 				loading: !1,
 				error: "",
 				view: i
-			}), Ir(r.case_id, e);
+			}), Lr(r.case_id, e);
 		} catch (e) {
 			o === a.current && n === l.current && !t.signal.aborted && S({
 				context: o,
 				loading: !1,
-				error: cr(e).message,
+				error: lr(e).message,
 				view: null
 			});
 		} finally {
@@ -9163,14 +9163,14 @@ function zr(e) {
 	(0, k.useEffect)(() => {
 		oe(), w.current = null, T.current = o.current, d({
 			context: i,
-			rows: [Rr(1)]
+			rows: [zr(1)]
 		}), S({
 			context: i,
 			loading: !1,
 			error: "",
 			view: null
 		});
-		let e = r && Fr(r.case_id);
+		let e = r && Ir(r.case_id);
 		return e && pe(e), () => {
 			o.current++, s.current?.abort(), l.current++, c.current?.abort();
 		};
@@ -9181,7 +9181,7 @@ function zr(e) {
 			loading: !1,
 			error: "",
 			view: n.view
-		}), Ir(r.case_id, n.view.record.comparison_id), ee((e) => e + 1)) : (e.deferComparisonAck(n.serial), ee((e) => e + 1))));
+		}), Lr(r.case_id, n.view.record.comparison_id), ee((e) => e + 1)) : (e.deferComparisonAck(n.serial), ee((e) => e + 1))));
 	}, [e.comparisonAck]);
 	let j = e.comparisonError?.scope === t.id ? e.comparisonError : null;
 	return {
@@ -9214,20 +9214,20 @@ function zr(e) {
 	};
 }
 // src/formContracts.ts
-var Br = (e) => JSON.parse(JSON.stringify(e));
-function Vr(e) {
+var Vr = (e) => JSON.parse(JSON.stringify(e));
+function Hr(e) {
 	return !e.startsWith("/") || /~(?![01])/.test(e) ? [] : e.slice(1).split("/").map((e) => e.replace(/~1/g, "/").replace(/~0/g, "~"));
 }
-function Hr(e, t) {
+function Ur(e, t) {
 	let n = e;
-	for (let e of Vr(t)) {
+	for (let e of Hr(t)) {
 		if (!n || typeof n != "object" || !Object.prototype.hasOwnProperty.call(n, e)) return "";
 		n = n[e];
 	}
 	return n;
 }
-function Ur(e, t, n) {
-	let r = Br(e), i = Vr(t);
+function Wr(e, t, n) {
+	let r = Vr(e), i = Hr(t);
 	if (!i.length || i.some((e) => [
 		"__proto__",
 		"constructor",
@@ -9240,7 +9240,7 @@ function Ur(e, t, n) {
 	}
 	return i.length && (a[i[i.length - 1]] = n), r;
 }
-function Wr(e, t) {
+function Gr(e, t) {
 	let n = typeof t == "string" || typeof t == "number" ? String(t) : "";
 	if (e.optional && !n.trim()) return null;
 	if (!n.trim()) throw Error("Enter a value for this field.");
@@ -9257,16 +9257,16 @@ function Wr(e, t) {
 	if (!Number.isSafeInteger(i)) throw Error("Enter an exact safe integer.");
 	return i;
 }
-function Gr(e) {
+function Kr(e) {
 	return e;
 }
-function Kr(e) {
+function qr(e) {
 	if (e.schema_version !== "commercial-assessment-v2") return [];
 	let t = e.years, n = (e) => /^\d{4}-\d{2}-\d{2}$/.test(e) && Number.isFinite(Date.parse(e)) && new Date(e).toISOString().slice(0, 10) === e, r = t.every((e) => {
 		if (!n(e.period_start) || !n(e.period_end) || !e.period_start.endsWith("-01")) return !1;
 		let t = /* @__PURE__ */ new Date(`${e.period_start}T00:00:00Z`), r = new Date(t);
 		return r.setUTCFullYear(t.getUTCFullYear() + 1, t.getUTCMonth(), 0), r.toISOString().slice(0, 10) === e.period_end;
-	}), i = t.every((e, r) => n(e.period_start) && n(e.period_end) && (r === 0 || e.period_start > t[r - 1].period_end)), a = Gr(e.working_capital), o = t[t.length - 1];
+	}), i = t.every((e, r) => n(e.period_start) && n(e.period_end) && (r === 0 || e.period_start > t[r - 1].period_end)), a = Kr(e.working_capital), o = t[t.length - 1];
 	return [
 		{
 			label: "Complete fiscal years",
@@ -9283,8 +9283,8 @@ function Kr(e) {
 	];
 }
 // src/components/GuidedForm.tsx
-function qr(e, t) {
-	let n = t?.querySelectorAll("[data-pointer]") ?? Kn(".guidedForm")?.querySelectorAll("[data-pointer]"), r = e.startsWith("/input/") ? e.slice(6) : e, i = Array.from(n ?? []), a = i.find((e) => e.dataset.pointer === r) ?? i.find((e) => e.dataset.pointer?.startsWith(`${r}/`));
+function Jr(e, t) {
+	let n = t?.querySelectorAll("[data-pointer]") ?? qn(".guidedForm")?.querySelectorAll("[data-pointer]"), r = e.startsWith("/input/") ? e.slice(6) : e, i = Array.from(n ?? []), a = i.find((e) => e.dataset.pointer === r) ?? i.find((e) => e.dataset.pointer?.startsWith(`${r}/`));
 	if (!a) return;
 	let o = a.parentElement;
 	for (; o;) o instanceof HTMLDetailsElement && (o.open = !0), o = o.parentElement;
@@ -9293,23 +9293,23 @@ function qr(e, t) {
 		behavior: "instant"
 	});
 }
-function Jr(e) {
+function Yr(e) {
 	let [t, n] = (0, k.useState)(e), [r, i] = (0, k.useState)([]), [a, o] = (0, k.useState)(0), s = (0, k.useRef)(null);
 	(0, k.useEffect)(() => {
-		a && r.length && qr(r[0].pointer, s.current);
+		a && r.length && Jr(r[0].pointer, s.current);
 	}, [a]);
 	function c(e) {
-		n(Br(e)), i([]);
+		n(Vr(e)), i([]);
 	}
 	function l(e, t) {
-		n((n) => Ur(n, e.pointer, t));
+		n((n) => Wr(n, e.pointer, t));
 		try {
-			Wr(e, t), i((t) => t.filter((t) => t.pointer !== e.pointer));
+			Gr(e, t), i((t) => t.filter((t) => t.pointer !== e.pointer));
 		} catch {}
 	}
 	function u(e) {
 		try {
-			Wr(e, Hr(t, e.pointer));
+			Gr(e, Ur(t, e.pointer));
 		} catch (t) {
 			let n = {
 				pointer: e.pointer,
@@ -9324,9 +9324,9 @@ function Jr(e) {
 		i(e), o((e) => e + 1);
 	}
 	function f(e) {
-		let n = Br(t), r = [];
+		let n = Vr(t), r = [];
 		for (let i of e) try {
-			n = Ur(n, i.pointer, Wr(i, Hr(t, i.pointer)));
+			n = Wr(n, i.pointer, Gr(i, Ur(t, i.pointer)));
 		} catch (e) {
 			r.push({
 				pointer: i.pointer,
@@ -9349,68 +9349,68 @@ function Jr(e) {
 		prepare: f
 	};
 }
-function Yr({ form: e, specs: t }) {
-	return e.errors.length ? /* @__PURE__ */ (0, W.jsxs)("section", {
+function Xr({ form: e, specs: t }) {
+	return e.errors.length ? /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "validationSummary",
 		role: "region",
 		"aria-label": "Validation summary",
 		"aria-live": "polite",
-		children: [/* @__PURE__ */ (0, W.jsxs)("h2", { children: [
+		children: [/* @__PURE__ */ (0, U.jsxs)("h2", { children: [
 			"Review ",
 			e.errors.length,
 			" input",
 			" ",
 			e.errors.length === 1 ? "issue" : "issues"
-		] }), /* @__PURE__ */ (0, W.jsx)("ul", { children: e.errors.map((n, r) => /* @__PURE__ */ (0, W.jsxs)("li", { children: [/* @__PURE__ */ (0, W.jsxs)("button", {
+		] }), /* @__PURE__ */ (0, U.jsx)("ul", { children: e.errors.map((n, r) => /* @__PURE__ */ (0, U.jsxs)("li", { children: [/* @__PURE__ */ (0, U.jsxs)("button", {
 			type: "button",
-			onClick: () => qr(n.pointer, e.root.current),
+			onClick: () => Jr(n.pointer, e.root.current),
 			children: [
 				t.find((e) => e.pointer === n.pointer)?.label ?? (n.pointer || "Complete document"),
 				": ",
 				n.message
 			]
-		}), n.limit !== null && /* @__PURE__ */ (0, W.jsxs)("small", { children: ["Limit ", n.limit] })] }, `${n.pointer}:${r}`)) })]
+		}), n.limit !== null && /* @__PURE__ */ (0, U.jsxs)("small", { children: ["Limit ", n.limit] })] }, `${n.pointer}:${r}`)) })]
 	}) : null;
 }
-var Xr = {
+var Zr = {
 	money: "500000.00",
 	rate: "0.105",
 	integer: "120",
 	text: "Enter name or reference",
 	date: "2025-12-31"
-}, Zr = {
+}, Qr = {
 	money: "USD decimal · up to 34 significant digits",
 	rate: "Rate [0, 1] · decimal fraction",
 	integer: "Integer",
 	text: "Text",
 	date: "ISO calendar date · YYYY-MM-DD"
 };
-function Qr({ form: e, spec: t }) {
+function $r({ form: e, spec: t }) {
 	let n = (0, k.useId)(), r = e.errors.find((e) => e.pointer === t.pointer);
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "formField",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("label", {
+			/* @__PURE__ */ (0, U.jsx)("label", {
 				htmlFor: n,
 				children: t.label
 			}),
-			/* @__PURE__ */ (0, W.jsx)("input", {
+			/* @__PURE__ */ (0, U.jsx)("input", {
 				id: n,
 				"data-pointer": t.pointer,
 				type: "text",
 				inputMode: ["money", "rate"].includes(t.kind) ? "decimal" : t.kind === "integer" ? "numeric" : "text",
-				value: String(Hr(e.values, t.pointer) ?? ""),
-				placeholder: t.placeholder ?? Xr[t.kind],
+				value: String(Ur(e.values, t.pointer) ?? ""),
+				placeholder: t.placeholder ?? Zr[t.kind],
 				"aria-invalid": r ? "true" : void 0,
 				"aria-describedby": `${n}-help${r ? ` ${n}-error` : ""}`,
 				onBlur: () => e.blur(t),
 				onChange: (n) => e.change(t, n.target.value)
 			}),
-			/* @__PURE__ */ (0, W.jsx)("small", {
+			/* @__PURE__ */ (0, U.jsx)("small", {
 				id: `${n}-help`,
-				children: t.helper ?? `${Zr[t.kind]}${t.min === void 0 ? "" : ` · minimum ${t.min}`}${t.max === void 0 ? "" : ` · maximum ${t.max}`}`
+				children: t.helper ?? `${Qr[t.kind]}${t.min === void 0 ? "" : ` · minimum ${t.min}`}${t.max === void 0 ? "" : ` · maximum ${t.max}`}`
 			}),
-			r && /* @__PURE__ */ (0, W.jsxs)("span", {
+			r && /* @__PURE__ */ (0, U.jsxs)("span", {
 				id: `${n}-error`,
 				className: "fieldError",
 				children: [r.message, r.limit === null ? "" : ` · limit ${r.limit}`]
@@ -9419,25 +9419,25 @@ function Qr({ form: e, spec: t }) {
 	});
 }
 // src/Scenarios.tsx
-var $r = [
+var ei = [
 	"Revenue change (%)",
 	"COGS change (%)",
 	"Operating expense change (%)",
 	"Proposed rate change (bps)"
 ];
-function ei({ title: e, children: t }) {
+function ti({ title: e, children: t }) {
 	let [n, r] = (0, k.useState)(!1);
-	return /* @__PURE__ */ (0, W.jsxs)("details", {
+	return /* @__PURE__ */ (0, U.jsxs)("details", {
 		onToggle: (e) => r(e.currentTarget.open),
-		children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: e }), n && t()]
+		children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: e }), n && t()]
 	});
 }
-function ti({ rows: e, render: t, label: n }) {
+function ni({ rows: e, render: t, label: n }) {
 	let [r, i] = (0, k.useState)(0), a = Math.max(1, Math.ceil(e.length / 50));
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		"aria-label": n,
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				"Page ",
 				r + 1,
 				" of ",
@@ -9447,9 +9447,9 @@ function ti({ rows: e, render: t, label: n }) {
 				" rows · up to 50 rows per page"
 			] }),
 			e.slice(r * 50, (r + 1) * 50).map((e, n) => t(e, r * 50 + n)),
-			a > 1 && /* @__PURE__ */ (0, W.jsxs)("div", {
+			a > 1 && /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "actions",
-				children: [/* @__PURE__ */ (0, W.jsxs)("button", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("button", {
 					disabled: r === 0,
 					onClick: () => i(r - 1),
 					children: [
@@ -9457,7 +9457,7 @@ function ti({ rows: e, render: t, label: n }) {
 						n,
 						" page"
 					]
-				}), /* @__PURE__ */ (0, W.jsxs)("button", {
+				}), /* @__PURE__ */ (0, U.jsxs)("button", {
 					disabled: r + 1 === a,
 					onClick: () => i(r + 1),
 					children: [
@@ -9470,68 +9470,68 @@ function ti({ rows: e, render: t, label: n }) {
 		]
 	});
 }
-function ni({ value: e }) {
-	return /* @__PURE__ */ (0, W.jsx)(er, {
+function ri({ value: e }) {
+	return /* @__PURE__ */ (0, U.jsx)(tr, {
 		value: e,
 		className: "originalComparisonJson",
 		title: "Original JSON",
 		noun: "JSON"
 	});
 }
-function ri({ row: e }) {
-	return /* @__PURE__ */ (0, W.jsxs)("details", { children: [
-		/* @__PURE__ */ (0, W.jsxs)("summary", { children: [
+function ii({ row: e }) {
+	return /* @__PURE__ */ (0, U.jsxs)("details", { children: [
+		/* @__PURE__ */ (0, U.jsxs)("summary", { children: [
 			e.fact_id,
 			" · ",
-			tr(e)
+			nr(e)
 		] }),
-		/* @__PURE__ */ (0, W.jsx)("strong", { children: e.definition_id }),
-		/* @__PURE__ */ (0, W.jsx)("p", {
+		/* @__PURE__ */ (0, U.jsx)("strong", { children: e.definition_id }),
+		/* @__PURE__ */ (0, U.jsx)("p", {
 			className: "expression",
 			children: e.expression
 		}),
-		e.operands.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("div", {
+		e.operands.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "operand",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("code", { children: e.reference }),
-				/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+				/* @__PURE__ */ (0, U.jsx)("code", { children: e.reference }),
+				/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 					e.raw_value === null ? "Not applicable" : String(e.raw_value),
 					" ",
 					e.unit
 				] }),
-				/* @__PURE__ */ (0, W.jsx)("small", { children: e.reference_type })
+				/* @__PURE__ */ (0, U.jsx)("small", { children: e.reference_type })
 			]
 		}, t)),
-		e.explanation && /* @__PURE__ */ (0, W.jsx)("p", { children: e.explanation })
+		e.explanation && /* @__PURE__ */ (0, U.jsx)("p", { children: e.explanation })
 	] });
 }
-function G(e) {
+function W(e) {
 	return e === null ? "Not applicable" : String(e);
 }
-function ii(e) {
+function ai(e) {
 	return e === null ? "Not applicable" : String(e);
 }
-function ai({ preview: e, result: t }) {
+function oi({ preview: e, result: t }) {
 	let n = e.baseline.assessment;
-	return /* @__PURE__ */ (0, W.jsxs)("article", {
+	return /* @__PURE__ */ (0, U.jsxs)("article", {
 		className: "scenarioResult",
 		"aria-label": `Reviewed scenario ${t.name}`,
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h3", { children: t.name }),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: t.rationale }),
-			/* @__PURE__ */ (0, W.jsxs)("p", {
+			/* @__PURE__ */ (0, U.jsx)("h3", { children: t.name }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: t.rationale }),
+			/* @__PURE__ */ (0, U.jsxs)("p", {
 				className: "scenarioOutcome",
 				children: [
 					"Baseline",
 					" ",
-					/* @__PURE__ */ (0, W.jsx)("strong", {
+					/* @__PURE__ */ (0, U.jsx)("strong", {
 						"data-outcome": t.outcome_change.baseline,
 						children: t.outcome_change.baseline.toUpperCase()
 					}),
 					" ",
 					"→ Projected",
 					" ",
-					/* @__PURE__ */ (0, W.jsx)("strong", {
+					/* @__PURE__ */ (0, U.jsx)("strong", {
 						"data-outcome": t.outcome_change.projected,
 						children: t.outcome_change.projected.toUpperCase()
 					}),
@@ -9541,232 +9541,232 @@ function ai({ preview: e, result: t }) {
 					t.outcome_change.changed ? "Outcome changed" : "Outcome unchanged"
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				"Server score ",
 				t.decision.score,
 				" · retained policy",
 				" ",
 				t.decision.policy_version
 			] }),
-			/* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("div", {
 				className: "tableScroll",
-				children: /* @__PURE__ */ (0, W.jsxs)("table", { children: [
-					/* @__PURE__ */ (0, W.jsx)("caption", { children: "Original baseline and projected current facts" }),
-					/* @__PURE__ */ (0, W.jsx)("thead", { children: /* @__PURE__ */ (0, W.jsxs)("tr", { children: [
-						/* @__PURE__ */ (0, W.jsx)("th", { children: "Metric" }),
-						/* @__PURE__ */ (0, W.jsx)("th", { children: "Baseline" }),
-						/* @__PURE__ */ (0, W.jsx)("th", { children: "Projected" }),
-						/* @__PURE__ */ (0, W.jsx)("th", { children: "Server delta" })
+				children: /* @__PURE__ */ (0, U.jsxs)("table", { children: [
+					/* @__PURE__ */ (0, U.jsx)("caption", { children: "Original baseline and projected current facts" }),
+					/* @__PURE__ */ (0, U.jsx)("thead", { children: /* @__PURE__ */ (0, U.jsxs)("tr", { children: [
+						/* @__PURE__ */ (0, U.jsx)("th", { children: "Metric" }),
+						/* @__PURE__ */ (0, U.jsx)("th", { children: "Baseline" }),
+						/* @__PURE__ */ (0, U.jsx)("th", { children: "Projected" }),
+						/* @__PURE__ */ (0, U.jsx)("th", { children: "Server delta" })
 					] }) }),
-					/* @__PURE__ */ (0, W.jsx)("tbody", { children: $e.map((e) => {
+					/* @__PURE__ */ (0, U.jsx)("tbody", { children: $e.map((e) => {
 						let r = t.comparisons.find((t) => t.metric === e);
-						return /* @__PURE__ */ (0, W.jsxs)("tr", { children: [
-							/* @__PURE__ */ (0, W.jsx)("th", {
+						return /* @__PURE__ */ (0, U.jsxs)("tr", { children: [
+							/* @__PURE__ */ (0, U.jsx)("th", {
 								scope: "row",
 								children: mt[e]
 							}),
-							/* @__PURE__ */ (0, W.jsx)("td", {
+							/* @__PURE__ */ (0, U.jsx)("td", {
 								className: "num",
-								children: tr(n.current_facts[e])
+								children: nr(n.current_facts[e])
 							}),
-							/* @__PURE__ */ (0, W.jsx)("td", {
+							/* @__PURE__ */ (0, U.jsx)("td", {
 								className: "num",
-								children: tr(t.current_facts[e])
+								children: nr(t.current_facts[e])
 							}),
-							/* @__PURE__ */ (0, W.jsxs)("td", {
+							/* @__PURE__ */ (0, U.jsxs)("td", {
 								className: "num",
-								children: [r ? r.delta === null ? "Not applicable" : tr({
+								children: [r ? r.delta === null ? "Not applicable" : nr({
 									...t.current_facts[e],
 									raw_value: r.delta,
 									reported_value: null
-								}) : "Held fixed", r?.delta_explanation && /* @__PURE__ */ (0, W.jsx)("small", { children: r.delta_explanation })]
+								}) : "Held fixed", r?.delta_explanation && /* @__PURE__ */ (0, U.jsx)("small", { children: r.delta_explanation })]
 							})
 						] }, e);
 					}) })
 				] })
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				"K-1 history stays observed:",
 				" ",
-				tr(t.current_facts.k1_history),
+				nr(t.current_facts.k1_history),
 				". Current shocks do not create a historical operating year."
 			] }),
-			/* @__PURE__ */ (0, W.jsx)(ei, {
+			/* @__PURE__ */ (0, U.jsx)(ti, {
 				title: "Raw deltas and policy headroom",
-				children: () => /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("p", { children: "Values below are the server's raw results. Approval uses the displayed operator; decline floors apply where returned." }), t.comparisons.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", {
+				children: () => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("p", { children: "Values below are the server's raw results. Approval uses the displayed operator; decline floors apply where returned." }), t.comparisons.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "scenarioFact",
 					children: [
-						/* @__PURE__ */ (0, W.jsx)("strong", { children: mt[e.metric] }),
-						/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: mt[e.metric] }),
+						/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 							"Baseline ",
-							G(e.baseline_value),
+							W(e.baseline_value),
 							" · projected",
 							" ",
-							G(e.projected_value),
+							W(e.projected_value),
 							" · delta ",
-							G(e.delta),
+							W(e.delta),
 							" ",
 							e.unit
 						] }),
-						/* @__PURE__ */ (0, W.jsxs)("code", { children: [
+						/* @__PURE__ */ (0, U.jsxs)("code", { children: [
 							e.baseline_fact_id,
 							" → ",
 							e.projected_fact_id
 						] }),
-						e.delta_explanation && /* @__PURE__ */ (0, W.jsx)("p", { children: e.delta_explanation }),
-						e.policy_headroom && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+						e.delta_explanation && /* @__PURE__ */ (0, U.jsx)("p", { children: e.delta_explanation }),
+						e.policy_headroom && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 							"Approval ",
 							e.policy_headroom.comparison_operator,
 							" ",
-							G(e.policy_headroom.approval_threshold),
+							W(e.policy_headroom.approval_threshold),
 							" · decline floor ",
-							G(e.policy_headroom.decline_threshold),
-							/* @__PURE__ */ (0, W.jsx)("br", {}),
+							W(e.policy_headroom.decline_threshold),
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
 							"Approval headroom: baseline",
 							" ",
-							ii(e.policy_headroom.baseline_approval),
+							ai(e.policy_headroom.baseline_approval),
 							" · projected",
 							" ",
-							ii(e.policy_headroom.projected_approval),
-							/* @__PURE__ */ (0, W.jsx)("br", {}),
+							ai(e.policy_headroom.projected_approval),
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
 							"Decline headroom: baseline",
 							" ",
-							ii(e.policy_headroom.baseline_decline),
+							ai(e.policy_headroom.baseline_decline),
 							" · projected",
 							" ",
-							ii(e.policy_headroom.projected_decline)
+							ai(e.policy_headroom.projected_decline)
 						] })
 					]
 				}, e.metric))] })
 			}),
-			/* @__PURE__ */ (0, W.jsx)(ei, {
+			/* @__PURE__ */ (0, U.jsx)(ti, {
 				title: "Factor and reason changes",
-				children: () => /* @__PURE__ */ (0, W.jsxs)("div", { children: [
-					t.factor_changes.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", {
+				children: () => /* @__PURE__ */ (0, U.jsxs)("div", { children: [
+					t.factor_changes.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", {
 						className: "scenarioFact",
-						children: [/* @__PURE__ */ (0, W.jsxs)("h4", { children: [
+						children: [/* @__PURE__ */ (0, U.jsxs)("h4", { children: [
 							mt[e.name],
 							" ·",
 							" ",
 							e.changed ? "Changed" : "Unchanged"
-						] }), /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+						] }), /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 							"Baseline raw ",
-							G(e.baseline.raw_value),
+							W(e.baseline.raw_value),
 							" → projected raw",
 							" ",
-							G(e.projected.raw_value),
-							/* @__PURE__ */ (0, W.jsx)("br", {}),
+							W(e.projected.raw_value),
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
 							"Pass: ",
-							G(e.baseline.passed),
+							W(e.baseline.passed),
 							" →",
 							" ",
-							G(e.projected.passed),
+							W(e.projected.passed),
 							" · decline triggered:",
 							" ",
-							G(e.baseline.decline_triggered),
+							W(e.baseline.decline_triggered),
 							" →",
 							" ",
-							G(e.projected.decline_triggered),
-							/* @__PURE__ */ (0, W.jsx)("br", {}),
+							W(e.projected.decline_triggered),
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
 							"Operator",
 							" ",
 							e.projected.comparison_operator ?? "Not applicable",
 							" · approval ",
-							G(e.projected.threshold),
+							W(e.projected.threshold),
 							" · decline floor",
 							" ",
-							G(e.projected.decline_threshold),
+							W(e.projected.decline_threshold),
 							" · weight",
 							" ",
 							e.projected.weight,
-							/* @__PURE__ */ (0, W.jsx)("br", {}),
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
 							"Basis ",
 							e.basis,
 							" · ",
-							/* @__PURE__ */ (0, W.jsx)("code", { children: e.projected_fact_id })
+							/* @__PURE__ */ (0, U.jsx)("code", { children: e.projected_fact_id })
 						] })]
 					}, e.name)),
-					/* @__PURE__ */ (0, W.jsx)("h4", { children: "Reason changes" }),
-					t.reason_changes.length ? t.reason_changes.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsxs)("strong", { children: [
+					/* @__PURE__ */ (0, U.jsx)("h4", { children: "Reason changes" }),
+					t.reason_changes.length ? t.reason_changes.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsxs)("strong", { children: [
 						e.code,
 						" · ",
 						e.change
-					] }), /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					] }), /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Baseline: ",
 						e.baseline?.message ?? "No reason",
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Projected: ",
 						e.projected?.message ?? "No reason"
-					] })] }, e.code)) : /* @__PURE__ */ (0, W.jsx)("p", { children: "No reason changes returned." }),
-					/* @__PURE__ */ (0, W.jsx)("h4", { children: "Projected reasons" }),
-					t.decision.reasons.length ? t.decision.reasons.map((e) => /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					] })] }, e.code)) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No reason changes returned." }),
+					/* @__PURE__ */ (0, U.jsx)("h4", { children: "Projected reasons" }),
+					t.decision.reasons.length ? t.decision.reasons.map((e) => /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						e.code,
 						" · ",
 						e.message
-					] }, e.code)) : /* @__PURE__ */ (0, W.jsx)("p", { children: "No additional reasons returned." })
+					] }, e.code)) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No additional reasons returned." })
 				] })
 			}),
-			/* @__PURE__ */ (0, W.jsx)(ei, {
+			/* @__PURE__ */ (0, U.jsx)(ti, {
 				title: "Projected inputs and held-fixed assumptions",
-				children: () => /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("pre", { children: JSON.stringify({
+				children: () => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("pre", { children: JSON.stringify({
 					assumptions: t.assumptions,
 					operating: t.projection_inputs.operating,
 					proposed_loan: t.projection_inputs.proposed_loan,
 					existing_debt: t.projection_inputs.existing_debt,
 					working_capital: t.projection_inputs.working_capital
-				}, null, 2) }), /* @__PURE__ */ (0, W.jsx)("ul", { children: e.held_fixed_assumptions.map((e, t) => /* @__PURE__ */ (0, W.jsx)("li", { children: e }, t)) })] })
+				}, null, 2) }), /* @__PURE__ */ (0, U.jsx)("ul", { children: e.held_fixed_assumptions.map((e, t) => /* @__PURE__ */ (0, U.jsx)("li", { children: e }, t)) })] })
 			}),
-			/* @__PURE__ */ (0, W.jsx)(ei, {
+			/* @__PURE__ */ (0, U.jsx)(ti, {
 				title: "Projected guarantor contributions",
-				children: () => /* @__PURE__ */ (0, W.jsx)(ti, {
+				children: () => /* @__PURE__ */ (0, U.jsx)(ni, {
 					rows: t.guarantor_contributions,
 					label: "guarantors",
-					render: (e, n) => /* @__PURE__ */ (0, W.jsxs)("div", {
+					render: (e, n) => /* @__PURE__ */ (0, U.jsxs)("div", {
 						className: "scenarioFact",
 						children: [
-							/* @__PURE__ */ (0, W.jsx)("h4", { children: e.name }),
-							/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+							/* @__PURE__ */ (0, U.jsx)("h4", { children: e.name }),
+							/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 								"Business EBITDA: ",
-								tr(e.business_ebitda),
-								/* @__PURE__ */ (0, W.jsx)("br", {}),
+								nr(e.business_ebitda),
+								/* @__PURE__ */ (0, U.jsx)("br", {}),
 								"Outside income: ",
-								tr(e.outside_income),
-								/* @__PURE__ */ (0, W.jsx)("br", {}),
+								nr(e.outside_income),
+								/* @__PURE__ */ (0, U.jsx)("br", {}),
 								"Personal debt: ",
-								tr(e.personal_debt)
+								nr(e.personal_debt)
 							] }),
-							/* @__PURE__ */ (0, W.jsx)(ei, {
+							/* @__PURE__ */ (0, U.jsx)(ti, {
 								title: `${e.name} projected inputs`,
-								children: () => /* @__PURE__ */ (0, W.jsx)("pre", { children: JSON.stringify(t.projection_inputs.guarantors[n], null, 2) })
+								children: () => /* @__PURE__ */ (0, U.jsx)("pre", { children: JSON.stringify(t.projection_inputs.guarantors[n], null, 2) })
 							})
 						]
 					}, n)
 				})
 			}),
-			/* @__PURE__ */ (0, W.jsx)(ei, {
+			/* @__PURE__ */ (0, U.jsx)(ti, {
 				title: "Calculation trace",
-				children: () => /* @__PURE__ */ (0, W.jsx)(ti, {
+				children: () => /* @__PURE__ */ (0, U.jsx)(ni, {
 					rows: t.calculation_trace,
 					label: "trace",
-					render: (e) => /* @__PURE__ */ (0, W.jsx)(ri, { row: e }, e.fact_id)
+					render: (e) => /* @__PURE__ */ (0, U.jsx)(ii, { row: e }, e.fact_id)
 				})
 			})
 		]
 	});
 }
-function oi({ preview: e }) {
+function si({ preview: e }) {
 	let [t, n] = (0, k.useState)(0);
-	return /* @__PURE__ */ (0, W.jsxs)("div", { children: [
-		/* @__PURE__ */ (0, W.jsxs)("label", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", { children: [
+		/* @__PURE__ */ (0, U.jsxs)("label", {
 			className: "scenarioSelect",
 			children: [
 				"Reviewed scenario",
 				" ",
-				/* @__PURE__ */ (0, W.jsx)("select", {
+				/* @__PURE__ */ (0, U.jsx)("select", {
 					"aria-label": "Reviewed scenario",
 					value: t,
 					onChange: (e) => n(Number(e.target.value)),
-					children: e.scenarios.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("option", {
+					children: e.scenarios.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("option", {
 						value: t,
 						children: [
 							t + 1,
@@ -9777,39 +9777,39 @@ function oi({ preview: e }) {
 				})
 			]
 		}),
-		/* @__PURE__ */ (0, W.jsx)(ai, {
+		/* @__PURE__ */ (0, U.jsx)(oi, {
 			preview: e,
 			result: e.scenarios[t]
 		}, e.scenarios[t].scenario_key),
-		/* @__PURE__ */ (0, W.jsx)("p", {
+		/* @__PURE__ */ (0, U.jsx)("p", {
 			className: "fine",
 			children: e.disclaimer
 		})
 	] });
 }
-function si({ view: e, onOpen: t }) {
+function ci({ view: e, onOpen: t }) {
 	let n = e.record;
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel originalComparison",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "comparisonContext",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("h2", { children: "Saved comparison" }),
-					/* @__PURE__ */ (0, W.jsx)("code", { children: n.comparison_id }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsx)("h2", { children: "Saved comparison" }),
+					/* @__PURE__ */ (0, U.jsx)("code", { children: n.comparison_id }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Original record · Case ",
 						n.case_id,
 						" · baseline revision",
 						" ",
 						n.baseline_revision,
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Run ",
 						n.baseline_run_id,
 						" · recorded ",
 						n.recorded_at
 					] }),
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						onClick: () => t({
 							caseId: n.case_id,
 							revision: n.baseline_revision
@@ -9818,7 +9818,7 @@ function si({ view: e, onOpen: t }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				"Recorded actor: ",
 				n.actor,
 				" ·",
@@ -9829,8 +9829,8 @@ function si({ view: e, onOpen: t }) {
 				n.recording.source_status,
 				n.recording.source_revision ? ` · ${n.recording.source_revision}` : " · exact build revision not supplied"
 			] }),
-			e.preview ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			e.preview ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Operating period ",
 					e.preview.selected_period.period_start,
 					" –",
@@ -9839,7 +9839,7 @@ function si({ view: e, onOpen: t }) {
 					" · assumptions as of",
 					" ",
 					e.preview.assumptions_as_of,
-					/* @__PURE__ */ (0, W.jsx)("br", {}),
+					/* @__PURE__ */ (0, U.jsx)("br", {}),
 					"Retained policy ",
 					e.preview.policy_snapshot.version,
 					" ·",
@@ -9849,36 +9849,36 @@ function si({ view: e, onOpen: t }) {
 					" ",
 					e.preview.calculation_version
 				] }),
-				/* @__PURE__ */ (0, W.jsx)(ei, {
+				/* @__PURE__ */ (0, U.jsx)(ti, {
 					title: "Baseline hashes, fingerprint and retained policy",
-					children: () => /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					children: () => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Input hash ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.preview.baseline.input_hash }),
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.preview.baseline.input_hash }),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Baseline payload hash",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.preview.baseline.payload_hash }),
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.preview.baseline.payload_hash }),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Reviewed fingerprint",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.preview.fingerprint.value })
-					] }), /* @__PURE__ */ (0, W.jsx)("pre", { children: JSON.stringify({
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.preview.fingerprint.value })
+					] }), /* @__PURE__ */ (0, U.jsx)("pre", { children: JSON.stringify({
 						units: e.preview.units,
 						policy_snapshot: e.preview.policy_snapshot,
 						recording: n.recording
 					}, null, 2) })] })
 				}),
-				/* @__PURE__ */ (0, W.jsx)(oi, { preview: e.preview }, n.comparison_id)
-			] }) : /* @__PURE__ */ (0, W.jsx)("p", {
+				/* @__PURE__ */ (0, U.jsx)(si, { preview: e.preview }, n.comparison_id)
+			] }) : /* @__PURE__ */ (0, U.jsx)("p", {
 				className: "compatibility",
 				role: "status",
 				children: e.compatibility
 			}),
-			/* @__PURE__ */ (0, W.jsx)(ei, {
+			/* @__PURE__ */ (0, U.jsx)(ti, {
 				title: "Original comparison JSON",
-				children: () => /* @__PURE__ */ (0, W.jsx)(ni, { value: n })
+				children: () => /* @__PURE__ */ (0, U.jsx)(ri, { value: n })
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("p", {
+			/* @__PURE__ */ (0, U.jsxs)("p", {
 				className: "fine",
 				children: [
 					"Payload hash ",
@@ -9889,52 +9889,52 @@ function si({ view: e, onOpen: t }) {
 		]
 	});
 }
-function ci({ caseId: e, scope: t, refresh: n, onOpen: r }) {
-	let i = _r(`${t}:${n}`, (t, n) => Nr(e, t, n), (e) => e.comparison_id);
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+function li({ caseId: e, scope: t, refresh: n, onOpen: r }) {
+	let i = vr(`${t}:${n}`, (t, n) => Pr(e, t, n), (e) => e.comparison_id);
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel comparisonArchive",
 		"aria-label": "Saved comparisons",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "panelTitle",
-				children: [/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("h2", { children: "Saved comparisons" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "All baselines for this case · newest records first · 25 summaries per page" })] }), /* @__PURE__ */ (0, W.jsx)("button", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h2", { children: "Saved comparisons" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "All baselines for this case · newest records first · 25 summaries per page" })] }), /* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: i.refresh,
 					children: "Refresh comparisons"
 				})]
 			}),
-			i.loading && /* @__PURE__ */ (0, W.jsx)("p", {
+			i.loading && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "status",
 				children: "Loading comparison summaries…"
 			}),
-			i.error && /* @__PURE__ */ (0, W.jsx)("p", {
+			i.error && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "alert",
 				children: i.error
 			}),
-			!i.loading && !i.error && !i.items.length && /* @__PURE__ */ (0, W.jsx)("p", { children: "No saved comparisons yet." }),
-			i.items.map((e) => /* @__PURE__ */ (0, W.jsxs)("article", {
+			!i.loading && !i.error && !i.items.length && /* @__PURE__ */ (0, U.jsx)("p", { children: "No saved comparisons yet." }),
+			i.items.map((e) => /* @__PURE__ */ (0, U.jsxs)("article", {
 				className: "caseRow",
-				children: [/* @__PURE__ */ (0, W.jsxs)("div", { children: [
-					/* @__PURE__ */ (0, W.jsx)("h3", { children: e.scenarios.map((e) => e.name).join(" · ") }),
-					/* @__PURE__ */ (0, W.jsx)("code", { children: e.comparison_id }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				children: [/* @__PURE__ */ (0, U.jsxs)("div", { children: [
+					/* @__PURE__ */ (0, U.jsx)("h3", { children: e.scenarios.map((e) => e.name).join(" · ") }),
+					/* @__PURE__ */ (0, U.jsx)("code", { children: e.comparison_id }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Baseline revision ",
 						e.baseline_revision,
 						" ·",
 						" ",
 						e.scenario_count,
 						" scenario(s)",
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						e.recorded_at,
 						" · policy ",
 						e.policy_version
 					] })
-				] }), /* @__PURE__ */ (0, W.jsx)("button", {
+				] }), /* @__PURE__ */ (0, U.jsx)("button", {
 					"aria-label": `Open comparison ${e.comparison_id}`,
 					onClick: () => r(e.comparison_id),
 					children: "Open original comparison"
 				})]
 			}, e.comparison_id)),
-			i.next && /* @__PURE__ */ (0, W.jsx)("button", {
+			i.next && /* @__PURE__ */ (0, U.jsx)("button", {
 				disabled: i.loading,
 				onClick: i.more,
 				children: "Load more comparisons"
@@ -9942,20 +9942,20 @@ function ci({ caseId: e, scope: t, refresh: n, onOpen: r }) {
 		]
 	});
 }
-function li(e) {
+function ui(e) {
 	let t = /^\/scenarios\/(\d+)\/([a-z_]+)/.exec(e);
 	return t ? `Scenario ${Number(t[1]) + 1} ${t[2].replace(/_/g, " ")}` : e || "Comparison";
 }
-function ui(e) {
+function di(e) {
 	let t = e.replace(/^Invalid saved-case response or command: /, ""), n = /^nonblank scenario text, at most ([\d,]+) characters\.?$/.exec(t);
 	return n ? `Enter text of up to ${n[1]} characters.` : t;
 }
-function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
+function fi({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 	let r = (0, k.useRef)(null), [i, a] = (0, k.useState)(null), o = (0, k.useRef)(null), [s, c] = (0, k.useState)([]), [l, u] = (0, k.useState)(0);
 	(0, k.useEffect)(() => {
 		e.fieldErrors.length && (c(e.fieldErrors), u((e) => e + 1));
 	}, [e.fieldErrors]), (0, k.useEffect)(() => {
-		l && s.length && qr(s[0].pointer, o.current);
+		l && s.length && Jr(s[0].pointer, o.current);
 	}, [l]);
 	let d = (e, t) => `/scenarios/${e}/${t === "name" || t === "rationale" ? t : `assumptions/${t}`}`, f = (e, t) => {
 		try {
@@ -9995,35 +9995,35 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 		}), c(t), t.length && u((e) => e + 1), e.preview();
 	}
 	(0, k.useEffect)(() => {
-		i && (Kn(`[id="scenario-name-${i}"]`)?.focus(), a(null));
+		i && (qn(`[id="scenario-name-${i}"]`)?.focus(), a(null));
 	}, [i]);
 	let g = e.view?.assessment;
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "scenariosWorkspace",
 		ref: o,
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("section", {
+			/* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel scenarioComposer",
 				"aria-label": "Scenario authoring",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("div", {
+					/* @__PURE__ */ (0, U.jsx)("div", {
 						className: "panelTitle",
-						children: /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("h2", { children: "Scenario comparison" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "Review current pro forma shocks against an explicit original saved baseline." })] })
+						children: /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h2", { children: "Scenario comparison" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "Review current pro forma shocks against an explicit original saved baseline." })] })
 					}),
-					e.baseline && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					e.baseline && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Case ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.baseline.case_id }),
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.baseline.case_id }),
 						" · baseline revision",
 						" ",
 						e.baseline.revision,
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Run ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.baseline.run_id }),
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.baseline.run_id }),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Payload hash ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.baseline.payload_hash })
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.baseline.payload_hash })
 					] }),
-					g && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					g && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Operating period ",
 						g.selected_period.period_start,
 						" –",
@@ -10032,50 +10032,50 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 						" · assumptions as of",
 						" ",
 						g.assumptions_as_of,
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Retained policy ",
 						g.policy_snapshot.version,
 						". The spread's selected column does not change this baseline."
 					] }),
-					e.view ? e.supported ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-						/* @__PURE__ */ (0, W.jsx)("p", { children: "Enter percentage changes as percentages (−10 means −10%). Enter rate changes in basis points; fractional basis points are supported. Each of the four shocks must be explicit. Presets fill the name and shocks; enter your own rationale." }),
-						s.length > 0 && /* @__PURE__ */ (0, W.jsxs)("section", {
+					e.view ? e.supported ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+						/* @__PURE__ */ (0, U.jsx)("p", { children: "Enter percentage changes as percentages (−10 means −10%). Enter rate changes in basis points; fractional basis points are supported. Each of the four shocks must be explicit. Presets fill the name and shocks; enter your own rationale." }),
+						s.length > 0 && /* @__PURE__ */ (0, U.jsxs)("section", {
 							className: "validationSummary",
 							"aria-label": "Scenario validation summary",
 							role: "region",
-							children: [/* @__PURE__ */ (0, W.jsx)("h3", { children: "Review scenario inputs" }), /* @__PURE__ */ (0, W.jsx)("ul", { children: s.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("li", { children: [/* @__PURE__ */ (0, W.jsxs)("button", {
+							children: [/* @__PURE__ */ (0, U.jsx)("h3", { children: "Review scenario inputs" }), /* @__PURE__ */ (0, U.jsx)("ul", { children: s.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("li", { children: [/* @__PURE__ */ (0, U.jsxs)("button", {
 								type: "button",
-								onClick: () => qr(e.pointer, o.current),
+								onClick: () => Jr(e.pointer, o.current),
 								children: [
-									li(e.pointer),
+									ui(e.pointer),
 									": ",
-									ui(e.message)
+									di(e.message)
 								]
-							}), e.limit !== null && /* @__PURE__ */ (0, W.jsxs)("small", { children: ["Limit ", e.limit] })] }, t)) })]
+							}), e.limit !== null && /* @__PURE__ */ (0, U.jsxs)("small", { children: ["Limit ", e.limit] })] }, t)) })]
 						}),
-						e.rows.map((t, n) => /* @__PURE__ */ (0, W.jsxs)("fieldset", {
+						e.rows.map((t, n) => /* @__PURE__ */ (0, U.jsxs)("fieldset", {
 							className: "scenarioRow",
 							disabled: e.fieldsDisabled,
 							children: [
-								/* @__PURE__ */ (0, W.jsxs)("legend", { children: ["Scenario ", n + 1] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", {
+								/* @__PURE__ */ (0, U.jsxs)("legend", { children: ["Scenario ", n + 1] }),
+								/* @__PURE__ */ (0, U.jsxs)("div", {
 									className: "scenarioFields",
 									children: [
-										/* @__PURE__ */ (0, W.jsxs)("label", { children: ["Preset", /* @__PURE__ */ (0, W.jsxs)("select", {
+										/* @__PURE__ */ (0, U.jsxs)("label", { children: ["Preset", /* @__PURE__ */ (0, U.jsxs)("select", {
 											"aria-label": `Scenario ${n + 1} preset`,
 											value: t.preset,
 											onChange: (n) => e.preset(t.key, n.target.value),
-											children: [/* @__PURE__ */ (0, W.jsx)("option", {
+											children: [/* @__PURE__ */ (0, U.jsx)("option", {
 												value: "custom",
 												children: "Custom / zero shocks"
-											}), Object.entries(Lr).map(([e, t]) => /* @__PURE__ */ (0, W.jsx)("option", {
+											}), Object.entries(Rr).map(([e, t]) => /* @__PURE__ */ (0, U.jsx)("option", {
 												value: e,
 												children: t.name
 											}, e))]
 										})] }),
-										/* @__PURE__ */ (0, W.jsxs)("label", { children: [
+										/* @__PURE__ */ (0, U.jsxs)("label", { children: [
 											"Name",
-											/* @__PURE__ */ (0, W.jsx)("input", {
+											/* @__PURE__ */ (0, U.jsx)("input", {
 												id: `scenario-name-${t.key}`,
 												"data-pointer": d(n, "name"),
 												"aria-invalid": s.some((e) => e.pointer === d(n, "name")) || void 0,
@@ -10090,13 +10090,13 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 													}));
 												}
 											}),
-											/* @__PURE__ */ (0, W.jsx)("small", { children: "Text · at most 120 Unicode characters after trimming" })
+											/* @__PURE__ */ (0, U.jsx)("small", { children: "Text · at most 120 Unicode characters after trimming" })
 										] }),
-										/* @__PURE__ */ (0, W.jsxs)("label", {
+										/* @__PURE__ */ (0, U.jsxs)("label", {
 											className: "scenarioRationale",
 											children: [
 												"Rationale",
-												/* @__PURE__ */ (0, W.jsx)("textarea", {
+												/* @__PURE__ */ (0, U.jsx)("textarea", {
 													"data-pointer": d(n, "rationale"),
 													"aria-invalid": s.some((e) => e.pointer === d(n, "rationale")) || void 0,
 													"aria-label": `Scenario ${n + 1} rationale`,
@@ -10111,17 +10111,17 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 														}));
 													}
 												}),
-												/* @__PURE__ */ (0, W.jsx)("small", { children: "Required · at most 2,000 Unicode characters after trimming; name limit 120." })
+												/* @__PURE__ */ (0, U.jsx)("small", { children: "Required · at most 2,000 Unicode characters after trimming; name limit 120." })
 											]
 										}),
-										tn.map((r, i) => /* @__PURE__ */ (0, W.jsxs)("label", { children: [
-											$r[i],
-											/* @__PURE__ */ (0, W.jsx)("input", {
+										tn.map((r, i) => /* @__PURE__ */ (0, U.jsxs)("label", { children: [
+											ei[i],
+											/* @__PURE__ */ (0, U.jsx)("input", {
 												inputMode: "decimal",
 												"data-pointer": d(n, r),
 												"aria-invalid": s.some((e) => e.pointer === d(n, r)) || void 0,
 												placeholder: r === "proposed_rate_change_bps" ? "100" : "-10",
-												"aria-label": `Scenario ${n + 1} ${$r[i]}`,
+												"aria-label": `Scenario ${n + 1} ${ei[i]}`,
 												value: t.shocks[r],
 												onBlur: (e) => m(n, r, e.target.value),
 												onChange: (i) => {
@@ -10135,11 +10135,11 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 													}));
 												}
 											}),
-											/* @__PURE__ */ (0, W.jsx)("small", { children: r === "proposed_rate_change_bps" ? "Basis points · fractional values supported" : "Percentage change · minimum -100%" })
+											/* @__PURE__ */ (0, U.jsx)("small", { children: r === "proposed_rate_change_bps" ? "Basis points · fractional values supported" : "Percentage change · minimum -100%" })
 										] }, r))
 									]
 								}),
-								/* @__PURE__ */ (0, W.jsx)("div", {
+								/* @__PURE__ */ (0, U.jsx)("div", {
 									className: "scenarioChips",
 									role: "group",
 									"aria-label": `Scenario ${n + 1} quick-fill shocks`,
@@ -10169,7 +10169,7 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 											field: "operating_expense_change",
 											value: "10"
 										}
-									].map((r) => /* @__PURE__ */ (0, W.jsx)("button", {
+									].map((r) => /* @__PURE__ */ (0, U.jsx)("button", {
 										type: "button",
 										onClick: () => {
 											p(n, r.field, r.value), e.change(t.key, (e) => ({
@@ -10184,7 +10184,7 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 										children: r.label
 									}, r.label))
 								}),
-								/* @__PURE__ */ (0, W.jsx)("button", {
+								/* @__PURE__ */ (0, U.jsx)("button", {
 									disabled: e.rows.length <= 1,
 									"aria-label": `Remove scenario ${n + 1}`,
 									onClick: () => {
@@ -10194,10 +10194,10 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 								})
 							]
 						}, t.key)),
-						/* @__PURE__ */ (0, W.jsxs)("div", {
+						/* @__PURE__ */ (0, U.jsxs)("div", {
 							className: "actions",
 							children: [
-								/* @__PURE__ */ (0, W.jsx)("button", {
+								/* @__PURE__ */ (0, U.jsx)("button", {
 									ref: r,
 									disabled: e.fieldsDisabled || e.rows.length >= 10,
 									onClick: () => {
@@ -10206,75 +10206,75 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 									},
 									children: "Add scenario"
 								}),
-								/* @__PURE__ */ (0, W.jsx)("button", {
+								/* @__PURE__ */ (0, U.jsx)("button", {
 									className: e.canRetain ? void 0 : "primary",
 									disabled: e.fieldsDisabled || e.busy || !e.rows.length,
 									onClick: h,
 									children: "Preview scenarios"
 								}),
-								/* @__PURE__ */ (0, W.jsx)("button", {
+								/* @__PURE__ */ (0, U.jsx)("button", {
 									className: e.canRetain ? "primary" : void 0,
 									disabled: !e.canRetain,
 									onClick: e.retain,
 									children: "Save reviewed comparison"
 								}),
-								/* @__PURE__ */ (0, W.jsx)("button", {
+								/* @__PURE__ */ (0, U.jsx)("button", {
 									disabled: e.frozen,
 									onClick: e.newDraft,
 									children: "Start another comparison"
 								})
 							]
 						}),
-						/* @__PURE__ */ (0, W.jsx)("p", {
+						/* @__PURE__ */ (0, U.jsx)("p", {
 							role: "status",
 							children: e.busy ? "Previewing current draft…" : e.canRetain ? "Current preview ready for review and retention." : "Preview required before a fresh save. A saved or pending batch cannot be saved twice."
 						}),
-						e.original.view && /* @__PURE__ */ (0, W.jsx)("p", { children: "Viewing a saved original. Choose Start another comparison to author a fresh batch." }),
-						e.writeBlocked && /* @__PURE__ */ (0, W.jsx)("p", { children: "Resolve this tab's existing saved write, recovery tracking or conflicting proposal before retaining another comparison. Read-only previews remain available." })
-					] }) : /* @__PURE__ */ (0, W.jsx)("p", { children: "New preview is unavailable for this baseline definition. Saved comparison summaries and original records remain available below." }) : /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)("p", { children: "Save an accepted dated case, or open an original saved revision, to author scenarios. Legacy annual assessments remain unsaved." }), /* @__PURE__ */ (0, W.jsx)("button", {
+						e.original.view && /* @__PURE__ */ (0, U.jsx)("p", { children: "Viewing a saved original. Choose Start another comparison to author a fresh batch." }),
+						e.writeBlocked && /* @__PURE__ */ (0, U.jsx)("p", { children: "Resolve this tab's existing saved write, recovery tracking or conflicting proposal before retaining another comparison. Read-only previews remain available." })
+					] }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "New preview is unavailable for this baseline definition. Saved comparison summaries and original records remain available below." }) : /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("p", { children: "Save an accepted dated case, or open an original saved revision, to author scenarios. Legacy annual assessments remain unsaved." }), /* @__PURE__ */ (0, U.jsx)("button", {
 						disabled: !e.canSaveBaseline,
 						onClick: (e) => t(e.currentTarget),
 						children: "Save baseline case"
 					})] }),
-					e.error && /* @__PURE__ */ (0, W.jsx)("p", {
+					e.error && /* @__PURE__ */ (0, U.jsx)("p", {
 						role: "alert",
 						children: e.error
 					}),
-					e.errorCode === "storage_upgrade_required" && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					e.errorCode === "storage_upgrade_required" && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Retention requires the documented copy upgrade to a separate schema-v2 database. An operator must verify the copy and select it explicitly; opening this view performs no upgrade. See",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: "docs/SCENARIO_COMPARISONS.md" }),
+						/* @__PURE__ */ (0, U.jsx)("code", { children: "docs/SCENARIO_COMPARISONS.md" }),
 						"."
 					] })
 				]
 			}),
-			e.previewResult && (!e.original.view || !e.previewConsumed) && /* @__PURE__ */ (0, W.jsxs)("section", {
+			e.previewResult && (!e.original.view || !e.previewConsumed) && /* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel scenarioPreview",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("h2", { children: "Read-only preview" }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsx)("h2", { children: "Read-only preview" }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Review the server's projected results and rationale before saving this batch.",
-						/* @__PURE__ */ (0, W.jsx)("br", {}),
+						/* @__PURE__ */ (0, U.jsx)("br", {}),
 						"Reviewed fingerprint",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("code", { children: e.previewResult.fingerprint.value })
+						/* @__PURE__ */ (0, U.jsx)("code", { children: e.previewResult.fingerprint.value })
 					] }),
-					/* @__PURE__ */ (0, W.jsx)(oi, { preview: e.previewResult }, e.previewResult.fingerprint.value)
+					/* @__PURE__ */ (0, U.jsx)(si, { preview: e.previewResult }, e.previewResult.fingerprint.value)
 				]
 			}),
-			e.original.loading && /* @__PURE__ */ (0, W.jsx)("p", {
+			e.original.loading && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "status",
 				children: "Loading original comparison…"
 			}),
-			e.original.error && /* @__PURE__ */ (0, W.jsx)("p", {
+			e.original.error && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "alert",
 				children: e.original.error
 			}),
-			e.original.view && (!e.previewResult || e.previewConsumed) && /* @__PURE__ */ (0, W.jsx)(si, {
+			e.original.view && (!e.previewResult || e.previewConsumed) && /* @__PURE__ */ (0, U.jsx)(ci, {
 				view: e.original.view,
 				onOpen: n
 			}),
-			e.baseline && /* @__PURE__ */ (0, W.jsx)(ci, {
+			e.baseline && /* @__PURE__ */ (0, U.jsx)(li, {
 				caseId: e.baseline.case_id,
 				scope: e.context,
 				refresh: e.refreshSerial,
@@ -10284,30 +10284,30 @@ function di({ model: e, onSaveBaseline: t, onOpenBaseline: n }) {
 	});
 }
 // src/prototypeDisclaimer.ts
-var fi = "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.";
-function pi(e, t) {
+var pi = "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.";
+function mi(e, t) {
 	return `spreadline-case-${e.case_id}-r${e.revision}-${e.run_id}${t ? `-comparison-${t.comparison_id}` : ""}.json`;
 }
-function mi(e, t) {
+function hi(e, t) {
 	let n = e.snapshot, r = t.record, i = z(r.preview.baseline, "export comparison baseline");
 	R(r.case_id === n.case_id && r.baseline_revision === n.revision && r.baseline_run_id === n.run_id && i.case_id === n.case_id && i.revision === n.revision && i.run_id === n.run_id && i.input_hash === n.input_hash && i.payload_hash === n.payload_hash && H(i.assessment, n.assessment), "retained comparison must match the selected original case, revision, run, hashes and full baseline assessment");
 }
 // src/reviewPackage.worker.ts?worker&inline
-var hi = "(function(){let e=/^([+-]?)(?:(\\d+)(?:\\.(\\d*))?|\\.(\\d+))(?:[eE]([+-]?\\d+))?$/,t=10n;function n(t){if(t.length>256)throw Error(`Decimal exceeds the supported range.`);let n=e.exec(t);if(!n)throw Error(`Enter a finite decimal value.`);let r=Number(n[5]??`0`);if(!Number.isSafeInteger(r)||Math.abs(r)>128)throw Error(`Decimal exponent exceeds the supported range.`);let i=n[3]??n[4]??``;return{coefficient:BigInt(`${n[1]===`-`?`-`:``}${n[2]??`0`}${i}`),scale:i.length-r}}function r({coefficient:e,scale:t}){if(e===0n)return`0`;let n=e<0n?`-`:``,r=(e<0n?-e:e).toString();return t<=0?n+r+`0`.repeat(-t):(r=r.padStart(t+1,`0`),(n+r.slice(0,-t)+`.`+r.slice(-t)).replace(/0+$/,``).replace(/\\.$/,``))}function i(e){return r(n(e))}function a(e){if(typeof e!=`string`)return!1;try{return n(e),!0}catch{return!1}}function o(e){if(typeof e==`number`&&Number.isFinite(e))return i(String(e));if(typeof e==`string`)return i(e);throw Error(`Financial values must be finite decimals.`)}function s(e,r){let i=n(e),a=n(r),o=Math.max(i.scale,a.scale),s=i.coefficient*t**BigInt(o-i.scale),c=a.coefficient*t**BigInt(o-a.scale);return s<c?-1:+(s>c)}function c(e,t){try{return s(o(e),o(t))===0}catch{return!1}}let l=[`gross_receipts`,`cogs`,`operating_expense_excl_dna_interest_comp`,`officer_compensation`,`depreciation`,`amortization`,`interest_expense`,`section_179`,`k1_distribution`],u=[`ordinary_business_income`,`ebitda`,`proposed_monthly_payment`,`proposed_annual_payment`,`debt_service`,`fixed_charge_service`,`global_business_ebitda`,`global_outside_income`,`global_personal_debt`,`global_cash_flow`,`global_debt_service`,`dscr`,`fccr`,`global_dscr`,`net_working_capital_increase`,`uca_cash_flow`,`k1_ratio_difference`,`k1_history`],d=[`commercial_min_dscr`,`commercial_min_fccr`,`commercial_min_global_dscr`,`commercial_decline_dscr`,`commercial_decline_fccr`,`commercial_decline_global_dscr`,`commercial_min_uca_cash_flow`,`consumer_review_dti`,`consumer_decline_dti`,`consumer_min_credit_score`,`extraction_confidence_threshold`,`k1_stability_band`,`sba_global_dscr_floor_expansion`,`sba_global_dscr_floor_acquisition`];function f(e,t){if(!e)throw Error(`Incomplete or invalid assessment: ${t}`)}function p(e,t){return f(typeof e==`object`&&!!e&&!Array.isArray(e),t),e}function m(e,t){return f(Array.isArray(e),t),e}function h(e){return typeof e==`string`&&e.length>0}function g(e){return typeof e==`number`&&Number.isFinite(e)}function _(e){return typeof e==`string`||typeof e==`boolean`}function v(e){return typeof e==`string`&&/^\\d{4}-\\d{2}-\\d{2}$/.test(e)&&Number.isFinite(Date.parse(e))&&new Date(e).toISOString().slice(0,10)===e}function y(e){let t=p(e,`period`);return f(v(t.period_start)&&v(t.period_end)&&t.period_start<=t.period_end,`period dates`),t}let b=(e,t)=>e.period_start===t.period_start&&e.period_end===t.period_end;function x(e){let t=p(e,`decision`);f(t.vertical===`commercial`&&[`approve`,`review`,`decline`].includes(String(t.outcome))&&a(t.score)&&h(t.policy_version)&&h(t.disclaimer),`decision identity`);let n=m(t.factors,`factors`);f(n.length===5,`commercial factors`);let r=[`dscr`,`fccr`,`global_dscr`,`uca_positive`,`k1_history`];for(let e of n){let t=p(e,`factor`);f(h(t.name)&&r.includes(t.name)&&_(t.value)&&(t.raw_value===null||_(t.raw_value))&&a(t.weight)&&(t.threshold===null||_(t.threshold))&&(t.passed===null||typeof t.passed==`boolean`)&&h(t.source)&&[null,`>=`,`>`,`<`,`==`].includes(t.comparison_operator)&&(t.decline_threshold===null||a(t.decline_threshold))&&(t.decline_triggered===null||typeof t.decline_triggered==`boolean`),`factor fields`)}f(new Set(n.map(e=>p(e,`factor`).name)).size===5,`unique factors`);for(let e of m(t.reasons,`reasons`)){let t=p(e,`reason`);f(h(t.code)&&h(t.factor)&&h(t.message)&&_(t.value),`reason fields`)}return t}function S(e){let t=p(e,`normalized input`);f(t.schema_version===`commercial-assessment-v2`&&v(t.assessment_as_of)&&h(t.borrower_name)&&h(t.geography),`dated identity`);let n=p(t.units,`units`);f(n.currency===`USD`&&n.monetary_unit===`dollars`&&n.annual_rate_unit===`decimal_nominal`,`units`);let r=m(t.years,`years`);f(r.length>=1&&r.length<=10,`year count`);let i=``;for(let e of r){let n=p(e,`year`),r=y(n);f(r.period_start>i&&r.period_end<=t.assessment_as_of,`year order`),i=r.period_end;for(let e of l)f(a(n[e]),`year ${e}`)}let o=(e,t)=>{let n=p(e,`assumption`);for(let e of t)f(a(n[e]),e);return n};o(t.existing_debt,[`cpltd_annual`,`operating_lease_annual`]);let s=o(t.proposed_loan,[`amount`,`annual_rate`]);f(Number.isSafeInteger(s.term_months)&&s.rate_type===`fixed`&&s.repayment_type===`fully_amortizing`&&s.payment_frequency===`monthly`,`loan convention`);let c=o(t.working_capital,[`ar_increase`,`inventory_increase`,`ap_increase`,`cash_taxes_paid`]);f(b(y(c),y(r[r.length-1])),`working capital period`);for(let e of m(t.guarantors,`guarantors`))f(h(o(e,[`ownership_percentage`,`wages`,`interest_dividend_income`,`mortgage_pi_annual`,`auto_loan_annual`,`credit_card_min_annual`]).name),`guarantor name`);return t}function C(e){let t=p(e,`metric`);return f(h(t.fact_id)&&h(t.unit)&&(t.display_precision===null||Number.isInteger(t.display_precision)&&Number(t.display_precision)>=0&&Number(t.display_precision)<=30)&&(t.explanation===null||h(t.explanation)),`metric fields`),f(t.status===`available`?a(t.raw_value)||t.unit===`category`&&h(t.raw_value):t.status===`not_applicable`&&t.raw_value===null&&h(t.explanation),`metric status/value`),f(t.status===`not_applicable`?t.reported_value===null:t.unit===`category`?t.reported_value===t.raw_value:a(t.reported_value),`reported metric value`),t}function w(e){let t=p(e,`assessment`);f(t.schema_version===`commercial-assessment-v2`&&t.calculation_version===`commercial-calculation-v2`&&t.serialization_version===`assessment-json-v2`&&t.coverage_basis===`current_pro_forma`&&h(t.disclaimer),`versions`);let n=S(t.normalized_input),r=n.years[n.years.length-1];f(b(y(t.selected_period),r)&&t.assumptions_as_of===n.assessment_as_of,`selected period`);let i=m(t.historical_spread,`spread`);f(i.length===n.years.length,`spread length`);let o=[];i.forEach((e,t)=>{let r=p(e,`historical period`);f(b(y(r),n.years[t])&&b(y(r.financials),n.years[t]),`historical period correspondence`);let i=p(r.financials,`historical financials`);for(let e of l)f(i[e]===n.years[t][e],`historical inputs`);let s=p(r.reported_financials,`reported financials`);f(b(y(s),n.years[t]),`reported period`);for(let e of l)f(a(s[e])&&/^-?\\d+\\.\\d{2}$/.test(s[e]),`reported source amount`);for(let e of[`gross_profit`,`ordinary_business_income`,`ebitda`,`k1_distribution_ratio`])o.push(C(r[e]))});let s=p(t.current_facts,`facts`);for(let e of u){let t=C(s[e]),r=[`ordinary_business_income`,`ebitda`].includes(e)?`years.${n.years.length-1}.${e}`:`current.${e}`;f(t.fact_id===r,`fact identity`),f(e===`k1_history`?t.status===`available`&&[`stable`,`unstable`,`insufficient_history`].includes(String(t.raw_value)):t.raw_value===null||a(t.raw_value),`fact type`),o.push(t)}let c=m(t.guarantor_contributions,`contributions`);f(c.length===n.guarantors.length,`contributions length`),c.forEach((e,t)=>{let r=p(e,`contribution`);f(r.guarantor_index===t&&r.name===n.guarantors[t].name,`contribution identity`);for(let e of[`business_ebitda`,`outside_income`,`personal_debt`])o.push(C(r[e]))});let _=m(t.k1_history_periods,`history periods`).map(y);f(_.length>=1&&_.length<=2&&b(_[_.length-1],r)&&_.every(e=>n.years.some(t=>b(e,t))),`history periods`);let w=p(t.policy_snapshot,`policy`);f(h(w.version)&&v(w.sba_sop_8_effective)&&v(w.sba_sop_8_1_effective),`policy identity`);for(let e of d)f(e===`consumer_min_credit_score`?Number.isSafeInteger(w[e]):a(w[e]),`policy ${e}`);f(m(w.consumer_required_atr_fields,`ATR fields`).every(h),`ATR fields`);let T=x(t.decision);f(T.policy_version===w.version,`decision policy`);let E=m(t.calculation_trace,`trace`);f(E.length>0,`trace rows`);let D=/* @__PURE__ */ new Map;for(let e of E){let t=p(e,`trace row`),n=C(t);f(h(t.definition_id)&&h(t.expression)&&!D.has(n.fact_id),`trace identity`),D.set(n.fact_id,n);for(let e of m(t.operands,`operands`)){let t=p(e,`operand`);f([`input`,`fact`,`policy`].includes(String(t.reference_type))&&h(t.reference)&&h(t.unit)&&(t.raw_value===null||g(t.raw_value)||typeof t.raw_value==`string`),`operand fields`),f(t.reported_value===null||a(t.reported_value)||Number.isSafeInteger(t.reported_value),`reported operand`)}}for(let e of E){let t=p(e,`trace row`);for(let e of m(t.operands,`operands`)){let t=p(e,`operand`);if(t.reference_type===`fact`){let e=D.get(String(t.reference));f(e&&e.raw_value===t.raw_value&&e.unit===t.unit,`referenced fact`)}else{let e=String(t.reference).split(`/`).slice(1),r=t.reference_type===`policy`?{policy_snapshot:w}:n;for(let t of e)f(typeof r==`object`&&!!r&&Object.prototype.hasOwnProperty.call(r,t),`operand input path`),r=r[t];f(r===t.raw_value,`operand input value`)}}}for(let e of o){let t=D.get(e.fact_id);f(t&&t.raw_value===e.raw_value&&t.reported_value===e.reported_value&&t.status===e.status&&t.unit===e.unit,`fact/trace correspondence`)}for(let e of T.factors){let t=e.name===`uca_positive`?`uca_cash_flow`:e.name;f(e.raw_value===C(s[t]).raw_value,`factor/fact correspondence`)}let O=p(t.fingerprint,`fingerprint`);return f(O.algorithm===`sha256`&&typeof O.value==`string`&&/^[0-9a-f]{64}$/.test(O.value)&&O.content===`normalized_input+policy_snapshot+calculation_version+schema_version+serialization_version`,`fingerprint`),t}function T(e,t){if(!e)throw Error(`Invalid saved-case response or command: ${t}.`)}function E(e,t){return T(typeof e==`object`&&!!e&&!Array.isArray(e),t),e}let D=e=>typeof e==`number`&&Number.isFinite(e),O=e=>typeof e==`string`,k=e=>O(e)&&/^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/.test(e),A=e=>O(e)&&/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(e),j=e=>Number.isSafeInteger(e)&&Number(e)>=1,M=e=>O(e)&&/^[0-9a-f]{64}$/.test(e),N=e=>O(e)&&/^\\d{4}-\\d{2}-\\d{2}$/.test(e)&&Number.isFinite(Date.parse(e))&&new Date(e).toISOString().slice(0,10)===e,P=e=>O(e)&&/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?(?:Z|\\+00:00)$/.test(e)&&N(e.slice(0,10))&&Number.isFinite(Date.parse(e));function F(e,t=0,n=64){if(T(t<n,`JSON depth`),!(e===null||O(e)||typeof e==`boolean`)){if(typeof e==`number`)T(D(e),`finite JSON number`);else{T(typeof e==`object`,`JSON value`);for(let r of Object.values(e))F(r,t+1,n)}}}function I(e,t){if(e===t)return!0;if(!e||!t||typeof e!=`object`||typeof t!=`object`||Array.isArray(e)!==Array.isArray(t))return!1;let n=Object.keys(e),r=Object.keys(t);return n.length===r.length&&n.every(n=>Object.prototype.hasOwnProperty.call(t,n)&&I(e[n],t[n]))}function ee(e){return T(O(e)&&[...e].length<=2e3&&e.trim().length>0,`nonblank rationale, at most 2,000 characters`),e.trim()}let L={years:l,existing_debt:[`cpltd_annual`,`operating_lease_annual`],proposed_loan:[`amount`,`annual_rate`,`term_months`],guarantors:[`ownership_percentage`,`wages`,`interest_dividend_income`,`mortgage_pi_annual`,`auto_loan_annual`,`credit_card_min_annual`],working_capital:[`ar_increase`,`inventory_increase`,`ap_increase`,`cash_taxes_paid`]};function R(e){T(O(e)&&e.length<=160&&e.startsWith(`/`),`numeric field path`);let t=e.slice(1).split(`/`),n=t[0],r=t[t.length-1];return T(Object.prototype.hasOwnProperty.call(L,n)&&L[n].includes(r),`numeric field allowlist`),T([`years`,`guarantors`].includes(n)?t.length===3&&/^(?:0|[1-9][0-9]{0,8})$/.test(t[1]):t.length===2,`field index`),t}function te(e,t){let n=R(t),r=n[0],i=n[n.length-1],o=e,s,c={basis:`current_assumptions`,assessment_as_of:String(o.assessment_as_of),period_start:null,period_end:null,guarantor_index:null,guarantor_name:null,unit:`USD dollars`};if(n.length===3){let e=o[r];T(Array.isArray(e)&&Number(n[1])<e.length,`existing input index`),s=E(e[Number(n[1])],`input row`),r===`guarantors`?(c.guarantor_index=Number(n[1]),c.guarantor_name=String(s.name)):c.basis=`annual_financials`}else s=E(o[r],`input group`),r===`working_capital`&&(c.basis=`working_capital`);[`annual_financials`,`working_capital`].includes(c.basis)&&(T(N(s.period_start)&&N(s.period_end),`input dates`),c.period_start=s.period_start,c.period_end=s.period_end),[`annual_rate`,`ownership_percentage`].includes(i)&&(c.unit=`decimal fraction`),i===`term_months`&&(c.unit=`months`);let l=s[i];return T(i===`term_months`?Number.isSafeInteger(l):a(l)||D(l),`numeric input`),{value:l,context:c}}function ne(e,t){let n=E(e,`snapshot`);F(n),T(n.storage_serialization_version===`case-json-v1`&&A(n.case_id)&&A(n.run_id)&&j(n.revision),`snapshot identity`),T(n.parent_revision===(n.revision===1?null:n.revision-1)&&P(n.recorded_at),`snapshot parent/time`),T(M(n.input_hash)&&M(n.payload_hash),`snapshot hashes`),T(t===`\"case-json-v1:${n.case_id}:${n.revision}:${n.payload_hash}\"`,`strong ETag`);let r=E(n.normalized_input,`stored input`),i=E(n.assessment,`stored assessment`);T(O(i.schema_version)&&O(i.calculation_version)&&O(i.serialization_version),`assessment versions`);let o=i.schema_version===`commercial-assessment-v2`&&i.calculation_version===`commercial-calculation-v2`&&i.serialization_version===`assessment-json-v2`,s=o?w(i):null;s&&T(I(r,s.normalized_input),`outer normalized input`);let l=E(n.event,`event`),u=E(l.context,`event context`);if(T(l.case_id===n.case_id&&l.revision===n.revision&&l.run_id===n.run_id&&l.recorded_at===n.recorded_at&&k(l.actor),`event identity`),ee(l.rationale),T(N(u.assessment_as_of),`event as-of`),T(u.period_start===null&&u.period_end===null||N(u.period_start)&&N(u.period_end)&&u.period_start<=u.period_end,`event period`),T(u.guarantor_index===null&&u.guarantor_name===null||Number.isSafeInteger(u.guarantor_index)&&Number(u.guarantor_index)>=0&&O(u.guarantor_name),`event guarantor`),n.revision===1)T(l.kind===`creation`&&l.field_path===null&&l.before===null&&l.after===null&&u.basis===`case_creation`&&u.unit===null&&u.period_start===null&&u.guarantor_index===null,`creation event`);else if(T(l.kind===`edit`&&(a(l.before)||D(l.before))&&(a(l.after)||D(l.after))&&!c(l.before,l.after)&&O(l.field_path),`edit event`),R(l.field_path),T([`annual_financials`,`working_capital`,`current_assumptions`].includes(String(u.basis))&&[`USD dollars`,`decimal fraction`,`months`].includes(String(u.unit)),`edit context`),s){let e=te(s.normalized_input,l.field_path);T(e.value===l.after&&I(e.context,u),`server-derived edit context`)}return s&&T(u.assessment_as_of===s.normalized_input.assessment_as_of,`event assumptions date`),z(n.recording),{snapshot:n,etag:t,assessment:s,compatibility:o?null:`Stored assessment definition: ${i.schema_version} / ${i.calculation_version} / ${i.serialization_version}. Original JSON is available; typed display and editing are unavailable.`}}function z(e){let t=E(e,`recording metadata`),n=E(t.packages,`installed packages`);T(O(t.python_version)&&O(t.sqlite_version)&&M(t.dependency_baseline_sha256),`recording versions`);for(let e of[`fastapi`,`pydantic`,`starlette`,`uvicorn`])T(O(n[e])&&n[e].length>0,`installed ${e}`);return T(t.source_status===`development_unverified`?t.source_revision===null:t.source_status===`build_reported`&&O(t.source_revision)&&/^[0-9a-f]{40}$/.test(t.source_revision),`recorded source`),t}let B=[`revenue_change`,`cogs_change`,`operating_expense_change`,`proposed_rate_change_bps`],V=`commercial-scenario-preview-v2`;function H(e,t){T(Object.keys(e).length===t.length&&t.every(t=>Object.prototype.hasOwnProperty.call(e,t)),`scenario fields`)}function U(e,t){T(O(e),`scenario text`);let n=e.replace(/^[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+|[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+$/gu,``);return T(n.length>0&&[...n].length<=t,`nonblank scenario text, at most ${t} characters`),n}function W(e,t=!1){let n=E(e,`scenario`),r=E(n.assumptions,`shocks`);T(O(n.scenario_key)&&/^[A-Za-z0-9_-]{1,64}$/.test(n.scenario_key),`scenario key`),H(r,B);for(let e of B)T((a(r[e])||t&&D(r[e]))&&(e===`proposed_rate_change_bps`||s(o(r[e]),`-1`)>=0),`finite explicit shock`);return{scenario_key:n.scenario_key,name:U(n.name,120),rationale:U(n.rationale,2e3),assumptions:r}}function G(e){let t=E(e,`scenario command`),n=[`commercial-scenario-comparison-create-v1`,`commercial-scenario-comparison-create-v2`].includes(String(t.schema_version)),r=String(t.schema_version).endsWith(`-v1`);T(n||t.schema_version===V||t.schema_version===`commercial-scenario-preview-v1`,`scenario command version`),H(t,[`schema_version`,`baseline_run_id`,`scenarios`,...n?[`expected_preview_fingerprint`]:[]]),T(A(t.baseline_run_id)&&String(t.baseline_run_id).toLowerCase()===t.baseline_run_id,`canonical baseline run`),n&&T(M(t.expected_preview_fingerprint),`reviewed preview fingerprint`),T(Array.isArray(t.scenarios)&&t.scenarios.length>=1&&t.scenarios.length<=10,`1–10 scenarios`);let i=/* @__PURE__ */ new Set;for(let e of t.scenarios){H(E(e,`scenario command row`),[`scenario_key`,`name`,`rationale`,`assumptions`]);let t=W(e,r);T(I(t,e)&&!i.has(t.scenario_key),`normalized unique scenario command`),i.add(t.scenario_key)}return t}function K(e){let t=E(e.baseline,`preview baseline`);return T(Array.isArray(e.scenarios),`preview scenarios`),G({schema_version:e.schema_version,baseline_run_id:t.run_id,scenarios:e.scenarios.map(t=>W(t,e.schema_version===`commercial-scenario-preview-v1`))})}function q(e,t){return T(Array.isArray(e),t),e}function J(e){return e===null||a(e)}function Y(e){return A(e)&&e.toLowerCase()===e}function X(e){T((e.schema_version===V&&e.serialization_version===`scenario-preview-json-v2`||e.schema_version===`commercial-scenario-preview-v1`&&e.serialization_version===`scenario-preview-json-v1`)&&e.persisted===!1&&O(e.scenario_definition_version)&&O(e.calculation_version),`preview envelope versions`);let t=E(e.baseline,`baseline evidence`);T(Y(t.case_id)&&Y(t.run_id)&&j(t.revision)&&M(t.input_hash)&&M(t.payload_hash),`baseline evidence identity`);let n=E(t.assessment,`original assessment`),r=E(e.fingerprint,`preview fingerprint`);T(r.algorithm===`sha256`&&M(r.value)&&r.content===`baseline_identity+payload_hash+normalized_command+policy_snapshot+versions`,`preview fingerprint`);let i=E(e.selected_period,`selected operating period`);T(N(i.period_start)&&N(i.period_end)&&i.period_start<=i.period_end&&N(e.assumptions_as_of)&&i.period_end<=e.assumptions_as_of,`preview dates`),T(I(e.selected_period,n.selected_period)&&e.assumptions_as_of===n.assumptions_as_of&&I(e.policy_snapshot,n.policy_snapshot),`baseline period and retained policy`);let a=E(n.normalized_input,`baseline input`);return T(I(e.units,a.units),`baseline units`),T(q(e.held_fixed_assumptions,`held fixed assumptions`).length>0&&e.held_fixed_assumptions.every(O)&&O(e.disclaimer),`preview explanation`),K(e),{b:t,a:n}}function re(e,t,n){let r=E(e,`scenario preview`);F(r,0,100);let{b:i,a}=X(r);T(r.schema_version===V&&r.scenario_definition_version===`commercial-scenario-definition-v2`&&r.calculation_version===`commercial-calculation-v2`,`supported live scenario definition`);let o=w(a);t&&T(i.case_id===t.snapshot.case_id&&i.revision===t.snapshot.revision&&i.run_id===t.snapshot.run_id&&i.input_hash===t.snapshot.input_hash&&i.payload_hash===t.snapshot.payload_hash&&I(o,t.snapshot.assessment),`selected original baseline`),n&&T(I(K(r),G(n)),`reviewed normalized command`);for(let e of r.scenarios)ie(e,r,o);return r}function ie(e,t,n){let r=E(e,`scenario result`),i=W(r);T(I({scenario_key:r.scenario_key,name:r.name,rationale:r.rationale,assumptions:r.assumptions},i)&&r.coverage_basis===`stressed_latest_period_current_pro_forma`,`normalized projection command/basis`);let o=E(r.projection_inputs,`projected inputs`),s=n.normalized_input;S({...s,years:[...s.years.slice(0,-1),o.operating],proposed_loan:o.proposed_loan,existing_debt:o.existing_debt,guarantors:o.guarantors,working_capital:o.working_capital});for(let e of[`existing_debt`,`guarantors`,`working_capital`])T(I(o[e],s[e]),`held-fixed projected inputs`);let c=E(o.operating,`projected operating`),d=E(o.proposed_loan,`projected loan`),f=s.years[s.years.length-1];for(let e of l)[`gross_receipts`,`cogs`,`operating_expense_excl_dna_interest_comp`].includes(e)||T(c[e]===f[e],`held-fixed financial lines`);T(c.period_start===f.period_start&&c.period_end===f.period_end,`projected period`);for(let e of Object.keys(s.proposed_loan))e!==`annual_rate`&&T(d[e]===s.proposed_loan[e],`held-fixed loan`);let p=E(r.current_facts,`projected facts`),m=[];for(let e of u){let t=C(p[e]),r=e===`k1_history`||e===`k1_ratio_difference`,i=r?`baseline.`+n.current_facts[e].fact_id:[`ordinary_business_income`,`ebitda`].includes(e)?`projection.operating.${e}`:`projection.current.${e}`;T(t.fact_id===i&&(r?I(t,{...n.current_facts[e],fact_id:i}):J(t.raw_value)),`projected fact identity/type/observed history`),m.push(t)}let h=q(r.guarantor_contributions,`projected guarantors`);T(h.length===s.guarantors.length,`guarantor count`),h.forEach((e,t)=>{let n=E(e,`guarantor contribution`);T(n.guarantor_index===t&&n.name===s.guarantors[t].name,`guarantor identity`);for(let e of[`business_ebitda`,`outside_income`,`personal_debt`]){let r=C(n[e]);T(r.fact_id===`projection.current.guarantors.${t}.${e}`&&J(r.raw_value),`projected guarantor fact`),m.push(r)}});let g=x(r.decision);T(g.policy_version===n.policy_snapshot.version,`retained decision policy`);let _=q(r.calculation_trace,`projection trace`),v=/* @__PURE__ */ new Map;for(let e of _){let t=E(e,`trace row`),n=C(t);T(O(t.definition_id)&&O(t.expression)&&!v.has(n.fact_id),`trace identity`),v.set(n.fact_id,n),q(t.operands,`trace operands`)}for(let e of n.calculation_trace){let t={...e,fact_id:`baseline.`+e.fact_id,operands:e.operands.map(e=>({...e,reference:e.reference_type===`fact`?`baseline.`+e.reference:e.reference_type===`input`?`/baseline/assessment/normalized_input`+e.reference:e.reference}))};T(I(v.get(t.fact_id),t),`retained observed trace identity`)}for(let e of _)for(let n of E(e,`trace row`).operands){let e=E(n,`operand`);if(T(O(e.reference)&&O(e.unit)&&(e.raw_value===null||D(e.raw_value)||O(e.raw_value)),`operand value`),e.reference_type===`fact`){let t=v.get(e.reference);T(t&&t.raw_value===e.raw_value&&t.unit===e.unit,`referenced scenario fact`)}else{T([`input`,`policy`].includes(String(e.reference_type))&&e.reference.startsWith(`/`),`operand reference`);let n={...r,baseline:t.baseline,policy_snapshot:t.policy_snapshot};for(let t of e.reference.slice(1).split(`/`)){let e=ae(n);T(Object.prototype.hasOwnProperty.call(e,t),`scenario operand path`),n=e[t]}T(n===e.raw_value,`scenario operand value`)}}for(let e of m){let t=v.get(e.fact_id);T(t&&[`fact_id`,`raw_value`,`reported_value`,`unit`,`display_precision`,`status`,`explanation`].every(n=>t[n]===e[n]),`fact/trace fields`)}let y=q(r.comparisons,`metric comparisons`);T(y.length===u.length-1,`comparison count`);let b=/* @__PURE__ */ new Set;for(let e of y){let t=E(e,`metric comparison`);T(O(t.metric)&&u.includes(t.metric)&&t.metric!==`k1_history`&&!b.has(t.metric),`compared metric identity`),b.add(t.metric);let r=n.current_facts[t.metric],i=C(p[t.metric]);T(t.baseline_fact_id===`baseline.`+r.fact_id&&t.projected_fact_id===i.fact_id&&t.baseline_value===r.raw_value&&t.projected_value===i.raw_value&&t.unit===i.unit&&J(t.delta),`comparison fact links`),T(r.raw_value===null||i.raw_value===null?t.delta===null&&O(t.delta_explanation):a(t.delta)&&t.delta_explanation===null,`comparison availability`);let o=g.factors.find(e=>e.name===(t.metric===`uca_cash_flow`?`uca_positive`:t.metric));if([`dscr`,`fccr`,`global_dscr`,`uca_cash_flow`].includes(t.metric)){let e=E(t.policy_headroom,`policy headroom`);T(o&&e.comparison_operator===o.comparison_operator&&e.approval_threshold===o.threshold&&e.decline_threshold===o.decline_threshold,`headroom policy`);for(let t of[`baseline_approval`,`projected_approval`,`baseline_decline`,`projected_decline`])T(J(e[t]),`finite headroom`)}else T(t.policy_headroom===null,`non-policy headroom`)}for(let e of g.factors){let t=e.name===`uca_positive`?`uca_cash_flow`:e.name,r=n.decision.factors.find(t=>t.name===e.name);T(e.raw_value===C(p[t]).raw_value&&r&&[`threshold`,`decline_threshold`,`comparison_operator`,`weight`,`source`].every(t=>e[t]===r[t]),`scenario factor fact and retained policy`),t===`k1_history`&&T(I(e,r),`held-fixed observed K-1 factor`)}let w=q(r.factor_changes,`factor changes`);T(w.length===g.factors.length,`factor change count`);let k=/* @__PURE__ */ new Set;for(let e of w){let t=E(e,`factor change`),r=n.decision.factors.find(e=>e.name===t.name),i=g.factors.find(e=>e.name===t.name);T(O(t.name)&&!k.has(t.name)&&r&&i&&I(t.baseline,r)&&I(t.projected,i)&&t.changed===!I(r,i)&&t.basis===(t.name===`k1_history`?`observed_history`:`projected_current`),`factor change links`),k.add(t.name),T(t.projected_fact_id===C(p[t.name===`uca_positive`?`uca_cash_flow`:t.name]).fact_id,`factor projected reference`)}let A=E(r.outcome_change,`outcome change`);T(A.baseline===n.decision.outcome&&A.projected===g.outcome&&A.changed===(A.baseline!==A.projected),`outcome change links`);let j=q(r.reason_changes,`reason changes`),M=Array.from(new Set([...n.decision.reasons,...g.reasons].map(e=>e.code))).filter(e=>!I(n.decision.reasons.find(t=>t.code===e)??null,g.reasons.find(t=>t.code===e)??null));T(j.length===M.length,`reason changes count`);let N=/* @__PURE__ */ new Set;for(let e of j){let t=E(e,`reason change`),r=n.decision.reasons.find(e=>e.code===t.code)??null,i=g.reasons.find(e=>e.code===t.code)??null;T(O(t.code)&&M.includes(t.code)&&!N.has(t.code)&&I(t.baseline,r)&&I(t.projected,i)&&t.change===(r===null?`added`:i===null?`removed`:`changed`),`reason change links`),N.add(t.code)}}function ae(e){return T(typeof e==`object`&&!!e,`operand path object`),e}function oe(e,t){let n=E(e,`original comparison`);F(n,0,100),T([`commercial-scenario-comparison-v1`,`commercial-scenario-comparison-v2`].includes(String(n.schema_version))&&n.storage_serialization_version===`scenario-comparison-json-v1`&&n.persisted===!0&&Y(n.comparison_id)&&Y(n.case_id)&&Y(n.baseline_run_id)&&j(n.baseline_revision)&&M(n.payload_hash),`comparison storage identity`),T(P(n.recorded_at)&&/^\\d{4}-\\d\\d-\\d\\dT(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{6}\\+00:00$/.test(n.recorded_at)&&k(n.actor),`comparison recording time/actor`),z(n.recording),T(t===`\"scenario-comparison-json-v1:${n.case_id}:${n.comparison_id}:${n.payload_hash}\"`,`comparison ETag`);let r=E(n.preview,`original preview`),{b:i,a}=X(r);T(i.case_id===n.case_id&&i.revision===n.baseline_revision&&i.run_id===n.baseline_run_id,`inner/outer original baseline`);let o=r.schema_version===V&&r.scenario_definition_version===`commercial-scenario-definition-v2`&&r.calculation_version===`commercial-calculation-v2`&&a.schema_version===`commercial-assessment-v2`&&a.calculation_version===`commercial-calculation-v2`&&a.serialization_version===`assessment-json-v2`;return{record:n,etag:t,preview:o?re(r):null,compatibility:o?null:`Original definition: ${r.scenario_definition_version} / ${r.calculation_version}; baseline ${a.schema_version} / ${a.calculation_version} / ${a.serialization_version}. Original JSON remains available; typed projection and new preview are unavailable.`}}function se(e,t){return`spreadline-case-${e.case_id}-r${e.revision}-${e.run_id}${t?`-comparison-${t.comparison_id}`:``}.json`}function Z(e,t){let n=/* @__PURE__ */ new Set;function r(e,i){if(T(i<t,`export source JSON depth`),e===null||typeof e==`string`||typeof e==`boolean`)return e;if(typeof e==`number`)return T(Number.isFinite(e),`export finite number`),e;T(typeof e==`object`&&!!e,`export JSON value`);let a=e;T(!n.has(a),`export JSON cycle`),T(Object.getOwnPropertySymbols(a).length===0,`export JSON symbol keys`);let o=Array.isArray(a);T(o||Object.getPrototypeOf(a)===Object.prototype||Object.getPrototypeOf(a)===null,`export plain JSON object`);let s=Object.getOwnPropertyNames(a).filter(e=>!o||e!==`length`);o&&T(s.length===a.length&&s.every((e,t)=>e===String(t)),`export dense JSON array`),n.add(a);let c=o?[]:Object.create(null);for(let e of s){let t=Object.getOwnPropertyDescriptor(a,e);T(t.enumerable&&`value`in t,`export plain JSON property`),c[e]=r(t.value,i+1)}return n.delete(a),Object.freeze(c)}return r(e,0)}function ce(e,t){let n=e.snapshot,r=t.record,i=E(r.preview.baseline,`export comparison baseline`);T(r.case_id===n.case_id&&r.baseline_revision===n.revision&&r.baseline_run_id===n.run_id&&i.case_id===n.case_id&&i.revision===n.revision&&i.run_id===n.run_id&&i.input_hash===n.input_hash&&i.payload_hash===n.payload_hash&&I(i.assessment,n.assessment),`retained comparison must match the selected original case, revision, run, hashes and full baseline assessment`)}function le(e,t){let n=Z(e.snapshot,64),r=ne(n,e.etag),i=t===null?null:oe(Z(t.record,100),t.etag);i&&ce(r,i);let a=se(n,i?.record??null);return{package:Object.freeze({schema_version:`spreadline-review-package-v1`,serialization_version:`review-package-json-v1`,scope:`saved_case_revision`,case:Object.freeze({etag:r.etag,snapshot:n}),comparison:i?Object.freeze({etag:i.etag,record:i.record}):null,provenance:Object.freeze({representation:`browser_parsed_json`,actor_status:`prototype_unverified`,integrity_status:`recorded_hashes_not_verified_by_export`}),disclaimer:`Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.`}),filename:a,view:r,comparison:i}}function*Q(e){yield`\"`;for(let t=0;t<e.length;){let n=Math.min(t+4096,e.length);n<e.length&&e.charCodeAt(n-1)>=55296&&e.charCodeAt(n-1)<=56319&&e.charCodeAt(n)>=56320&&e.charCodeAt(n)<=57343&&n--,yield JSON.stringify(e.slice(t,n)).slice(1,-1),t=n}yield`\"`}function*$(e,t=0,n=/* @__PURE__ */ new Set){if(T(t<104,`export envelope JSON depth`),typeof e==`string`){yield*Q(e);return}if(e===null||typeof e==`boolean`){yield String(e);return}if(typeof e==`number`){T(Number.isFinite(e),`export finite number`),yield JSON.stringify(e);return}T(typeof e==`object`&&!!e,`export JSON value`);let r=e,i=Array.isArray(r);T(!n.has(r),`export JSON cycle`),T(Object.getOwnPropertySymbols(r).length===0&&(i||Object.getPrototypeOf(r)===Object.prototype||Object.getPrototypeOf(r)===null),`export plain JSON object`);let a=Object.getOwnPropertyNames(r).filter(e=>!i||e!==`length`);i?T(a.length===r.length&&a.every((e,t)=>e===String(t)),`export dense JSON array`):a.sort(),n.add(r),yield i?`[`:`{`;for(let e=0;e<a.length;e++){let o=a[e],s=Object.getOwnPropertyDescriptor(r,o);T(s.enumerable&&`value`in s,`export plain JSON property`),yield`${e?`,`:``}\\n${`  `.repeat(t+1)}`,i||(yield*Q(o),yield`: `),yield*$(s.value,t+1,n)}a.length&&(yield`\\n${`  `.repeat(t)}`),yield i?`]`:`}`,n.delete(r)}async function ue(e,t){let n=new TextEncoder,r=[],i=0,a=``,o=0;function s(){if(t?.aborted)throw Error(`Export preparation cancelled.`)}function c(){s();let e=n.encode(a);if(i+e.byteLength>16777216)throw Error(`The complete review package exceeds 16 MiB. No file was prepared. Choose a case-only package explicitly, or a smaller original.`);i+=e.byteLength,o+=e.byteLength,r.push(e),a=``}s();for(let t of $(e))a+=t,a.length>=8192&&c(),o>=131072&&(await new Promise(e=>setTimeout(e,0)),o=0,s());return a+=`\n`,c(),s(),{chunks:r,size:i}}self.onmessage=async e=>{try{let t=le(e.data.view,e.data.comparison),{chunks:n,size:r}=await ue(t.package),i=n.map(e=>e.buffer);self.postMessage({filename:t.filename,buffers:i,size:r},{transfer:i})}catch(e){self.postMessage({error:e instanceof Error?e.message:`Unable to prepare the original review package.`})}}})();", gi = typeof self < "u" && self.Blob && new Blob(["(self.URL || self.webkitURL).revokeObjectURL(self.location.href);", hi], { type: "text/javascript;charset=utf-8" });
-function _i(e) {
+var gi = "(function(){let e=/^([+-]?)(?:(\\d+)(?:\\.(\\d*))?|\\.(\\d+))(?:[eE]([+-]?\\d+))?$/,t=10n;function n(t){if(t.length>256)throw Error(`Decimal exceeds the supported range.`);let n=e.exec(t);if(!n)throw Error(`Enter a finite decimal value.`);let r=Number(n[5]??`0`);if(!Number.isSafeInteger(r)||Math.abs(r)>128)throw Error(`Decimal exponent exceeds the supported range.`);let i=n[3]??n[4]??``;return{coefficient:BigInt(`${n[1]===`-`?`-`:``}${n[2]??`0`}${i}`),scale:i.length-r}}function r({coefficient:e,scale:t}){if(e===0n)return`0`;let n=e<0n?`-`:``,r=(e<0n?-e:e).toString();return t<=0?n+r+`0`.repeat(-t):(r=r.padStart(t+1,`0`),(n+r.slice(0,-t)+`.`+r.slice(-t)).replace(/0+$/,``).replace(/\\.$/,``))}function i(e){return r(n(e))}function a(e){if(typeof e!=`string`)return!1;try{return n(e),!0}catch{return!1}}function o(e){if(typeof e==`number`&&Number.isFinite(e))return i(String(e));if(typeof e==`string`)return i(e);throw Error(`Financial values must be finite decimals.`)}function s(e,r){let i=n(e),a=n(r),o=Math.max(i.scale,a.scale),s=i.coefficient*t**BigInt(o-i.scale),c=a.coefficient*t**BigInt(o-a.scale);return s<c?-1:+(s>c)}function c(e,t){try{return s(o(e),o(t))===0}catch{return!1}}let l=[`gross_receipts`,`cogs`,`operating_expense_excl_dna_interest_comp`,`officer_compensation`,`depreciation`,`amortization`,`interest_expense`,`section_179`,`k1_distribution`],u=[`ordinary_business_income`,`ebitda`,`proposed_monthly_payment`,`proposed_annual_payment`,`debt_service`,`fixed_charge_service`,`global_business_ebitda`,`global_outside_income`,`global_personal_debt`,`global_cash_flow`,`global_debt_service`,`dscr`,`fccr`,`global_dscr`,`net_working_capital_increase`,`uca_cash_flow`,`k1_ratio_difference`,`k1_history`],d=[`commercial_min_dscr`,`commercial_min_fccr`,`commercial_min_global_dscr`,`commercial_decline_dscr`,`commercial_decline_fccr`,`commercial_decline_global_dscr`,`commercial_min_uca_cash_flow`,`consumer_review_dti`,`consumer_decline_dti`,`consumer_min_credit_score`,`extraction_confidence_threshold`,`k1_stability_band`,`sba_global_dscr_floor_expansion`,`sba_global_dscr_floor_acquisition`];function f(e,t){if(!e)throw Error(`Incomplete or invalid assessment: ${t}`)}function p(e,t){return f(typeof e==`object`&&!!e&&!Array.isArray(e),t),e}function m(e,t){return f(Array.isArray(e),t),e}function h(e){return typeof e==`string`&&e.length>0}function g(e){return typeof e==`number`&&Number.isFinite(e)}function _(e){return typeof e==`string`||typeof e==`boolean`}function v(e){return typeof e==`string`&&/^\\d{4}-\\d{2}-\\d{2}$/.test(e)&&Number.isFinite(Date.parse(e))&&new Date(e).toISOString().slice(0,10)===e}function y(e){let t=p(e,`period`);return f(v(t.period_start)&&v(t.period_end)&&t.period_start<=t.period_end,`period dates`),t}let b=(e,t)=>e.period_start===t.period_start&&e.period_end===t.period_end;function x(e){let t=p(e,`decision`);f(t.vertical===`commercial`&&[`approve`,`review`,`decline`].includes(String(t.outcome))&&a(t.score)&&h(t.policy_version)&&h(t.disclaimer),`decision identity`);let n=m(t.factors,`factors`);f(n.length===5,`commercial factors`);let r=[`dscr`,`fccr`,`global_dscr`,`uca_positive`,`k1_history`];for(let e of n){let t=p(e,`factor`);f(h(t.name)&&r.includes(t.name)&&_(t.value)&&(t.raw_value===null||_(t.raw_value))&&a(t.weight)&&(t.threshold===null||_(t.threshold))&&(t.passed===null||typeof t.passed==`boolean`)&&h(t.source)&&[null,`>=`,`>`,`<`,`==`].includes(t.comparison_operator)&&(t.decline_threshold===null||a(t.decline_threshold))&&(t.decline_triggered===null||typeof t.decline_triggered==`boolean`),`factor fields`)}f(new Set(n.map(e=>p(e,`factor`).name)).size===5,`unique factors`);for(let e of m(t.reasons,`reasons`)){let t=p(e,`reason`);f(h(t.code)&&h(t.factor)&&h(t.message)&&_(t.value),`reason fields`)}return t}function S(e){let t=p(e,`normalized input`);f(t.schema_version===`commercial-assessment-v2`&&v(t.assessment_as_of)&&h(t.borrower_name)&&h(t.geography),`dated identity`);let n=p(t.units,`units`);f(n.currency===`USD`&&n.monetary_unit===`dollars`&&n.annual_rate_unit===`decimal_nominal`,`units`);let r=m(t.years,`years`);f(r.length>=1&&r.length<=10,`year count`);let i=``;for(let e of r){let n=p(e,`year`),r=y(n);f(r.period_start>i&&r.period_end<=t.assessment_as_of,`year order`),i=r.period_end;for(let e of l)f(a(n[e]),`year ${e}`)}let o=(e,t)=>{let n=p(e,`assumption`);for(let e of t)f(a(n[e]),e);return n};o(t.existing_debt,[`cpltd_annual`,`operating_lease_annual`]);let s=o(t.proposed_loan,[`amount`,`annual_rate`]);f(Number.isSafeInteger(s.term_months)&&s.rate_type===`fixed`&&s.repayment_type===`fully_amortizing`&&s.payment_frequency===`monthly`,`loan convention`);let c=o(t.working_capital,[`ar_increase`,`inventory_increase`,`ap_increase`,`cash_taxes_paid`]);f(b(y(c),y(r[r.length-1])),`working capital period`);for(let e of m(t.guarantors,`guarantors`))f(h(o(e,[`ownership_percentage`,`wages`,`interest_dividend_income`,`mortgage_pi_annual`,`auto_loan_annual`,`credit_card_min_annual`]).name),`guarantor name`);return t}function C(e){let t=p(e,`metric`);return f(h(t.fact_id)&&h(t.unit)&&(t.display_precision===null||Number.isInteger(t.display_precision)&&Number(t.display_precision)>=0&&Number(t.display_precision)<=30)&&(t.explanation===null||h(t.explanation)),`metric fields`),f(t.status===`available`?a(t.raw_value)||t.unit===`category`&&h(t.raw_value):t.status===`not_applicable`&&t.raw_value===null&&h(t.explanation),`metric status/value`),f(t.status===`not_applicable`?t.reported_value===null:t.unit===`category`?t.reported_value===t.raw_value:a(t.reported_value),`reported metric value`),t}function w(e){let t=p(e,`assessment`);f(t.schema_version===`commercial-assessment-v2`&&t.calculation_version===`commercial-calculation-v2`&&t.serialization_version===`assessment-json-v2`&&t.coverage_basis===`current_pro_forma`&&h(t.disclaimer),`versions`);let n=S(t.normalized_input),r=n.years[n.years.length-1];f(b(y(t.selected_period),r)&&t.assumptions_as_of===n.assessment_as_of,`selected period`);let i=m(t.historical_spread,`spread`);f(i.length===n.years.length,`spread length`);let o=[];i.forEach((e,t)=>{let r=p(e,`historical period`);f(b(y(r),n.years[t])&&b(y(r.financials),n.years[t]),`historical period correspondence`);let i=p(r.financials,`historical financials`);for(let e of l)f(i[e]===n.years[t][e],`historical inputs`);let s=p(r.reported_financials,`reported financials`);f(b(y(s),n.years[t]),`reported period`);for(let e of l)f(a(s[e])&&/^-?\\d+\\.\\d{2}$/.test(s[e]),`reported source amount`);for(let e of[`gross_profit`,`ordinary_business_income`,`ebitda`,`k1_distribution_ratio`])o.push(C(r[e]))});let s=p(t.current_facts,`facts`);for(let e of u){let t=C(s[e]),r=[`ordinary_business_income`,`ebitda`].includes(e)?`years.${n.years.length-1}.${e}`:`current.${e}`;f(t.fact_id===r,`fact identity`),f(e===`k1_history`?t.status===`available`&&[`stable`,`unstable`,`insufficient_history`].includes(String(t.raw_value)):t.raw_value===null||a(t.raw_value),`fact type`),o.push(t)}let c=m(t.guarantor_contributions,`contributions`);f(c.length===n.guarantors.length,`contributions length`),c.forEach((e,t)=>{let r=p(e,`contribution`);f(r.guarantor_index===t&&r.name===n.guarantors[t].name,`contribution identity`);for(let e of[`business_ebitda`,`outside_income`,`personal_debt`])o.push(C(r[e]))});let _=m(t.k1_history_periods,`history periods`).map(y);f(_.length>=1&&_.length<=2&&b(_[_.length-1],r)&&_.every(e=>n.years.some(t=>b(e,t))),`history periods`);let w=p(t.policy_snapshot,`policy`);f(h(w.version)&&v(w.sba_sop_8_effective)&&v(w.sba_sop_8_1_effective),`policy identity`);for(let e of d)f(e===`consumer_min_credit_score`?Number.isSafeInteger(w[e]):a(w[e]),`policy ${e}`);f(m(w.consumer_required_atr_fields,`ATR fields`).every(h),`ATR fields`);let T=x(t.decision);f(T.policy_version===w.version,`decision policy`);let E=m(t.calculation_trace,`trace`);f(E.length>0,`trace rows`);let D=/* @__PURE__ */ new Map;for(let e of E){let t=p(e,`trace row`),n=C(t);f(h(t.definition_id)&&h(t.expression)&&!D.has(n.fact_id),`trace identity`),D.set(n.fact_id,n);for(let e of m(t.operands,`operands`)){let t=p(e,`operand`);f([`input`,`fact`,`policy`].includes(String(t.reference_type))&&h(t.reference)&&h(t.unit)&&(t.raw_value===null||g(t.raw_value)||typeof t.raw_value==`string`),`operand fields`),f(t.reported_value===null||a(t.reported_value)||Number.isSafeInteger(t.reported_value),`reported operand`)}}for(let e of E){let t=p(e,`trace row`);for(let e of m(t.operands,`operands`)){let t=p(e,`operand`);if(t.reference_type===`fact`){let e=D.get(String(t.reference));f(e&&e.raw_value===t.raw_value&&e.unit===t.unit,`referenced fact`)}else{let e=String(t.reference).split(`/`).slice(1),r=t.reference_type===`policy`?{policy_snapshot:w}:n;for(let t of e)f(typeof r==`object`&&!!r&&Object.prototype.hasOwnProperty.call(r,t),`operand input path`),r=r[t];f(r===t.raw_value,`operand input value`)}}}for(let e of o){let t=D.get(e.fact_id);f(t&&t.raw_value===e.raw_value&&t.reported_value===e.reported_value&&t.status===e.status&&t.unit===e.unit,`fact/trace correspondence`)}for(let e of T.factors){let t=e.name===`uca_positive`?`uca_cash_flow`:e.name;f(e.raw_value===C(s[t]).raw_value,`factor/fact correspondence`)}let O=p(t.fingerprint,`fingerprint`);return f(O.algorithm===`sha256`&&typeof O.value==`string`&&/^[0-9a-f]{64}$/.test(O.value)&&O.content===`normalized_input+policy_snapshot+calculation_version+schema_version+serialization_version`,`fingerprint`),t}function T(e,t){if(!e)throw Error(`Invalid saved-case response or command: ${t}.`)}function E(e,t){return T(typeof e==`object`&&!!e&&!Array.isArray(e),t),e}let D=e=>typeof e==`number`&&Number.isFinite(e),O=e=>typeof e==`string`,k=e=>O(e)&&/^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/.test(e),A=e=>O(e)&&/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(e),j=e=>Number.isSafeInteger(e)&&Number(e)>=1,M=e=>O(e)&&/^[0-9a-f]{64}$/.test(e),N=e=>O(e)&&/^\\d{4}-\\d{2}-\\d{2}$/.test(e)&&Number.isFinite(Date.parse(e))&&new Date(e).toISOString().slice(0,10)===e,P=e=>O(e)&&/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?(?:Z|\\+00:00)$/.test(e)&&N(e.slice(0,10))&&Number.isFinite(Date.parse(e));function F(e,t=0,n=64){if(T(t<n,`JSON depth`),!(e===null||O(e)||typeof e==`boolean`)){if(typeof e==`number`)T(D(e),`finite JSON number`);else{T(typeof e==`object`,`JSON value`);for(let r of Object.values(e))F(r,t+1,n)}}}function I(e,t){if(e===t)return!0;if(!e||!t||typeof e!=`object`||typeof t!=`object`||Array.isArray(e)!==Array.isArray(t))return!1;let n=Object.keys(e),r=Object.keys(t);return n.length===r.length&&n.every(n=>Object.prototype.hasOwnProperty.call(t,n)&&I(e[n],t[n]))}function ee(e){return T(O(e)&&[...e].length<=2e3&&e.trim().length>0,`nonblank rationale, at most 2,000 characters`),e.trim()}let L={years:l,existing_debt:[`cpltd_annual`,`operating_lease_annual`],proposed_loan:[`amount`,`annual_rate`,`term_months`],guarantors:[`ownership_percentage`,`wages`,`interest_dividend_income`,`mortgage_pi_annual`,`auto_loan_annual`,`credit_card_min_annual`],working_capital:[`ar_increase`,`inventory_increase`,`ap_increase`,`cash_taxes_paid`]};function R(e){T(O(e)&&e.length<=160&&e.startsWith(`/`),`numeric field path`);let t=e.slice(1).split(`/`),n=t[0],r=t[t.length-1];return T(Object.prototype.hasOwnProperty.call(L,n)&&L[n].includes(r),`numeric field allowlist`),T([`years`,`guarantors`].includes(n)?t.length===3&&/^(?:0|[1-9][0-9]{0,8})$/.test(t[1]):t.length===2,`field index`),t}function te(e,t){let n=R(t),r=n[0],i=n[n.length-1],o=e,s,c={basis:`current_assumptions`,assessment_as_of:String(o.assessment_as_of),period_start:null,period_end:null,guarantor_index:null,guarantor_name:null,unit:`USD dollars`};if(n.length===3){let e=o[r];T(Array.isArray(e)&&Number(n[1])<e.length,`existing input index`),s=E(e[Number(n[1])],`input row`),r===`guarantors`?(c.guarantor_index=Number(n[1]),c.guarantor_name=String(s.name)):c.basis=`annual_financials`}else s=E(o[r],`input group`),r===`working_capital`&&(c.basis=`working_capital`);[`annual_financials`,`working_capital`].includes(c.basis)&&(T(N(s.period_start)&&N(s.period_end),`input dates`),c.period_start=s.period_start,c.period_end=s.period_end),[`annual_rate`,`ownership_percentage`].includes(i)&&(c.unit=`decimal fraction`),i===`term_months`&&(c.unit=`months`);let l=s[i];return T(i===`term_months`?Number.isSafeInteger(l):a(l)||D(l),`numeric input`),{value:l,context:c}}function ne(e,t){let n=E(e,`snapshot`);F(n),T(n.storage_serialization_version===`case-json-v1`&&A(n.case_id)&&A(n.run_id)&&j(n.revision),`snapshot identity`),T(n.parent_revision===(n.revision===1?null:n.revision-1)&&P(n.recorded_at),`snapshot parent/time`),T(M(n.input_hash)&&M(n.payload_hash),`snapshot hashes`),T(t===`\"case-json-v1:${n.case_id}:${n.revision}:${n.payload_hash}\"`,`strong ETag`);let r=E(n.normalized_input,`stored input`),i=E(n.assessment,`stored assessment`);T(O(i.schema_version)&&O(i.calculation_version)&&O(i.serialization_version),`assessment versions`);let o=i.schema_version===`commercial-assessment-v2`&&i.calculation_version===`commercial-calculation-v2`&&i.serialization_version===`assessment-json-v2`,s=o?w(i):null;s&&T(I(r,s.normalized_input),`outer normalized input`);let l=E(n.event,`event`),u=E(l.context,`event context`);if(T(l.case_id===n.case_id&&l.revision===n.revision&&l.run_id===n.run_id&&l.recorded_at===n.recorded_at&&k(l.actor),`event identity`),ee(l.rationale),T(N(u.assessment_as_of),`event as-of`),T(u.period_start===null&&u.period_end===null||N(u.period_start)&&N(u.period_end)&&u.period_start<=u.period_end,`event period`),T(u.guarantor_index===null&&u.guarantor_name===null||Number.isSafeInteger(u.guarantor_index)&&Number(u.guarantor_index)>=0&&O(u.guarantor_name),`event guarantor`),n.revision===1)T(l.kind===`creation`&&l.field_path===null&&l.before===null&&l.after===null&&u.basis===`case_creation`&&u.unit===null&&u.period_start===null&&u.guarantor_index===null,`creation event`);else if(T(l.kind===`edit`&&(a(l.before)||D(l.before))&&(a(l.after)||D(l.after))&&!c(l.before,l.after)&&O(l.field_path),`edit event`),R(l.field_path),T([`annual_financials`,`working_capital`,`current_assumptions`].includes(String(u.basis))&&[`USD dollars`,`decimal fraction`,`months`].includes(String(u.unit)),`edit context`),s){let e=te(s.normalized_input,l.field_path);T(e.value===l.after&&I(e.context,u),`server-derived edit context`)}return s&&T(u.assessment_as_of===s.normalized_input.assessment_as_of,`event assumptions date`),z(n.recording),{snapshot:n,etag:t,assessment:s,compatibility:o?null:`Stored assessment definition: ${i.schema_version} / ${i.calculation_version} / ${i.serialization_version}. Original JSON is available; typed display and editing are unavailable.`}}function z(e){let t=E(e,`recording metadata`),n=E(t.packages,`installed packages`);T(O(t.python_version)&&O(t.sqlite_version)&&M(t.dependency_baseline_sha256),`recording versions`);for(let e of[`fastapi`,`pydantic`,`starlette`,`uvicorn`])T(O(n[e])&&n[e].length>0,`installed ${e}`);return T(t.source_status===`development_unverified`?t.source_revision===null:t.source_status===`build_reported`&&O(t.source_revision)&&/^[0-9a-f]{40}$/.test(t.source_revision),`recorded source`),t}let B=[`revenue_change`,`cogs_change`,`operating_expense_change`,`proposed_rate_change_bps`],V=`commercial-scenario-preview-v2`;function H(e,t){T(Object.keys(e).length===t.length&&t.every(t=>Object.prototype.hasOwnProperty.call(e,t)),`scenario fields`)}function U(e,t){T(O(e),`scenario text`);let n=e.replace(/^[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+|[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]+$/gu,``);return T(n.length>0&&[...n].length<=t,`nonblank scenario text, at most ${t} characters`),n}function W(e,t=!1){let n=E(e,`scenario`),r=E(n.assumptions,`shocks`);T(O(n.scenario_key)&&/^[A-Za-z0-9_-]{1,64}$/.test(n.scenario_key),`scenario key`),H(r,B);for(let e of B)T((a(r[e])||t&&D(r[e]))&&(e===`proposed_rate_change_bps`||s(o(r[e]),`-1`)>=0),`finite explicit shock`);return{scenario_key:n.scenario_key,name:U(n.name,120),rationale:U(n.rationale,2e3),assumptions:r}}function G(e){let t=E(e,`scenario command`),n=[`commercial-scenario-comparison-create-v1`,`commercial-scenario-comparison-create-v2`].includes(String(t.schema_version)),r=String(t.schema_version).endsWith(`-v1`);T(n||t.schema_version===V||t.schema_version===`commercial-scenario-preview-v1`,`scenario command version`),H(t,[`schema_version`,`baseline_run_id`,`scenarios`,...n?[`expected_preview_fingerprint`]:[]]),T(A(t.baseline_run_id)&&String(t.baseline_run_id).toLowerCase()===t.baseline_run_id,`canonical baseline run`),n&&T(M(t.expected_preview_fingerprint),`reviewed preview fingerprint`),T(Array.isArray(t.scenarios)&&t.scenarios.length>=1&&t.scenarios.length<=10,`1–10 scenarios`);let i=/* @__PURE__ */ new Set;for(let e of t.scenarios){H(E(e,`scenario command row`),[`scenario_key`,`name`,`rationale`,`assumptions`]);let t=W(e,r);T(I(t,e)&&!i.has(t.scenario_key),`normalized unique scenario command`),i.add(t.scenario_key)}return t}function K(e){let t=E(e.baseline,`preview baseline`);return T(Array.isArray(e.scenarios),`preview scenarios`),G({schema_version:e.schema_version,baseline_run_id:t.run_id,scenarios:e.scenarios.map(t=>W(t,e.schema_version===`commercial-scenario-preview-v1`))})}function q(e,t){return T(Array.isArray(e),t),e}function J(e){return e===null||a(e)}function Y(e){return A(e)&&e.toLowerCase()===e}function X(e){T((e.schema_version===V&&e.serialization_version===`scenario-preview-json-v2`||e.schema_version===`commercial-scenario-preview-v1`&&e.serialization_version===`scenario-preview-json-v1`)&&e.persisted===!1&&O(e.scenario_definition_version)&&O(e.calculation_version),`preview envelope versions`);let t=E(e.baseline,`baseline evidence`);T(Y(t.case_id)&&Y(t.run_id)&&j(t.revision)&&M(t.input_hash)&&M(t.payload_hash),`baseline evidence identity`);let n=E(t.assessment,`original assessment`),r=E(e.fingerprint,`preview fingerprint`);T(r.algorithm===`sha256`&&M(r.value)&&r.content===`baseline_identity+payload_hash+normalized_command+policy_snapshot+versions`,`preview fingerprint`);let i=E(e.selected_period,`selected operating period`);T(N(i.period_start)&&N(i.period_end)&&i.period_start<=i.period_end&&N(e.assumptions_as_of)&&i.period_end<=e.assumptions_as_of,`preview dates`),T(I(e.selected_period,n.selected_period)&&e.assumptions_as_of===n.assumptions_as_of&&I(e.policy_snapshot,n.policy_snapshot),`baseline period and retained policy`);let a=E(n.normalized_input,`baseline input`);return T(I(e.units,a.units),`baseline units`),T(q(e.held_fixed_assumptions,`held fixed assumptions`).length>0&&e.held_fixed_assumptions.every(O)&&O(e.disclaimer),`preview explanation`),K(e),{b:t,a:n}}function re(e,t,n){let r=E(e,`scenario preview`);F(r,0,100);let{b:i,a}=X(r);T(r.schema_version===V&&r.scenario_definition_version===`commercial-scenario-definition-v2`&&r.calculation_version===`commercial-calculation-v2`,`supported live scenario definition`);let o=w(a);t&&T(i.case_id===t.snapshot.case_id&&i.revision===t.snapshot.revision&&i.run_id===t.snapshot.run_id&&i.input_hash===t.snapshot.input_hash&&i.payload_hash===t.snapshot.payload_hash&&I(o,t.snapshot.assessment),`selected original baseline`),n&&T(I(K(r),G(n)),`reviewed normalized command`);for(let e of r.scenarios)ie(e,r,o);return r}function ie(e,t,n){let r=E(e,`scenario result`),i=W(r);T(I({scenario_key:r.scenario_key,name:r.name,rationale:r.rationale,assumptions:r.assumptions},i)&&r.coverage_basis===`stressed_latest_period_current_pro_forma`,`normalized projection command/basis`);let o=E(r.projection_inputs,`projected inputs`),s=n.normalized_input;S({...s,years:[...s.years.slice(0,-1),o.operating],proposed_loan:o.proposed_loan,existing_debt:o.existing_debt,guarantors:o.guarantors,working_capital:o.working_capital});for(let e of[`existing_debt`,`guarantors`,`working_capital`])T(I(o[e],s[e]),`held-fixed projected inputs`);let c=E(o.operating,`projected operating`),d=E(o.proposed_loan,`projected loan`),f=s.years[s.years.length-1];for(let e of l)[`gross_receipts`,`cogs`,`operating_expense_excl_dna_interest_comp`].includes(e)||T(c[e]===f[e],`held-fixed financial lines`);T(c.period_start===f.period_start&&c.period_end===f.period_end,`projected period`);for(let e of Object.keys(s.proposed_loan))e!==`annual_rate`&&T(d[e]===s.proposed_loan[e],`held-fixed loan`);let p=E(r.current_facts,`projected facts`),m=[];for(let e of u){let t=C(p[e]),r=e===`k1_history`||e===`k1_ratio_difference`,i=r?`baseline.`+n.current_facts[e].fact_id:[`ordinary_business_income`,`ebitda`].includes(e)?`projection.operating.${e}`:`projection.current.${e}`;T(t.fact_id===i&&(r?I(t,{...n.current_facts[e],fact_id:i}):J(t.raw_value)),`projected fact identity/type/observed history`),m.push(t)}let h=q(r.guarantor_contributions,`projected guarantors`);T(h.length===s.guarantors.length,`guarantor count`),h.forEach((e,t)=>{let n=E(e,`guarantor contribution`);T(n.guarantor_index===t&&n.name===s.guarantors[t].name,`guarantor identity`);for(let e of[`business_ebitda`,`outside_income`,`personal_debt`]){let r=C(n[e]);T(r.fact_id===`projection.current.guarantors.${t}.${e}`&&J(r.raw_value),`projected guarantor fact`),m.push(r)}});let g=x(r.decision);T(g.policy_version===n.policy_snapshot.version,`retained decision policy`);let _=q(r.calculation_trace,`projection trace`),v=/* @__PURE__ */ new Map;for(let e of _){let t=E(e,`trace row`),n=C(t);T(O(t.definition_id)&&O(t.expression)&&!v.has(n.fact_id),`trace identity`),v.set(n.fact_id,n),q(t.operands,`trace operands`)}for(let e of n.calculation_trace){let t={...e,fact_id:`baseline.`+e.fact_id,operands:e.operands.map(e=>({...e,reference:e.reference_type===`fact`?`baseline.`+e.reference:e.reference_type===`input`?`/baseline/assessment/normalized_input`+e.reference:e.reference}))};T(I(v.get(t.fact_id),t),`retained observed trace identity`)}for(let e of _)for(let n of E(e,`trace row`).operands){let e=E(n,`operand`);if(T(O(e.reference)&&O(e.unit)&&(e.raw_value===null||D(e.raw_value)||O(e.raw_value)),`operand value`),e.reference_type===`fact`){let t=v.get(e.reference);T(t&&t.raw_value===e.raw_value&&t.unit===e.unit,`referenced scenario fact`)}else{T([`input`,`policy`].includes(String(e.reference_type))&&e.reference.startsWith(`/`),`operand reference`);let n={...r,baseline:t.baseline,policy_snapshot:t.policy_snapshot};for(let t of e.reference.slice(1).split(`/`)){let e=ae(n);T(Object.prototype.hasOwnProperty.call(e,t),`scenario operand path`),n=e[t]}T(n===e.raw_value,`scenario operand value`)}}for(let e of m){let t=v.get(e.fact_id);T(t&&[`fact_id`,`raw_value`,`reported_value`,`unit`,`display_precision`,`status`,`explanation`].every(n=>t[n]===e[n]),`fact/trace fields`)}let y=q(r.comparisons,`metric comparisons`);T(y.length===u.length-1,`comparison count`);let b=/* @__PURE__ */ new Set;for(let e of y){let t=E(e,`metric comparison`);T(O(t.metric)&&u.includes(t.metric)&&t.metric!==`k1_history`&&!b.has(t.metric),`compared metric identity`),b.add(t.metric);let r=n.current_facts[t.metric],i=C(p[t.metric]);T(t.baseline_fact_id===`baseline.`+r.fact_id&&t.projected_fact_id===i.fact_id&&t.baseline_value===r.raw_value&&t.projected_value===i.raw_value&&t.unit===i.unit&&J(t.delta),`comparison fact links`),T(r.raw_value===null||i.raw_value===null?t.delta===null&&O(t.delta_explanation):a(t.delta)&&t.delta_explanation===null,`comparison availability`);let o=g.factors.find(e=>e.name===(t.metric===`uca_cash_flow`?`uca_positive`:t.metric));if([`dscr`,`fccr`,`global_dscr`,`uca_cash_flow`].includes(t.metric)){let e=E(t.policy_headroom,`policy headroom`);T(o&&e.comparison_operator===o.comparison_operator&&e.approval_threshold===o.threshold&&e.decline_threshold===o.decline_threshold,`headroom policy`);for(let t of[`baseline_approval`,`projected_approval`,`baseline_decline`,`projected_decline`])T(J(e[t]),`finite headroom`)}else T(t.policy_headroom===null,`non-policy headroom`)}for(let e of g.factors){let t=e.name===`uca_positive`?`uca_cash_flow`:e.name,r=n.decision.factors.find(t=>t.name===e.name);T(e.raw_value===C(p[t]).raw_value&&r&&[`threshold`,`decline_threshold`,`comparison_operator`,`weight`,`source`].every(t=>e[t]===r[t]),`scenario factor fact and retained policy`),t===`k1_history`&&T(I(e,r),`held-fixed observed K-1 factor`)}let w=q(r.factor_changes,`factor changes`);T(w.length===g.factors.length,`factor change count`);let k=/* @__PURE__ */ new Set;for(let e of w){let t=E(e,`factor change`),r=n.decision.factors.find(e=>e.name===t.name),i=g.factors.find(e=>e.name===t.name);T(O(t.name)&&!k.has(t.name)&&r&&i&&I(t.baseline,r)&&I(t.projected,i)&&t.changed===!I(r,i)&&t.basis===(t.name===`k1_history`?`observed_history`:`projected_current`),`factor change links`),k.add(t.name),T(t.projected_fact_id===C(p[t.name===`uca_positive`?`uca_cash_flow`:t.name]).fact_id,`factor projected reference`)}let A=E(r.outcome_change,`outcome change`);T(A.baseline===n.decision.outcome&&A.projected===g.outcome&&A.changed===(A.baseline!==A.projected),`outcome change links`);let j=q(r.reason_changes,`reason changes`),M=Array.from(new Set([...n.decision.reasons,...g.reasons].map(e=>e.code))).filter(e=>!I(n.decision.reasons.find(t=>t.code===e)??null,g.reasons.find(t=>t.code===e)??null));T(j.length===M.length,`reason changes count`);let N=/* @__PURE__ */ new Set;for(let e of j){let t=E(e,`reason change`),r=n.decision.reasons.find(e=>e.code===t.code)??null,i=g.reasons.find(e=>e.code===t.code)??null;T(O(t.code)&&M.includes(t.code)&&!N.has(t.code)&&I(t.baseline,r)&&I(t.projected,i)&&t.change===(r===null?`added`:i===null?`removed`:`changed`),`reason change links`),N.add(t.code)}}function ae(e){return T(typeof e==`object`&&!!e,`operand path object`),e}function oe(e,t){let n=E(e,`original comparison`);F(n,0,100),T([`commercial-scenario-comparison-v1`,`commercial-scenario-comparison-v2`].includes(String(n.schema_version))&&n.storage_serialization_version===`scenario-comparison-json-v1`&&n.persisted===!0&&Y(n.comparison_id)&&Y(n.case_id)&&Y(n.baseline_run_id)&&j(n.baseline_revision)&&M(n.payload_hash),`comparison storage identity`),T(P(n.recorded_at)&&/^\\d{4}-\\d\\d-\\d\\dT(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{6}\\+00:00$/.test(n.recorded_at)&&k(n.actor),`comparison recording time/actor`),z(n.recording),T(t===`\"scenario-comparison-json-v1:${n.case_id}:${n.comparison_id}:${n.payload_hash}\"`,`comparison ETag`);let r=E(n.preview,`original preview`),{b:i,a}=X(r);T(i.case_id===n.case_id&&i.revision===n.baseline_revision&&i.run_id===n.baseline_run_id,`inner/outer original baseline`);let o=r.schema_version===V&&r.scenario_definition_version===`commercial-scenario-definition-v2`&&r.calculation_version===`commercial-calculation-v2`&&a.schema_version===`commercial-assessment-v2`&&a.calculation_version===`commercial-calculation-v2`&&a.serialization_version===`assessment-json-v2`;return{record:n,etag:t,preview:o?re(r):null,compatibility:o?null:`Original definition: ${r.scenario_definition_version} / ${r.calculation_version}; baseline ${a.schema_version} / ${a.calculation_version} / ${a.serialization_version}. Original JSON remains available; typed projection and new preview are unavailable.`}}function se(e,t){return`spreadline-case-${e.case_id}-r${e.revision}-${e.run_id}${t?`-comparison-${t.comparison_id}`:``}.json`}function Z(e,t){let n=/* @__PURE__ */ new Set;function r(e,i){if(T(i<t,`export source JSON depth`),e===null||typeof e==`string`||typeof e==`boolean`)return e;if(typeof e==`number`)return T(Number.isFinite(e),`export finite number`),e;T(typeof e==`object`&&!!e,`export JSON value`);let a=e;T(!n.has(a),`export JSON cycle`),T(Object.getOwnPropertySymbols(a).length===0,`export JSON symbol keys`);let o=Array.isArray(a);T(o||Object.getPrototypeOf(a)===Object.prototype||Object.getPrototypeOf(a)===null,`export plain JSON object`);let s=Object.getOwnPropertyNames(a).filter(e=>!o||e!==`length`);o&&T(s.length===a.length&&s.every((e,t)=>e===String(t)),`export dense JSON array`),n.add(a);let c=o?[]:Object.create(null);for(let e of s){let t=Object.getOwnPropertyDescriptor(a,e);T(t.enumerable&&`value`in t,`export plain JSON property`),c[e]=r(t.value,i+1)}return n.delete(a),Object.freeze(c)}return r(e,0)}function ce(e,t){let n=e.snapshot,r=t.record,i=E(r.preview.baseline,`export comparison baseline`);T(r.case_id===n.case_id&&r.baseline_revision===n.revision&&r.baseline_run_id===n.run_id&&i.case_id===n.case_id&&i.revision===n.revision&&i.run_id===n.run_id&&i.input_hash===n.input_hash&&i.payload_hash===n.payload_hash&&I(i.assessment,n.assessment),`retained comparison must match the selected original case, revision, run, hashes and full baseline assessment`)}function le(e,t){let n=Z(e.snapshot,64),r=ne(n,e.etag),i=t===null?null:oe(Z(t.record,100),t.etag);i&&ce(r,i);let a=se(n,i?.record??null);return{package:Object.freeze({schema_version:`spreadline-review-package-v1`,serialization_version:`review-package-json-v1`,scope:`saved_case_revision`,case:Object.freeze({etag:r.etag,snapshot:n}),comparison:i?Object.freeze({etag:i.etag,record:i.record}):null,provenance:Object.freeze({representation:`browser_parsed_json`,actor_status:`prototype_unverified`,integrity_status:`recorded_hashes_not_verified_by_export`}),disclaimer:`Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice.`}),filename:a,view:r,comparison:i}}function*Q(e){yield`\"`;for(let t=0;t<e.length;){let n=Math.min(t+4096,e.length);n<e.length&&e.charCodeAt(n-1)>=55296&&e.charCodeAt(n-1)<=56319&&e.charCodeAt(n)>=56320&&e.charCodeAt(n)<=57343&&n--,yield JSON.stringify(e.slice(t,n)).slice(1,-1),t=n}yield`\"`}function*$(e,t=0,n=/* @__PURE__ */ new Set){if(T(t<104,`export envelope JSON depth`),typeof e==`string`){yield*Q(e);return}if(e===null||typeof e==`boolean`){yield String(e);return}if(typeof e==`number`){T(Number.isFinite(e),`export finite number`),yield JSON.stringify(e);return}T(typeof e==`object`&&!!e,`export JSON value`);let r=e,i=Array.isArray(r);T(!n.has(r),`export JSON cycle`),T(Object.getOwnPropertySymbols(r).length===0&&(i||Object.getPrototypeOf(r)===Object.prototype||Object.getPrototypeOf(r)===null),`export plain JSON object`);let a=Object.getOwnPropertyNames(r).filter(e=>!i||e!==`length`);i?T(a.length===r.length&&a.every((e,t)=>e===String(t)),`export dense JSON array`):a.sort(),n.add(r),yield i?`[`:`{`;for(let e=0;e<a.length;e++){let o=a[e],s=Object.getOwnPropertyDescriptor(r,o);T(s.enumerable&&`value`in s,`export plain JSON property`),yield`${e?`,`:``}\\n${`  `.repeat(t+1)}`,i||(yield*Q(o),yield`: `),yield*$(s.value,t+1,n)}a.length&&(yield`\\n${`  `.repeat(t)}`),yield i?`]`:`}`,n.delete(r)}async function ue(e,t){let n=new TextEncoder,r=[],i=0,a=``,o=0;function s(){if(t?.aborted)throw Error(`Export preparation cancelled.`)}function c(){s();let e=n.encode(a);if(i+e.byteLength>16777216)throw Error(`The complete review package exceeds 16 MiB. No file was prepared. Choose a case-only package explicitly, or a smaller original.`);i+=e.byteLength,o+=e.byteLength,r.push(e),a=``}s();for(let t of $(e))a+=t,a.length>=8192&&c(),o>=131072&&(await new Promise(e=>setTimeout(e,0)),o=0,s());return a+=`\n`,c(),s(),{chunks:r,size:i}}self.onmessage=async e=>{try{let t=le(e.data.view,e.data.comparison),{chunks:n,size:r}=await ue(t.package),i=n.map(e=>e.buffer);self.postMessage({filename:t.filename,buffers:i,size:r},{transfer:i})}catch(e){self.postMessage({error:e instanceof Error?e.message:`Unable to prepare the original review package.`})}}})();", _i = typeof self < "u" && self.Blob && new Blob(["(self.URL || self.webkitURL).revokeObjectURL(self.location.href);", gi], { type: "text/javascript;charset=utf-8" });
+function vi(e) {
 	let t;
 	try {
-		if (t = gi && (self.URL || self.webkitURL).createObjectURL(gi), !t) throw "";
+		if (t = _i && (self.URL || self.webkitURL).createObjectURL(_i), !t) throw "";
 		let n = new Worker(t, { name: e?.name });
 		return n.addEventListener("error", () => {
 			(self.URL || self.webkitURL).revokeObjectURL(t);
 		}), n;
 	} catch {
-		return new Worker("data:text/javascript;charset=utf-8," + encodeURIComponent(hi), { name: e?.name });
+		return new Worker("data:text/javascript;charset=utf-8," + encodeURIComponent(gi), { name: e?.name });
 	}
 }
 // src/useReviewDownload.ts
-function vi(e) {
+function yi(e) {
 	let t = (0, k.useRef)(e);
 	t.current = e;
 	let n = (0, k.useRef)(null), r = (0, k.useRef)(null), i = (0, k.useRef)(!0), [a, o] = (0, k.useState)({
@@ -10330,7 +10330,7 @@ function vi(e) {
 			error: "",
 			file: null
 		});
-		let l, u = pi(a.snapshot, c?.record ?? null);
+		let l, u = mi(a.snapshot, c?.record ?? null);
 		function d() {
 			return i.current && t.current === e && n.current === l;
 		}
@@ -10345,7 +10345,7 @@ function vi(e) {
 		try {
 			l = {
 				scope: e,
-				worker: new _i()
+				worker: new vi()
 			}, n.current = l, l.worker.onmessage = (t) => {
 				if (!d()) return;
 				if (!t.data || typeof t.data != "object" || Array.isArray(t.data)) {
@@ -10411,60 +10411,60 @@ function vi(e) {
 	};
 }
 // src/Review.tsx
-function yi(e) {
+function bi(e) {
 	return typeof e == "string" ? e.length > 240 ? `${e.slice(0, 240)}…` : e : "Unavailable";
 }
-function bi({ view: e, selection: t, headRevision: n, sourceScope: r, original: i, pending: a, onOpenBaseline: o }) {
+function xi({ view: e, selection: t, headRevision: n, sourceScope: r, original: i, pending: a, onOpenBaseline: o }) {
 	let s = i.loading || i.error ? null : i.view, c = `${r}:${e?.etag ?? ""}:${i.context}:${i.loading}:${s?.etag ?? ""}:${i.error}`, [l, u] = (0, k.useState)({
 		source: c,
 		included: !1
-	}), d = l.source === c && l.included, f = vi(`${c}:${d}`), p = !1;
+	}), d = l.source === c && l.included, f = yi(`${c}:${d}`), p = !1;
 	if (e && s) try {
-		mi(e, s), p = !0;
+		hi(e, s), p = !0;
 	} catch {}
 	let m = e?.assessment, h = e?.snapshot, g = s?.record, _ = s?.preview?.scenarios.length ?? (Array.isArray(g?.preview.scenarios) ? g.preview.scenarios.length : 0);
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "reviewWorkspace",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("section", {
+			/* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel reviewIdentity",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("p", {
 						className: "eyebrow",
 						children: "ORIGINAL RECORD · REVIEW PACKAGE"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("h2", { children: "Saved-run review" }),
-					h ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-						/* @__PURE__ */ (0, W.jsx)("h3", { children: yi(h.normalized_input.borrower_name) }),
-						/* @__PURE__ */ (0, W.jsxs)("dl", {
+					/* @__PURE__ */ (0, U.jsx)("h2", { children: "Saved-run review" }),
+					h ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+						/* @__PURE__ */ (0, U.jsx)("h3", { children: bi(h.normalized_input.borrower_name) }),
+						/* @__PURE__ */ (0, U.jsxs)("dl", {
 							className: "reviewFacts",
 							children: [
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Case" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: h.case_id })] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Selected revision / run" }), /* @__PURE__ */ (0, W.jsxs)("dd", { children: [
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Case" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: h.case_id })] }),
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Selected revision / run" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [
 									h.revision,
 									" / ",
 									h.run_id
 								] })] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Recorded at" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: h.recorded_at })] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Selection" }), /* @__PURE__ */ (0, W.jsxs)("dd", { children: [t === "latest" ? "Latest when last refreshed" : "Original selected revision", n === null ? " · current head not confirmed" : ` · known head ${n}`] })] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Financial definitions" }), /* @__PURE__ */ (0, W.jsxs)("dd", { children: [
-									yi(h.assessment.schema_version),
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Recorded at" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: h.recorded_at })] }),
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Selection" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [t === "latest" ? "Latest when last refreshed" : "Original selected revision", n === null ? " · current head not confirmed" : ` · known head ${n}`] })] }),
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Financial definitions" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [
+									bi(h.assessment.schema_version),
 									" /",
 									" ",
-									yi(h.assessment.calculation_version),
+									bi(h.assessment.calculation_version),
 									" /",
 									" ",
-									yi(h.assessment.serialization_version)
+									bi(h.assessment.serialization_version)
 								] })] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Recording" }), /* @__PURE__ */ (0, W.jsxs)("dd", { children: [
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Recording" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [
 									"Actor: prototype demo, unverified ·",
 									" ",
 									h.recording.source_status === "build_reported" ? "build revision reported, unverified" : "development build, unverified"
 								] })] })
 							]
 						}),
-						m ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-							/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+						m ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+							/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 								"Operating period: ",
 								m.selected_period.period_start,
 								" –",
@@ -10475,15 +10475,15 @@ function bi({ view: e, selection: t, headRevision: n, sourceScope: r, original: 
 								m.assumptions_as_of,
 								" · USD dollars."
 							] }),
-							/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+							/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 								"Original outcome:",
 								" ",
-								/* @__PURE__ */ (0, W.jsx)("strong", { children: m.decision.outcome.toUpperCase() }),
+								/* @__PURE__ */ (0, U.jsx)("strong", { children: m.decision.outcome.toUpperCase() }),
 								" · policy ",
-								yi(m.policy_snapshot.version),
+								bi(m.policy_snapshot.version),
 								". Current pro forma coverage; observed history remains separate."
 							] }),
-							/* @__PURE__ */ (0, W.jsx)("div", {
+							/* @__PURE__ */ (0, U.jsx)("div", {
 								className: "reviewMetrics",
 								children: [
 									["EBITDA", m.current_facts.ebitda],
@@ -10492,78 +10492,78 @@ function bi({ view: e, selection: t, headRevision: n, sourceScope: r, original: 
 									["FCCR", m.current_facts.fccr],
 									["Global DSCR", m.current_facts.global_dscr],
 									["Observed K-1 history", m.current_facts.k1_history]
-								].map(([e, t]) => /* @__PURE__ */ (0, W.jsxs)("div", { children: [
-									/* @__PURE__ */ (0, W.jsx)("span", { children: e }),
-									/* @__PURE__ */ (0, W.jsx)("strong", { children: tr(t) }),
-									t.explanation && /* @__PURE__ */ (0, W.jsx)("small", { children: yi(t.explanation) })
+								].map(([e, t]) => /* @__PURE__ */ (0, U.jsxs)("div", { children: [
+									/* @__PURE__ */ (0, U.jsx)("span", { children: e }),
+									/* @__PURE__ */ (0, U.jsx)("strong", { children: nr(t) }),
+									t.explanation && /* @__PURE__ */ (0, U.jsx)("small", { children: bi(t.explanation) })
 								] }, e))
 							}),
-							/* @__PURE__ */ (0, W.jsxs)("p", { children: [m.decision.reasons.length ? `Recorded reasons: ${m.decision.reasons.length}.` : "Recorded reasons: none beyond the factors.", "Factors and calculations are in Calculation details above and in the Credit Memo."] })
-						] }) : /* @__PURE__ */ (0, W.jsx)("p", {
+							/* @__PURE__ */ (0, U.jsxs)("p", { children: [m.decision.reasons.length ? `Recorded reasons: ${m.decision.reasons.length}.` : "Recorded reasons: none beyond the factors.", "Factors and calculations are in Calculation details above and in the Credit Memo."] })
+						] }) : /* @__PURE__ */ (0, U.jsx)("p", {
 							className: "warning",
 							children: "Original JSON only. These financial definitions are not supported for typed conclusions. The guarded original can still be downloaded."
 						})
-					] }) : /* @__PURE__ */ (0, W.jsx)("p", { children: "Save or open a dated commercial revision to review and export its original evidence. Unsaved inputs, legacy decisions and incomplete case transitions cannot supply this package." })
+					] }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "Save or open a dated commercial revision to review and export its original evidence. Unsaved inputs, legacy decisions and incomplete case transitions cannot supply this package." })
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("section", {
+			/* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel reviewComparison",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("h2", { children: "Retained comparison" }),
-					i.loading ? /* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("h2", { children: "Retained comparison" }),
+					i.loading ? /* @__PURE__ */ (0, U.jsx)("p", {
 						role: "status",
 						children: "Loading the selected original comparison…"
-					}) : i.error ? /* @__PURE__ */ (0, W.jsx)("p", {
+					}) : i.error ? /* @__PURE__ */ (0, U.jsx)("p", {
 						role: "alert",
 						children: i.error
-					}) : g ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-						/* @__PURE__ */ (0, W.jsxs)("dl", {
+					}) : g ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+						/* @__PURE__ */ (0, U.jsxs)("dl", {
 							className: "reviewFacts",
 							children: [
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Comparison" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: g.comparison_id })] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Baseline revision / run" }), /* @__PURE__ */ (0, W.jsxs)("dd", { children: [
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Comparison" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: g.comparison_id })] }),
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Baseline revision / run" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [
 									g.baseline_revision,
 									" / ",
 									g.baseline_run_id
 								] })] }),
-								/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Recorded at" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: g.recorded_at })] })
+								/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Recorded at" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: g.recorded_at })] })
 							]
 						}),
-						/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+						/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 							"Full retained batch: ",
 							_,
 							" ",
 							_ === 1 ? "scenario" : "scenarios",
 							" in original order."
 						] }),
-						/* @__PURE__ */ (0, W.jsx)("ul", { children: (s?.preview?.scenarios ?? g.preview.scenarios).map((e, t) => /* @__PURE__ */ (0, W.jsx)("li", { children: yi(e.name) }, t)) }),
-						/* @__PURE__ */ (0, W.jsxs)("p", {
+						/* @__PURE__ */ (0, U.jsx)("ul", { children: (s?.preview?.scenarios ?? g.preview.scenarios).map((e, t) => /* @__PURE__ */ (0, U.jsx)("li", { children: bi(e.name) }, t)) }),
+						/* @__PURE__ */ (0, U.jsxs)("p", {
 							className: "reviewHash",
 							children: [
 								"Preview fingerprint:",
 								" ",
-								yi(g.preview.fingerprint?.value)
+								bi(g.preview.fingerprint?.value)
 							]
 						}),
-						s?.compatibility && /* @__PURE__ */ (0, W.jsx)("p", {
+						s?.compatibility && /* @__PURE__ */ (0, U.jsx)("p", {
 							className: "warning",
 							children: "Original JSON only for this comparison; typed projections are unavailable."
 						}),
-						!p && /* @__PURE__ */ (0, W.jsx)("p", {
+						!p && /* @__PURE__ */ (0, U.jsx)("p", {
 							className: "warning",
 							children: "This retained comparison has a different original baseline. Open that explicit revision to match its evidence before inclusion."
 						}),
-						!p && h && g.case_id === h.case_id && /* @__PURE__ */ (0, W.jsx)("button", {
+						!p && h && g.case_id === h.case_id && /* @__PURE__ */ (0, U.jsx)("button", {
 							onClick: () => o({
 								caseId: g.case_id,
 								revision: g.baseline_revision
 							}),
 							children: "Open comparison baseline revision"
 						})
-					] }) : /* @__PURE__ */ (0, W.jsx)("p", { children: "Open a retained original in Stress Tests to include its full batch. A live preview or pending save is excluded." }),
-					/* @__PURE__ */ (0, W.jsxs)("label", {
+					] }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "Open a retained original in Stress Tests to include its full batch. A live preview or pending save is excluded." }),
+					/* @__PURE__ */ (0, U.jsxs)("label", {
 						className: "reviewInclude",
-						children: [/* @__PURE__ */ (0, W.jsx)("input", {
+						children: [/* @__PURE__ */ (0, U.jsx)("input", {
 							type: "checkbox",
 							checked: d,
 							disabled: !e || !p || i.loading,
@@ -10575,48 +10575,48 @@ function bi({ view: e, selection: t, headRevision: n, sourceScope: r, original: 
 					})
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("section", {
+			/* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel reviewExport",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("h2", { children: "JSON review package" }),
-					/* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("h2", { children: "JSON review package" }),
+					/* @__PURE__ */ (0, U.jsx)("p", {
 						className: "provenanceNotice",
 						children: "Contains parsed originals and recorded hashes with explicit unverified provenance; does not claim original server bytes or independently verified hashes."
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Includes the full selected original: financial inputs, guarantor details, assessment, policy, trace, reasons, its revision event and recording metadata",
 						d ? ", plus the full matching retained comparison batch" : "",
 						". This is one revision event, not the entire case history."
 					] }),
-					/* @__PURE__ */ (0, W.jsx)("p", { children: "Browser-parsed JSON representation; formatting and numeric spellings can differ from server bytes. Recorded hashes are carried unchanged, not verified by this export or calculated over the downloaded file." }),
-					a && /* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("p", { children: "Browser-parsed JSON representation; formatting and numeric spellings can differ from server bytes. Recorded hashes are carried unchanged, not verified by this export or calculated over the downloaded file." }),
+					a && /* @__PURE__ */ (0, U.jsx)("p", {
 						className: "warning",
 						children: "Pending work is excluded. Downloading this original leaves recovery tracking unchanged."
 					}),
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						disabled: !e || f.busy || d && !p,
 						onClick: () => {
 							e && f.prepare(e, d ? s : null);
 						},
 						children: "Download JSON review package"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("p", {
 						role: "status",
-						children: f.busy && h ? `Preparing ${pi(h, d ? g ?? null : null)}…` : f.file ? `Prepared ${f.file.filename} (${f.file.size.toLocaleString("en-US")} bytes). The browser handles saving.` : "Maximum complete file: 16 MiB. No evidence is truncated."
+						children: f.busy && h ? `Preparing ${mi(h, d ? g ?? null : null)}…` : f.file ? `Prepared ${f.file.filename} (${f.file.size.toLocaleString("en-US")} bytes). The browser handles saving.` : "Maximum complete file: 16 MiB. No evidence is truncated."
 					}),
-					f.error && /* @__PURE__ */ (0, W.jsx)("p", {
+					f.error && /* @__PURE__ */ (0, U.jsx)("p", {
 						role: "alert",
 						children: f.error
 					}),
-					f.file && /* @__PURE__ */ (0, W.jsx)("a", {
+					f.file && /* @__PURE__ */ (0, U.jsx)("a", {
 						className: "reviewDownload",
 						href: f.file.url,
 						download: f.file.filename,
 						children: "Download prepared JSON"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("p", {
 						className: "fine",
-						children: fi
+						children: pi
 					})
 				]
 			})
@@ -10624,90 +10624,90 @@ function bi({ view: e, selection: t, headRevision: n, sourceScope: r, original: 
 	});
 }
 // src/analysisContracts.ts
-var xi = class extends Error {
+var Si = class extends Error {
 	kind;
 	constructor(e, t) {
 		super(e), this.kind = t, this.name = "AnalysisContractError";
 	}
-}, Si = [
+}, Ci = [
 	"dscr",
 	"fccr",
 	"global_dscr"
-], Ci = [
+], wi = [
 	...Qe,
 	"gross_profit",
 	"ordinary_business_income",
 	"ebitda"
-], wi = [
+], Ti = [
 	"approve",
 	"review",
 	"decline"
-], Ti = [
+], Ei = [
 	"meets_approval",
 	"review_band",
 	"below_decline_floor",
 	"not_applicable"
-], Ei = [
+], Di = [
 	"coverage_meets_approval",
 	"uca_meets_approval",
 	"k1_history_stable",
 	"coverage_below_decline_floor"
-], Di = [
+], Oi = [
 	"approve_all_conditions",
 	"review_k1_history",
 	"decline_coverage_floor",
 	"review_otherwise"
-], Oi = [
+], ki = [
 	"dscr",
 	"fccr",
 	"global_dscr",
 	"k1_history",
 	"uca_positive"
 ];
-function ki(e, t) {
-	throw new xi(`Analysis outside the display contract: ${t}`, e);
+function Ai(e, t) {
+	throw new Si(`Analysis outside the display contract: ${t}`, e);
+}
+function G(e, t) {
+	e || Ai("invalid", t);
 }
 function K(e, t) {
-	e || ki("invalid", t);
+	return G(typeof e == "object" && !!e && !Array.isArray(e), t), e;
 }
-function q(e, t) {
-	return K(typeof e == "object" && !!e && !Array.isArray(e), t), e;
+function ji(e, t, n = 0, r = Infinity) {
+	return G(Array.isArray(e) && e.length >= n && e.length <= r, t), e;
 }
-function Ai(e, t, n = 0, r = Infinity) {
-	return K(Array.isArray(e) && e.length >= n && e.length <= r, t), e;
-}
-var ji = (e) => typeof e == "string" && e.trim().length > 0, Mi = (e) => typeof e == "string" && j(e), Ni = (e) => e === null || Mi(e), Pi = (e) => typeof e == "string" && /^\d{4}-\d{2}-\d{2}$/.test(e), Fi = (e, t) => e.period_start === t.period_start && e.period_end === t.period_end;
+var q = (e) => typeof e == "string" && e.trim().length > 0, Mi = (e) => typeof e == "string" && j(e), Ni = (e) => e === null || Mi(e), Pi = (e) => typeof e == "string" && /^\d{4}-\d{2}-\d{2}$/.test(e), Fi = (e, t) => e.period_start === t.period_start && e.period_end === t.period_end;
 function Ii(e, t) {
-	let n = q(e, "analysis");
-	(n.schema_version !== "commercial-analysis-v1" || n.definition_version !== "commercial-analysis-definition-v1" || n.serialization_version !== "analysis-json-v1") && ki("unsupported", "versions");
-	let r = q(n.assessment_fingerprint, "fingerprint");
-	r.value !== t.fingerprint && ki("mismatch", "assessment fingerprint");
-	let i = Ai(n.periods, "periods", 1, 10);
-	(i.length !== t.years.length || i.some((e, n) => !Fi(q(e, "period"), t.years[n]) || q(e, "period").period_index !== n) || !Fi(q(n.selected_period, "selected period"), t.years[t.years.length - 1])) && ki("mismatch", "periods"), K(r.algorithm === "sha256" && typeof r.content == "string" && ji(n.calculation_version) && n.persisted === !1 && ji(n.policy_version) && Pi(n.assumptions_as_of) && ji(n.disclaimer), "identity"), K(n.source === "stateless_request" ? n.baseline === null : n.source === "saved_revision" && Li(n.baseline), "source and baseline");
+	let n = K(e, "analysis");
+	(n.schema_version !== "commercial-analysis-v1" || n.definition_version !== "commercial-analysis-definition-v1" || n.serialization_version !== "analysis-json-v1") && Ai("unsupported", "versions");
+	let r = K(n.assessment_fingerprint, "fingerprint");
+	r.value !== t.fingerprint && Ai("mismatch", "assessment fingerprint");
+	let i = ji(n.periods, "periods", 1, 10);
+	(i.length !== t.years.length || i.some((e, n) => !Fi(K(e, "period"), t.years[n]) || K(e, "period").period_index !== n) || !Fi(K(n.selected_period, "selected period"), t.years[t.years.length - 1])) && Ai("mismatch", "periods"), G(r.algorithm === "sha256" && typeof r.content == "string" && q(n.calculation_version) && n.persisted === !1 && q(n.policy_version) && Pi(n.assumptions_as_of) && q(n.disclaimer), "identity"), G(n.source === "stateless_request" ? n.baseline === null : n.source === "saved_revision" && Li(n.baseline), "source and baseline");
 	let a = [], o = (e, t, n = !0) => {
 		let r;
 		try {
 			r = dt(e);
 		} catch {
-			ki("invalid", t);
+			Ai("invalid", t);
 		}
-		return K(r.fact_id === t, t), n && a.push(r), r;
+		return G(r.fact_id === t, t), n && a.push(r), r;
 	}, s = (e, t) => {
-		let n = q(e, t);
-		K(Object.keys(n).length === Ci.length, t);
-		for (let e of Ci) o(n[e], `${t}.${e}`);
+		let n = K(e, t);
+		G(Object.keys(n).length === wi.length, t);
+		for (let e of wi) o(n[e], `${t}.${e}`);
 	};
 	i.forEach((e, n) => {
-		let r = q(e, "period");
-		if (s(r.common_size, `analysis.periods.${n}.common_size`), r.prior_period === null) K(r.prior_period_adjacent === null && r.change_vs_prior === null, "first period");
+		let r = K(e, "period");
+		if (s(r.common_size, `analysis.periods.${n}.common_size`), r.prior_period === null) G(r.prior_period_adjacent === null && r.change_vs_prior === null, "first period");
 		else {
-			let e = q(r.prior_period, "prior period");
-			K(n > 0 && Fi(e, t.years[n - 1]) && typeof r.prior_period_adjacent == "boolean", "prior period"), s(r.change_vs_prior, `analysis.periods.${n}.change_vs_prior`);
+			let e = K(r.prior_period, "prior period");
+			G(n > 0 && Fi(e, t.years[n - 1]) && typeof r.prior_period_adjacent == "boolean", "prior period"), s(r.change_vs_prior, `analysis.periods.${n}.change_vs_prior`);
 		}
 	});
-	let c = q(n.debt_capacity, "debt capacity"), l = Ai(c.constraints, "constraints", 3, 3).map((e) => q(e, "constraint"));
-	K(c.basis === "latest_period_current_pro_forma" && Si.every((e) => l.filter((t) => t.constraint === e).length === 1) && Si.includes(c.binding_constraint) && typeof c.has_capacity == "boolean", "debt capacity");
-	for (let e of l) K(Mi(e.approval_minimum), "approval minimum"), o(e.max_annual_payment, `analysis.debt_capacity.${String(e.constraint)}.max_annual_payment`);
+	let c = K(n.debt_capacity, "debt capacity"), l = ji(c.constraints, "constraints", 3, 3).map((e) => K(e, "constraint"));
+	G(c.basis === "latest_period_current_pro_forma" && Ci.every((e) => l.filter((t) => t.constraint === e).length === 1) && Ci.includes(c.binding_constraint) && typeof c.has_capacity == "boolean", "debt capacity");
+	for (let e of l) G(Mi(e.approval_minimum), "approval minimum"), o(e.max_annual_payment, `analysis.debt_capacity.${String(e.constraint)}.max_annual_payment`);
 	for (let e of [
 		"max_annual_payment",
 		"max_monthly_payment",
@@ -10715,60 +10715,60 @@ function Ii(e, t) {
 		"requested_principal",
 		"principal_headroom"
 	]) o(c[e], `analysis.debt_capacity.${e}`);
-	let u = q(n.breakevens, "breakevens");
+	let u = K(n.breakevens, "breakevens");
 	o(u.ownership_weight, "analysis.breakevens.ownership_weight");
-	let d = Ai(u.rows, "breakeven rows", 6, 6).map((e) => q(e, "breakeven"));
-	for (let e of Si) for (let t of ["approval_minimum", "decline_floor"]) K(d.filter((n) => n.constraint === e && n.threshold_kind === t).length === 1, "breakeven rows");
+	let d = ji(u.rows, "breakeven rows", 6, 6).map((e) => K(e, "breakeven"));
+	for (let e of Ci) for (let t of ["approval_minimum", "decline_floor"]) G(d.filter((n) => n.constraint === e && n.threshold_kind === t).length === 1, "breakeven rows");
 	for (let e of d) {
-		K(Mi(e.threshold), "breakeven threshold");
+		G(Mi(e.threshold), "breakeven threshold");
 		for (let t of [
 			"ebitda_breakeven",
 			"ebitda_cushion",
 			"revenue_cushion"
 		]) o(e[t], `analysis.breakevens.${String(e.constraint)}.${String(e.threshold_kind)}.${t}`);
 	}
-	for (let e of ["binding_approval_constraint", "binding_decline_constraint"]) K(u[e] === null || Si.includes(u[e]), e);
-	Ri(q(n.amortization, "amortization")), zi(q(n.sensitivity, "sensitivity"), o);
-	let f = q(n.explanation, "explanation");
-	K(wi.includes(f.outcome) && Di.includes(f.matched_rule) && ji(f.headline) && Ai(f.rules, "rules", 1).every(ji), "explanation");
-	let p = Ai(f.conditions, "conditions", 4, 4).map((e) => q(e, "condition"));
-	K(Ei.every((e) => p.filter((t) => t.condition_id === e).length === 1) && p.every((e) => ji(e.description) && typeof e.satisfied == "boolean"), "conditions");
-	let m = Ai(f.factors, "factors", 5, 5).map((e) => q(e, "factor"));
-	K(Oi.every((e) => m.filter((t) => t.name === e).length === 1), "factor names");
-	for (let e of m) K(ji(e.label) && Ti.includes(e.status) && ji(e.summary) && (e.comparison_operator === null || typeof e.comparison_operator == "string") && (typeof e.value == "string" || typeof e.value == "boolean") && [e.raw_value, e.threshold].every((e) => e === null || typeof e == "string" || typeof e == "boolean") && Ni(e.decline_threshold) && Mi(e.weight) && Mi(e.score_contribution) && typeof e.blocks_approval == "boolean" && typeof e.triggers_decline == "boolean", "factor"), o(e.approval_cushion, `analysis.explanation.${String(e.name)}.approval_cushion`), o(e.decline_cushion, `analysis.explanation.${String(e.name)}.decline_cushion`);
-	let h = q(f.score, "score");
-	K([
+	for (let e of ["binding_approval_constraint", "binding_decline_constraint"]) G(u[e] === null || Ci.includes(u[e]), e);
+	Ri(K(n.amortization, "amortization")), zi(K(n.sensitivity, "sensitivity"), o);
+	let f = K(n.explanation, "explanation");
+	G(Ti.includes(f.outcome) && Oi.includes(f.matched_rule) && q(f.headline) && ji(f.rules, "rules", 1).every(q), "explanation");
+	let p = ji(f.conditions, "conditions", 4, 4).map((e) => K(e, "condition"));
+	G(Di.every((e) => p.filter((t) => t.condition_id === e).length === 1) && p.every((e) => q(e.description) && typeof e.satisfied == "boolean"), "conditions");
+	let m = ji(f.factors, "factors", 5, 5).map((e) => K(e, "factor"));
+	G(ki.every((e) => m.filter((t) => t.name === e).length === 1), "factor names");
+	for (let e of m) G(q(e.label) && Ei.includes(e.status) && q(e.summary) && (e.comparison_operator === null || typeof e.comparison_operator == "string") && (typeof e.value == "string" || typeof e.value == "boolean") && [e.raw_value, e.threshold].every((e) => e === null || typeof e == "string" || typeof e == "boolean") && Ni(e.decline_threshold) && Mi(e.weight) && Mi(e.score_contribution) && typeof e.blocks_approval == "boolean" && typeof e.triggers_decline == "boolean", "factor"), o(e.approval_cushion, `analysis.explanation.${String(e.name)}.approval_cushion`), o(e.decline_cushion, `analysis.explanation.${String(e.name)}.decline_cushion`);
+	let h = K(f.score, "score");
+	G([
 		"passed_weight",
 		"total_weight",
 		"raw_score",
 		"reported_score"
-	].every((e) => Mi(h[e])) && ji(h.note), "score");
+	].every((e) => Mi(h[e])) && q(h.note), "score");
 	let g = /* @__PURE__ */ new Map();
-	for (let e of Ai(n.calculation_trace, "trace", 1)) {
-		let t = q(e, "trace row"), n;
+	for (let e of ji(n.calculation_trace, "trace", 1)) {
+		let t = K(e, "trace row"), n;
 		try {
 			n = dt(t);
 		} catch {
-			ki("invalid", "trace row");
+			Ai("invalid", "trace row");
 		}
-		K(n.fact_id.startsWith("analysis.") && !g.has(n.fact_id) && ji(t.definition_id) && ji(t.expression) && Ai(t.operands, "operands").every((e) => {
-			let t = q(e, "operand");
+		G(n.fact_id.startsWith("analysis.") && !g.has(n.fact_id) && q(t.definition_id) && q(t.expression) && ji(t.operands, "operands").every((e) => {
+			let t = K(e, "operand");
 			return [
 				"input",
 				"fact",
 				"policy"
-			].includes(t.reference_type) && ji(t.reference) && ji(t.unit);
+			].includes(t.reference_type) && q(t.reference) && q(t.unit);
 		}), "trace row"), g.set(n.fact_id, n);
 	}
 	for (let e of a) {
 		let t = g.get(e.fact_id);
-		e.status === "available" && K(t, `trace for ${e.fact_id}`), t && K(t.raw_value === e.raw_value && t.reported_value === e.reported_value && t.status === e.status && t.unit === e.unit, `trace for ${e.fact_id}`);
+		e.status === "available" && G(t, `trace for ${e.fact_id}`), t && G(t.raw_value === e.raw_value && t.reported_value === e.reported_value && t.status === e.status && t.unit === e.unit, `trace for ${e.fact_id}`);
 	}
 	return n;
 }
 function Li(e) {
-	let t = q(e, "baseline");
-	return ji(t.case_id) && Number.isSafeInteger(t.revision) && t.revision >= 1 && ji(t.run_id) && ji(t.input_hash) && ji(t.payload_hash);
+	let t = K(e, "baseline");
+	return q(t.case_id) && Number.isSafeInteger(t.revision) && t.revision >= 1 && q(t.run_id) && q(t.input_hash) && q(t.payload_hash);
 }
 function Ri(e) {
 	let t = [
@@ -10780,15 +10780,15 @@ function Ri(e) {
 		"total_payments",
 		"total_interest",
 		"total_principal"
-	], n = Ai(e.annual_rows, "annual rows", 0, 1e3), r = Ai(e.monthly_rows, "monthly rows", 0, 360);
-	if (K(typeof e.monthly_rows_truncated == "boolean", "schedule truncation"), e.status === "not_applicable") {
-		K(ji(e.explanation) && t.every((t) => e[t] === null) && e.payment_count === null && e.early_payoff === null && e.reconciliation === null && !n.length && !r.length, "unavailable schedule");
+	], n = ji(e.annual_rows, "annual rows", 0, 1e3), r = ji(e.monthly_rows, "monthly rows", 0, 360);
+	if (G(typeof e.monthly_rows_truncated == "boolean", "schedule truncation"), e.status === "not_applicable") {
+		G(q(e.explanation) && t.every((t) => e[t] === null) && e.payment_count === null && e.early_payoff === null && e.reconciliation === null && !n.length && !r.length, "unavailable schedule");
 		return;
 	}
-	K(e.status === "available" && t.every((t) => Mi(e[t])) && Number.isSafeInteger(e.payment_count) && typeof e.early_payoff == "boolean" && n.length > 0 && r.length > 0, "available schedule");
+	G(e.status === "available" && t.every((t) => Mi(e[t])) && Number.isSafeInteger(e.payment_count) && typeof e.early_payoff == "boolean" && n.length > 0 && r.length > 0, "available schedule");
 	for (let e of n) {
-		let t = q(e, "annual row");
-		K(Number.isSafeInteger(t.loan_year) && Number.isSafeInteger(t.months) && [
+		let t = K(e, "annual row");
+		G(Number.isSafeInteger(t.loan_year) && Number.isSafeInteger(t.months) && [
 			"payments",
 			"interest",
 			"principal",
@@ -10796,29 +10796,29 @@ function Ri(e) {
 		].every((e) => Mi(t[e])), "annual row");
 	}
 	for (let e of r) {
-		let t = q(e, "monthly row");
-		K(Number.isSafeInteger(t.month) && [
+		let t = K(e, "monthly row");
+		G(Number.isSafeInteger(t.month) && [
 			"payment",
 			"interest",
 			"principal",
 			"ending_balance"
 		].every((e) => Mi(t[e])), "monthly row");
 	}
-	let i = q(e.reconciliation, "reconciliation");
-	K([
+	let i = K(e.reconciliation, "reconciliation");
+	G([
 		"annuity_monthly_payment",
 		"scheduled_monthly_payment",
 		"monthly_rounding_difference",
 		"coverage_annual_payment",
 		"first_loan_year_payments",
 		"first_loan_year_difference"
-	].every((e) => Mi(i[e])) && ji(i.explanation), "reconciliation");
+	].every((e) => Mi(i[e])) && q(i.explanation), "reconciliation");
 }
 function zi(e, t) {
-	let n = Ai(e.revenue_changes, "revenue changes"), r = Ai(e.rate_changes_bps, "rate changes"), i = Ai(e.cells, "cells", 0, 20);
-	K((e.status === "available" || e.status === "not_applicable") && e.scenario_definition_version === "commercial-scenario-definition-v2" && e.coverage_basis === "stressed_latest_period_current_pro_forma" && Ai(e.definition_ids, "definition ids").every(ji) && Ai(e.held_fixed_assumptions, "held fixed").every(ji) && n.every(Mi) && r.every(Mi) && (e.status === "available" ? e.explanation === null && i.length === n.length * r.length : ji(e.explanation) && !i.length), "sensitivity grid"), i.forEach((e, i) => {
-		let a = q(e, "cell"), o = Math.floor(i / r.length), s = i % r.length;
-		K(a.revenue_change === n[o] && a.proposed_rate_change_bps === r[s] && (a.status === "available" ? a.explanation === null && Mi(a.resulting_annual_rate) && wi.includes(a.outcome) : a.status === "not_applicable" && ji(a.explanation) && a.outcome === null && Ni(a.resulting_annual_rate)), "sensitivity cell");
+	let n = ji(e.revenue_changes, "revenue changes"), r = ji(e.rate_changes_bps, "rate changes"), i = ji(e.cells, "cells", 0, 20);
+	G((e.status === "available" || e.status === "not_applicable") && e.scenario_definition_version === "commercial-scenario-definition-v2" && e.coverage_basis === "stressed_latest_period_current_pro_forma" && ji(e.definition_ids, "definition ids").every(q) && ji(e.held_fixed_assumptions, "held fixed").every(q) && n.every(Mi) && r.every(Mi) && (e.status === "available" ? e.explanation === null && i.length === n.length * r.length : q(e.explanation) && !i.length), "sensitivity grid"), i.forEach((e, i) => {
+		let a = K(e, "cell"), o = Math.floor(i / r.length), s = i % r.length;
+		G(a.revenue_change === n[o] && a.proposed_rate_change_bps === r[s] && (a.status === "available" ? a.explanation === null && Mi(a.resulting_annual_rate) && Ti.includes(a.outcome) : a.status === "not_applicable" && q(a.explanation) && a.outcome === null && Ni(a.resulting_annual_rate)), "sensitivity cell");
 		for (let e of [
 			"dscr",
 			"fccr",
@@ -10866,7 +10866,7 @@ async function Vi(e, t, n = fetch) {
 	}
 	let o;
 	try {
-		o = await Dr(a, "Analysis");
+		o = await Or(a, "Analysis");
 	} catch (e) {
 		throw t.aborted ? e : a.status === 404 ? new J(Bi.unavailable, "unavailable", 404) : new J(`The analysis response could not be read (${a.status}).`, "failed", a.status);
 	}
@@ -10877,7 +10877,7 @@ async function Vi(e, t, n = fetch) {
 	try {
 		return Ii(o, e);
 	} catch (e) {
-		throw e instanceof xi ? new J(Bi[e.kind], e.kind === "invalid" ? "failed" : e.kind, a.status) : e;
+		throw e instanceof Si ? new J(Bi[e.kind], e.kind === "invalid" ? "failed" : e.kind, a.status) : e;
 	}
 }
 // src/requestPriority.ts
@@ -10964,14 +10964,14 @@ function Yi({ label: e, tabs: t, selected: n, onSelect: r, children: i }) {
 		let r = t.findIndex((e) => e.key === n), i = e.key === "ArrowRight" ? (r + 1) % t.length : e.key === "ArrowLeft" ? (r - 1 + t.length) % t.length : e.key === "Home" ? 0 : e.key === "End" ? t.length - 1 : null;
 		i !== null && (e.preventDefault(), l(t[i].key));
 	}
-	return /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("div", {
 		className: "workspaceTabs",
 		role: "tablist",
 		"aria-label": e,
 		onKeyDown: u,
 		children: t.map((e) => {
 			let t = e.key === n;
-			return /* @__PURE__ */ (0, W.jsx)("button", {
+			return /* @__PURE__ */ (0, U.jsx)("button", {
 				ref: (t) => {
 					t ? o.current.set(e.key, t) : o.current.delete(e.key);
 				},
@@ -10985,7 +10985,7 @@ function Yi({ label: e, tabs: t, selected: n, onSelect: r, children: i }) {
 				children: e.label
 			}, e.key);
 		})
-	}), /* @__PURE__ */ (0, W.jsx)("div", {
+	}), /* @__PURE__ */ (0, U.jsx)("div", {
 		className: "tabPanel",
 		role: "tabpanel",
 		id: c,
@@ -11003,7 +11003,7 @@ function Xi({ label: e, panelLabel: t, className: n, children: r }) {
 			o.current && !e.composedPath().includes(o.current) && a(!1);
 		}, t = o.current?.ownerDocument;
 		return t?.addEventListener("pointerdown", e), () => t?.removeEventListener("pointerdown", e);
-	}, [i]), /* @__PURE__ */ (0, W.jsxs)("div", {
+	}, [i]), /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "disclosureMenu",
 		ref: o,
 		onKeyDown: (e) => {
@@ -11013,26 +11013,26 @@ function Xi({ label: e, panelLabel: t, className: n, children: r }) {
 			let t = e.relatedTarget;
 			i && t instanceof Node && !e.currentTarget.contains(t) && a(!1);
 		},
-		children: [/* @__PURE__ */ (0, W.jsxs)("button", {
+		children: [/* @__PURE__ */ (0, U.jsxs)("button", {
 			ref: s,
 			type: "button",
 			className: "menuToggle",
 			"aria-expanded": i,
 			"aria-controls": i ? c : void 0,
 			onClick: () => a((e) => !e),
-			children: [e, /* @__PURE__ */ (0, W.jsx)("svg", {
+			children: [e, /* @__PURE__ */ (0, U.jsx)("svg", {
 				viewBox: "0 0 12 12",
 				width: "12",
 				height: "12",
 				"aria-hidden": "true",
-				children: /* @__PURE__ */ (0, W.jsx)("path", {
+				children: /* @__PURE__ */ (0, U.jsx)("path", {
 					d: "M2.5 4.5 6 8l3.5-3.5",
 					fill: "none",
 					stroke: "currentColor",
 					strokeWidth: "1.5"
 				})
 			})]
-		}), i && /* @__PURE__ */ (0, W.jsx)("div", {
+		}), i && /* @__PURE__ */ (0, U.jsx)("div", {
 			className: n,
 			id: c,
 			role: "group",
@@ -11064,12 +11064,12 @@ function ta({ children: e }) {
 	function r(e) {
 		$i(e), n(e);
 	}
-	return /* @__PURE__ */ (0, W.jsx)(ea.Provider, {
+	return /* @__PURE__ */ (0, U.jsx)(ea.Provider, {
 		value: {
 			theme: t,
 			setTheme: r
 		},
-		children: /* @__PURE__ */ (0, W.jsx)("div", {
+		children: /* @__PURE__ */ (0, U.jsx)("div", {
 			className: "themeRoot",
 			"data-theme": t,
 			children: e
@@ -11083,27 +11083,27 @@ function na() {
 }
 // src/views/WorkspaceHeader.tsx
 function ra({ children: e }) {
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "workspaceBrand",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "wordmark",
-				children: [/* @__PURE__ */ (0, W.jsx)("svg", {
+				children: [/* @__PURE__ */ (0, U.jsx)("svg", {
 					viewBox: "0 0 24 24",
 					width: "24",
 					height: "24",
 					"aria-hidden": "true",
-					children: /* @__PURE__ */ (0, W.jsx)("path", {
+					children: /* @__PURE__ */ (0, U.jsx)("path", {
 						d: "M2 5h13v4H2zm7 5h13v4H9zM2 15h13v4H2z",
 						fill: "currentColor"
 					})
-				}), /* @__PURE__ */ (0, W.jsx)("span", { children: "Spreadline" })]
+				}), /* @__PURE__ */ (0, U.jsx)("span", { children: "Spreadline" })]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("span", {
+			/* @__PURE__ */ (0, U.jsxs)("span", {
 				className: "workspaceType",
-				children: ["Commercial underwriting ", /* @__PURE__ */ (0, W.jsx)("span", { children: "USD" })]
+				children: ["Commercial underwriting ", /* @__PURE__ */ (0, U.jsx)("span", { children: "USD" })]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("div", {
 				className: "brandActions",
 				children: e
 			})
@@ -11111,13 +11111,13 @@ function ra({ children: e }) {
 	});
 }
 function ia({ showCases: e, canSave: t, onToggleCases: n, onSave: r }) {
-	return /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)("button", {
+	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("button", {
 		type: "button",
 		"data-focus-fallback": !0,
 		"aria-expanded": e,
 		onClick: n,
 		children: "Open case"
-	}), /* @__PURE__ */ (0, W.jsx)("button", {
+	}), /* @__PURE__ */ (0, U.jsx)("button", {
 		type: "button",
 		className: "primary",
 		disabled: !t,
@@ -11127,14 +11127,14 @@ function ia({ showCases: e, canSave: t, onToggleCases: n, onSave: r }) {
 }
 function aa({ onEditDraft: e, onExample: t, onImport: n, onDisconnect: r }) {
 	let { theme: i, setTheme: a } = na();
-	return /* @__PURE__ */ (0, W.jsx)(Xi, {
+	return /* @__PURE__ */ (0, U.jsx)(Xi, {
 		label: "More",
 		panelLabel: "More actions",
 		className: "moreMenu",
-		children: (o) => /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-			e && /* @__PURE__ */ (0, W.jsx)("div", {
+		children: (o) => /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+			e && /* @__PURE__ */ (0, U.jsx)("div", {
 				className: "menuGroup",
-				children: /* @__PURE__ */ (0, W.jsx)("button", {
+				children: /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					onClick: () => {
 						o(), e();
@@ -11142,24 +11142,24 @@ function aa({ onEditDraft: e, onExample: t, onImport: n, onDisconnect: r }) {
 					children: "Edit complete draft"
 				})
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "menuGroup",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: () => {
 							o(), t("dated");
 						},
 						children: "Load example case"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: () => {
 							o(), t("legacy");
 						},
 						children: "Load legacy example case"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: () => {
 							o(), n();
@@ -11168,9 +11168,9 @@ function aa({ onEditDraft: e, onExample: t, onImport: n, onDisconnect: r }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("div", {
 				className: "menuGroup",
-				children: /* @__PURE__ */ (0, W.jsx)("button", {
+				children: /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					className: "themeToggle",
 					"aria-pressed": i === "dark",
@@ -11178,9 +11178,9 @@ function aa({ onEditDraft: e, onExample: t, onImport: n, onDisconnect: r }) {
 					children: "Dark theme"
 				})
 			}),
-			r && /* @__PURE__ */ (0, W.jsx)("div", {
+			r && /* @__PURE__ */ (0, U.jsx)("div", {
 				className: "menuGroup",
-				children: /* @__PURE__ */ (0, W.jsx)("button", {
+				children: /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					onClick: () => {
 						o(), r();
@@ -11192,32 +11192,32 @@ function aa({ onEditDraft: e, onExample: t, onImport: n, onDisconnect: r }) {
 	});
 }
 function oa({ view: e, filename: t, legacy: n }) {
-	return /* @__PURE__ */ (0, W.jsxs)("header", {
+	return /* @__PURE__ */ (0, U.jsxs)("header", {
 		className: "caseHeader",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h1", { children: e.title }),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsx)("h1", { children: e.title }),
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "caseMeta",
 				children: [
-					e.modeLabel ? /* @__PURE__ */ (0, W.jsx)("span", {
+					e.modeLabel ? /* @__PURE__ */ (0, U.jsx)("span", {
 						className: "modeBadge",
 						children: e.modeLabel
-					}) : /* @__PURE__ */ (0, W.jsx)("span", {
+					}) : /* @__PURE__ */ (0, U.jsx)("span", {
 						className: "pendingNote",
 						children: e.subtitle
 					}),
-					e.statusChip && /* @__PURE__ */ (0, W.jsx)("span", {
+					e.statusChip && /* @__PURE__ */ (0, U.jsx)("span", {
 						className: "statusChip",
 						"data-saved": e.statusChip.startsWith("Draft") ? "false" : "true",
 						children: e.statusChip
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("span", {
+					/* @__PURE__ */ (0, U.jsxs)("span", {
 						className: "caseSource",
 						children: [t, " · synthetic only"]
 					})
 				]
 			}),
-			n && /* @__PURE__ */ (0, W.jsx)("p", {
+			n && /* @__PURE__ */ (0, U.jsx)("p", {
 				className: "legacyNote",
 				children: "Saving requires a separately imported dated assessment with explicit dates and units."
 			})
@@ -11252,21 +11252,21 @@ function sa({ showCases: e, onExample: t, onToggleCases: n, onImport: r, onExcel
 			onClick: r
 		}
 	];
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "startScreen",
 		"aria-labelledby": `${a}title`,
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h1", {
+			/* @__PURE__ */ (0, U.jsx)("h1", {
 				id: `${a}title`,
 				children: "Start a credit analysis"
 			}),
-			/* @__PURE__ */ (0, W.jsx)("p", {
+			/* @__PURE__ */ (0, U.jsx)("p", {
 				className: "startLead",
 				children: "Spread the borrower's statements, check coverage against the illustrative policy, and size the loan. Use synthetic data only."
 			}),
-			/* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("div", {
 				className: "startOptions",
-				children: o.map((t) => /* @__PURE__ */ (0, W.jsxs)("button", {
+				children: o.map((t) => /* @__PURE__ */ (0, U.jsxs)("button", {
 					type: "button",
 					className: t.key === "example" ? "startOption primary" : "startOption",
 					"aria-label": t.title,
@@ -11274,10 +11274,10 @@ function sa({ showCases: e, onExample: t, onToggleCases: n, onImport: r, onExcel
 					"data-focus-fallback": t.key === "open" ? "" : void 0,
 					"aria-expanded": t.key === "open" ? e : void 0,
 					onClick: t.onClick,
-					children: [/* @__PURE__ */ (0, W.jsx)("span", {
+					children: [/* @__PURE__ */ (0, U.jsx)("span", {
 						className: "startOptionTitle",
 						children: t.title
-					}), /* @__PURE__ */ (0, W.jsx)("span", {
+					}), /* @__PURE__ */ (0, U.jsx)("span", {
 						className: "startOptionDetail",
 						id: `${a}${t.key}`,
 						children: t.detail
@@ -11290,14 +11290,14 @@ function sa({ showCases: e, onExample: t, onToggleCases: n, onImport: r, onExcel
 // src/views/PrototypeNotice.tsx
 function ca() {
 	let [e, t] = (0, k.useState)(!1), n = (0, k.useId)();
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "warning environmentWarning",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("span", { children: "Prototype" }),
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsx)("span", { children: "Prototype" }),
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				"Synthetic data only. Not validated for lending decisions.",
 				" ",
-				/* @__PURE__ */ (0, W.jsx)("button", {
+				/* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					className: "linkButton",
 					"aria-expanded": e,
@@ -11306,7 +11306,7 @@ function ca() {
 					children: "Read full notice"
 				})
 			] }),
-			e && /* @__PURE__ */ (0, W.jsx)("p", {
+			e && /* @__PURE__ */ (0, U.jsx)("p", {
 				className: "noticeDetail",
 				id: n,
 				children: "Prototype demonstration only. This output has not been validated for use in an actual lending decision. Use synthetic data only; this is not legal or compliance advice."
@@ -11328,23 +11328,23 @@ function la(e, t) {
 var ua = "The score is the weight share of factors that meet policy. It is illustrative, never changes the outcome, and is not a probability of default.";
 function da({ view: e }) {
 	let { state: t } = Ji();
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "decision",
 		"data-outcome": e.decision?.outcome ?? "unavailable",
 		"aria-label": "Illustrative decision",
 		"aria-live": "polite",
-		children: [/* @__PURE__ */ (0, W.jsxs)("div", {
+		children: [/* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "decisionStatus",
-			children: [/* @__PURE__ */ (0, W.jsx)("span", { children: "Illustrative decision" }), /* @__PURE__ */ (0, W.jsx)("strong", { children: e.decisionWord })]
-		}), /* @__PURE__ */ (0, W.jsxs)("div", {
+			children: [/* @__PURE__ */ (0, U.jsx)("span", { children: "Illustrative decision" }), /* @__PURE__ */ (0, U.jsx)("strong", { children: e.decisionWord })]
+		}), /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "decisionReason",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("p", { children: la(e, t) }),
-				/* @__PURE__ */ (0, W.jsx)("small", {
+				/* @__PURE__ */ (0, U.jsx)("p", { children: la(e, t) }),
+				/* @__PURE__ */ (0, U.jsx)("small", {
 					title: e.decision ? ua : void 0,
 					children: e.decisionNote
 				}),
-				e.previous && /* @__PURE__ */ (0, W.jsxs)("small", {
+				e.previous && /* @__PURE__ */ (0, U.jsxs)("small", {
 					className: "previousResult",
 					children: [
 						"Previous result: ",
@@ -11446,25 +11446,25 @@ function Sa({ assessment: e }) {
 			cushion: s ? c === "fits" ? `Principal headroom ${Ve(s.principal_headroom, "money")}` : `Principal shortfall ${We(s.principal_headroom.raw_value ?? "0")}` : r
 		}
 	];
-	return /* @__PURE__ */ (0, W.jsx)("section", {
+	return /* @__PURE__ */ (0, U.jsx)("section", {
 		className: "kpiTiles",
 		"aria-label": "Assessment overview",
-		children: f.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", {
+		children: f.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "kpiTile",
 			"data-state": e.state,
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("span", {
+				/* @__PURE__ */ (0, U.jsx)("span", {
 					className: "kpiLabel",
 					title: xa[e.label],
 					children: e.label
 				}),
-				/* @__PURE__ */ (0, W.jsx)("strong", { children: e.value }),
-				e.status && /* @__PURE__ */ (0, W.jsx)("span", {
+				/* @__PURE__ */ (0, U.jsx)("strong", { children: e.value }),
+				e.status && /* @__PURE__ */ (0, U.jsx)("span", {
 					className: "kpiStatus",
 					children: e.status
 				}),
-				e.lines.map((e) => /* @__PURE__ */ (0, W.jsx)("small", { children: e }, e)),
-				/* @__PURE__ */ (0, W.jsx)("small", {
+				e.lines.map((e) => /* @__PURE__ */ (0, U.jsx)("small", { children: e }, e)),
+				/* @__PURE__ */ (0, U.jsx)("small", {
 					className: "kpiCushion",
 					children: e.cushion
 				})
@@ -11475,13 +11475,13 @@ function Sa({ assessment: e }) {
 // src/views/WorkspaceStatus.tsx
 function Ca({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i, onImport: a }) {
 	let { draft: o, saved: s } = e, c = t.previousAccepted, l = n && !c && e.action === "evaluate";
-	return /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-		!t.ready && !l && /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+		!t.ready && !l && /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "pending",
 			role: "status",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("strong", { children: t.pendingTitle }),
-				o && e.action === "evaluate" && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsx)("strong", { children: t.pendingTitle }),
+				o && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Submitted draft: ",
 					o.filename,
 					" · ",
@@ -11491,7 +11491,7 @@ function Ca({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i, onIm
 					typeof o.payload.borrower_name == "string" ? o.payload.borrower_name : "Unnamed input",
 					o.edit && ` · ${o.edit.path}: ${o.edit.prior} → ${o.edit.next}`
 				] }),
-				c && /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				c && /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Previous accepted case: ",
 					c.input.borrower_name,
 					" ·",
@@ -11501,25 +11501,25 @@ function Ca({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i, onIm
 				] })
 			]
 		}),
-		e.error && /* @__PURE__ */ (0, W.jsx)("div", {
+		e.error && /* @__PURE__ */ (0, U.jsx)("div", {
 			className: "warning",
 			role: "alert",
 			children: e.error
 		}),
-		e.status === "unavailable" && /* @__PURE__ */ (0, W.jsxs)("div", {
+		e.status === "unavailable" && /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "actions",
 			children: [
-				!o && e.action === "evaluate" && a && /* @__PURE__ */ (0, W.jsx)("button", {
+				!o && e.action === "evaluate" && a && /* @__PURE__ */ (0, U.jsx)("button", {
 					className: "primary",
 					onClick: a,
 					children: "Choose another file"
 				}),
-				o && e.action === "evaluate" && /* @__PURE__ */ (0, W.jsx)("button", {
+				o && e.action === "evaluate" && /* @__PURE__ */ (0, U.jsx)("button", {
 					className: "primary",
 					onClick: () => r(o),
 					children: "Retry submitted draft"
 				}),
-				c && /* @__PURE__ */ (0, W.jsx)("button", {
+				c && /* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: () => r({
 						mode: c.mode,
 						payload: c.input,
@@ -11527,7 +11527,7 @@ function Ca({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i, onIm
 					}),
 					children: "Re-evaluate last accepted case"
 				}),
-				s && /* @__PURE__ */ (0, W.jsx)("button", {
+				s && /* @__PURE__ */ (0, U.jsx)("button", {
 					onClick: () => i({
 						caseId: s.view.snapshot.case_id,
 						revision: s.view.snapshot.revision
@@ -11539,17 +11539,17 @@ function Ca({ state: e, view: t, preparing: n = !1, onSubmit: r, onOpen: i, onIm
 	] });
 }
 function wa({ view: e }) {
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel compatibility",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h2", { children: "Original stored assessment" }),
-			String(e.snapshot.assessment.schema_version).endsWith("-v1") && /* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsx)("h2", { children: "Original stored assessment" }),
+			String(e.snapshot.assessment.schema_version).endsWith("-v1") && /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "modelScope",
 				role: "status",
-				children: [/* @__PURE__ */ (0, W.jsx)("strong", { children: "Archived v1 Record — Read-Only (replay_unavailable)" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "Original JSON facts, hashes, and receipts are preserved and remain available for storage integrity verification. V2 calculation replay and editing are disabled. Browser export carries recorded hashes without independently verifying them." })]
+				children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: "Archived v1 Record — Read-Only (replay_unavailable)" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "Original JSON facts, hashes, and receipts are preserved and remain available for storage integrity verification. V2 calculation replay and editing are disabled. Browser export carries recorded hashes without independently verifying them." })]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: e.compatibility }),
-			/* @__PURE__ */ (0, W.jsx)(er, {
+			/* @__PURE__ */ (0, U.jsx)("p", { children: e.compatibility }),
+			/* @__PURE__ */ (0, U.jsx)(tr, {
 				value: e.snapshot,
 				className: "compatibilityJson",
 				title: "Original stored JSON",
@@ -11559,16 +11559,16 @@ function wa({ view: e }) {
 	});
 }
 function Ta({ assessment: e }) {
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "context",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+			/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 				"Assessment as of: ",
 				e.assumptions_as_of,
 				" · USD · dollars · nominal annual rate"
 			] }),
-			/* @__PURE__ */ (0, W.jsxs)("span", { children: ["Coverage period: ", L(e.selected_period, 0)] }),
-			/* @__PURE__ */ (0, W.jsx)("span", { children: "Current pro forma coverage · fixed rate · fully amortizing · monthly payments" })
+			/* @__PURE__ */ (0, U.jsxs)("span", { children: ["Coverage period: ", L(e.selected_period, 0)] }),
+			/* @__PURE__ */ (0, U.jsx)("span", { children: "Current pro forma coverage · fixed rate · fully amortizing · monthly payments" })
 		]
 	});
 }
@@ -11605,7 +11605,7 @@ var Ea = [
 ];
 // src/views/EditButton.tsx
 function Da({ field: e, canEdit: t, onEdit: n, label: r, children: i }) {
-	return /* @__PURE__ */ (0, W.jsx)("button", {
+	return /* @__PURE__ */ (0, U.jsx)("button", {
 		className: "rowEdit",
 		"aria-label": r,
 		disabled: !t,
@@ -11685,27 +11685,27 @@ function ja({ data: e, onClose: t }) {
 		"global-outside-income-v2",
 		"global-personal-debt-v2"
 	].includes(r.definition_id) ? r.operands.map(() => "+") : void 0) : void 0;
-	return /* @__PURE__ */ (0, W.jsxs)("aside", {
+	return /* @__PURE__ */ (0, U.jsxs)("aside", {
 		className: "panel traceInspector",
 		role: "region",
 		"aria-label": "Calculation inspector",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "panelTitle",
-				children: [/* @__PURE__ */ (0, W.jsx)("h2", {
+				children: [/* @__PURE__ */ (0, U.jsx)("h2", {
 					tabIndex: -1,
 					ref: n,
 					children: e.title
-				}), /* @__PURE__ */ (0, W.jsx)("button", {
+				}), /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					onClick: t,
 					children: "Close inspector"
 				})]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("h3", { children: "Exact methodology" }),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: e.formula ?? (r ? Oa[r.definition_id] ?? r.expression : "Methodology unavailable") }),
-			r && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-				/* @__PURE__ */ (0, W.jsxs)("p", {
+			/* @__PURE__ */ (0, U.jsx)("h3", { children: "Exact methodology" }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: e.formula ?? (r ? Oa[r.definition_id] ?? r.expression : "Methodology unavailable") }),
+			r && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+				/* @__PURE__ */ (0, U.jsxs)("p", {
 					className: "fine",
 					children: [
 						"Definition ",
@@ -11714,25 +11714,25 @@ function ja({ data: e, onClose: t }) {
 						r.fact_id
 					]
 				}),
-				/* @__PURE__ */ (0, W.jsx)("p", {
+				/* @__PURE__ */ (0, U.jsx)("p", {
 					className: "expression",
 					children: r.expression
 				}),
-				/* @__PURE__ */ (0, W.jsx)("h3", { children: "Contextual reported operands" }),
-				/* @__PURE__ */ (0, W.jsx)("ol", {
+				/* @__PURE__ */ (0, U.jsx)("h3", { children: "Contextual reported operands" }),
+				/* @__PURE__ */ (0, U.jsx)("ol", {
 					className: "traceOperands",
 					children: r.operands.map((e, t) => {
 						let n = e.unit.startsWith("USD") && e.raw_value !== null && e.reported_value !== null && N(String(e.raw_value), 2, !1) !== N(String(e.reported_value), 2, !1);
-						return /* @__PURE__ */ (0, W.jsxs)("li", {
+						return /* @__PURE__ */ (0, U.jsxs)("li", {
 							"data-allocated": n,
 							children: [
-								/* @__PURE__ */ (0, W.jsx)("code", { children: e.reference }),
-								/* @__PURE__ */ (0, W.jsxs)("strong", { children: [
+								/* @__PURE__ */ (0, U.jsx)("code", { children: e.reference }),
+								/* @__PURE__ */ (0, U.jsxs)("strong", { children: [
 									i?.[t] ?? "Operand",
 									" ",
 									Aa(e.reported_value ?? e.raw_value, e.unit)
 								] }),
-								/* @__PURE__ */ (0, W.jsxs)("small", { children: [
+								/* @__PURE__ */ (0, U.jsxs)("small", { children: [
 									"Raw ",
 									String(e.raw_value),
 									" ",
@@ -11741,7 +11741,7 @@ function ja({ data: e, onClose: t }) {
 									" ",
 									e.reference_type
 								] }),
-								n && /* @__PURE__ */ (0, W.jsx)("span", {
+								n && /* @__PURE__ */ (0, U.jsx)("span", {
 									className: "allocationBadge",
 									children: "Residual cents allocated by server"
 								})
@@ -11749,7 +11749,7 @@ function ja({ data: e, onClose: t }) {
 						}, t);
 					})
 				}),
-				i && r.operands.every((e) => e.reported_value !== null) && /* @__PURE__ */ (0, W.jsxs)("p", {
+				i && r.operands.every((e) => e.reported_value !== null) && /* @__PURE__ */ (0, U.jsxs)("p", {
 					className: "reconciliationEquation",
 					"aria-label": "Server reported reconciliation",
 					children: [
@@ -11757,29 +11757,29 @@ function ja({ data: e, onClose: t }) {
 						" ",
 						"= ",
 						Aa(r.reported_value, r.unit),
-						/* @__PURE__ */ (0, W.jsx)("small", { children: "Server-recorded signed reconciliation · displayed from recorded operands; no browser sum is recalculated." })
+						/* @__PURE__ */ (0, U.jsx)("small", { children: "Server-recorded signed reconciliation · displayed from recorded operands; no browser sum is recalculated." })
 					]
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Reported result:",
 					" ",
-					/* @__PURE__ */ (0, W.jsx)("strong", { children: Aa(r.reported_value, r.unit) }),
-					/* @__PURE__ */ (0, W.jsx)("br", {}),
+					/* @__PURE__ */ (0, U.jsx)("strong", { children: Aa(r.reported_value, r.unit) }),
+					/* @__PURE__ */ (0, U.jsx)("br", {}),
 					"Raw result: ",
-					/* @__PURE__ */ (0, W.jsx)("code", { children: r.raw_value ?? "Unavailable" })
+					/* @__PURE__ */ (0, U.jsx)("code", { children: r.raw_value ?? "Unavailable" })
 				] }),
-				r.explanation && /* @__PURE__ */ (0, W.jsx)("p", { children: r.explanation }),
-				/* @__PURE__ */ (0, W.jsx)("h3", { children: "ROUND_HALF_EVEN reporting" }),
-				/* @__PURE__ */ (0, W.jsx)("p", { children: "Money uses cents; ratios use four decimal places. Additive residual cents follow the largest signed rounding residual, with input order breaking ties. Raw values and policy decisions are never altered by reporting rounding." })
+				r.explanation && /* @__PURE__ */ (0, U.jsx)("p", { children: r.explanation }),
+				/* @__PURE__ */ (0, U.jsx)("h3", { children: "ROUND_HALF_EVEN reporting" }),
+				/* @__PURE__ */ (0, U.jsx)("p", { children: "Money uses cents; ratios use four decimal places. Additive residual cents follow the largest signed rounding residual, with input order breaking ties. Raw values and policy decisions are never altered by reporting rounding." })
 			] }),
-			e.supplied && /* @__PURE__ */ (0, W.jsx)("dl", {
+			e.supplied && /* @__PURE__ */ (0, U.jsx)("dl", {
 				className: "traceSupplied",
-				children: e.supplied.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: e.label }), /* @__PURE__ */ (0, W.jsx)("dd", { children: e.value })] }, e.label))
+				children: e.supplied.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: e.label }), /* @__PURE__ */ (0, U.jsx)("dd", { children: e.value })] }, e.label))
 			}),
-			e.note && /* @__PURE__ */ (0, W.jsx)("p", { children: e.note }),
-			/* @__PURE__ */ (0, W.jsx)("h3", { children: "Policy factor verdict" }),
-			e.factor ? /* @__PURE__ */ (0, W.jsxs)("p", { children: [
-				/* @__PURE__ */ (0, W.jsx)("strong", {
+			e.note && /* @__PURE__ */ (0, U.jsx)("p", { children: e.note }),
+			/* @__PURE__ */ (0, U.jsx)("h3", { children: "Policy factor verdict" }),
+			e.factor ? /* @__PURE__ */ (0, U.jsxs)("p", { children: [
+				/* @__PURE__ */ (0, U.jsx)("strong", {
 					className: "statusBadge",
 					children: e.factor.passed === null ? "Unavailable" : e.factor.passed ? "Pass" : "Fail"
 				}),
@@ -11791,7 +11791,7 @@ function ja({ data: e, onClose: t }) {
 				".",
 				" ",
 				e.factor.raw_value === null && "A zero coverage denominator cannot pass a policy factor."
-			] }) : /* @__PURE__ */ (0, W.jsx)("p", { children: "No separate policy factor is returned for this fact. Zero coverage denominators are unavailable and cannot pass a policy factor." })
+			] }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No separate policy factor is returned for this fact. Zero coverage denominators are unavailable and cannot pass a policy factor." })
 		]
 	});
 }
@@ -11808,83 +11808,83 @@ function Ma({ ready: e, canEdit: t, input: n, legacy: r, assessment: i, decision
 			let n = m.analysis.periods[t], r = (l === "common" ? n.common_size : n.change_vs_prior)?.[e];
 			return r?.status === "available" && j(r.raw_value) ? Se(r.raw_value, 2) : l === "change" && !n.prior_period ? "No prior period" : "Unavailable";
 		}
-		return r ? tr(r) : `$${N(n, 2)}`;
+		return r ? nr(r) : `$${N(n, 2)}`;
 	}
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "grid",
-		children: [/* @__PURE__ */ (0, W.jsxs)("div", {
+		children: [/* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "panel wide",
 			children: [
-				/* @__PURE__ */ (0, W.jsxs)("div", {
+				/* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "panelTitle",
-					children: [/* @__PURE__ */ (0, W.jsx)("h2", { children: "Annual financial spread" }), /* @__PURE__ */ (0, W.jsx)("span", { children: e ? t ? "Select a supplied input to edit · derived rows are read-only" : "Original accepted inputs · editing unavailable for this selection" : "Previous accepted inputs · editing unavailable" })]
+					children: [/* @__PURE__ */ (0, U.jsx)("h2", { children: "Annual financial spread" }), /* @__PURE__ */ (0, U.jsx)("span", { children: e ? t ? "Select a supplied input to edit · derived rows are read-only" : "Original accepted inputs · editing unavailable for this selection" : "Previous accepted inputs · editing unavailable" })]
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("label", {
+				/* @__PURE__ */ (0, U.jsxs)("label", {
 					className: "spreadMode",
-					children: ["Spread presentation", /* @__PURE__ */ (0, W.jsxs)("select", {
+					children: ["Spread presentation", /* @__PURE__ */ (0, U.jsxs)("select", {
 						"aria-label": "Spread presentation",
 						value: l,
 						onChange: (e) => u(e.target.value),
 						children: [
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "raw",
 								children: "Accepted raw inputs"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "reported",
 								children: "Reported amounts (rounded half to even)"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "common",
 								children: "Common-size (%)"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "change",
 								children: "Year-over-year change"
 							})
 						]
 					})]
 				}),
-				l === "raw" && /* @__PURE__ */ (0, W.jsx)("p", {
+				l === "raw" && /* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
 					children: "Exact accepted source inputs and server raw calculated facts. No digits are discarded."
 				}),
-				(l === "common" || l === "change") && /* @__PURE__ */ (0, W.jsx)("p", {
+				(l === "common" || l === "change") && /* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
 					children: "Server analysis only. Unavailable or non-comparable prior values are shown explicitly; no change is calculated by the browser."
 				}),
-				n ? /* @__PURE__ */ (0, W.jsx)("div", {
+				n ? /* @__PURE__ */ (0, U.jsx)("div", {
 					className: "tableScroll",
-					children: /* @__PURE__ */ (0, W.jsxs)("table", { children: [/* @__PURE__ */ (0, W.jsx)("thead", { children: /* @__PURE__ */ (0, W.jsxs)("tr", { children: [/* @__PURE__ */ (0, W.jsx)("th", { children: "Line item · USD" }), n.years.map((e, t) => /* @__PURE__ */ (0, W.jsx)("th", { children: /* @__PURE__ */ (0, W.jsx)("button", {
+					children: /* @__PURE__ */ (0, U.jsxs)("table", { children: [/* @__PURE__ */ (0, U.jsx)("thead", { children: /* @__PURE__ */ (0, U.jsxs)("tr", { children: [/* @__PURE__ */ (0, U.jsx)("th", { children: "Line item · USD" }), n.years.map((e, t) => /* @__PURE__ */ (0, U.jsx)("th", { children: /* @__PURE__ */ (0, U.jsx)("button", {
 						"aria-pressed": o === t,
 						className: o === t ? "period active" : "period",
 						onClick: () => s(t),
 						children: L(e, t)
-					}) }, t))] }) }), /* @__PURE__ */ (0, W.jsxs)("tbody", { children: [Qe.map((e) => /* @__PURE__ */ (0, W.jsxs)("tr", { children: [/* @__PURE__ */ (0, W.jsx)("th", {
+					}) }, t))] }) }), /* @__PURE__ */ (0, U.jsxs)("tbody", { children: [Qe.map((e) => /* @__PURE__ */ (0, U.jsxs)("tr", { children: [/* @__PURE__ */ (0, U.jsx)("th", {
 						scope: "row",
 						children: pt[e]
-					}), n.years.map((r, a) => /* @__PURE__ */ (0, W.jsx)("td", {
+					}), n.years.map((r, a) => /* @__PURE__ */ (0, U.jsx)("td", {
 						className: "num",
-						children: /* @__PURE__ */ (0, W.jsx)(Da, {
+						children: /* @__PURE__ */ (0, U.jsx)(Da, {
 							field: xt(n, a, e),
 							canEdit: t,
 							onEdit: c,
 							label: `Edit ${pt[e]} for ${L(r, a)}`,
 							children: y(e, a, l === "reported" ? i?.historical_spread[a].reported_financials[e] ?? r[e] : r[e])
 						})
-					}, a))] }, e)), i && vt.map((e) => /* @__PURE__ */ (0, W.jsxs)("tr", {
+					}, a))] }, e)), i && vt.map((e) => /* @__PURE__ */ (0, U.jsxs)("tr", {
 						className: "derived",
 						"data-fact": e,
-						children: [/* @__PURE__ */ (0, W.jsxs)("th", {
+						children: [/* @__PURE__ */ (0, U.jsxs)("th", {
 							scope: "row",
 							children: [
 								pt[e] ?? "K-1 distribution ratio",
 								" ",
-								/* @__PURE__ */ (0, W.jsx)("small", { children: "Calculated" })
+								/* @__PURE__ */ (0, U.jsx)("small", { children: "Calculated" })
 							]
-						}), i.historical_spread.map((t, n) => /* @__PURE__ */ (0, W.jsx)("td", {
+						}), i.historical_spread.map((t, n) => /* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
-							children: /* @__PURE__ */ (0, W.jsx)("button", {
+							children: /* @__PURE__ */ (0, U.jsx)("button", {
 								type: "button",
 								className: "traceLink",
 								"aria-label": `Inspect ${pt[e] ?? "K-1 distribution ratio"} for ${L(t, n)}`,
@@ -11893,23 +11893,23 @@ function Ma({ ready: e, canEdit: t, input: n, legacy: r, assessment: i, decision
 							})
 						}, n))]
 					}, e))] })] })
-				}) : /* @__PURE__ */ (0, W.jsx)("p", { children: "No accepted inputs yet." }),
-				i && /* @__PURE__ */ (0, W.jsx)("p", {
+				}) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No accepted inputs yet." }),
+				i && /* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
 					children: "Report amounts reconcile to income totals in cents. Editing opens the original unrounded input."
 				}),
-				r && /* @__PURE__ */ (0, W.jsx)("p", {
+				r && /* @__PURE__ */ (0, U.jsx)("p", {
 					className: "fine",
 					children: "Legacy inputs have no verified dates or dated calculation trace. Supplied period order is retained."
 				})
 			]
-		}), /* @__PURE__ */ (0, W.jsxs)("div", {
+		}), /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "contextPane",
-			children: [/* @__PURE__ */ (0, W.jsx)(Na, {
+			children: [/* @__PURE__ */ (0, U.jsx)(Na, {
 				decision: a,
 				assessment: i,
 				onInspect: v
-			}), h && /* @__PURE__ */ (0, W.jsx)(ja, {
+			}), h && /* @__PURE__ */ (0, U.jsx)(ja, {
 				data: {
 					title: pt[h.fact_id.split(".").slice(-1)[0] ?? ""] ?? mt[h.fact_id.split(".").slice(-1)[0] ?? ""] ?? h.fact_id,
 					trace: h,
@@ -11923,15 +11923,15 @@ function Ma({ ready: e, canEdit: t, input: n, legacy: r, assessment: i, decision
 	});
 }
 function Na({ decision: e, assessment: t, onInspect: n }) {
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "panel",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h2", { children: "Current coverage" }),
-			e ? e.factors.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsx)("h2", { children: "Current coverage" }),
+			e ? e.factors.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "metric",
 				"data-state": e.passed === null ? "review" : e.passed ? "pass" : "fail",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("span", { children: t ? /* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("span", { children: t ? /* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						className: "traceLink",
 						onClick: (r) => {
@@ -11940,8 +11940,8 @@ function Na({ decision: e, assessment: t, onInspect: n }) {
 						},
 						children: pt[e.name] ?? e.name
 					}) : pt[e.name] ?? e.name }),
-					/* @__PURE__ */ (0, W.jsx)("strong", { children: Ke(e) }),
-					/* @__PURE__ */ (0, W.jsxs)("small", { children: [
+					/* @__PURE__ */ (0, U.jsx)("strong", { children: Ke(e) }),
+					/* @__PURE__ */ (0, U.jsxs)("small", { children: [
 						e.name === "uca_positive" && j(e.threshold) ? `Must exceed ${Le(e.threshold)}` : `Policy: ${e.comparison_operator ?? "comparison unavailable"} ${j(e.threshold) ? we(e.threshold) : String(e.threshold)}`,
 						" ",
 						"·",
@@ -11950,8 +11950,8 @@ function Na({ decision: e, assessment: t, onInspect: n }) {
 						e.decline_threshold !== null && ` · decline below ${we(e.decline_threshold)}`
 					] })
 				]
-			}, e.name)) : /* @__PURE__ */ (0, W.jsx)("p", { children: "No current results. Resolve the selected input and retry." }),
-			t && /* @__PURE__ */ (0, W.jsxs)("details", { children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: "Inspect current calculated facts" }), [
+			}, e.name)) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No current results. Resolve the selected input and retry." }),
+			t && /* @__PURE__ */ (0, U.jsxs)("details", { children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: "Inspect current calculated facts" }), [
 				"proposed_monthly_payment",
 				"proposed_annual_payment",
 				"debt_service",
@@ -11959,7 +11959,7 @@ function Na({ decision: e, assessment: t, onInspect: n }) {
 				"global_cash_flow",
 				"global_debt_service",
 				"uca_cash_flow"
-			].map((e) => /* @__PURE__ */ (0, W.jsx)("button", {
+			].map((e) => /* @__PURE__ */ (0, U.jsx)("button", {
 				type: "button",
 				className: "traceFact",
 				onClick: (r) => n(t.current_facts[e], r.currentTarget),
@@ -11995,22 +11995,22 @@ var La = {
 };
 function Ra({ title: e, points: t }) {
 	let n = Ia(t.map((e) => e.value), La), r = `${e}: ${t.map((e) => `${e.text} for ${e.label}`).join("; ")}`;
-	return /* @__PURE__ */ (0, W.jsxs)("figure", {
+	return /* @__PURE__ */ (0, U.jsxs)("figure", {
 		className: "trendChart",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("figcaption", { children: e }),
-			/* @__PURE__ */ (0, W.jsxs)("svg", {
+			/* @__PURE__ */ (0, U.jsx)("figcaption", { children: e }),
+			/* @__PURE__ */ (0, U.jsxs)("svg", {
 				viewBox: `0 0 ${La.width} ${La.height}`,
 				preserveAspectRatio: "none",
 				role: "img",
 				"aria-label": r,
-				children: [/* @__PURE__ */ (0, W.jsx)("line", {
+				children: [/* @__PURE__ */ (0, U.jsx)("line", {
 					className: "trendBaseline",
 					x1: "0",
 					x2: La.width,
 					y1: n.baseline,
 					y2: n.baseline
-				}), n.bars.map((e, t) => e ? /* @__PURE__ */ (0, W.jsx)("rect", {
+				}), n.bars.map((e, t) => e ? /* @__PURE__ */ (0, U.jsx)("rect", {
 					className: e.negative ? "trendBar negative" : "trendBar",
 					x: e.x,
 					y: e.y,
@@ -12018,10 +12018,10 @@ function Ra({ title: e, points: t }) {
 					height: e.height
 				}, t) : null)]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("ol", {
+			/* @__PURE__ */ (0, U.jsx)("ol", {
 				className: "trendLegend",
 				"aria-hidden": "true",
-				children: t.map((e) => /* @__PURE__ */ (0, W.jsxs)("li", { children: [/* @__PURE__ */ (0, W.jsx)("span", { children: e.short }), /* @__PURE__ */ (0, W.jsx)("strong", { children: e.text })] }, e.label))
+				children: t.map((e) => /* @__PURE__ */ (0, U.jsxs)("li", { children: [/* @__PURE__ */ (0, U.jsx)("span", { children: e.short }), /* @__PURE__ */ (0, U.jsx)("strong", { children: e.text })] }, e.label))
 			})
 		]
 	});
@@ -12039,25 +12039,25 @@ var za = [
 };
 function Va({ title: e, className: t, children: n }) {
 	let r = (0, k.useId)();
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: `panel ${t ?? ""}`,
 		"aria-labelledby": r,
-		children: [/* @__PURE__ */ (0, W.jsx)("h2", {
+		children: [/* @__PURE__ */ (0, U.jsx)("h2", {
 			id: r,
 			children: e
 		}), n]
 	});
 }
 function Ha({ state: e, retry: t }) {
-	return e.status === "error" ? /* @__PURE__ */ (0, W.jsxs)("div", {
+	return e.status === "error" ? /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "analysisNotice",
 		role: "status",
-		children: [/* @__PURE__ */ (0, W.jsx)("p", { children: e.message }), t && e.kind === "failed" && /* @__PURE__ */ (0, W.jsx)("button", {
+		children: [/* @__PURE__ */ (0, U.jsx)("p", { children: e.message }), t && e.kind === "failed" && /* @__PURE__ */ (0, U.jsx)("button", {
 			type: "button",
 			onClick: t,
 			children: "Retry analysis"
 		})]
-	}) : /* @__PURE__ */ (0, W.jsx)("p", {
+	}) : /* @__PURE__ */ (0, U.jsx)("p", {
 		className: "analysisNotice",
 		role: "status",
 		children: e.status === "waiting" ? "The analysis resumes after the saved write is confirmed." : "Preparing the analysis…"
@@ -12068,34 +12068,34 @@ function Ua(e, t) {
 }
 function Wa({ analysis: e }) {
 	let { explanation: t } = e, n = t.rules[za.indexOf(t.matched_rule)];
-	return /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-		/* @__PURE__ */ (0, W.jsx)("p", {
+	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+		/* @__PURE__ */ (0, U.jsx)("p", {
 			className: "overviewHeadline",
 			children: t.headline
 		}),
-		n && /* @__PURE__ */ (0, W.jsxs)("p", { children: ["Rule applied: ", n] }),
-		/* @__PURE__ */ (0, W.jsx)("h3", { children: "Outcome conditions" }),
-		/* @__PURE__ */ (0, W.jsx)("ul", {
+		n && /* @__PURE__ */ (0, U.jsxs)("p", { children: ["Rule applied: ", n] }),
+		/* @__PURE__ */ (0, U.jsx)("h3", { children: "Outcome conditions" }),
+		/* @__PURE__ */ (0, U.jsx)("ul", {
 			className: "conditionList",
-			children: t.conditions.map((e) => /* @__PURE__ */ (0, W.jsxs)("li", {
+			children: t.conditions.map((e) => /* @__PURE__ */ (0, U.jsxs)("li", {
 				"data-satisfied": e.satisfied,
-				children: [/* @__PURE__ */ (0, W.jsx)("span", { children: e.description }), /* @__PURE__ */ (0, W.jsx)("strong", { children: e.satisfied ? "Yes" : "No" })]
+				children: [/* @__PURE__ */ (0, U.jsx)("span", { children: e.description }), /* @__PURE__ */ (0, U.jsx)("strong", { children: e.satisfied ? "Yes" : "No" })]
 			}, e.condition_id))
 		}),
-		/* @__PURE__ */ (0, W.jsx)("h3", { children: "Policy factors" }),
-		/* @__PURE__ */ (0, W.jsx)("ul", {
+		/* @__PURE__ */ (0, U.jsx)("h3", { children: "Policy factors" }),
+		/* @__PURE__ */ (0, U.jsx)("ul", {
 			className: "factorList",
 			children: t.factors.map((e) => {
 				let t = e.name === "uca_positive" ? "money" : "multiple";
-				return /* @__PURE__ */ (0, W.jsxs)("li", {
+				return /* @__PURE__ */ (0, U.jsxs)("li", {
 					"data-status": e.status,
 					children: [
-						/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("strong", { children: e.label }), /* @__PURE__ */ (0, W.jsx)("span", {
+						/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: e.label }), /* @__PURE__ */ (0, U.jsx)("span", {
 							className: "factorStatus",
 							children: fa[e.status]
 						})] }),
-						/* @__PURE__ */ (0, W.jsx)("p", { children: e.summary }),
-						e.name !== "k1_history" && /* @__PURE__ */ (0, W.jsxs)("small", { children: [
+						/* @__PURE__ */ (0, U.jsx)("p", { children: e.summary }),
+						e.name !== "k1_history" && /* @__PURE__ */ (0, U.jsxs)("small", { children: [
 							"Approval cushion ",
 							Ua(e.approval_cushion, t),
 							e.name !== "uca_positive" && `, decline cushion ${Ua(e.decline_cushion, t)}`
@@ -12104,7 +12104,7 @@ function Wa({ analysis: e }) {
 				}, e.name);
 			})
 		}),
-		/* @__PURE__ */ (0, W.jsxs)("p", {
+		/* @__PURE__ */ (0, U.jsxs)("p", {
 			className: "fine",
 			children: [
 				"Illustrative score ",
@@ -12123,57 +12123,57 @@ function Ga({ analysis: e, assessment: t }) {
 			row: r
 		} : null;
 	}, a = i("approval_minimum"), o = i("decline_floor"), s = ga(n);
-	return /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-		/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+		/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 			s === "fits" ? "The requested principal fits within the illustrative coverage minimums." : s === "over" ? "The requested principal is larger than the illustrative coverage minimums support." : "Existing obligations leave no room for new payments at the illustrative coverage minimums.",
 			" ",
 			Ba[n.binding_constraint],
 			" binds first."
 		] }),
-		/* @__PURE__ */ (0, W.jsxs)("dl", {
+		/* @__PURE__ */ (0, U.jsxs)("dl", {
 			className: "capacityFacts",
 			children: [
-				/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Binding constraint" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: Ba[n.binding_constraint] })] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsxs)("dt", { children: [
+				/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Binding constraint" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: Ba[n.binding_constraint] })] }),
+				/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsxs)("dt", { children: [
 					"Maximum principal at ",
 					Ye(r.annual_rate, "%"),
 					" for ",
 					Ye(r.term_months, "months")
-				] }), /* @__PURE__ */ (0, W.jsx)("dd", { children: Ve(n.max_principal, "money", He) })] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Requested principal" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: Ve(n.requested_principal, "money", He) })] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: s === "fits" ? "Principal headroom" : "Principal shortfall" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: s === "fits" ? Ve(n.principal_headroom, "money", He) : We(n.principal_headroom.raw_value ?? "0", He) })] }),
-				/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Largest new payment" }), /* @__PURE__ */ (0, W.jsxs)("dd", { children: [
+				] }), /* @__PURE__ */ (0, U.jsx)("dd", { children: Ve(n.max_principal, "money", He) })] }),
+				/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Requested principal" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: Ve(n.requested_principal, "money", He) })] }),
+				/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: s === "fits" ? "Principal headroom" : "Principal shortfall" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: s === "fits" ? Ve(n.principal_headroom, "money", He) : We(n.principal_headroom.raw_value ?? "0", He) })] }),
+				/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Largest new payment" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [
 					Ve(n.max_annual_payment, "money", He),
 					" a year (",
 					Ve(n.max_monthly_payment, "money", He),
 					" a month)"
 				] })] }),
-				a && /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsxs)("dt", { children: [
+				a && /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsxs)("dt", { children: [
 					"Revenue cushion to the ",
 					ha[a.binding],
 					" approval minimum"
-				] }), /* @__PURE__ */ (0, W.jsx)("dd", { children: qe(a.row.revenue_cushion, 2) })] }),
-				o && /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsxs)("dt", { children: [
+				] }), /* @__PURE__ */ (0, U.jsx)("dd", { children: qe(a.row.revenue_cushion, 2) })] }),
+				o && /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsxs)("dt", { children: [
 					"Revenue cushion to the ",
 					ha[o.binding],
 					" decline floor"
-				] }), /* @__PURE__ */ (0, W.jsx)("dd", { children: qe(o.row.revenue_cushion, 2) })] })
+				] }), /* @__PURE__ */ (0, U.jsx)("dd", { children: qe(o.row.revenue_cushion, 2) })] })
 			]
 		}),
-		/* @__PURE__ */ (0, W.jsx)("h3", { children: "New annual payment allowed by each minimum" }),
-		/* @__PURE__ */ (0, W.jsx)("ul", {
+		/* @__PURE__ */ (0, U.jsx)("h3", { children: "New annual payment allowed by each minimum" }),
+		/* @__PURE__ */ (0, U.jsx)("ul", {
 			className: "constraintList",
-			children: n.constraints.map((e) => /* @__PURE__ */ (0, W.jsxs)("li", {
+			children: n.constraints.map((e) => /* @__PURE__ */ (0, U.jsxs)("li", {
 				"data-binding": e.constraint === n.binding_constraint,
-				children: [/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+				children: [/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 					Ba[e.constraint],
 					" at ",
 					we(e.approval_minimum),
 					e.constraint === n.binding_constraint && " (binding)"
-				] }), /* @__PURE__ */ (0, W.jsx)("strong", { children: Ve(e.max_annual_payment, "money", He) })]
+				] }), /* @__PURE__ */ (0, U.jsx)("strong", { children: Ve(e.max_annual_payment, "money", He) })]
 			}, e.constraint))
 		}),
-		/* @__PURE__ */ (0, W.jsx)("p", {
+		/* @__PURE__ */ (0, U.jsx)("p", {
 			className: "fine",
 			children: "Policy arithmetic at the approval minimums, holding every other input fixed. It is not a credit approval."
 		})
@@ -12186,12 +12186,12 @@ function Ka({ assessment: e }) {
 		value: n,
 		text: r
 	});
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "trendGrid",
-		children: [/* @__PURE__ */ (0, W.jsx)(Ra, {
+		children: [/* @__PURE__ */ (0, U.jsx)(Ra, {
 			title: "Gross receipts",
 			points: t.map((e, t) => n(t, e.financials.gross_receipts, Le(e.financials.gross_receipts)))
-		}), /* @__PURE__ */ (0, W.jsx)(Ra, {
+		}), /* @__PURE__ */ (0, U.jsx)(Ra, {
 			title: "EBITDA",
 			points: t.map((e, t) => n(t, e.ebitda.status === "available" ? e.ebitda.raw_value : null, Ve(e.ebitda, "money")))
 		})]
@@ -12199,66 +12199,66 @@ function Ka({ assessment: e }) {
 }
 function qa({ view: e }) {
 	let { state: t, retry: n } = Ji(), { assessment: r } = e;
-	if (e.ready && e.accepted?.mode === "legacy") return /* @__PURE__ */ (0, W.jsx)(Va, {
+	if (e.ready && e.accepted?.mode === "legacy") return /* @__PURE__ */ (0, U.jsx)(Va, {
 		title: "Overview",
-		children: /* @__PURE__ */ (0, W.jsx)("p", { children: "Legacy decisions have policy factor results only. The explanation, debt capacity and trends need a dated assessment." })
+		children: /* @__PURE__ */ (0, U.jsx)("p", { children: "Legacy decisions have policy factor results only. The explanation, debt capacity and trends need a dated assessment." })
 	});
-	if (!r) return /* @__PURE__ */ (0, W.jsx)(Va, {
+	if (!r) return /* @__PURE__ */ (0, U.jsx)(Va, {
 		title: "Overview",
-		children: /* @__PURE__ */ (0, W.jsx)("p", { children: e.decisionWord === "CALCULATING" ? "The explanation appears here with the decision." : "No current assessment is available. Resolve or choose a case to see its explanation." })
+		children: /* @__PURE__ */ (0, U.jsx)("p", { children: e.decisionWord === "CALCULATING" ? "The explanation appears here with the decision." : "No current assessment is available. Resolve or choose a case to see its explanation." })
 	});
 	let i = t.status === "ready" ? t.analysis : null;
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "overviewGrid",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)(Va, {
+			/* @__PURE__ */ (0, U.jsx)(Va, {
 				title: "Why this decision",
 				className: "overviewExplanation",
-				children: i ? /* @__PURE__ */ (0, W.jsx)(Wa, { analysis: i }) : /* @__PURE__ */ (0, W.jsx)(Ha, {
+				children: i ? /* @__PURE__ */ (0, U.jsx)(Wa, { analysis: i }) : /* @__PURE__ */ (0, U.jsx)(Ha, {
 					state: t,
 					retry: n
 				})
 			}),
-			/* @__PURE__ */ (0, W.jsx)(Va, {
+			/* @__PURE__ */ (0, U.jsx)(Va, {
 				title: "Debt capacity",
 				className: "overviewCapacity",
-				children: i ? /* @__PURE__ */ (0, W.jsx)(Ga, {
+				children: i ? /* @__PURE__ */ (0, U.jsx)(Ga, {
 					analysis: i,
 					assessment: r
-				}) : /* @__PURE__ */ (0, W.jsx)(Ha, { state: t })
+				}) : /* @__PURE__ */ (0, U.jsx)(Ha, { state: t })
 			}),
-			/* @__PURE__ */ (0, W.jsx)(Va, {
+			/* @__PURE__ */ (0, U.jsx)(Va, {
 				title: "Trends",
 				className: "overviewTrends",
-				children: /* @__PURE__ */ (0, W.jsx)(Ka, { assessment: r })
+				children: /* @__PURE__ */ (0, U.jsx)(Ka, { assessment: r })
 			})
 		]
 	});
 }
 // src/views/AssumptionsView.tsx
 function Ja({ title: e, prefix: t, values: n, period: r, input: i, mode: a, canEdit: o, onEdit: s }) {
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "panel",
-		children: [/* @__PURE__ */ (0, W.jsx)("h2", { children: e }), Object.entries(n).map(([e, n]) => {
+		children: [/* @__PURE__ */ (0, U.jsx)("h2", { children: e }), Object.entries(n).map(([e, n]) => {
 			let c = St(i, a, t, e, n, r);
-			return /* @__PURE__ */ (0, W.jsxs)("div", {
+			return /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "assumption",
-				children: [/* @__PURE__ */ (0, W.jsx)(Da, {
+				children: [/* @__PURE__ */ (0, U.jsx)(Da, {
 					field: c,
 					canEdit: o,
 					onEdit: s,
 					children: c.label
-				}), /* @__PURE__ */ (0, W.jsx)("strong", { children: c.unit === "%" ? `${Xe(he(String(n), 2))}%` : c.unit === "months" ? `${n} months` : `$${Xe(String(n))}` })]
+				}), /* @__PURE__ */ (0, U.jsx)("strong", { children: c.unit === "%" ? `${Xe(he(String(n), 2))}%` : c.unit === "months" ? `${n} months` : `$${Xe(String(n))}` })]
 			}, e);
 		})]
 	});
 }
 function Ya({ ready: e, accepted: t, canEdit: n, onEdit: r }) {
 	let i = t?.input;
-	return /* @__PURE__ */ (0, W.jsxs)("section", { children: [/* @__PURE__ */ (0, W.jsx)("p", { children: e ? "Annual assumptions used by the backend. Select an amount to propose an edit." : "Previous accepted assumptions; no active recommendation." }), t && i && /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", { children: [/* @__PURE__ */ (0, U.jsx)("p", { children: e ? "Annual assumptions used by the backend. Select an amount to propose an edit." : "Previous accepted assumptions; no active recommendation." }), t && i && /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "assumptionsGrid",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)(Ja, {
+			/* @__PURE__ */ (0, U.jsx)(Ja, {
 				title: "Existing debt",
 				prefix: "/existing_debt",
 				values: i.existing_debt,
@@ -12267,7 +12267,7 @@ function Ya({ ready: e, accepted: t, canEdit: n, onEdit: r }) {
 				canEdit: n,
 				onEdit: r
 			}),
-			/* @__PURE__ */ (0, W.jsx)(Ja, {
+			/* @__PURE__ */ (0, U.jsx)(Ja, {
 				title: "Proposed fixed monthly loan",
 				prefix: "/proposed_loan",
 				values: {
@@ -12280,7 +12280,7 @@ function Ya({ ready: e, accepted: t, canEdit: n, onEdit: r }) {
 				canEdit: n,
 				onEdit: r
 			}),
-			/* @__PURE__ */ (0, W.jsx)(Ja, {
+			/* @__PURE__ */ (0, U.jsx)(Ja, {
 				title: "Working capital",
 				prefix: "/working_capital",
 				values: {
@@ -12300,9 +12300,9 @@ function Ya({ ready: e, accepted: t, canEdit: n, onEdit: r }) {
 }
 function Xa({ ready: e, accepted: t, canEdit: n, onEdit: r }) {
 	let i = t?.input;
-	return /* @__PURE__ */ (0, W.jsxs)("section", { children: [/* @__PURE__ */ (0, W.jsx)("p", { children: e ? "Guarantor income and personal debt used for global coverage. Select an amount to propose an edit." : "Previous accepted guarantors; no active recommendation." }), t && i && /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", { children: [/* @__PURE__ */ (0, U.jsx)("p", { children: e ? "Guarantor income and personal debt used for global coverage. Select an amount to propose an edit." : "Previous accepted guarantors; no active recommendation." }), t && i && /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "assumptionsGrid",
-		children: [i.guarantors.map((e, a) => /* @__PURE__ */ (0, W.jsx)(Ja, {
+		children: [i.guarantors.map((e, a) => /* @__PURE__ */ (0, U.jsx)(Ja, {
 			title: e.name,
 			prefix: `/guarantors/${a}`,
 			values: {
@@ -12317,25 +12317,25 @@ function Xa({ ready: e, accepted: t, canEdit: n, onEdit: r }) {
 			mode: t.mode,
 			canEdit: n,
 			onEdit: r
-		}, a)), i.guarantors.length === 0 && /* @__PURE__ */ (0, W.jsxs)("div", {
+		}, a)), i.guarantors.length === 0 && /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "panel",
-			children: [/* @__PURE__ */ (0, W.jsx)("h2", { children: "Business-only fallback" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "No guarantors supplied. The backend uses full business EBITDA for global coverage." })]
+			children: [/* @__PURE__ */ (0, U.jsx)("h2", { children: "Business-only fallback" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "No guarantors supplied. The backend uses full business EBITDA for global coverage." })]
 		})]
 	})] });
 }
 // src/views/DetailsView.tsx
 function Za({ ready: e, input: t, assessment: n, decision: r, index: i }) {
 	let a = (0, k.useId)(), o = (0, k.useId)(), [s, c] = (0, k.useState)(!1);
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel",
 		"aria-labelledby": a,
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h2", {
+			/* @__PURE__ */ (0, U.jsx)("h2", {
 				id: a,
 				children: "Calculation details"
 			}),
-			!n && /* @__PURE__ */ (0, W.jsx)("p", { children: e ? "Legacy mode has decision factors but no dated spread or trace." : "No current assessment is available." }),
-			(n || r) && /* @__PURE__ */ (0, W.jsx)("button", {
+			!n && /* @__PURE__ */ (0, U.jsx)("p", { children: e ? "Legacy mode has decision factors but no dated spread or trace." : "No current assessment is available." }),
+			(n || r) && /* @__PURE__ */ (0, U.jsx)("button", {
 				type: "button",
 				className: "detailsToggle",
 				"aria-expanded": s,
@@ -12343,45 +12343,45 @@ function Za({ ready: e, input: t, assessment: n, decision: r, index: i }) {
 				onClick: () => c((e) => !e),
 				children: "Definitions, operands and policy snapshot"
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				id: o,
 				hidden: !s,
-				children: [n ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				children: [n ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Policy version:",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("strong", { children: n.policy_snapshot.version })
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: n.policy_snapshot.version })
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"K-1 comparison periods:",
 						" ",
 						n.k1_history_periods.map((e, t) => L(e, t)).join(" / ")
 					] }),
-					/* @__PURE__ */ (0, W.jsx)("h3", { children: "Current facts" }),
-					Object.values(n.current_facts).map((e) => /* @__PURE__ */ (0, W.jsx)(Qa, {
+					/* @__PURE__ */ (0, U.jsx)("h3", { children: "Current facts" }),
+					Object.values(n.current_facts).map((e) => /* @__PURE__ */ (0, U.jsx)(Qa, {
 						metric: e,
 						assessment: n
 					}, e.fact_id)),
-					/* @__PURE__ */ (0, W.jsxs)("h3", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("h3", { children: [
 						"Selected historical period:",
 						" ",
 						L(t.years[i], i)
 					] }),
-					vt.map((e) => /* @__PURE__ */ (0, W.jsx)(Qa, {
+					vt.map((e) => /* @__PURE__ */ (0, U.jsx)(Qa, {
 						metric: n.historical_spread[i][e],
 						assessment: n
 					}, e)),
-					/* @__PURE__ */ (0, W.jsx)("h3", { children: "Guarantor contributions" }),
-					n.guarantor_contributions.length ? n.guarantor_contributions.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("h4", { children: e.name }), [
+					/* @__PURE__ */ (0, U.jsx)("h3", { children: "Guarantor contributions" }),
+					n.guarantor_contributions.length ? n.guarantor_contributions.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h4", { children: e.name }), [
 						e.business_ebitda,
 						e.outside_income,
 						e.personal_debt
-					].map((e) => /* @__PURE__ */ (0, W.jsx)(Qa, {
+					].map((e) => /* @__PURE__ */ (0, U.jsx)(Qa, {
 						metric: e,
 						assessment: n
-					}, e.fact_id))] }, e.guarantor_index)) : /* @__PURE__ */ (0, W.jsx)("p", { children: "Business-only fallback; no guarantor contributions." }),
-					/* @__PURE__ */ (0, W.jsxs)("details", { children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: "Complete policy snapshot" }), /* @__PURE__ */ (0, W.jsx)("pre", { children: JSON.stringify(n.policy_snapshot, null, 2) })] }),
-					/* @__PURE__ */ (0, W.jsxs)("p", {
+					}, e.fact_id))] }, e.guarantor_index)) : /* @__PURE__ */ (0, U.jsx)("p", { children: "Business-only fallback; no guarantor contributions." }),
+					/* @__PURE__ */ (0, U.jsxs)("details", { children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: "Complete policy snapshot" }), /* @__PURE__ */ (0, U.jsx)("pre", { children: JSON.stringify(n.policy_snapshot, null, 2) })] }),
+					/* @__PURE__ */ (0, U.jsxs)("p", {
 						className: "fine",
 						children: [
 							"Calculation: ",
@@ -12389,17 +12389,17 @@ function Za({ ready: e, input: t, assessment: n, decision: r, index: i }) {
 							" · serialization:",
 							" ",
 							n.serialization_version,
-							/* @__PURE__ */ (0, W.jsx)("br", {}),
+							/* @__PURE__ */ (0, U.jsx)("br", {}),
 							"Content fingerprint (not document authentication):",
 							" ",
-							/* @__PURE__ */ (0, W.jsx)("code", { children: n.fingerprint.value })
+							/* @__PURE__ */ (0, U.jsx)("code", { children: n.fingerprint.value })
 						]
 					})
-				] }) : null, r && /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("h3", { children: "Raw policy comparisons" }), r.factors.map((e) => /* @__PURE__ */ (0, W.jsxs)("div", {
+				] }) : null, r && /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h3", { children: "Raw policy comparisons" }), r.factors.map((e) => /* @__PURE__ */ (0, U.jsxs)("div", {
 					className: "operand",
 					children: [
-						/* @__PURE__ */ (0, W.jsx)("strong", { children: pt[e.name] }),
-						/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: pt[e.name] }),
+						/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 							"Raw: ",
 							String(e.raw_value),
 							" ",
@@ -12410,7 +12410,7 @@ function Za({ ready: e, input: t, assessment: n, decision: r, index: i }) {
 							" ",
 							e.decline_threshold ?? "not applicable"
 						] }),
-						/* @__PURE__ */ (0, W.jsx)("small", { children: e.source })
+						/* @__PURE__ */ (0, U.jsx)("small", { children: e.source })
 					]
 				}, e.name))] })]
 			})
@@ -12419,54 +12419,54 @@ function Za({ ready: e, input: t, assessment: n, decision: r, index: i }) {
 }
 function Qa({ metric: e, assessment: t }) {
 	let n = t.calculation_trace.find((t) => t.fact_id === e.fact_id);
-	return n ? /* @__PURE__ */ (0, W.jsxs)("details", { children: [
-		/* @__PURE__ */ (0, W.jsxs)("summary", { children: [
+	return n ? /* @__PURE__ */ (0, U.jsxs)("details", { children: [
+		/* @__PURE__ */ (0, U.jsxs)("summary", { children: [
 			e.fact_id,
 			" · ",
-			tr(e)
+			nr(e)
 		] }),
-		/* @__PURE__ */ (0, W.jsx)("p", { children: /* @__PURE__ */ (0, W.jsx)("strong", { children: n.definition_id }) }),
-		/* @__PURE__ */ (0, W.jsx)("p", {
+		/* @__PURE__ */ (0, U.jsx)("p", { children: /* @__PURE__ */ (0, U.jsx)("strong", { children: n.definition_id }) }),
+		/* @__PURE__ */ (0, U.jsx)("p", {
 			className: "expression",
 			children: n.expression
 		}),
-		/* @__PURE__ */ (0, W.jsx)("h3", { children: "Actual operands" }),
-		n.operands.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("div", {
+		/* @__PURE__ */ (0, U.jsx)("h3", { children: "Actual operands" }),
+		n.operands.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "operand",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("code", { children: e.reference }),
-				/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+				/* @__PURE__ */ (0, U.jsx)("code", { children: e.reference }),
+				/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 					e.raw_value === null ? "Not applicable" : String(e.raw_value),
 					" ",
 					e.unit
 				] }),
-				/* @__PURE__ */ (0, W.jsxs)("small", { children: [e.reference_type, e.reported_value !== null && ` · Reported component: ${N(String(e.reported_value), 2)} ${e.unit}`] })
+				/* @__PURE__ */ (0, U.jsxs)("small", { children: [e.reference_type, e.reported_value !== null && ` · Reported component: ${N(String(e.reported_value), 2)} ${e.unit}`] })
 			]
 		}, t)),
-		/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+		/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 			"Raw result: ",
 			String(n.raw_value),
 			" ",
 			n.unit
 		] }),
-		n.explanation && /* @__PURE__ */ (0, W.jsx)("p", { children: n.explanation })
+		n.explanation && /* @__PURE__ */ (0, U.jsx)("p", { children: n.explanation })
 	] }) : null;
 }
 // src/views/MemoView.tsx
 function $a({ decision: e }) {
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel memo",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h2", { children: "Credit memo" }),
-			e ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-				/* @__PURE__ */ (0, W.jsx)("h3", { children: "Recommendation" }),
-				/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsx)("h2", { children: "Credit memo" }),
+			e ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+				/* @__PURE__ */ (0, U.jsx)("h3", { children: "Recommendation" }),
+				/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					e.outcome[0].toUpperCase() + e.outcome.slice(1),
 					" ",
 					"for prototype demonstration based on the accepted inputs."
 				] }),
-				/* @__PURE__ */ (0, W.jsx)("h3", { children: "Primary factors considered" }),
-				/* @__PURE__ */ (0, W.jsx)("ul", { children: e.factors.map((e) => /* @__PURE__ */ (0, W.jsxs)("li", { children: [
+				/* @__PURE__ */ (0, U.jsx)("h3", { children: "Primary factors considered" }),
+				/* @__PURE__ */ (0, U.jsx)("ul", { children: e.factors.map((e) => /* @__PURE__ */ (0, U.jsxs)("li", { children: [
 					pt[e.name],
 					": ",
 					Ze(e),
@@ -12474,53 +12474,53 @@ function $a({ decision: e }) {
 					" ",
 					e.passed === null ? "manual review required" : e.passed ? "meets configured policy" : "does not meet configured policy"
 				] }, e.name)) }),
-				/* @__PURE__ */ (0, W.jsx)("h3", { children: "Recorded reasons" }),
-				e.reasons.length ? /* @__PURE__ */ (0, W.jsx)("ul", { children: e.reasons.map((e, t) => /* @__PURE__ */ (0, W.jsx)("li", { children: e.message }, t)) }) : /* @__PURE__ */ (0, W.jsx)("p", { children: "No reasons beyond the factors above." })
-			] }) : /* @__PURE__ */ (0, W.jsx)("p", { children: "No current decision is available." }),
-			/* @__PURE__ */ (0, W.jsx)("p", {
+				/* @__PURE__ */ (0, U.jsx)("h3", { children: "Recorded reasons" }),
+				e.reasons.length ? /* @__PURE__ */ (0, U.jsx)("ul", { children: e.reasons.map((e, t) => /* @__PURE__ */ (0, U.jsx)("li", { children: e.message }, t)) }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No reasons beyond the factors above." })
+			] }) : /* @__PURE__ */ (0, U.jsx)("p", { children: "No current decision is available." }),
+			/* @__PURE__ */ (0, U.jsx)("p", {
 				className: "fine",
-				children: fi
+				children: pi
 			})
 		]
 	});
 }
 // src/views/HistoryView.tsx
 function eo({ saved: e, ready: t, history: n, input: r, onOpen: i }) {
-	return e ? /* @__PURE__ */ (0, W.jsx)(xr, {
+	return e ? /* @__PURE__ */ (0, U.jsx)(Sr, {
 		saved: e,
 		active: t,
 		onOpen: i
-	}) : /* @__PURE__ */ (0, W.jsxs)("section", {
+	}) : /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel historyPanel",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h2", { children: "Session edit history" }),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: "Resets on reload. Actor: demonstration analyst; timestamps are local and unverified." }),
-			n.length === 0 ? /* @__PURE__ */ (0, W.jsx)("p", { children: "No applied edits this session." }) : n.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsx)("h2", { children: "Session edit history" }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "Resets on reload. Actor: demonstration analyst; timestamps are local and unverified." }),
+			n.length === 0 ? /* @__PURE__ */ (0, U.jsx)("p", { children: "No applied edits this session." }) : n.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "audit",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("strong", { children: e.path }),
-					/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+					/* @__PURE__ */ (0, U.jsx)("strong", { children: e.path }),
+					/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 						e.prior,
 						" → ",
 						e.next
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("small", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("small", { children: [
 						e.rationale || "No rationale given",
 						" · ",
 						e.at
 					] })
 				]
 			}, t)),
-			r && "overrides" in r && !!r.overrides?.length && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)("h3", { children: "Unverified imported history" }), r.overrides.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("div", {
+			r && "overrides" in r && !!r.overrides?.length && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("h3", { children: "Unverified imported history" }), r.overrides.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "audit imported",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("strong", { children: e.field }),
-					/* @__PURE__ */ (0, W.jsxs)("span", { children: [
+					/* @__PURE__ */ (0, U.jsx)("strong", { children: e.field }),
+					/* @__PURE__ */ (0, U.jsxs)("span", { children: [
 						String(e.prior_value),
 						" → ",
 						String(e.new_value)
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("small", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("small", { children: [
 						e.rationale,
 						" · supplied actor ",
 						e.actor,
@@ -12683,7 +12683,7 @@ var uo = class {
 	request = null;
 	constructor(e, t = fetch) {
 		this.storage = e, this.transport = t;
-		let n = jn(e);
+		let n = Mn(e);
 		this.state = {
 			operation: n.operation,
 			recoveryError: n.error,
@@ -12715,9 +12715,9 @@ var uo = class {
 		let t = wn(e);
 		if (this.state.operation && !H(this.state.operation, t)) throw Error("The pending operation cannot be replaced.");
 		try {
-			An(this.storage, t);
+			jn(this.storage, t);
 		} catch (e) {
-			let t = jn(this.storage);
+			let t = Mn(this.storage);
 			throw this.update({
 				operation: t.operation,
 				recoveryError: t.error
@@ -12732,7 +12732,7 @@ var uo = class {
 	}
 	clear(e) {
 		try {
-			Mn(this.storage, e.id), this.update({
+			Nn(this.storage, e.id), this.update({
 				operation: null,
 				recoveryError: ""
 			});
@@ -12744,15 +12744,15 @@ var uo = class {
 		try {
 			let n = e.kind === "comparison" ? {
 				kind: "comparison",
-				...await jr(e, t.signal, this.transport)
+				...await Mr(e, t.signal, this.transport)
 			} : {
 				kind: "case",
-				...await fr(e, t.signal, this.transport)
+				...await pr(e, t.signal, this.transport)
 			};
-			if (t.signal.aborted) throw new sr("The view closed before acknowledgment. Keep the original operation for exact retry.");
+			if (t.signal.aborted) throw new cr("The view closed before acknowledgment. Keep the original operation for exact retry.");
 			return this.clear(e), n;
 		} catch (t) {
-			let n = cr(t);
+			let n = lr(t);
 			throw this.update({ writeError: n }), n.certain && this.clear(e), n;
 		} finally {
 			this.request === t && (this.request = null, this.update({ inFlight: !1 }));
@@ -12760,7 +12760,7 @@ var uo = class {
 	}
 	discard() {
 		if (this.request) throw Error("Wait for the current response before discarding tracking.");
-		Nn(this.storage), this.update({
+		Pn(this.storage), this.update({
 			operation: null,
 			recoveryError: "",
 			writeError: null
@@ -12774,7 +12774,7 @@ var uo = class {
 	}
 };
 function fo() {
-	let [e] = (0, k.useState)(() => new uo(U())), t = (0, k.useSyncExternalStore)(e.subscribe, e.snapshot);
+	let [e] = (0, k.useState)(() => new uo(En())), t = (0, k.useSyncExternalStore)(e.subscribe, e.snapshot);
 	return (0, k.useEffect)(() => () => e.abort(), [e]), {
 		...t,
 		controller: e
@@ -12782,7 +12782,7 @@ function fo() {
 }
 // src/useAnalystWorkspace.ts
 function po() {
-	let [e, t] = (0, k.useReducer)(zn, null, () => Rn(U())), n = (0, k.useRef)(e);
+	let [e, t] = (0, k.useReducer)(Bn, null, () => zn(En())), n = (0, k.useRef)(e);
 	n.current = e;
 	let r = (0, k.useRef)(0), i = (0, k.useRef)(null), a = (0, k.useRef)(null), o = (0, k.useRef)(null), s = (0, k.useRef)(!1), c = fo(), { operation: l, recoveryError: u, inFlight: d, writeError: f } = c, [p, m] = (0, k.useState)(null), [h, g] = (0, k.useState)(null), _ = (0, k.useRef)(0), [v, y] = (0, k.useState)(""), [b, x] = (0, k.useState)([]), [S, C] = (0, k.useState)(null), [ee, te] = (0, k.useState)(null), [w, T] = (0, k.useState)(null), [ne, re] = (0, k.useState)(null), E = (0, k.useRef)(ne);
 	E.current = ne;
@@ -12832,10 +12832,10 @@ function po() {
 	}
 	function ae(e) {
 		if (d || l || u || E.current) throw Error("Resolve saved-write recovery before evaluating this import.");
-		return Fn(U(), null), D(e);
+		return In(En(), null), D(e);
 	}
 	function O(e) {
-		Fn(U(), null), D({
+		In(En(), null), D({
 			mode: e,
 			payload: e === "dated" ? to : lt(no),
 			filename: e === "dated" ? "alpine_dated_v2.json" : "alpine.json",
@@ -12844,7 +12844,7 @@ function po() {
 	}
 	async function oe(e) {
 		if (!e) return;
-		Fn(U(), null);
+		In(En(), null);
 		let n = ie(e.name, null);
 		try {
 			if (e.size > 1e6) throw Error("Use a JSON file no larger than 1,000,000 bytes.");
@@ -12868,9 +12868,9 @@ function po() {
 	}
 	async function se(e) {
 		let n = ie(`Saved case ${e.caseId}`, null, "open"), a = new AbortController();
-		i.current = a, Fn(U(), e);
+		i.current = a, In(En(), e);
 		try {
-			let i = await dr(e.caseId, e.revision, a.signal);
+			let i = await fr(e.caseId, e.revision, a.signal);
 			if (n === r.current && !a.signal.aborted && t({
 				type: "stored-success",
 				id: n,
@@ -12881,7 +12881,7 @@ function po() {
 			n === r.current && !a.signal.aborted && t({
 				type: "failure",
 				id: n,
-				error: cr(e).message
+				error: lr(e).message
 			});
 		}
 	}
@@ -12889,7 +12889,7 @@ function po() {
 		let i = new AbortController();
 		a.current = i;
 		try {
-			let a = await dr(e.snapshot.case_id, "latest", i.signal);
+			let a = await fr(e.snapshot.case_id, "latest", i.signal);
 			if (n !== r.current || i.signal.aborted) return;
 			if (a.snapshot.revision < e.snapshot.revision || a.snapshot.revision === e.snapshot.revision && (a.etag !== e.etag || a.snapshot.run_id !== e.snapshot.run_id)) throw Error("Latest snapshot disagrees with the acknowledged receipt.");
 			t({
@@ -12898,12 +12898,12 @@ function po() {
 				caseId: e.snapshot.case_id,
 				revision: e.snapshot.revision,
 				headRevision: a.snapshot.revision
-			}), Fn(U(), {
+			}), In(En(), {
 				caseId: e.snapshot.case_id,
 				revision: a.snapshot.revision === e.snapshot.revision ? "latest" : e.snapshot.revision
 			});
 		} catch (e) {
-			n === r.current && !i.signal.aborted && y(`Write accepted. Latest could not be confirmed; this original receipt remains read-only. ${cr(e).message}`);
+			n === r.current && !i.signal.aborted && y(`Write accepted. Latest could not be confirmed; this original receipt remains read-only. ${lr(e).message}`);
 		}
 	}
 	async function A(e) {
@@ -12911,7 +12911,7 @@ function po() {
 		let t = new AbortController();
 		o.current = t;
 		try {
-			let n = await dr(e.caseId, "latest", t.signal);
+			let n = await fr(e.caseId, "latest", t.signal);
 			if (t.signal.aborted || !s.current) return;
 			if (!n.assessment || n.snapshot.revision < e.baseRevision || !H(Gt(n.snapshot.normalized_input, e.review.path).context, e.context)) throw Error("The latest field's definition/context cannot be reviewed with this proposal.");
 			re((t) => t?.operation.id === e.id ? {
@@ -12923,7 +12923,7 @@ function po() {
 			!t.signal.aborted && s.current && re((t) => t?.operation.id === e.id ? {
 				...t,
 				latest: null,
-				error: cr(n).message
+				error: lr(n).message
 			} : t);
 		}
 	}
@@ -12939,13 +12939,13 @@ function po() {
 				view: e.view,
 				selection: "receipt",
 				resetPeriod: i
-			}), Fn(U(), {
+			}), In(En(), {
 				caseId: e.view.snapshot.case_id,
 				revision: e.view.snapshot.revision
 			}), ce(e.view, n)) : te(e.view);
 		} catch (i) {
 			if (!s.current) return;
-			let a = cr(i);
+			let a = lr(i);
 			a.certain && (a.status === 412 && e.kind === "edit" ? (re({
 				operation: e,
 				latest: null,
@@ -12965,7 +12965,7 @@ function po() {
 	function de(e) {
 		let t = n.current;
 		if (t.status !== "ready" || t.accepted?.mode !== "dated" || t.saved) throw Error("Open an accepted unsaved dated input before saving.");
-		ue(On(t.accepted.input, e), !0);
+		ue(kn(t.accepted.input, e), !0);
 	}
 	function fe(e = n.current) {
 		return e.status === "ready" && !!e.accepted && (!e.saved || !c.controller.snapshot().operation && !u && !E.current && !!e.saved.view.assessment && e.saved.selection === "latest" && e.saved.headRevision === e.saved.view.snapshot.revision);
@@ -12973,9 +12973,9 @@ function po() {
 	function pe(e, t) {
 		let r = n.current;
 		if (!fe(r) || !r.accepted) throw Error("Open a supported latest revision and resolve pending work before editing.");
-		r.saved ? ue(kn(r.saved.view, e, t), !1) : D({
+		r.saved ? ue(An(r.saved.view, e, t), !1) : D({
 			mode: r.accepted.mode,
-			payload: Bn(r.accepted.input, e),
+			payload: Vn(r.accepted.input, e),
 			filename: r.accepted.filename,
 			edit: e
 		});
@@ -13003,7 +13003,7 @@ function po() {
 			}), y(`${r.replayed ? "Recovered the original" : "Saved"} comparison ${r.view.record.comparison_id}.`);
 		} catch (e) {
 			if (s.current) {
-				let n = cr(e);
+				let n = lr(e);
 				g({
 					scope: t,
 					message: n.message,
@@ -13025,7 +13025,7 @@ function po() {
 			id: n,
 			view: e,
 			selection: "latest"
-		}), Fn(U(), {
+		}), In(En(), {
 			caseId: e.snapshot.case_id,
 			revision: "latest"
 		}), o.current?.abort(), re(null), E.current = null, c.controller.clearError();
@@ -13057,7 +13057,7 @@ function po() {
 		if (i?.kind !== "edit") return null;
 		let a = r.current, s = new AbortController();
 		o.current?.abort(), o.current = s;
-		let c = await dr(i.caseId, "latest", s.signal);
+		let c = await fr(i.caseId, "latest", s.signal);
 		if (s.signal.aborted || a !== r.current || !c.assessment) return null;
 		let l = Gt(c.assessment.normalized_input, i.review.path);
 		if (!H(l.context, i.context)) throw Error("The latest field has a different context. Review the complete original before changing it.");
@@ -13067,7 +13067,7 @@ function po() {
 			id: u,
 			view: c,
 			selection: "latest"
-		}), Fn(U(), {
+		}), In(En(), {
 			caseId: i.caseId,
 			revision: "latest"
 		}), T(null), {
@@ -13088,7 +13088,7 @@ function po() {
 		s.current = !0;
 		let e = c.controller.snapshot().operation;
 		if (!e || e.kind === "comparison") {
-			let t = Pn(U());
+			let t = Fn(En());
 			t ? se(t) : e?.kind === "comparison" && se({
 				caseId: e.caseId,
 				revision: e.baselineRevision
@@ -13149,42 +13149,42 @@ function mo({ startedAt: e }) {
 		return () => clearInterval(t);
 	}, [e]), e === null) return null;
 	let r = Math.max(0, t - e);
-	return /* @__PURE__ */ (0, W.jsxs)("span", {
+	return /* @__PURE__ */ (0, U.jsxs)("span", {
 		className: "requestDeadline",
 		"aria-busy": "true",
-		children: [r >= 100 && /* @__PURE__ */ (0, W.jsxs)("span", { children: [
+		children: [r >= 100 && /* @__PURE__ */ (0, U.jsxs)("span", { children: [
 			"Request active · ",
 			Math.max(0, 30 - Math.floor(r / 1e3)),
 			"s until deadline"
-		] }), r >= 1e3 && /* @__PURE__ */ (0, W.jsx)("span", {
+		] }), r >= 1e3 && /* @__PURE__ */ (0, U.jsx)("span", {
 			className: "requestSkeleton",
 			"aria-hidden": "true"
 		})]
 	});
 }
 function ho({ actor: e }) {
-	let t = (0, k.useSyncExternalStore)(ee, C), n = (0, k.useSyncExternalStore)(or, ar);
-	return /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsxs)("div", {
+	let t = (0, k.useSyncExternalStore)(ee, C), n = (0, k.useSyncExternalStore)(sr, or);
+	return /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "sessionStatus",
 		"aria-label": "Connection status",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("span", {
+			/* @__PURE__ */ (0, U.jsx)("span", {
 				className: "connectionBadge",
 				children: re() ? "Testing host connected" : "API access verified"
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("span", { children: ["Operator identity not provided", e ? ` · selected record attributed to ${e}` : ""] }),
-			/* @__PURE__ */ (0, W.jsx)("span", { children: "Reload clears drafts and retry tracking" }),
-			/* @__PURE__ */ (0, W.jsx)(mo, { startedAt: t.startedAt })
+			/* @__PURE__ */ (0, U.jsxs)("span", { children: ["Operator identity not provided", e ? ` · selected record attributed to ${e}` : ""] }),
+			/* @__PURE__ */ (0, U.jsx)("span", { children: "Reload clears drafts and retry tracking" }),
+			/* @__PURE__ */ (0, U.jsx)(mo, { startedAt: t.startedAt })
 		]
-	}), n && /* @__PURE__ */ (0, W.jsxs)("div", {
+	}), n && /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "modelScope",
 		role: "status",
-		children: [/* @__PURE__ */ (0, W.jsx)("strong", { children: "Stateless Mode Active" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "Case persistence is disabled. Commercial assessments and decisions, Consumer Decision, and SBA Screen remain usable through the standalone API. The Streamlit testing bridge supports commercial workflows only." })]
+		children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: "Stateless Mode Active" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "Case persistence is disabled. Commercial assessments and decisions, Consumer Decision, and SBA Screen remain usable through the standalone API. The Streamlit testing bridge supports commercial workflows only." })]
 	})] });
 }
 // src/CommercialComposer.tsx
 function go(e) {
-	let t = Br(e === "dated" ? to : no), n = (e, t = "") => Array.isArray(e) ? t === "guarantors" ? [] : e.slice(0, 1).map((e) => n(e)) : e && typeof e == "object" ? Object.fromEntries(Object.entries(e).map(([e, t]) => [e, n(t, e)])) : [
+	let t = Vr(e === "dated" ? to : no), n = (e, t = "") => Array.isArray(e) ? t === "guarantors" ? [] : e.slice(0, 1).map((e) => n(e)) : e && typeof e == "object" ? Object.fromEntries(Object.entries(e).map(([e, t]) => [e, n(t, e)])) : [
 		"schema_version",
 		"currency",
 		"monetary_unit",
@@ -13202,7 +13202,7 @@ var _o = (e, t, n, r = {}) => ({
 	...r
 });
 function vo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, onEvaluate: a, onClose: o }) {
-	let s = Jr(t ? Br(t) : go(e)), [c, l] = (0, k.useState)(""), u = s.values.years, d = s.values.guarantors;
+	let s = Yr(t ? Vr(t) : go(e)), [c, l] = (0, k.useState)(""), u = s.values.years, d = s.values.guarantors;
 	(0, k.useEffect)(() => {
 		n.length && s.reject(n);
 	}, [n]);
@@ -13251,43 +13251,43 @@ function vo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 		...m,
 		...h,
 		...g.flat()
-	], v = (e) => /* @__PURE__ */ (0, W.jsx)("div", {
+	], v = (e) => /* @__PURE__ */ (0, U.jsx)("div", {
 		className: "formGrid",
-		children: e.map((e) => /* @__PURE__ */ (0, W.jsx)(Qr, {
+		children: e.map((e) => /* @__PURE__ */ (0, U.jsx)($r, {
 			form: s,
 			spec: e
 		}, e.pointer))
 	});
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel composerPanel",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "panelTitle",
-				children: [/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("h1", { children: e === "dated" ? "Build a dated assessment" : "Build an undated decision" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "Enter source facts. The server calculates every financial result and policy verdict." })] }), /* @__PURE__ */ (0, W.jsx)("button", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("h1", { children: e === "dated" ? "Build a dated assessment" : "Build an undated decision" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "Enter source facts. The server calculates every financial result and policy verdict." })] }), /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					onClick: o,
 					children: "Return to workspace"
 				})]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("label", {
+			/* @__PURE__ */ (0, U.jsxs)("label", {
 				className: "sampleSelector",
-				children: ["Load sample case", /* @__PURE__ */ (0, W.jsxs)("select", {
+				children: ["Load sample case", /* @__PURE__ */ (0, U.jsxs)("select", {
 					"aria-label": "Load sample case",
 					value: c,
 					onChange: (t) => {
 						let n = t.target.value;
 						l(n), n && s.replace(e === "dated" ? to : no);
 					},
-					children: [/* @__PURE__ */ (0, W.jsx)("option", {
+					children: [/* @__PURE__ */ (0, U.jsx)("option", {
 						value: "",
 						children: "Choose a synthetic preset"
-					}), /* @__PURE__ */ (0, W.jsx)("option", {
+					}), /* @__PURE__ */ (0, U.jsx)("option", {
 						value: e === "dated" ? "dated" : "legacy",
 						children: e === "dated" ? "Alpine · Dated v2 · exact decimal strings" : "Alpine · Undated commercial decision"
 					})]
 				})]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("form", {
+			/* @__PURE__ */ (0, U.jsxs)("form", {
 				ref: s.root,
 				className: "guidedForm",
 				noValidate: !0,
@@ -13302,36 +13302,36 @@ function vo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 					});
 				},
 				children: [
-					/* @__PURE__ */ (0, W.jsx)(Yr, {
+					/* @__PURE__ */ (0, U.jsx)(Xr, {
 						form: s,
 						specs: _
 					}),
-					r && /* @__PURE__ */ (0, W.jsx)("p", {
+					r && /* @__PURE__ */ (0, U.jsx)("p", {
 						role: "alert",
 						children: r
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("fieldset", { children: [/* @__PURE__ */ (0, W.jsx)("legend", { children: "Case identity" }), v(f)] }),
-					e === "dated" && /* @__PURE__ */ (0, W.jsxs)("div", {
+					/* @__PURE__ */ (0, U.jsxs)("fieldset", { children: [/* @__PURE__ */ (0, U.jsx)("legend", { children: "Case identity" }), v(f)] }),
+					e === "dated" && /* @__PURE__ */ (0, U.jsxs)("div", {
 						className: "structuralHints",
 						"aria-label": "Fiscal-period structural hints",
-						children: [Kr(s.values).map((e) => /* @__PURE__ */ (0, W.jsxs)("span", {
+						children: [qr(s.values).map((e) => /* @__PURE__ */ (0, U.jsxs)("span", {
 							"data-valid": e.valid,
 							children: [
 								e.valid ? "Ready" : "Review",
 								" · ",
 								e.label
 							]
-						}, e.label)), /* @__PURE__ */ (0, W.jsx)("p", {
+						}, e.label)), /* @__PURE__ */ (0, U.jsx)("p", {
 							className: "fine",
 							children: "Structural hints are non-blocking. The server validates fiscal dates and working capital."
 						})]
 					}),
-					p.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("details", {
+					p.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("details", {
 						open: !0,
 						children: [
-							/* @__PURE__ */ (0, W.jsxs)("summary", { children: ["Financial period ", t + 1] }),
+							/* @__PURE__ */ (0, U.jsxs)("summary", { children: ["Financial period ", t + 1] }),
 							v(e),
-							u.length > 1 && /* @__PURE__ */ (0, W.jsxs)("button", {
+							u.length > 1 && /* @__PURE__ */ (0, U.jsxs)("button", {
 								type: "button",
 								onClick: () => s.setValues((e) => ({
 									...e,
@@ -13341,7 +13341,7 @@ function vo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 							})
 						]
 					}, t)),
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "button",
 						onClick: () => {
 							u.length < 10 && s.setValues((e) => ({
@@ -13351,29 +13351,29 @@ function vo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 						},
 						children: "Add financial period"
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("details", {
+					/* @__PURE__ */ (0, U.jsxs)("details", {
 						open: !0,
 						children: [
-							/* @__PURE__ */ (0, W.jsx)("summary", { children: "Debt and proposed loan" }),
+							/* @__PURE__ */ (0, U.jsx)("summary", { children: "Debt and proposed loan" }),
 							v(m),
-							e === "dated" && /* @__PURE__ */ (0, W.jsx)("p", {
+							e === "dated" && /* @__PURE__ */ (0, U.jsx)("p", {
 								className: "fine",
 								children: "Fixed rate · fully amortizing · monthly payments. These conventions remain explicit in the request."
 							})
 						]
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("details", { children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: "Working capital and cash taxes" }), v(h)] }),
-					/* @__PURE__ */ (0, W.jsxs)("details", { children: [
-						/* @__PURE__ */ (0, W.jsxs)("summary", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("details", { children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: "Working capital and cash taxes" }), v(h)] }),
+					/* @__PURE__ */ (0, U.jsxs)("details", { children: [
+						/* @__PURE__ */ (0, U.jsxs)("summary", { children: [
 							"Guarantors (",
 							d.length,
 							")"
 						] }),
-						!d.length && /* @__PURE__ */ (0, W.jsx)("p", { children: "Business-only fallback; the backend uses full business EBITDA when guarantors are empty." }),
-						g.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("fieldset", { children: [
-							/* @__PURE__ */ (0, W.jsxs)("legend", { children: ["Guarantor ", t + 1] }),
+						!d.length && /* @__PURE__ */ (0, U.jsx)("p", { children: "Business-only fallback; the backend uses full business EBITDA when guarantors are empty." }),
+						g.map((e, t) => /* @__PURE__ */ (0, U.jsxs)("fieldset", { children: [
+							/* @__PURE__ */ (0, U.jsxs)("legend", { children: ["Guarantor ", t + 1] }),
 							v(e),
-							/* @__PURE__ */ (0, W.jsxs)("button", {
+							/* @__PURE__ */ (0, U.jsxs)("button", {
 								type: "button",
 								onClick: () => s.setValues((e) => ({
 									...e,
@@ -13382,7 +13382,7 @@ function vo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 								children: ["Remove guarantor ", t + 1]
 							})
 						] }, t)),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",
 							onClick: () => s.setValues((e) => ({
 								...e,
@@ -13391,11 +13391,11 @@ function vo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 							children: "Add guarantor"
 						})
 					] }),
-					/* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("p", {
 						className: "fine",
 						children: "Drafts remain in page memory. Evaluation replaces the unsaved selection; saving a case is a separate reviewed action."
 					}),
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						className: "primary",
 						type: "submit",
 						"aria-busy": i,
@@ -13590,7 +13590,13 @@ var ko = (e, t, n, r = {}) => ({
 	atr_documentation: "Ability-to-repay documentation",
 	synthetic_credit_score: "Synthetic credit score"
 };
-function jo(e, t) {
+function jo(e, t, n) {
+	if (e !== 422) return `The evaluation could not be completed (${e}). Your draft is preserved.`;
+	if (n || typeof t != "string" || !t.trim()) return "The server rejected these inputs. Review the highlighted fields; your draft is preserved.";
+	let r = t.trim().replace(/\.$/, "");
+	return /^NAICS \d{6} is unsupported:/.test(r) ? `This case couldn't be screened: ${r}. That is a known limit of the prototype's pinned SBA size table, so correct the code if it is wrong or review the case manually; your draft is preserved.` : `This case couldn't be evaluated: ${r}. Your draft is preserved.`;
+}
+function Mo(e, t) {
 	let [n, r] = (0, k.useState)(null), [i, a] = (0, k.useState)(!1), [o, s] = (0, k.useState)(""), c = (0, k.useRef)(null), l = JSON.stringify(e.values), u = (0, k.useRef)(l);
 	u.current = l, (0, k.useEffect)(() => {
 		c.current?.abort(), r(null), a(!1), s("");
@@ -13611,11 +13617,11 @@ function jo(e, t) {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(d),
 				signal: f.signal
-			}), a = await Dr(i, "Domain evaluation");
+			}), a = await Or(i, "Domain evaluation");
 			if (f.signal.aborted || u.current !== l) return;
 			if (!i.ok) {
-				let t = a && typeof a == "object" && "detail" in a ? a.detail : null;
-				throw e.reject(Mt(a, t)), Error(i.status === 422 ? "The server rejected these inputs. Review the highlighted fields; your draft is preserved." : `The evaluation could not be completed (${i.status}). Your draft is preserved.`);
+				let t = a && typeof a == "object" && "detail" in a ? a.detail : null, n = Mt(a, t);
+				throw e.reject(n), Error(jo(i.status, t, n.length));
 			}
 			let o = t(a);
 			!f.signal.aborted && u.current === l && r({
@@ -13635,46 +13641,46 @@ function jo(e, t) {
 		send: d
 	};
 }
-function Mo({ form: e, pointer: t, label: n, helper: r, options: i, onChange: a }) {
+function No({ form: e, pointer: t, label: n, helper: r, options: i, onChange: a }) {
 	let o = `choice${t.replace(/\//g, "-")}`, s = e.errors.find((e) => e.pointer === t);
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "formField",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("label", {
+			/* @__PURE__ */ (0, U.jsx)("label", {
 				htmlFor: o,
 				children: n
 			}),
-			/* @__PURE__ */ (0, W.jsx)("select", {
+			/* @__PURE__ */ (0, U.jsx)("select", {
 				id: o,
 				"data-pointer": t,
-				value: String(Hr(e.values, t)),
+				value: String(Ur(e.values, t)),
 				"aria-invalid": s ? "true" : void 0,
 				"aria-describedby": `${o}-help`,
 				onChange: (r) => a ? a(r.target.value) : e.change(ko(t, n, "text"), r.target.value),
-				children: i.map((e) => /* @__PURE__ */ (0, W.jsx)("option", {
+				children: i.map((e) => /* @__PURE__ */ (0, U.jsx)("option", {
 					value: e.value,
 					children: e.label
 				}, e.value))
 			}),
-			/* @__PURE__ */ (0, W.jsx)("small", {
+			/* @__PURE__ */ (0, U.jsx)("small", {
 				id: `${o}-help`,
 				children: r
 			}),
-			s && /* @__PURE__ */ (0, W.jsx)("span", {
+			s && /* @__PURE__ */ (0, U.jsx)("span", {
 				className: "fieldError",
 				children: s.message
 			})
 		]
 	});
 }
-function No() {
-	return re() ? /* @__PURE__ */ (0, W.jsx)("p", {
+function Po() {
+	return re() ? /* @__PURE__ */ (0, U.jsx)("p", {
 		className: "analysisNotice",
 		children: "The private Streamlit host is synthetic data only. Its existing bridge supports commercial workflows; this screen requires the standalone API connection."
 	}) : null;
 }
-function Po() {
-	let e = Jr({
+function Fo() {
+	let e = Yr({
 		...Eo,
 		applicant_name: "",
 		geography: "",
@@ -13688,7 +13694,7 @@ function Po() {
 			assets: !1,
 			debts: !1
 		}
-	}), t = jo(e, wo), [n, r] = (0, k.useState)(""), [i, a] = (0, k.useState)(null), o = (0, k.useRef)(null);
+	}), t = Mo(e, wo), [n, r] = (0, k.useState)(""), [i, a] = (0, k.useState)(null), o = (0, k.useRef)(null);
 	(0, k.useEffect)(() => a(null), [t.result]);
 	let s = [
 		ko("/applicant_name", "Applicant name", "text"),
@@ -13712,38 +13718,38 @@ function Po() {
 			formula: t ? "Housing DTI = (monthly housing principal and interest + monthly housing tax and insurance) / gross monthly income" : "Total DTI = (monthly housing principal and interest + monthly housing tax and insurance + other monthly debt) / gross monthly income",
 			supplied: s.filter((e) => e.kind === "money").map((t) => ({
 				label: t.label,
-				value: String(Hr(e.values, t.pointer))
+				value: String(Ur(e.values, t.pointer))
 			})),
 			note: t ? "The existing consumer decision endpoint does not return housing DTI or a housing factor. No housing ratio or sum is calculated in the browser." : `Server total DTI: ${c && typeof c.value == "string" ? Se(c.value, 4) : "Unavailable"}. The endpoint returns the policy factor, but no additive trace or housing ratio. Inputs shown above are supplied facts; the browser does not reconstruct financial results.`
 		});
 	}
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "domainWorkspace",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("header", {
+			/* @__PURE__ */ (0, U.jsxs)("header", {
 				className: "caseHeader",
-				children: [/* @__PURE__ */ (0, W.jsx)("h1", { children: "Consumer DTI review" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "Review supplied income, debt and documentation under the server's illustrative policy." })]
+				children: [/* @__PURE__ */ (0, U.jsx)("h1", { children: "Consumer DTI review" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "Review supplied income, debt and documentation under the server's illustrative policy." })]
 			}),
-			/* @__PURE__ */ (0, W.jsx)(No, {}),
-			/* @__PURE__ */ (0, W.jsxs)("section", {
+			/* @__PURE__ */ (0, U.jsx)(Po, {}),
+			/* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel",
-				children: [/* @__PURE__ */ (0, W.jsxs)("label", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("label", {
 					className: "sampleSelector",
-					children: ["Load sample case", /* @__PURE__ */ (0, W.jsxs)("select", {
+					children: ["Load sample case", /* @__PURE__ */ (0, U.jsxs)("select", {
 						"aria-label": "Load sample case",
 						value: n,
 						onChange: (t) => {
 							r(t.target.value), t.target.value && e.replace(Eo);
 						},
-						children: [/* @__PURE__ */ (0, W.jsx)("option", {
+						children: [/* @__PURE__ */ (0, U.jsx)("option", {
 							value: "",
 							children: "Choose a synthetic preset"
-						}), /* @__PURE__ */ (0, W.jsx)("option", {
+						}), /* @__PURE__ */ (0, U.jsx)("option", {
 							value: "consumer",
 							children: "Consumer · complete DTI and documentation"
 						})]
 					})]
-				}), /* @__PURE__ */ (0, W.jsxs)("form", {
+				}), /* @__PURE__ */ (0, U.jsxs)("form", {
 					ref: e.root,
 					className: "guidedForm",
 					noValidate: !0,
@@ -13751,47 +13757,47 @@ function Po() {
 						e.preventDefault(), t.send("/consumer/decision", s);
 					},
 					children: [
-						/* @__PURE__ */ (0, W.jsx)(Yr, {
+						/* @__PURE__ */ (0, U.jsx)(Xr, {
 							form: e,
 							specs: s
 						}),
-						/* @__PURE__ */ (0, W.jsx)("div", {
+						/* @__PURE__ */ (0, U.jsx)("div", {
 							className: "formGrid",
-							children: s.map((t) => /* @__PURE__ */ (0, W.jsx)(Qr, {
+							children: s.map((t) => /* @__PURE__ */ (0, U.jsx)($r, {
 								form: e,
 								spec: t
 							}, t.pointer))
 						}),
-						/* @__PURE__ */ (0, W.jsxs)("fieldset", { children: [
-							/* @__PURE__ */ (0, W.jsx)("legend", { children: "Ability-to-repay documentation" }),
+						/* @__PURE__ */ (0, U.jsxs)("fieldset", { children: [
+							/* @__PURE__ */ (0, U.jsx)("legend", { children: "Ability-to-repay documentation" }),
 							[
 								"income",
 								"assets",
 								"debts"
-							].map((t) => /* @__PURE__ */ (0, W.jsxs)("label", {
+							].map((t) => /* @__PURE__ */ (0, U.jsxs)("label", {
 								className: "checkboxField",
 								children: [
-									/* @__PURE__ */ (0, W.jsx)("input", {
+									/* @__PURE__ */ (0, U.jsx)("input", {
 										type: "checkbox",
 										"data-pointer": `/atr_documentation/${t}`,
-										checked: Hr(e.values, `/atr_documentation/${t}`) === !0,
-										onChange: (n) => e.setValues((e) => Ur(e, `/atr_documentation/${t}`, n.target.checked))
+										checked: Ur(e.values, `/atr_documentation/${t}`) === !0,
+										onChange: (n) => e.setValues((e) => Wr(e, `/atr_documentation/${t}`, n.target.checked))
 									}),
 									"Verified ",
 									t,
 									" evidence"
 								]
 							}, t)),
-							/* @__PURE__ */ (0, W.jsx)("p", {
+							/* @__PURE__ */ (0, U.jsx)("p", {
 								className: "fine",
 								children: "These are analyst attestations. The application does not independently verify documents."
 							})
 						] }),
-						t.error && /* @__PURE__ */ (0, W.jsx)("p", {
+						t.error && /* @__PURE__ */ (0, U.jsx)("p", {
 							role: "alert",
 							children: t.error
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							className: "primary",
 							type: "submit",
 							"aria-busy": t.busy,
@@ -13800,13 +13806,13 @@ function Po() {
 					]
 				})]
 			}),
-			t.result && /* @__PURE__ */ (0, W.jsxs)("section", {
+			t.result && /* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel",
 				role: "region",
 				"aria-label": "Consumer result",
 				children: [
-					/* @__PURE__ */ (0, W.jsxs)("h2", { children: ["Consumer result · ", t.result.outcome.toUpperCase()] }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("h2", { children: ["Consumer result · ", t.result.outcome.toUpperCase()] }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Policy ",
 						t.result.policy_version,
 						" · weighted-rule score",
@@ -13814,29 +13820,29 @@ function Po() {
 						t.result.score,
 						". The score is not a probability of default."
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("div", {
+					/* @__PURE__ */ (0, U.jsxs)("div", {
 						className: "domainMetrics",
-						children: [/* @__PURE__ */ (0, W.jsxs)("article", { children: [
-							/* @__PURE__ */ (0, W.jsx)("h3", { children: "Total DTI" }),
-							/* @__PURE__ */ (0, W.jsx)("strong", { children: c && typeof c.value == "string" ? Se(c.value, 4) : "Unavailable" }),
-							/* @__PURE__ */ (0, W.jsx)("button", {
+						children: [/* @__PURE__ */ (0, U.jsxs)("article", { children: [
+							/* @__PURE__ */ (0, U.jsx)("h3", { children: "Total DTI" }),
+							/* @__PURE__ */ (0, U.jsx)("strong", { children: c && typeof c.value == "string" ? Se(c.value, 4) : "Unavailable" }),
+							/* @__PURE__ */ (0, U.jsx)("button", {
 								type: "button",
 								onClick: (e) => l(!1, e.currentTarget),
 								children: "Inspect Total DTI"
 							})
-						] }), /* @__PURE__ */ (0, W.jsxs)("article", { children: [
-							/* @__PURE__ */ (0, W.jsx)("h3", { children: "Housing DTI" }),
-							/* @__PURE__ */ (0, W.jsx)("p", { children: "Unavailable from this endpoint" }),
-							/* @__PURE__ */ (0, W.jsx)("button", {
+						] }), /* @__PURE__ */ (0, U.jsxs)("article", { children: [
+							/* @__PURE__ */ (0, U.jsx)("h3", { children: "Housing DTI" }),
+							/* @__PURE__ */ (0, U.jsx)("p", { children: "Unavailable from this endpoint" }),
+							/* @__PURE__ */ (0, U.jsx)("button", {
 								type: "button",
 								onClick: (e) => l(!0, e.currentTarget),
 								children: "Inspect Housing DTI"
 							})
 						] })]
 					}),
-					/* @__PURE__ */ (0, W.jsx)("ul", {
+					/* @__PURE__ */ (0, U.jsx)("ul", {
 						className: "factorList",
-						children: t.result.factors.map((e) => /* @__PURE__ */ (0, W.jsx)("li", { children: /* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("strong", { children: Ao[e.name] ?? e.name.replace(/_/g, " ") }), /* @__PURE__ */ (0, W.jsxs)("span", { children: [
+						children: t.result.factors.map((e) => /* @__PURE__ */ (0, U.jsx)("li", { children: /* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("strong", { children: Ao[e.name] ?? e.name.replace(/_/g, " ") }), /* @__PURE__ */ (0, U.jsxs)("span", { children: [
 							e.passed === null ? "Unavailable" : e.passed ? "Pass" : "Fail",
 							" ",
 							"·",
@@ -13844,14 +13850,14 @@ function Po() {
 							typeof e.value == "boolean" ? String(e.value) : e.name.includes("dti") ? Se(e.value, 4) : e.value
 						] })] }) }, e.name))
 					}),
-					t.result.reasons.map((e) => /* @__PURE__ */ (0, W.jsx)("p", { children: e.message }, e.code)),
-					/* @__PURE__ */ (0, W.jsxs)("p", {
+					t.result.reasons.map((e) => /* @__PURE__ */ (0, U.jsx)("p", { children: e.message }, e.code)),
+					/* @__PURE__ */ (0, U.jsxs)("p", {
 						className: "fine",
 						children: [t.result.disclaimer, " DTI boundaries are illustrative policy settings, not a claim about legal lending ceilings."]
 					})
 				]
 			}),
-			i && /* @__PURE__ */ (0, W.jsx)(ja, {
+			i && /* @__PURE__ */ (0, U.jsx)(ja, {
 				data: i,
 				onClose: () => {
 					a(null), o.current?.focus();
@@ -13860,14 +13866,14 @@ function Po() {
 		]
 	});
 }
-var Fo = {
+var Io = {
 	lender_credit_elsewhere_determination: "Lender credit elsewhere determination",
 	industry_selection_and_affiliation_review: "Industry selection and affiliation review",
 	alternative_size_standards_and_program_eligibility: "Alternative size standards and program eligibility",
 	approved_lender_credit_policy: "Approved lender credit policy"
 };
-function Io() {
-	let e = Jr({
+function Lo() {
+	let e = Yr({
 		...Do,
 		borrower_name: "",
 		naics: "",
@@ -13881,7 +13887,7 @@ function Io() {
 			affiliates: "included",
 			source_reference: ""
 		}
-	}), t = jo(e, To), [n, r] = (0, k.useState)(""), i = String(Hr(e.values, "/size_evidence/basis")).startsWith("employees"), a = [
+	}), t = Mo(e, To), [n, r] = (0, k.useState)(""), i = String(Ur(e.values, "/size_evidence/basis")).startsWith("employees"), a = [
 		ko("/borrower_name", "SBA borrower name", "text"),
 		ko("/assessment_as_of", "SBA assessment as of", "date", { helper: "Pinned source verified through 2026-10-15; later dates are rejected" }),
 		ko("/naics", "NAICS code", "text", {
@@ -13918,30 +13924,30 @@ function Io() {
 			helper: "USD decimal · supplied evidence only; no legal entitlement is inferred"
 		}))
 	];
-	return /* @__PURE__ */ (0, W.jsxs)("div", {
+	return /* @__PURE__ */ (0, U.jsxs)("div", {
 		className: "domainWorkspace",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("header", {
+			/* @__PURE__ */ (0, U.jsxs)("header", {
 				className: "caseHeader",
-				children: [/* @__PURE__ */ (0, W.jsx)("h1", { children: "SBA eligibility screen" }), /* @__PURE__ */ (0, W.jsx)("p", { children: "Selected size and coverage screens with explicit unresolved lender requirements." })]
+				children: [/* @__PURE__ */ (0, U.jsx)("h1", { children: "SBA eligibility screen" }), /* @__PURE__ */ (0, U.jsx)("p", { children: "Selected size and coverage screens with explicit unresolved lender requirements." })]
 			}),
-			/* @__PURE__ */ (0, W.jsx)(No, {}),
-			/* @__PURE__ */ (0, W.jsxs)("section", {
+			/* @__PURE__ */ (0, U.jsx)(Po, {}),
+			/* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel sourceNotice",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("h2", { children: "Pinned workbook" }),
-					/* @__PURE__ */ (0, W.jsx)("p", { children: "Effective March 17, 2023 · verified through October 15, 2026 · 850 supported unambiguous rows · 128 refused rows with footnotes, industry exceptions, or unsupported measures." }),
-					/* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("h2", { children: "Pinned workbook" }),
+					/* @__PURE__ */ (0, U.jsx)("p", { children: "Effective March 17, 2023 · verified through October 15, 2026 · 850 supported unambiguous rows · 128 refused rows with footnotes, industry exceptions, or unsupported measures." }),
+					/* @__PURE__ */ (0, U.jsx)("p", {
 						className: "fine",
 						children: "A passing size screen does not establish complete SBA eligibility. Later source dates and unsupported rows require a separately reviewed source update."
 					})
 				]
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("section", {
+			/* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel",
-				children: [/* @__PURE__ */ (0, W.jsxs)("label", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("label", {
 					className: "sampleSelector",
-					children: ["Load sample case", /* @__PURE__ */ (0, W.jsxs)("select", {
+					children: ["Load sample case", /* @__PURE__ */ (0, U.jsxs)("select", {
 						"aria-label": "Load sample case",
 						value: n,
 						onChange: (t) => {
@@ -13949,21 +13955,21 @@ function Io() {
 							r(n), n && e.replace(n === "sba-employees" ? Oo : Do);
 						},
 						children: [
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "",
 								children: "Choose a synthetic preset"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "sba-receipts",
 								children: "SBA · three-year receipts evidence"
 							}),
-							/* @__PURE__ */ (0, W.jsx)("option", {
+							/* @__PURE__ */ (0, U.jsx)("option", {
 								value: "sba-employees",
 								children: "SBA · 24-month employee evidence"
 							})
 						]
 					})]
-				}), /* @__PURE__ */ (0, W.jsxs)("form", {
+				}), /* @__PURE__ */ (0, U.jsxs)("form", {
 					ref: e.root,
 					className: "guidedForm",
 					noValidate: !0,
@@ -13971,14 +13977,14 @@ function Io() {
 						e.preventDefault(), t.send("/sba/evaluate", a);
 					},
 					children: [
-						/* @__PURE__ */ (0, W.jsx)(Yr, {
+						/* @__PURE__ */ (0, U.jsx)(Xr, {
 							form: e,
 							specs: a
 						}),
-						/* @__PURE__ */ (0, W.jsxs)("div", {
+						/* @__PURE__ */ (0, U.jsxs)("div", {
 							className: "formGrid",
 							children: [
-								/* @__PURE__ */ (0, W.jsx)(Mo, {
+								/* @__PURE__ */ (0, U.jsx)(No, {
 									form: e,
 									pointer: "/size_evidence/basis",
 									label: "Measurement basis",
@@ -13999,12 +14005,12 @@ function Io() {
 									],
 									onChange: (t) => {
 										e.setValues((e) => {
-											let n = Ur(e, "/size_evidence/basis", t);
+											let n = Wr(e, "/size_evidence/basis", t);
 											return delete n.employees, delete n.annual_receipts_millions, n[t.startsWith("employees") ? "employees" : "annual_receipts_millions"] = "", n;
 										});
 									}
 								}),
-								/* @__PURE__ */ (0, W.jsx)(Mo, {
+								/* @__PURE__ */ (0, U.jsx)(No, {
 									form: e,
 									pointer: "/size_evidence/affiliates",
 									label: "Affiliate treatment",
@@ -14017,7 +14023,7 @@ function Io() {
 										label: "No affiliates"
 									}]
 								}),
-								/* @__PURE__ */ (0, W.jsx)(Mo, {
+								/* @__PURE__ */ (0, U.jsx)(No, {
 									form: e,
 									pointer: "/sop_version",
 									label: "SOP version",
@@ -14030,7 +14036,7 @@ function Io() {
 										label: "SOP 8.1"
 									}]
 								}),
-								/* @__PURE__ */ (0, W.jsx)(Mo, {
+								/* @__PURE__ */ (0, U.jsx)(No, {
 									form: e,
 									pointer: "/transaction_type",
 									label: "Transaction type",
@@ -14045,18 +14051,18 @@ function Io() {
 										label: e
 									}))
 								}),
-								a.map((t) => /* @__PURE__ */ (0, W.jsx)(Qr, {
+								a.map((t) => /* @__PURE__ */ (0, U.jsx)($r, {
 									form: e,
 									spec: t
 								}, t.pointer))
 							]
 						}),
-						/* @__PURE__ */ (0, W.jsx)("p", { children: "Owner-resource arithmetic never establishes credit elsewhere. Allowances require documented lender review." }),
-						t.error && /* @__PURE__ */ (0, W.jsx)("p", {
+						/* @__PURE__ */ (0, U.jsx)("p", { children: "Owner-resource arithmetic never establishes credit elsewhere. Allowances require documented lender review." }),
+						t.error && /* @__PURE__ */ (0, U.jsx)("p", {
 							role: "alert",
 							children: t.error
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							className: "primary",
 							type: "submit",
 							"aria-busy": t.busy,
@@ -14065,30 +14071,30 @@ function Io() {
 					]
 				})]
 			}),
-			t.result && /* @__PURE__ */ (0, W.jsxs)("section", {
+			t.result && /* @__PURE__ */ (0, U.jsxs)("section", {
 				className: "panel incompleteEligibility",
 				role: "region",
 				"aria-label": "SBA result",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("h2", { children: "Incomplete Eligibility — Manual Underwriter Review Required" }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsx)("h2", { children: "Incomplete Eligibility — Manual Underwriter Review Required" }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Server outcome:",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("strong", { children: t.result.outcome === "review_required" ? "Review required" : "Screen failed" }),
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: t.result.outcome === "review_required" ? "Review required" : "Screen failed" }),
 						" ",
 						"· eligibility_status: incomplete"
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("ul", { children: [/* @__PURE__ */ (0, W.jsxs)("li", { children: [
+					/* @__PURE__ */ (0, U.jsxs)("ul", { children: [/* @__PURE__ */ (0, U.jsxs)("li", { children: [
 						"Size screen:",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("strong", { children: t.result.size_eligible ? "Pass" : "Fail" }),
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: t.result.size_eligible ? "Pass" : "Fail" }),
 						" ",
 						"· ",
 						t.result.size_reason
-					] }), /* @__PURE__ */ (0, W.jsxs)("li", { children: [
+					] }), /* @__PURE__ */ (0, U.jsxs)("li", { children: [
 						"Coverage screen:",
 						" ",
-						/* @__PURE__ */ (0, W.jsx)("strong", { children: t.result.coverage_pass ? "Pass" : "Fail" }),
+						/* @__PURE__ */ (0, U.jsx)("strong", { children: t.result.coverage_pass ? "Pass" : "Fail" }),
 						" ",
 						"· supplied DSCR ",
 						t.result.global_dscr,
@@ -14096,28 +14102,28 @@ function Io() {
 						" ",
 						t.result.configured_global_dscr_floor
 					] })] }),
-					/* @__PURE__ */ (0, W.jsx)("h3", { children: "Unresolved eligibility requirements" }),
-					/* @__PURE__ */ (0, W.jsx)("ul", { children: t.result.unresolved_requirements.map((e) => /* @__PURE__ */ (0, W.jsx)("li", { children: Fo[e] }, e)) }),
-					/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+					/* @__PURE__ */ (0, U.jsx)("h3", { children: "Unresolved eligibility requirements" }),
+					/* @__PURE__ */ (0, U.jsx)("ul", { children: t.result.unresolved_requirements.map((e) => /* @__PURE__ */ (0, U.jsx)("li", { children: Io[e] }, e)) }),
+					/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 						"Owner-resource arithmetic never establishes credit elsewhere.",
 						" ",
 						t.result.credit_elsewhere.reason
 					] }),
-					/* @__PURE__ */ (0, W.jsxs)("dl", {
+					/* @__PURE__ */ (0, U.jsxs)("dl", {
 						className: "reviewFacts",
 						children: [
-							/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Policy" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: t.result.policy_version })] }),
-							/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Source workbook row" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: t.result.size_standard_source.row ?? "Unavailable" })] }),
-							/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Source effective / verified through" }), /* @__PURE__ */ (0, W.jsxs)("dd", { children: [
+							/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Policy" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: t.result.policy_version })] }),
+							/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Source workbook row" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: t.result.size_standard_source.row ?? "Unavailable" })] }),
+							/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Source effective / verified through" }), /* @__PURE__ */ (0, U.jsxs)("dd", { children: [
 								t.result.size_standard_source.effective_date,
 								" /",
 								" ",
 								t.result.size_standard_source.verified_through ?? "Unavailable"
 							] })] }),
-							/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("dt", { children: "Recorded workbook SHA-256" }), /* @__PURE__ */ (0, W.jsx)("dd", { children: t.result.size_standard_source.sha256 ?? "Unavailable" })] })
+							/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("dt", { children: "Recorded workbook SHA-256" }), /* @__PURE__ */ (0, U.jsx)("dd", { children: t.result.size_standard_source.sha256 ?? "Unavailable" })] })
 						]
 					}),
-					/* @__PURE__ */ (0, W.jsx)("p", {
+					/* @__PURE__ */ (0, U.jsx)("p", {
 						className: "fine",
 						children: t.result.disclaimer
 					})
@@ -14127,94 +14133,94 @@ function Io() {
 	});
 }
 // src/views/AnalysisPanels.tsx
-function Lo() {
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+function Ro() {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "modelScope",
 		"aria-label": "Model scope and policy limitations",
-		children: [/* @__PURE__ */ (0, W.jsxs)("p", { children: [
-			/* @__PURE__ */ (0, W.jsx)("strong", { children: "Capacity is policy arithmetic, not a credit approval." }),
+		children: [/* @__PURE__ */ (0, U.jsxs)("p", { children: [
+			/* @__PURE__ */ (0, U.jsx)("strong", { children: "Capacity is policy arithmetic, not a credit approval." }),
 			" ",
 			"Default rules are illustrative and require institutional validation. The weighted-rule score is not a probability of default."
-		] }), /* @__PURE__ */ (0, W.jsxs)("details", { children: [
-			/* @__PURE__ */ (0, W.jsx)("summary", { children: "Methodology scope" }),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: "FCCR and UCA use simplified definitions. LTV, debt yield, IRR, and NPV are not implemented." }),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: "The assessment's displayed monthly payment is an indicative rounded amount. Coverage annual proposed service uses 12 unrounded monthly payments. The analysis service's proposed-loan schedule rounds principal, interest and payments to cents, so first-year scheduled payments can differ from coverage service." })
+		] }), /* @__PURE__ */ (0, U.jsxs)("details", { children: [
+			/* @__PURE__ */ (0, U.jsx)("summary", { children: "Methodology scope" }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "FCCR and UCA use simplified definitions. LTV, debt yield, IRR, and NPV are not implemented." }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "The assessment's displayed monthly payment is an indicative rounded amount. Coverage annual proposed service uses 12 unrounded monthly payments. The analysis service's proposed-loan schedule rounds principal, interest and payments to cents, so first-year scheduled payments can differ from coverage service." })
 		] })]
 	});
 }
-function Ro({ kind: e }) {
+function zo({ kind: e }) {
 	let { state: t, retry: n } = Ji(), [r, i] = (0, k.useState)(!1), [a, o] = (0, k.useState)(!0), s = e === "schedule" ? "Cent-rounded proposed-loan schedule" : e === "grid" ? "Coverage grid" : "Policy breakevens", c = t.status === "ready" ? t.analysis : null;
-	return /* @__PURE__ */ (0, W.jsxs)("details", {
+	return /* @__PURE__ */ (0, U.jsxs)("details", {
 		className: "panel analysisPanel",
 		onToggle: (e) => i(e.currentTarget.open),
-		children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: s }), r && /* @__PURE__ */ (0, W.jsx)(W.Fragment, { children: c ? e === "schedule" ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+		children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: s }), r && /* @__PURE__ */ (0, U.jsx)(U.Fragment, { children: c ? e === "schedule" ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 			"Server-generated cents ·",
 			" ",
 			c.amortization.status === "available" ? `${c.amortization.payment_count} payments` : c.amortization.explanation
-		] }), c.amortization.status === "available" && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-			/* @__PURE__ */ (0, W.jsxs)("label", {
+		] }), c.amortization.status === "available" && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+			/* @__PURE__ */ (0, U.jsxs)("label", {
 				className: "sampleSelector",
-				children: ["Schedule granularity", /* @__PURE__ */ (0, W.jsxs)("select", {
+				children: ["Schedule granularity", /* @__PURE__ */ (0, U.jsxs)("select", {
 					value: a ? "monthly" : "annual",
 					onChange: (e) => o(e.target.value === "monthly"),
-					children: [/* @__PURE__ */ (0, W.jsx)("option", {
+					children: [/* @__PURE__ */ (0, U.jsx)("option", {
 						value: "monthly",
 						children: "Monthly · first 360 months"
-					}), /* @__PURE__ */ (0, W.jsx)("option", {
+					}), /* @__PURE__ */ (0, U.jsx)("option", {
 						value: "annual",
 						children: "Annual · full loan term"
 					})]
 				})]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("div", {
 				className: "tableScroll scheduleScroll",
 				tabIndex: 0,
 				role: "region",
 				"aria-label": "Scrollable loan schedule",
-				children: /* @__PURE__ */ (0, W.jsxs)("table", { children: [
-					/* @__PURE__ */ (0, W.jsx)("caption", { children: "Server-calculated loan schedule" }),
-					/* @__PURE__ */ (0, W.jsx)("thead", { children: /* @__PURE__ */ (0, W.jsxs)("tr", { children: [
-						/* @__PURE__ */ (0, W.jsx)("th", { children: a ? "Month" : "Loan year" }),
-						/* @__PURE__ */ (0, W.jsx)("th", {
+				children: /* @__PURE__ */ (0, U.jsxs)("table", { children: [
+					/* @__PURE__ */ (0, U.jsx)("caption", { children: "Server-calculated loan schedule" }),
+					/* @__PURE__ */ (0, U.jsx)("thead", { children: /* @__PURE__ */ (0, U.jsxs)("tr", { children: [
+						/* @__PURE__ */ (0, U.jsx)("th", { children: a ? "Month" : "Loan year" }),
+						/* @__PURE__ */ (0, U.jsx)("th", {
 							className: "num",
 							children: "Payments · USD"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("th", {
+						/* @__PURE__ */ (0, U.jsx)("th", {
 							className: "num",
 							children: "Interest · USD"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("th", {
+						/* @__PURE__ */ (0, U.jsx)("th", {
 							className: "num",
 							children: "Principal · USD"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("th", {
+						/* @__PURE__ */ (0, U.jsx)("th", {
 							className: "num",
 							children: "Ending balance · USD"
 						})
 					] }) }),
-					/* @__PURE__ */ (0, W.jsx)("tbody", { children: a ? c.amortization.monthly_rows.map((e) => /* @__PURE__ */ (0, W.jsxs)("tr", { children: [
-						/* @__PURE__ */ (0, W.jsx)("th", {
+					/* @__PURE__ */ (0, U.jsx)("tbody", { children: a ? c.amortization.monthly_rows.map((e) => /* @__PURE__ */ (0, U.jsxs)("tr", { children: [
+						/* @__PURE__ */ (0, U.jsx)("th", {
 							scope: "row",
 							children: e.month
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.payment, 2)
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.interest, 2)
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.principal, 2)
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.ending_balance, 2)
 						})
-					] }, e.month)) : c.amortization.annual_rows.map((e) => /* @__PURE__ */ (0, W.jsxs)("tr", { children: [
-						/* @__PURE__ */ (0, W.jsxs)("th", {
+					] }, e.month)) : c.amortization.annual_rows.map((e) => /* @__PURE__ */ (0, U.jsxs)("tr", { children: [
+						/* @__PURE__ */ (0, U.jsxs)("th", {
 							scope: "row",
 							children: [
 								e.loan_year,
@@ -14223,27 +14229,27 @@ function Ro({ kind: e }) {
 								" months"
 							]
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.payments, 2)
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.interest, 2)
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.principal, 2)
 						}),
-						/* @__PURE__ */ (0, W.jsx)("td", {
+						/* @__PURE__ */ (0, U.jsx)("td", {
 							className: "num",
 							children: N(e.ending_balance, 2)
 						})
 					] }, e.loan_year)) })
 				] })
 			}),
-			a && c.amortization.monthly_rows_truncated && /* @__PURE__ */ (0, W.jsx)("p", { children: "Monthly detail ends after 360 months. Annual rows cover the full term." }),
-			/* @__PURE__ */ (0, W.jsxs)("p", { children: [
+			a && c.amortization.monthly_rows_truncated && /* @__PURE__ */ (0, U.jsx)("p", { children: "Monthly detail ends after 360 months. Annual rows cover the full term." }),
+			/* @__PURE__ */ (0, U.jsxs)("p", { children: [
 				"Final payment ",
 				c.amortization.final_payment,
 				" USD · final adjustment",
@@ -14252,21 +14258,21 @@ function Ro({ kind: e }) {
 				" USD",
 				c.amortization.early_payoff ? " · Early payoff reported by server" : ""
 			] }),
-			c.amortization.reconciliation && /* @__PURE__ */ (0, W.jsxs)("div", {
+			c.amortization.reconciliation && /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "reconciliationNote",
-				children: [/* @__PURE__ */ (0, W.jsx)("p", { children: c.amortization.reconciliation.explanation }), /* @__PURE__ */ (0, W.jsxs)("p", { children: [
+				children: [/* @__PURE__ */ (0, U.jsx)("p", { children: c.amortization.reconciliation.explanation }), /* @__PURE__ */ (0, U.jsxs)("p", { children: [
 					"Coverage annual service:",
 					" ",
 					c.amortization.reconciliation.coverage_annual_payment,
 					" ",
 					"USD",
-					/* @__PURE__ */ (0, W.jsx)("br", {}),
+					/* @__PURE__ */ (0, U.jsx)("br", {}),
 					"First loan-year payments:",
 					" ",
 					c.amortization.reconciliation.first_loan_year_payments,
 					" ",
 					"USD",
-					/* @__PURE__ */ (0, W.jsx)("br", {}),
+					/* @__PURE__ */ (0, U.jsx)("br", {}),
 					"Server reconciliation difference:",
 					" ",
 					c.amortization.reconciliation.first_loan_year_difference,
@@ -14274,16 +14280,16 @@ function Ro({ kind: e }) {
 					"USD"
 				] })]
 			})
-		] })] }) : e === "grid" ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-			/* @__PURE__ */ (0, W.jsx)("p", { children: "Server outcomes under the retained policy · projected latest period · observed history held fixed." }),
-			c.sensitivity.status === "not_applicable" ? /* @__PURE__ */ (0, W.jsxs)("p", { children: ["Unavailable · ", c.sensitivity.explanation] }) : /* @__PURE__ */ (0, W.jsx)("div", {
+		] })] }) : e === "grid" ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "Server outcomes under the retained policy · projected latest period · observed history held fixed." }),
+			c.sensitivity.status === "not_applicable" ? /* @__PURE__ */ (0, U.jsxs)("p", { children: ["Unavailable · ", c.sensitivity.explanation] }) : /* @__PURE__ */ (0, U.jsx)("div", {
 				className: "tableScroll",
 				tabIndex: 0,
 				role: "region",
 				"aria-label": "Scrollable coverage grid",
-				children: /* @__PURE__ */ (0, W.jsxs)("table", { children: [
-					/* @__PURE__ */ (0, W.jsx)("caption", { children: "Revenue and rate coverage grid" }),
-					/* @__PURE__ */ (0, W.jsx)("thead", { children: /* @__PURE__ */ (0, W.jsxs)("tr", { children: [/* @__PURE__ */ (0, W.jsx)("th", { children: "Revenue change" }), c.sensitivity.rate_changes_bps.map((e) => /* @__PURE__ */ (0, W.jsxs)("th", {
+				children: /* @__PURE__ */ (0, U.jsxs)("table", { children: [
+					/* @__PURE__ */ (0, U.jsx)("caption", { children: "Revenue and rate coverage grid" }),
+					/* @__PURE__ */ (0, U.jsx)("thead", { children: /* @__PURE__ */ (0, U.jsxs)("tr", { children: [/* @__PURE__ */ (0, U.jsx)("th", { children: "Revenue change" }), c.sensitivity.rate_changes_bps.map((e) => /* @__PURE__ */ (0, U.jsxs)("th", {
 						className: "num",
 						children: [
 							"+",
@@ -14291,18 +14297,18 @@ function Ro({ kind: e }) {
 							" bps"
 						]
 					}, e))] }) }),
-					/* @__PURE__ */ (0, W.jsx)("tbody", { children: c.sensitivity.revenue_changes.map((e) => /* @__PURE__ */ (0, W.jsxs)("tr", { children: [/* @__PURE__ */ (0, W.jsx)("th", {
+					/* @__PURE__ */ (0, U.jsx)("tbody", { children: c.sensitivity.revenue_changes.map((e) => /* @__PURE__ */ (0, U.jsxs)("tr", { children: [/* @__PURE__ */ (0, U.jsx)("th", {
 						scope: "row",
 						children: Se(e, 0)
 					}), c.sensitivity.rate_changes_bps.map((t) => {
 						let n = c.sensitivity.cells.find((n) => n.revenue_change === e && n.proposed_rate_change_bps === t);
-						return /* @__PURE__ */ (0, W.jsx)("td", {
+						return /* @__PURE__ */ (0, U.jsx)("td", {
 							className: "gridCell",
-							children: !n || n.status === "not_applicable" ? /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)("strong", {
+							children: !n || n.status === "not_applicable" ? /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("strong", {
 								className: "statusBadge",
 								children: "Unavailable"
-							}), /* @__PURE__ */ (0, W.jsx)("p", { children: n?.explanation ?? "No cell returned" })] }) : /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-								/* @__PURE__ */ (0, W.jsxs)("strong", {
+							}), /* @__PURE__ */ (0, U.jsx)("p", { children: n?.explanation ?? "No cell returned" })] }) : /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+								/* @__PURE__ */ (0, U.jsxs)("strong", {
 									className: "statusBadge",
 									"data-outcome": n.outcome,
 									children: [
@@ -14312,58 +14318,58 @@ function Ro({ kind: e }) {
 										n.outcome?.toUpperCase()
 									]
 								}),
-								/* @__PURE__ */ (0, W.jsxs)("span", { children: ["DSCR ", tr(n.dscr)] }),
-								/* @__PURE__ */ (0, W.jsxs)("span", { children: ["FCCR ", tr(n.fccr)] }),
-								/* @__PURE__ */ (0, W.jsxs)("span", { children: ["Global ", tr(n.global_dscr)] })
+								/* @__PURE__ */ (0, U.jsxs)("span", { children: ["DSCR ", nr(n.dscr)] }),
+								/* @__PURE__ */ (0, U.jsxs)("span", { children: ["FCCR ", nr(n.fccr)] }),
+								/* @__PURE__ */ (0, U.jsxs)("span", { children: ["Global ", nr(n.global_dscr)] })
 							] })
 						}, t);
 					})] }, e)) })
 				] })
 			}),
-			/* @__PURE__ */ (0, W.jsx)("ul", { children: c.sensitivity.held_fixed_assumptions.map((e, t) => /* @__PURE__ */ (0, W.jsx)("li", { children: e }, t)) })
-		] }) : /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)("p", { children: "Each threshold and cushion is calculated by the server. Negative cushions indicate an existing breach." }), /* @__PURE__ */ (0, W.jsx)("div", {
+			/* @__PURE__ */ (0, U.jsx)("ul", { children: c.sensitivity.held_fixed_assumptions.map((e, t) => /* @__PURE__ */ (0, U.jsx)("li", { children: e }, t)) })
+		] }) : /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("p", { children: "Each threshold and cushion is calculated by the server. Negative cushions indicate an existing breach." }), /* @__PURE__ */ (0, U.jsx)("div", {
 			className: "tableScroll",
-			children: /* @__PURE__ */ (0, W.jsxs)("table", { children: [
-				/* @__PURE__ */ (0, W.jsx)("caption", { children: "Server-calculated policy breakevens" }),
-				/* @__PURE__ */ (0, W.jsx)("thead", { children: /* @__PURE__ */ (0, W.jsxs)("tr", { children: [
-					/* @__PURE__ */ (0, W.jsx)("th", { children: "Constraint" }),
-					/* @__PURE__ */ (0, W.jsx)("th", { children: "Threshold type" }),
-					/* @__PURE__ */ (0, W.jsx)("th", {
+			children: /* @__PURE__ */ (0, U.jsxs)("table", { children: [
+				/* @__PURE__ */ (0, U.jsx)("caption", { children: "Server-calculated policy breakevens" }),
+				/* @__PURE__ */ (0, U.jsx)("thead", { children: /* @__PURE__ */ (0, U.jsxs)("tr", { children: [
+					/* @__PURE__ */ (0, U.jsx)("th", { children: "Constraint" }),
+					/* @__PURE__ */ (0, U.jsx)("th", { children: "Threshold type" }),
+					/* @__PURE__ */ (0, U.jsx)("th", {
 						className: "num",
 						children: "Threshold"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("th", {
+					/* @__PURE__ */ (0, U.jsx)("th", {
 						className: "num",
 						children: "EBITDA breakeven"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("th", {
+					/* @__PURE__ */ (0, U.jsx)("th", {
 						className: "num",
 						children: "Revenue cushion"
 					})
 				] }) }),
-				/* @__PURE__ */ (0, W.jsx)("tbody", { children: c.breakevens.rows.map((e) => /* @__PURE__ */ (0, W.jsxs)("tr", { children: [
-					/* @__PURE__ */ (0, W.jsx)("th", {
+				/* @__PURE__ */ (0, U.jsx)("tbody", { children: c.breakevens.rows.map((e) => /* @__PURE__ */ (0, U.jsxs)("tr", { children: [
+					/* @__PURE__ */ (0, U.jsx)("th", {
 						scope: "row",
 						children: e.constraint.toUpperCase()
 					}),
-					/* @__PURE__ */ (0, W.jsx)("td", { children: e.threshold_kind.replace(/_/g, " ") }),
-					/* @__PURE__ */ (0, W.jsx)("td", {
+					/* @__PURE__ */ (0, U.jsx)("td", { children: e.threshold_kind.replace(/_/g, " ") }),
+					/* @__PURE__ */ (0, U.jsx)("td", {
 						className: "num",
 						children: e.threshold
 					}),
-					/* @__PURE__ */ (0, W.jsx)("td", {
+					/* @__PURE__ */ (0, U.jsx)("td", {
 						className: "num",
-						children: tr(e.ebitda_breakeven)
+						children: nr(e.ebitda_breakeven)
 					}),
-					/* @__PURE__ */ (0, W.jsx)("td", {
+					/* @__PURE__ */ (0, U.jsx)("td", {
 						className: "num",
 						children: e.revenue_cushion.status === "available" && e.revenue_cushion.raw_value !== null ? Se(e.revenue_cushion.raw_value, 2) : "Unavailable"
 					})
 				] }, `${e.constraint}:${e.threshold_kind}`)) })
 			] })
-		})] }) : /* @__PURE__ */ (0, W.jsxs)("div", {
+		})] }) : /* @__PURE__ */ (0, U.jsxs)("div", {
 			role: "status",
-			children: [/* @__PURE__ */ (0, W.jsx)("p", { children: t.status === "error" ? t.message : t.status === "none" ? "A current dated assessment is required." : "Preparing server analysis…" }), t.status === "error" && /* @__PURE__ */ (0, W.jsx)("button", {
+			children: [/* @__PURE__ */ (0, U.jsx)("p", { children: t.status === "error" ? t.message : t.status === "none" ? "A current dated assessment is required." : "Preparing server analysis…" }), t.status === "error" && /* @__PURE__ */ (0, U.jsx)("button", {
 				type: "button",
 				onClick: n,
 				children: "Retry analysis"
@@ -14372,9 +14378,9 @@ function Ro({ kind: e }) {
 	});
 }
 // src/RejectedInputFields.tsx
-function zo({ draft: e, errors: t, savedField: n, rationale: r, onEvaluate: i, onReviewSaved: a }) {
-	let o = Jr({
-		...Br(e.payload),
+function Bo({ draft: e, errors: t, savedField: n, rationale: r, onEvaluate: i, onReviewSaved: a }) {
+	let o = Yr({
+		...Vr(e.payload),
 		...n ? { rationale: r ?? "" } : {}
 	}), [s, c] = (0, k.useState)(""), l = t.map((e) => ({
 		...e,
@@ -14385,10 +14391,10 @@ function zo({ draft: e, errors: t, savedField: n, rationale: r, onEvaluate: i, o
 	}, [t]);
 	let u = [.../* @__PURE__ */ new Set([
 		...l.map((e) => e.pointer),
-		...typeof Hr(o.values, "/proposed_loan/term_months") == "string" ? ["/proposed_loan/term_months"] : [],
+		...typeof Ur(o.values, "/proposed_loan/term_months") == "string" ? ["/proposed_loan/term_months"] : [],
 		...n ? [n, "/rationale"] : []
 	])].flatMap((t) => {
-		if (!t || Vr(t).some((e) => [
+		if (!t || Hr(t).some((e) => [
 			"__proto__",
 			"constructor",
 			"prototype"
@@ -14410,13 +14416,13 @@ function zo({ draft: e, errors: t, savedField: n, rationale: r, onEvaluate: i, o
 			}] : [];
 		}
 	});
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "panel rejectedInputFields",
 		"aria-label": "Correct rejected inputs",
 		children: [
-			/* @__PURE__ */ (0, W.jsx)("h2", { children: "Review rejected inputs" }),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: "Your complete draft is preserved. A saved edit requires review against the latest stored revision before a fresh operation can be sent." }),
-			/* @__PURE__ */ (0, W.jsxs)("form", {
+			/* @__PURE__ */ (0, U.jsx)("h2", { children: "Review rejected inputs" }),
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "Your complete draft is preserved. A saved edit requires review against the latest stored revision before a fresh operation can be sent." }),
+			/* @__PURE__ */ (0, U.jsxs)("form", {
 				ref: o.root,
 				className: "guidedForm",
 				noValidate: !0,
@@ -14425,14 +14431,14 @@ function zo({ draft: e, errors: t, savedField: n, rationale: r, onEvaluate: i, o
 					let r = o.prepare(u);
 					if (r && u.length) {
 						if (n && a) {
-							let e = Hr(r, n);
+							let e = Ur(r, n);
 							if (typeof e != "string" && typeof e != "number") return;
 							let i = t.currentTarget.querySelector("button[type=submit]");
 							i && a(e, String(r.rationale), i).catch((e) => c(e instanceof Error ? e.message : "The latest revision could not be reviewed. Your correction is preserved."));
 						} else {
 							let t = e.edit ? {
 								...e.edit,
-								next: Hr(r, e.edit.path)
+								next: Ur(r, e.edit.path)
 							} : void 0;
 							i({
 								...e,
@@ -14444,23 +14450,23 @@ function zo({ draft: e, errors: t, savedField: n, rationale: r, onEvaluate: i, o
 					}
 				},
 				children: [
-					/* @__PURE__ */ (0, W.jsx)(Yr, {
+					/* @__PURE__ */ (0, U.jsx)(Xr, {
 						form: o,
 						specs: u
 					}),
-					/* @__PURE__ */ (0, W.jsx)("div", {
+					/* @__PURE__ */ (0, U.jsx)("div", {
 						className: "formGrid",
-						children: u.map((e) => /* @__PURE__ */ (0, W.jsx)(Qr, {
+						children: u.map((e) => /* @__PURE__ */ (0, U.jsx)($r, {
 							form: o,
 							spec: e
 						}, e.pointer))
 					}),
-					u.length ? /* @__PURE__ */ (0, W.jsx)("button", {
+					u.length ? /* @__PURE__ */ (0, U.jsx)("button", {
 						type: "submit",
 						className: "primary",
 						children: n ? "Review corrected revision" : "Evaluate corrected draft"
-					}) : /* @__PURE__ */ (0, W.jsx)("p", { children: "These errors require a corrected complete case file. The original rejection and field locations remain above." }),
-					s && /* @__PURE__ */ (0, W.jsx)("p", {
+					}) : /* @__PURE__ */ (0, U.jsx)("p", { children: "These errors require a corrected complete case file. The original rejection and field locations remain above." }),
+					s && /* @__PURE__ */ (0, U.jsx)("p", {
 						role: "alert",
 						children: s
 					})
@@ -14470,21 +14476,21 @@ function zo({ draft: e, errors: t, savedField: n, rationale: r, onEvaluate: i, o
 	});
 }
 // src/excel/workbook.worker.ts?worker&inline
-var Bo = "(function(){var e={},t=(function(t,n,r,i,a){var o=new Worker(e[n]||(e[n]=URL.createObjectURL(new Blob([t+`;addEventListener(\"error\",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})`],{type:`text/javascript`}))));return o.onmessage=function(e){var t=e.data,n=t.$e$;if(n){var r=Error(n[0]);r.code=n[1],r.stack=n[2],a(r,null)}else a(null,t)},o.postMessage(r,i),o}),n=Uint8Array,r=Uint16Array,i=Int32Array,a=new n([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0,0]),o=new n([0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,0,0]),s=new n([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),c=function(e,t){for(var n=new r(31),a=0;a<31;++a)n[a]=t+=1<<e[a-1];for(var o=new i(n[30]),a=1;a<30;++a)for(var s=n[a];s<n[a+1];++s)o[s]=s-n[a]<<5|a;return{b:n,r:o}},l=c(a,2),u=l.b,d=l.r;u[28]=258,d[258]=28;for(var f=c(o,0),p=f.b,m=f.r,h=new r(32768),g=0;g<32768;++g){var _=(g&43690)>>1|(g&21845)<<1;_=(_&52428)>>2|(_&13107)<<2,_=(_&61680)>>4|(_&3855)<<4,h[g]=((_&65280)>>8|(_&255)<<8)>>1}for(var v=(function(e,t,n){for(var i=e.length,a=0,o=new r(t);a<i;++a)e[a]&&++o[e[a]-1];var s=new r(t);for(a=1;a<t;++a)s[a]=s[a-1]+o[a-1]<<1;var c;if(n){c=new r(1<<t);var l=15-t;for(a=0;a<i;++a)if(e[a])for(var u=a<<4|e[a],d=t-e[a],f=s[e[a]-1]++<<d,p=f|(1<<d)-1;f<=p;++f)c[h[f]>>l]=u}else for(c=new r(i),a=0;a<i;++a)e[a]&&(c[a]=h[s[e[a]-1]++]>>15-e[a]);return c}),y=new n(288),g=0;g<144;++g)y[g]=8;for(var g=144;g<256;++g)y[g]=9;for(var g=256;g<280;++g)y[g]=7;for(var g=280;g<288;++g)y[g]=8;for(var b=new n(32),g=0;g<32;++g)b[g]=5;var x=/*#__PURE__*/ v(y,9,0),S=/*#__PURE__*/ v(y,9,1),C=/*#__PURE__*/ v(b,5,0),w=/*#__PURE__*/ v(b,5,1),ee=function(e){for(var t=e[0],n=1;n<e.length;++n)e[n]>t&&(t=e[n]);return t},T=function(e,t,n){var r=t/8|0;return(e[r]|e[r+1]<<8)>>(t&7)&n},E=function(e,t){var n=t/8|0;return(e[n]|e[n+1]<<8|e[n+2]<<16)>>(t&7)},D=function(e){return(e+7)/8|0},O=function(e,t,r){return(t==null||t<0)&&(t=0),(r==null||r>e.length)&&(r=e.length),new n(e.subarray(t,r))},k=[`unexpected EOF`,`invalid block type`,`invalid length/literal`,`invalid distance`,`stream finished`,`no stream handler`,,`no callback`,`invalid UTF-8 data`,`extra field too long`,`date not in range 1980-2099`,`filename too long`,`stream finishing`,`invalid zip data`],A=function(e,t,n){var r=Error(t||k[e]);if(r.code=e,Error.captureStackTrace&&Error.captureStackTrace(r,A),!n)throw r;return r},j=function(e,t,r,i){var c=e.length,l=i?i.length:0;if(!c||t.f&&!t.l)return r||new n(0);var d=!r,f=d||t.i!=2,m=t.i;d&&(r=new n(c*3));var h=function(e){var t=r.length;if(e>t){var i=new n(Math.max(t*2,e));i.set(r),r=i}},g=t.f||0,_=t.p||0,y=t.b||0,b=t.l,x=t.d,C=t.m,k=t.n,j=c*8;do{if(!b){g=T(e,_,1);var M=T(e,_+1,3);if(_+=3,!M){var N=D(_)+4,P=e[N-4]|e[N-3]<<8,F=N+P;if(F>c){m&&A(0);break}f&&h(y+P),r.set(e.subarray(N,F),y),t.b=y+=P,t.p=_=F*8,t.f=g;continue}if(M==1)b=S,x=w,C=9,k=5;else if(M==2){var I=T(e,_,31)+257,L=T(e,_+10,15)+4,R=I+T(e,_+5,31)+1;_+=14;for(var z=new n(R),B=new n(19),V=0;V<L;++V)B[s[V]]=T(e,_+V*3,7);_+=L*3;for(var H=ee(B),te=(1<<H)-1,U=v(B,H,1),V=0;V<R;){var W=U[T(e,_,te)];_+=W&15;var N=W>>4;if(N<16)z[V++]=N;else{var G=0,K=0;for(N==16?(K=3+T(e,_,3),_+=2,G=z[V-1]):N==17?(K=3+T(e,_,7),_+=3):N==18&&(K=11+T(e,_,127),_+=7);K--;)z[V++]=G}}var q=z.subarray(0,I),ne=z.subarray(I);C=ee(q),k=ee(ne),b=v(q,C,1),x=v(ne,k,1)}else A(1);if(_>j){m&&A(0);break}}f&&h(y+131072);for(var re=(1<<C)-1,ie=(1<<k)-1,J=_;;J=_){var G=b[E(e,_)&re],ae=G>>4;if(_+=G&15,_>j){m&&A(0);break}if(G||A(2),ae<256)r[y++]=ae;else if(ae==256){J=_,b=null;break}else{var oe=ae-254;if(ae>264){var V=ae-257,Y=a[V];oe=T(e,_,(1<<Y)-1)+u[V],_+=Y}var X=x[E(e,_)&ie],se=X>>4;X||A(3),_+=X&15;var ne=p[se];if(se>3){var Y=o[se];ne+=E(e,_)&(1<<Y)-1,_+=Y}if(_>j){m&&A(0);break}f&&h(y+131072);var Z=y+oe;if(y<ne){var ce=l-ne,le=Math.min(ne,Z);for(ce+y<0&&A(3);y<le;++y)r[y]=i[ce+y]}for(;y<Z;++y)r[y]=r[y-ne]}}t.l=b,t.p=J,t.b=y,t.f=g,b&&(g=1,t.m=C,t.d=x,t.n=k)}while(!g);return y!=r.length&&d?O(r,0,y):r.subarray(0,y)},M=function(e,t,n){n<<=t&7;var r=t/8|0;e[r]|=n,e[r+1]|=n>>8},N=function(e,t,n){n<<=t&7;var r=t/8|0;e[r]|=n,e[r+1]|=n>>8,e[r+2]|=n>>16},P=function(e,t){for(var i=[],a=0;a<e.length;++a)e[a]&&i.push({s:a,f:e[a]});var o=i.length,s=i.slice();if(!o)return{t:V,l:0};if(o==1){var c=new n(i[0].s+1);return c[i[0].s]=1,{t:c,l:1}}i.sort(function(e,t){return e.f-t.f}),i.push({s:-1,f:25001});var l=i[0],u=i[1],d=0,f=1,p=2;for(i[0]={s:-1,f:l.f+u.f,l,r:u};f!=o-1;)l=i[i[d].f<i[p].f?d++:p++],u=i[d!=f&&i[d].f<i[p].f?d++:p++],i[f++]={s:-1,f:l.f+u.f,l,r:u};for(var m=s[0].s,a=1;a<o;++a)s[a].s>m&&(m=s[a].s);var h=new r(m+1),g=F(i[f-1],h,0);if(g>t){var a=0,_=0,v=g-t,y=1<<v;for(s.sort(function(e,t){return h[t.s]-h[e.s]||e.f-t.f});a<o;++a){var b=s[a].s;if(h[b]>t)_+=y-(1<<g-h[b]),h[b]=t;else break}for(_>>=v;_>0;){var x=s[a].s;h[x]<t?_-=1<<t-h[x]++-1:++a}for(;a>=0&&_;--a){var S=s[a].s;h[S]==t&&(--h[S],++_)}g=t}return{t:new n(h),l:g}},F=function(e,t,n){return e.s==-1?Math.max(F(e.l,t,n+1),F(e.r,t,n+1)):t[e.s]=n},I=function(e){for(var t=e.length;t&&!e[--t];);for(var n=new r(++t),i=0,a=e[0],o=1,s=function(e){n[i++]=e},c=1;c<=t;++c)if(e[c]==a&&c!=t)++o;else{if(!a&&o>2){for(;o>138;o-=138)s(32754);o>2&&(s(o>10?o-11<<5|28690:o-3<<5|12305),o=0)}else if(o>3){for(s(a),--o;o>6;o-=6)s(8304);o>2&&(s(o-3<<5|8208),o=0)}for(;o--;)s(a);o=1,a=e[c]}return{c:n.subarray(0,i),n:t}},L=function(e,t){for(var n=0,r=0;r<t.length;++r)n+=e[r]*t[r];return n},R=function(e,t,n){var r=n.length,i=D(t+2);e[i]=r&255,e[i+1]=r>>8,e[i+2]=e[i]^255,e[i+3]=e[i+1]^255;for(var a=0;a<r;++a)e[i+a+4]=n[a];return(i+4+r)*8},z=function(e,t,n,i,c,l,u,d,f,p,m){M(t,m++,n),++c[256];for(var h=P(c,15),g=h.t,_=h.l,S=P(l,15),w=S.t,ee=S.l,T=I(g),E=T.c,D=T.n,O=I(w),k=O.c,A=O.n,j=new r(19),F=0;F<E.length;++F)++j[E[F]&31];for(var F=0;F<k.length;++F)++j[k[F]&31];for(var z=P(j,7),B=z.t,V=z.l,H=19;H>4&&!B[s[H-1]];--H);var te=p+5<<3,U=L(c,y)+L(l,b)+u,W=L(c,g)+L(l,w)+u+14+3*H+L(j,B)+2*j[16]+3*j[17]+7*j[18];if(f>=0&&te<=U&&te<=W)return R(t,m,e.subarray(f,f+p));var G,K,q,ne;if(M(t,m,1+(W<U)),m+=2,W<U){G=v(g,_,0),K=g,q=v(w,ee,0),ne=w;var re=v(B,V,0);M(t,m,D-257),M(t,m+5,A-1),M(t,m+10,H-4),m+=14;for(var F=0;F<H;++F)M(t,m+3*F,B[s[F]]);m+=3*H;for(var ie=[E,k],J=0;J<2;++J)for(var ae=ie[J],F=0;F<ae.length;++F){var oe=ae[F]&31;M(t,m,re[oe]),m+=B[oe],oe>15&&(M(t,m,ae[F]>>5&127),m+=ae[F]>>12)}}else G=x,K=y,q=C,ne=b;for(var F=0;F<d;++F){var Y=i[F];if(Y>255){var oe=Y>>18&31;N(t,m,G[oe+257]),m+=K[oe+257],oe>7&&(M(t,m,Y>>23&31),m+=a[oe]);var X=Y&31;N(t,m,q[X]),m+=ne[X],X>3&&(N(t,m,Y>>5&8191),m+=o[X])}else N(t,m,G[Y]),m+=K[Y]}return N(t,m,G[256]),m+K[256]},B=/*#__PURE__*/ new i([65540,131080,131088,131104,262176,1048704,1048832,2114560,2117632]),V=/*#__PURE__*/ new n(0),H=function(e,t,s,c,l,u){var f=u.z||e.length,p=new n(c+f+5*(1+Math.ceil(f/7e3))+l),h=p.subarray(c,p.length-l),g=u.l,_=(u.r||0)&7;if(t){_&&(h[0]=u.r>>3);for(var v=B[t-1],y=v>>13,b=v&8191,x=(1<<s)-1,S=u.p||new r(32768),C=u.h||new r(x+1),w=Math.ceil(s/3),ee=2*w,T=function(t){return(e[t]^e[t+1]<<w^e[t+2]<<ee)&x},E=new i(25e3),k=new r(288),A=new r(32),j=0,M=0,N=u.i||0,P=0,F=u.w||0,I=0;N+2<f;++N){var L=T(N),V=N&32767,H=C[L];if(S[V]=H,C[L]=V,F<=N){var te=f-N;if((j>7e3||P>24576)&&(te>423||!g)){_=z(e,h,0,E,k,A,M,P,I,N-I,_),P=j=M=0,I=N;for(var U=0;U<286;++U)k[U]=0;for(var U=0;U<30;++U)A[U]=0}var W=2,G=0,K=b,q=V-H&32767;if(te>2&&L==T(N-q))for(var ne=Math.min(y,te)-1,re=Math.min(32767,N),ie=Math.min(258,te);q<=re&&--K&&V!=H;){if(e[N+W]==e[N+W-q]){for(var J=0;J<ie&&e[N+J]==e[N+J-q];++J);if(J>W){if(W=J,G=q,J>ne)break;for(var ae=Math.min(q,J-2),oe=0,U=0;U<ae;++U){var Y=N-q+U&32767,X=Y-S[Y]&32767;X>oe&&(oe=X,H=Y)}}}V=H,H=S[V],q+=V-H&32767}if(G){E[P++]=268435456|d[W]<<18|m[G];var se=d[W]&31,Z=m[G]&31;M+=a[se]+o[Z],++k[257+se],++A[Z],F=N+W,++j}else E[P++]=e[N],++k[e[N]]}}for(N=Math.max(N,F);N<f;++N)E[P++]=e[N],++k[e[N]];_=z(e,h,g,E,k,A,M,P,I,N-I,_),g||(u.r=_&7|h[_/8|0]<<3,_-=7,u.h=C,u.p=S,u.i=N,u.w=F)}else{for(var N=u.w||0;N<f+g;N+=65535){var ce=N+65535;ce>=f&&(h[_/8|0]=g,ce=f),_=R(h,_+1,e.subarray(N,ce))}u.i=f}return O(p,0,c+D(_)+l)},te=/*#__PURE__*/ (function(){for(var e=/* @__PURE__ */ new Int32Array(256),t=0;t<256;++t){for(var n=t,r=9;--r;)n=(n&1&&-306674912)^n>>>1;e[t]=n}return e})(),U=function(){var e=-1;return{p:function(t){for(var n=e,r=0;r<t.length;++r)n=te[n&255^t[r]]^n>>>8;e=n},d:function(){return~e}}},W=function(e,t,r,i,a){if(!a&&(a={l:1},t.dictionary)){var o=t.dictionary.subarray(-32768),s=new n(o.length+e.length);s.set(o),s.set(e,o.length),e=s,a.w=o.length}return H(e,t.level==null?6:t.level,t.mem==null?a.l?Math.ceil(Math.max(8,Math.min(13,Math.log(e.length)))*1.5):20:12+t.mem,r,i,a)},G=function(e,t){var n={};for(var r in e)n[r]=e[r];for(var r in t)n[r]=t[r];return n},K=function(e,t,n){for(var r=e(),i=e.toString(),a=i.slice(i.indexOf(`[`)+1,i.lastIndexOf(`]`)).replace(/\\s+/g,``).split(`,`),o=0;o<r.length;++o){var s=r[o],c=a[o];if(typeof s==`function`){t+=`;`+c+`=`;var l=s.toString();if(s.prototype){if(l.indexOf(`[native code]`)!=-1){var u=l.indexOf(` `,8)+1;t+=l.slice(u,l.indexOf(`(`,u))}else for(var d in t+=l,s.prototype)t+=`;`+c+`.prototype.`+d+`=`+s.prototype[d].toString()}else t+=l}else n[c]=s}return t},q=[],ne=function(e){var t=[];for(var n in e)e[n].buffer&&t.push((e[n]=new e[n].constructor(e[n])).buffer);return t},re=function(e,n,r,i){if(!q[r]){for(var a=``,o={},s=e.length-1,c=0;c<s;++c)a=K(e[c],a,o);q[r]={c:K(e[s],a,o),e:o}}var l=G({},q[r].e);return t(q[r].c+`;onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage=`+n.toString()+`}`,r,l,ne(l),i)},ie=function(){return[n,r,i,a,o,s,u,p,S,w,h,k,v,ee,T,E,D,O,A,j,de,J,ae]},J=function(e){return postMessage(e,[e.buffer])},ae=function(e){return e&&{out:e.size&&new n(e.size),dictionary:e.dictionary}},oe=function(e,t,n,r,i,a){var o=re(n,r,i,function(e,t){o.terminate(),a(e,t)});return o.postMessage([e,t],t.consume?[e.buffer]:[]),function(){o.terminate()}},Y=function(e,t){return e[t]|e[t+1]<<8},X=function(e,t){return(e[t]|e[t+1]<<8|e[t+2]<<16|e[t+3]<<24)>>>0},se=function(e,t){return X(e,t)+X(e,t+4)*4294967296},Z=function(e,t,n){for(;n;++t)e[t]=n,n>>>=8};function ce(e,t){return W(e,t||{},0,0)}var le=/* @__PURE__ */ function(){function e(e,t){typeof e==`function`&&(t=e,e={}),this.ondata=t;var r=e&&e.dictionary&&e.dictionary.subarray(-32768);this.s={i:0,b:r?r.length:0},this.o=new n(32768),this.p=new n(0),r&&this.o.set(r)}return e.prototype.e=function(e){if(this.ondata||A(5),this.d&&A(4),!this.p.length)this.p=e;else if(e.length){var t=new n(this.p.length+e.length);t.set(this.p),t.set(e,this.p.length),this.p=t}},e.prototype.c=function(e){this.s.i=+(this.d=e||!1);var t=this.s.b,n=j(this.p,this.s,this.o);this.ondata(O(n,t,this.s.b),this.d),this.o=O(n,this.s.b-32768),this.s.b=this.o.length,this.p=O(this.p,this.s.p/8|0),this.s.p&=7},e.prototype.push=function(e,t){this.e(e),this.c(t)},e}();function ue(e,t,n){return n||(n=t,t={}),typeof n!=`function`&&A(7),oe(e,t,[ie],function(e){return J(de(e.data[0],ae(e.data[1])))},1,n)}function de(e,t){return j(e,{i:2},t&&t.out,t&&t.dictionary)}var fe=function(e,t,r,i){for(var a in e){var o=e[a],s=t+a,c=i;Array.isArray(o)&&(c=G(i,o[1]),o=o[0]),ArrayBuffer.isView(o)?r[s]=[o,c]:(r[s+=`/`]=[new n(0),c],fe(o,s,r,i))}},pe=typeof TextEncoder<`u`&&/*#__PURE__*/ new TextEncoder,me=typeof TextDecoder<`u`&&/*#__PURE__*/ new TextDecoder;try{me.decode(V,{stream:!0})}catch{}var he=function(e){for(var t=``,n=0;;){var r=e[n++],i=(r>127)+(r>223)+(r>239);if(n+i>e.length)return{s:t,r:O(e,n-1)};i?i==3?(r=((r&15)<<18|(e[n++]&63)<<12|(e[n++]&63)<<6|e[n++]&63)-65536,t+=String.fromCharCode(55296|r>>10,56320|r&1023)):i&1?t+=String.fromCharCode((r&31)<<6|e[n++]&63):t+=String.fromCharCode((r&15)<<12|(e[n++]&63)<<6|e[n++]&63):t+=String.fromCharCode(r)}};function ge(e,t){if(t){for(var r=new n(e.length),i=0;i<e.length;++i)r[i]=e.charCodeAt(i);return r}if(pe)return pe.encode(e);for(var a=e.length,o=new n(e.length+(e.length>>1)),s=0,c=function(e){o[s++]=e},i=0;i<a;++i){if(s+5>o.length){var l=new n(s+8+(a-i<<1));l.set(o),o=l}var u=e.charCodeAt(i);u<128||t?c(u):u<2048?(c(192|u>>6),c(128|u&63)):u>55295&&u<57344?(u=65536+(u&1047552)|e.charCodeAt(++i)&1023,c(240|u>>18),c(128|u>>12&63),c(128|u>>6&63),c(128|u&63)):(c(224|u>>12),c(128|u>>6&63),c(128|u&63))}return O(o,0,s)}function _e(e,t){if(t){for(var n=``,r=0;r<e.length;r+=16384)n+=String.fromCharCode.apply(null,e.subarray(r,r+16384));return n}if(me)return me.decode(e);var i=he(e),a=i.s,n=i.r;return n.length&&A(8),a}var ve=function(e,t){return t+30+Y(e,t+26)+Y(e,t+28)},ye=function(e,t,n){var r=Y(e,t+28),i=Y(e,t+30),a=_e(e.subarray(t+46,t+46+r),!(Y(e,t+8)&2048)),o=t+46+r,s=be(e,o,i,n,X(e,t+20),X(e,t+24),X(e,t+42)),c=s[0],l=s[1],u=s[2];return[Y(e,t+10),c,l,a,o+i+Y(e,t+32),u]},be=function(e,t,n,r,i,a,o){var s=i==4294967295,c=a==4294967295,l=o==4294967295,u=t+n,d=s+c+l;if(r&&d){for(;t+4<u;t+=4+Y(e,t+2))if(Y(e,t)==1)return[s?se(e,t+4+8*c):i,c?se(e,t+4):a,l?se(e,t+4+8*(c+s)):o,1];r<2&&A(13)}return[i,a,o,0]},xe=function(e){var t=0;if(e)for(var n in e){var r=e[n].length;r>65535&&A(9),t+=r+4}return t},Se=function(e,t,n,r,i,a,o,s){var c=r.length,l=n.extra,u=s&&s.length,d=xe(l);Z(e,t,o==null?67324752:33639248),t+=4,o!=null&&(e[t++]=20,e[t++]=n.os),e[t]=20,t+=2,e[t++]=n.flag<<1|(a<0&&8),e[t++]=i&&8,e[t++]=n.compression&255,e[t++]=n.compression>>8;var f=new Date(n.mtime==null?Date.now():n.mtime),p=f.getFullYear()-1980;if((p<0||p>119)&&A(10),Z(e,t,p<<25|f.getMonth()+1<<21|f.getDate()<<16|f.getHours()<<11|f.getMinutes()<<5|f.getSeconds()>>1),t+=4,a!=-1&&(Z(e,t,n.crc),Z(e,t+4,a<0?-a-2:a),Z(e,t+8,n.size)),Z(e,t+12,c),Z(e,t+14,d),t+=16,o!=null&&(Z(e,t,u),Z(e,t+6,n.attrs),Z(e,t+10,o),t+=14),e.set(r,t),t+=c,d)for(var m in l){var h=l[m],g=h.length;Z(e,t,+m),Z(e,t+2,g),e.set(h,t+4),t+=4+g}return u&&(e.set(s,t),t+=u),t},Ce=function(e,t,n,r,i){Z(e,t,101010256),Z(e,t+8,n),Z(e,t+10,n),Z(e,t+12,r),Z(e,t+16,i)};function we(e,t){t||={};var r={},i=[];fe(e,``,r,t);var a=0,o=0;for(var s in r){var c=r[s],l=c[0],u=c[1],d=u.level==0?0:8,f=ge(s),p=f.length,m=u.comment,h=m&&ge(m),g=h&&h.length,_=xe(u.extra);p>65535&&A(11);var v=d?ce(l,u):l,y=v.length,b=U();b.p(l),i.push(G(u,{size:l.length,crc:b.d(),c:v,f,m:h,u:p!=s.length||h&&m.length!=g,o:a,compression:d})),a+=30+p+_+y,o+=76+2*(p+_)+(g||0)+y}for(var x=new n(o+22),S=a,C=o-a,w=0;w<i.length;++w){var f=i[w];Se(x,f.o,f,f.f,f.u,f.c.length);var ee=30+f.f.length+xe(f.extra);x.set(f.c,f.o+ee),Se(x,a,f,f.f,f.u,f.c.length,f.o,f.m),a+=16+ee+(f.m?f.m.length:0)}return Ce(x,a,i.length,C,S),x}var Te=/* @__PURE__ */ function(){function e(){}return e.prototype.push=function(e,t){this.ondata(null,e,t)},e.compression=0,e}(),Ee=/* @__PURE__ */ function(){function e(){var e=this;this.i=new le(function(t,n){e.ondata(null,t,n)})}return e.prototype.push=function(e,t){try{this.i.push(e,t)}catch(e){this.ondata(e,null,t)}},e.compression=8,e}(),De=/* @__PURE__ */ function(){function e(e){this.onfile=e,this.k=[],this.o={0:Te},this.p=V}return e.prototype.push=function(e,t){var r=this;if(this.onfile||A(5),this.p||A(4),this.c>0){var i=Math.min(this.c,e.length),a=e.subarray(0,i);if(this.c-=i,this.d?this.d.push(a,!this.c):this.k[0].push(a),e=e.subarray(i),e.length)return this.push(e,t)}else{var o=0,s=0,c=void 0,l=void 0;this.p.length?e.length?(l=new n(this.p.length+e.length),l.set(this.p),l.set(e,this.p.length)):l=this.p:l=e;for(var u=l.length,d=this.c,f=d&&this.d,p=function(){var e=X(l,s);if(e==67324752){o=1,c=s,m.d=null,m.c=0;var t=Y(l,s+6),n=Y(l,s+8),i=t&2048,a=t&8,f=Y(l,s+26),p=Y(l,s+28);if(u>s+30+f+p){var h=[];m.k.unshift(h),o=2;var g=X(l,s+18),_=X(l,s+22),v=_e(l.subarray(s+30,s+=30+f),!i),y=be(l,s,p,2,g,_,0),b=y[0],x=y[1],S=y[3];a&&(b=-1-S),s+=p,m.c=b;var C,w={name:v,compression:n,start:function(){if(w.ondata||A(5),!b)w.ondata(null,V,!0);else{var e=r.o[n];e||w.ondata(A(14,`unknown compression type `+n,1),null,!1),C=b<0?new e(v):new e(v,b,x),C.ondata=function(e,t,n){w.ondata(e,t,n)};for(var t=0,i=h;t<i.length;t++){var a=i[t];C.push(a,!1)}r.k[0]==h&&r.c?r.d=C:C.push(V,!0)}},terminate:function(){C&&C.terminate&&C.terminate()}};b>=0&&(w.size=b,w.originalSize=x),m.onfile(w)}return`break`}if(d){if(e==134695760)return c=s+=12+(d==-2&&8),o=3,m.c=0,`break`;if(e==33639248)return c=s-=4,o=3,m.c=0,`break`}},m=this;s<u-4&&p()!==`break`;++s);if(this.p=V,d<0){var h=o?l.subarray(0,c-12-(d==-2&&8)-(X(l,c-16)==134695760&&4)):l.subarray(0,s);f?f.push(h,!!o):this.k[+(o==2)].push(h)}if(o&2)return this.push(l.subarray(s),t);this.p=l.subarray(s)}t&&(this.c&&A(13),this.p=null)},e.prototype.register=function(e){this.o[e.compression]=e},e}(),Oe=typeof queueMicrotask==`function`?queueMicrotask:typeof setTimeout==`function`?setTimeout:function(e){e()};function ke(e,t,r){r||(r=t,t={}),typeof r!=`function`&&A(7);var i=[],a=function(){for(var e=0;e<i.length;++e)i[e]()},o={},s=function(e,t){Oe(function(){r(e,t)})};Oe(function(){s=r});for(var c=e.length-22;X(e,c)!=101010256;--c)if(!c||e.length-c>65558)return s(A(13,0,1),null),a;var l=Y(e,c+8);if(l){var u=l,d=X(e,c+16),f=X(e,c-20)==117853008;if(f){var p=X(e,c-12);f=X(e,p)==101075792,f&&(u=l=X(e,p+32),d=X(e,p+48))}for(var m=t&&t.filter,h=function(t){var r=ye(e,d,f),c=r[0],u=r[1],p=r[2],h=r[3],g=r[4],_=r[5],v=ve(e,_);d=g;var y=function(e,t){e?(a(),s(e,null)):(t&&(o[h]=t),--l||s(null,o))};if(!m||m({name:h,size:u,originalSize:p,compression:c})){if(!c)y(null,O(e,v,v+u));else if(c==8){var b=e.subarray(v,v+u);if(p<524288||u>.8*p)try{y(null,de(b,{out:new n(p)}))}catch(e){y(e,null)}else i.push(ue(b,{size:p},y))}else y(A(14,`unknown compression type `+c,1),null)}else y(null,null)},g=0;g<u;++g)h(g)}else s(null,{});return a}function Ae(e){\"@babel/helpers - typeof\";return Ae=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Ae(e)}function je(e){var t=String.fromCharCode,n=Object.prototype.hasOwnProperty,r=/&#(\\d+);|&#x([0-9a-f]+);|&(\\w+);/gi,i={amp:`&`,apos:`'`,gt:`>`,lt:`<`,quot:`\"`};Object.keys(i).forEach(function(e){i[e.toUpperCase()]=i[e]});function a(e,r,a,o){return o?n.call(i,o)?i[o]:`&`+o+`;`:t(r||parseInt(a,16))}function o(e){return e.length>3&&e.indexOf(`&`)!==-1?e.replace(r,a):e}var s=`non-whitespace outside of root node`;function c(e){return Error(e)}function l(e){return`missing namespace for prefix <`+e+`>`}function u(e){return{get:e,enumerable:!0}}function d(e){var t={},n;for(n in e)t[n]=e[n];return t}var f=Symbol(`nameCache`);function p(e){return e+`$uri`}function m(e){var t={},n,r;for(n in e)r=e[n],t[r]=r,t[p(r)]=n;return t}function h(){return{line:0,column:0}}function g(e){throw e}function _(e){if(!this)return new _(e);var t=e&&e.proxy,n,r,i,a,v=g,y,b,x,S,C=h,w=!1,ee=!1,T=``,E=!1,D=!1,O=null,k=!1,A,j,M,N;function P(e){e instanceof Error||(e=c(e)),O=e,v(e,C)}function F(e){y&&(e instanceof Error||(e=c(e)),y(e,C))}this.on=function(e,t){if(typeof t!=`function`)throw c(`required args <name, cb>`);switch(e){case`openTag`:r=t;break;case`text`:n=t;break;case`closeTag`:i=t;break;case`error`:v=t;break;case`warn`:y=t;break;case`cdata`:a=t;break;case`attention`:S=t;break;case`question`:x=t;break;case`comment`:b=t;break;default:throw c(`unsupported event: `+e)}return this},this.ns=function(e){if(e===void 0&&(e={}),Ae(e)!==`object`)throw c(`required args <nsMap={}>`);var t={},n;for(n in e)t[n]=e[n];return D=!0,N=t,this};function I(){A=D?[]:null,j=D?m(N):null,M=[],C=h,k=!1,O=null,ee=!1,T=``}this.parse=function(e){if(typeof e!=`string`)throw c(`required args <xml=string>`);if(w)throw c(`parse during stream; call end() first`);return I(),L(e),C=h,k=!1,O},this.write=function(e){if(typeof e!=`string`)throw c(`required args <xml=string>`);return w||=(I(),!0),O||(T=L(T+e,!0)||``),this},this.end=function(){return w||I(),w=!1,O||L(T),T=``,C=h,k=!1,O},this.stop=function(){k=!0};function L(e){var c=arguments.length>1&&arguments[1]!==void 0&&arguments[1],m=null,h=null,g,_=0,v=!1,y=!1,w=0,T=0,O,I,L,R,z,B,V,H,te,U=``,W=0,G;function K(e,t){var n=e.indexOf(`:`);if(n===-1)return e;var r=j[e.substring(0,n)];return r?t===r?e.substr(n+1):r+e.substr(n):(F(l(e.substring(0,n))),null)}function q(){if(G!==null)return G;var e,t,n=D&&j.xmlns,r=D&&E?[]:null,i=W,a=U,s=a.length,c,l,u,f,m,h={},g=/* @__PURE__ */ new Set,v,y,b;parseAttr:for(;i<s;i++)if(v=!1,y=a.charCodeAt(i),!(y===32||y<14&&y>8)){for((y<65||y>122||y>90&&y<97)&&y!==95&&y!==58&&(F(`illegal first char attribute name`),v=!0),b=i+1;b<s;b++)if(y=a.charCodeAt(b),!(y>96&&y<123||y>64&&y<91||y>47&&y<59||y===46||y===45||y===95)){if(y===32||y<14&&y>8){F(`missing attribute value`),i=b;continue parseAttr}if(y===61)break;F(`illegal attribute name char`),v=!0}if(m=a.substring(i,b),m===`xmlns:xmlns`&&(F(`illegal declaration of xmlns`),v=!0),y=a.charCodeAt(b+1),y===34)b=a.indexOf(`\"`,i=b+2),b===-1&&(b=a.indexOf(`'`,i),b!==-1&&(F(`attribute value quote missmatch`),v=!0));else if(y===39)b=a.indexOf(`'`,i=b+2),b===-1&&(b=a.indexOf(`\"`,i),b!==-1&&(F(`attribute value quote missmatch`),v=!0));else for(F(`missing attribute value quotes`),v=!0,b+=1;b<s&&(y=a.charCodeAt(b+1),!(y===32||y<14&&y>8));b++);for(b===-1&&(F(`missing closing quotes`),b=s,v=!0),v||(u=a.substring(i,b)),i=b;b+1<s&&(y=a.charCodeAt(b+1),!(y===32||y<14&&y>8));b++)i===b&&(F(`illegal character after attribute end`),v=!0);if(i=b+1,v)continue parseAttr;if(g.has(m))F(`attribute <`+m+`> already defined`);else if(g.add(m),!D)h[m]=u;else if(E){if(l=m===`xmlns`?`xmlns`:m.charCodeAt(0)===120&&m.substr(0,6)===`xmlns:`?m.substr(6):null,l!==null){if(e=o(u),t=p(l),f=N[e],!f){if(l===`xmlns`||t in j&&j[t]!==e)do f=`ns`+_++;while(j[f]!==void 0);else f=l;N[e]=f}j[l]!==f&&(c||=(j=d(j),!0),j[l]=f,l===`xmlns`&&(j[p(f)]=e,n=f),j[t]=e),h[m]=u;continue}r.push(m,u)}else m=K(m,n),m!==null&&(h[m]=u)}if(E)for(i=0,s=r.length;i<s;i++)m=K(r[i++],n),u=r[i],m!==null&&(h[m]=u);return G=h}function ne(){for(var t=/(\\r\\n|\\r|\\n)/g,n=0,r=0,i=0,a=T,o,s;w>=i&&(o=t.exec(e),!(!o||(a=o[0].length+o.index,a>w)));)n+=1,i=a;return w==-1?(r=a,s=e.substring(T)):T===0?s=e.substring(T,w):(r=w-i,s=T==-1?e.substring(w):e.substring(w,T+1)),{data:s,line:n,column:r}}for(C=ne,t&&(te=Object.create({},{name:u(function(){return V}),originalName:u(function(){return H}),attrs:u(q),ns:u(function(){return j})}));T!==-1;){if(w=e.charCodeAt(T)===60?T:e.indexOf(`<`,T),w===-1){if(c)return e.substring(T);if(M.length)return P(`unexpected end of file`);if(!ee)return P(`missing start tag`);T<e.length&&e.substring(T).trim()&&F(s);return}if(ee||=!0,T!==w){if(M.length){if(n&&(n(e.substring(T,w),o,C),k))return}else if(e.substring(T,w).trim()&&(F(s),k))return}if(R=e.charCodeAt(w+1),R===33){if(L=e.charCodeAt(w+2),L===91&&e.substr(w+3,6)===`CDATA[`){if(T=e.indexOf(`]]>`,w),T===-1)return c?e.substring(w):P(`unclosed cdata`);if(a&&(a(e.substring(w+9,T),C),k))return;T+=3;continue}if(L===45&&e.charCodeAt(w+3)===45){if(T=e.indexOf(`-->`,w),T===-1)return c?e.substring(w):P(`unclosed comment`);if(b&&(b(e.substring(w+4,T),o,C),k))return;T+=3;continue}}if(R===63){if(T=e.indexOf(`?>`,w),T===-1)return c?e.substring(w):P(`unclosed question`);if(x&&(x(e.substring(w,T+2),C),k))return;T+=2}else{for(O=w+1;;O++){if(z=e.charCodeAt(O),isNaN(z))return c?e.substring(w):(T=-1,P(`unclosed tag`));if(z===34)L=e.indexOf(`\"`,O+1),O=L===-1?O:L;else if(z===39)L=e.indexOf(`'`,O+1),O=L===-1?O:L;else if(z===62){T=O;break}}if(R===33){if(S&&(S(e.substring(w,T+1),o,C),k))return;T+=1}else{if(G={},R===47){if(v=!1,y=!0,!M.length)return P(`missing open tag`);if(O=V=M.pop(),L=w+2+O.length,e.substring(w+2,L)!==O)return P(`closing tag mismatch`);for(;L<T;L++)if(R=e.charCodeAt(L),!(R===32||R>8&&R<14))return P(`close tag`)}else{if(e.charCodeAt(T-1)===47?(O=V=e.substring(w+1,T-1),v=!0,y=!0):(O=V=e.substring(w+1,T),v=!0,y=!1),!(R>96&&R<123||R>64&&R<91||R===95||R===58))return P(`illegal first char nodeName`);for(L=1,I=O.length;L<I;L++)if(R=O.charCodeAt(L),!(R>96&&R<123||R>64&&R<91||R>47&&R<59||R===45||R===95||R==46)){if(R===32||R<14&&R>8){V=O.substring(0,L),G=null;break}return P(`invalid nodeName`)}y||M.push(V)}if(D){g=j,v&&(y||A.push(g),G===null&&(E=O.indexOf(`xmlns`,L)!==-1)&&(W=L,U=O,q(),E=!1)),H=V,h!==j&&(m=j[f],m===void 0&&(m=j[f]={}),h=j);var re=m[V];if(re!==void 0)V=re;else{if(R=V.indexOf(`:`),R!==-1){if(B=j[V.substring(0,R)],!B)return P(`missing namespace on <`+H+`>`);V=V.substr(R+1)}else B=j.xmlns;B&&(V=B+`:`+V),m[H]=V}}if(v&&(W=L,U=O,r&&(t?r(te,o,y,C):r(V,q,o,y,C),k)))return;if(y){if(i&&(i(t?te:V,o,v,C),k))return;D&&(j=v?g:A.pop())}T+=1}}}}}return new _(e)}function Me(e,t,n,r){var i=!1,a=function(){if(i)throw Error(`Errored`)},o,s=new je;return{promise:new Promise(function(a,c){o=a,s.on(`error`,function(e){throw i=!0,e}),s.on(`text`,function(t,n){r&&r(n(t),e)}),s.on(`openTag`,function(n,r,i,a,o){if(t){var s=r();for(var c in s)s[Ne(c,!0)]=i(s[c]);t(Ne(n),s,e)}}),s.on(`closeTag`,function(t){n&&n(Ne(t),e)})}),write:function(e){a(),s.write(e)},end:function(){a(),s.end(),o()}}}function Ne(e,t){for(var n=0;n<e.length;){if(e[n]===`:`&&!(t&&n===5&&e.slice(0,5)===`xmlns`))return e.slice(n+1);n++}return e}function Pe(e){\"@babel/helpers - typeof\";return Pe=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Pe(e)}function Fe(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,Le(r.key),r)}}function Ie(e,t,n){return t&&Fe(e.prototype,t),n&&Fe(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function Le(e){var t=Re(e,`string`);return Pe(t)===`symbol`?t:String(t)}function Re(e,t){if(Pe(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(Pe(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function ze(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function Be(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&Je(e,t)}function Ve(e){var t=Ke();return function(){var n=Ye(e),r;if(t){var i=Ye(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return He(this,r)}}function He(e,t){if(t&&(Pe(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return Ue(e)}function Ue(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function We(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return We=function(e){if(e===null||!qe(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return Ge(e,arguments,Ye(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),Je(n,e)},We(e)}function Ge(e,t,n){return Ge=Ke()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&Je(i,n.prototype),i},Ge.apply(null,arguments)}function Ke(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function qe(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function Je(e,t){return Je=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},Je(e,t)}function Ye(e){return Ye=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},Ye(e)}var Xe=/*#__PURE__*/ function(e){Be(n,e);var t=Ve(n);function n(e){var r;return ze(this,n),r=t.call(this,e),r.name=`InvalidSpreadsheetError`,r}return Ie(n)}(/*#__PURE__*/ We(Error));function Ze(e,t,n,r,i,a){var o=Me(t,n,r,i);return a?s(o,e,a):(o.write(e),o.end()),o.promise.then(function(e){return e},function(e){var t=new Xe(e.message);throw t.stack=e.stack,t.cause=e,t});function s(e,t,n,r){var i=65536,a=0,o=i,s=function(){a++;var r=Date.now();if(t.length>o){e.write(t.slice(0,o)),n&&n(!1),t=t.slice(o);var i=Date.now()-r;return i<3.5?o*=2:i>7&&(o/=2),!0}return e.write(t),e.end(),n&&n(!0),!1};(function e(){s()&&(r?typeof setImmediate<`u`?setImmediate(e):setTimeout(e,0):e())})()}}function Qe(e){\"@babel/helpers - typeof\";return Qe=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Qe(e)}function $e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,tt(r.key),r)}}function et(e,t,n){return t&&$e(e.prototype,t),n&&$e(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function tt(e){var t=nt(e,`string`);return Qe(t)===`symbol`?t:String(t)}function nt(e,t){if(Qe(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(Qe(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function rt(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function it(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&ft(e,t)}function at(e){var t=ut();return function(){var n=pt(e),r;if(t){var i=pt(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return ot(this,r)}}function ot(e,t){if(t&&(Qe(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return st(e)}function st(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function ct(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return ct=function(e){if(e===null||!dt(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return lt(e,arguments,pt(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),ft(n,e)},ct(e)}function lt(e,t,n){return lt=ut()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&ft(i,n.prototype),i},lt.apply(null,arguments)}function ut(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function dt(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function ft(e,t){return ft=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},ft(e,t)}function pt(e){return pt=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},pt(e)}var mt=/*#__PURE__*/ function(e){it(n,e);var t=at(n);function n(){return rt(this,n),t.apply(this,arguments)}return et(n)}(/*#__PURE__*/ ct(Error));function ht(e){var t=new mt(e.message);return e.stack&&(t.stack=e.stack),Error.captureStackTrace&&Error.captureStackTrace(t,ht),t.cause=e,t}function gt(e,t){return _t(e,t,vt,!0)}function _t(e){var t=(arguments.length>1&&arguments[1]!==void 0?arguments[1]:{}).filter,n=arguments.length>2?arguments[2]:void 0;return arguments.length>3&&arguments[3],n(new Uint8Array(e),{filter:function(e){return!t||t({path:e.name})}}).then(function(e){return e},function(e){throw yt(e)?ht(e):e})}function vt(e){return new Promise(function(t,n){ke(e,function(e,r){e?n(e):t(r)})})}function yt(e){return typeof e.code==`number`}function bt(e){\"@babel/helpers - typeof\";return bt=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},bt(e)}function xt(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,Ct(r.key),r)}}function St(e,t,n){return t&&xt(e.prototype,t),n&&xt(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function Ct(e){var t=wt(e,`string`);return bt(t)===`symbol`?t:String(t)}function wt(e,t){if(bt(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(bt(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function Tt(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function Et(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&Pt(e,t)}function Dt(e){var t=Mt();return function(){var n=Ft(e),r;if(t){var i=Ft(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return Ot(this,r)}}function Ot(e,t){if(t&&(bt(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return kt(e)}function kt(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function At(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return At=function(e){if(e===null||!Nt(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return jt(e,arguments,Ft(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),Pt(n,e)},At(e)}function jt(e,t,n){return jt=Mt()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&Pt(i,n.prototype),i},jt.apply(null,arguments)}function Mt(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function Nt(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function Pt(e,t){return Pt=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},Pt(e,t)}function Ft(e){return Ft=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},Ft(e)}var It={XLS_FILE_NOT_SUPPORTED:\"You passed a legacy `.xls` file. Only `.xlsx` files are supported\",FILE_NOT_SUPPORTED:\"Doesn't look like an `.xlsx` file\",INVALID_ZIP:\"Couldn't unzip `.xlsx` file contents\",NO_DATA:`No data`},Lt=/*#__PURE__*/ function(e){Et(n,e);var t=Dt(n);function n(e,r){var i;return Tt(this,n),i=t.call(this,It[e]||e),i.code=e,i.name=`InvalidInputError`,i.cause=r,i}return St(n)}(/*#__PURE__*/ At(Error));function Rt(e){var t=e.path;return t.endsWith(`.xml`)||t.endsWith(`.xml.rels`)}var zt=[80,75],Bt=[208,207,17,224],Vt=[zt,Bt];Vt.indexOf(zt);var Ht=Vt.indexOf(Bt);function Ut(){var e,t=Wt(Vt),n=0;return function(r){if(isNaN(e)){var i;t=t.filter(function(e){if(r===Vt[e][n])return Vt[e].length===n+1&&(i=e),!0}),t.length===1?e=i:t.length===0&&(e=-1)}return n++,e}}function Wt(e){for(var t=[],n=0;n<e.length;)t.push(n),n++;return t}function Gt(e,t){var n=typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n)return(n=n.call(e)).next.bind(n);if(Array.isArray(e)||(n=Kt(e))||t&&e&&typeof e.length==`number`){n&&(e=n);var r=0;return function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}}}throw TypeError(`Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function Kt(e,t){if(e){if(typeof e==`string`)return qt(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return qt(e,t)}}function qt(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}function Jt(e){for(var t=Ut(),n=Gt(e),r;!(r=n()).done;){var i=r.value;if(Yt(i,t))return}Xt(e.length)}function Yt(e,t){var n=t(e);if(n!==void 0){if(n===Ht)throw new Lt(`XLS_FILE_NOT_SUPPORTED`);if(n<0)throw new Lt(`FILE_NOT_SUPPORTED`);return!0}}function Xt(e){throw new Lt(e===0?`NO_DATA`:`FILE_NOT_SUPPORTED`)}var Zt;function Qt(e){var t=Date.now();(typeof global<`u`?global.READ_EXCEL_FILE_CHECKPOINTS:typeof window<`u`&&window.READ_EXCEL_FILE_CHECKPOINTS)&&(Zt&&console.log(`  -`,t-Zt,`ms`),console.log(`*`,e)),Zt=t}function $t(){Zt=void 0}function en(e){return $t(),Qt(`unpack files`),tn(e).then(function(e){return Jt(new Uint8Array(e)),gt(e,{filter:Rt}).then(function(e){return e},function(e){throw e instanceof mt?new Lt(`INVALID_ZIP`,e.cause):e})})}function tn(e){if(e instanceof Blob)return e.arrayBuffer();if(e instanceof ArrayBuffer)return Promise.resolve(e);throw new Lt(`INPUT_TYPE_NOT_SUPPORTED`)}function nn(e,t){var n=r();return t(e,n,a,null,null).then(function(){return i(n)});function r(){return{workbookPr:void 0,sheets:[]}}function i(e){return{epoch1904:e.workbookPr?e.workbookPr.epoch1904:!1,sheets:e.sheets}}function a(e,t,n){e===`workbookPr`?n.workbookPr||={epoch1904:t.date1904===`1`}:e===`sheet`&&t.name&&n.sheets.push({id:Number(t.sheetId),name:t.name,relationId:t.id})}}function rn(e,t){var n=`http://schemas.openxmlformats.org/officeDocument/2006/relationships/`,r=`http://purl.oclc.org/ooxml/officeDocument/relationships/`,i=a();return t(e,i,s,null,null).then(function(){return o(i)});function a(){return{sheets:{},sharedStrings:void 0,styles:void 0}}function o(e){return e}function s(e,t,n){e===`Relationship`&&c(n,t.Id,t.Type,t.Target)}function c(e,t,i,a){switch(i){case n+`styles`:case r+`styles`:e.styles=l(a);break;case n+`sharedStrings`:case r+`sharedStrings`:e.sharedStrings=l(a);break;case n+`worksheet`:case r+`worksheet`:e.sheets[t]=l(a)}}function l(e){return e[0]===`/`?e.slice(1):`xl/`+e}}function an(e){\"@babel/helpers - typeof\";return an=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},an(e)}var on=[`xfId`];function sn(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),n.push.apply(n,r)}return n}function cn(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]==null?{}:arguments[t];t%2?sn(Object(n),!0).forEach(function(t){ln(e,t,n[t])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):sn(Object(n)).forEach(function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(n,t))})}return e}function ln(e,t,n){return t=un(t),t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function un(e){var t=dn(e,`string`);return an(t)===`symbol`?t:String(t)}function dn(e,t){if(an(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(an(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function fn(e,t){if(e==null)return{};var n=pn(e,t),r,i;if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);for(i=0;i<a.length;i++)r=a[i],!(t.indexOf(r)>=0)&&Object.prototype.propertyIsEnumerable.call(e,r)&&(n[r]=e[r])}return n}function pn(e,t){if(e==null)return{};for(var n={},r=Object.keys(e),i,a=0;a<r.length;a++)i=r[a],!(t.indexOf(i)>=0)&&(n[i]=e[i]);return n}function mn(e,t){var n=r();return t(e,n,a,o,null).then(function(){return i(n)});function r(){return{numberFormats:[],baseStyles:[],styles:[],cellStyleXfs:!1,cellXfs:!1}}function i(e){return e.styles.map(function(t){if(t.xfId){var n=t.xfId,r=fn(t,on);return cn(cn({},e.baseStyles[n]),r)}return t})}function a(e,t,n){if(e===`numFmt`){var r=Number(t.numFmtId),i={id:r};r>=100&&(i.template=t.formatCode),n.numberFormats[r]=i}else if(e===`cellStyleXfs`)n.cellStyleXfs=!0;else if(e===`cellXfs`)n.cellXfs=!0;else if(e===`xf`){if(n.cellStyleXfs)n.baseStyles.push(s(t));else if(n.cellXfs){var a=s(t,n.numberFormats);t.xfId&&(a.xfId=Number(t.xfId)),n.styles.push(a)}}}function o(e,t){e===`cellStyleXfs`?t.cellStyleXfs=!1:e===`cellXfs`&&(t.cellXfs=!1)}function s(e,t){var n={};if(e.numFmtId){var r=Number(e.numFmtId);n.numberFormat=t&&t[r]?t[r]:{id:r}}return n}}function hn(e,t){var n=r();return t(e,n,a,o,s).then(function(){return i(n)});function r(){return{si:void 0,strings:[]}}function i(e){return e.strings}function a(e,t,n){e===`si`?n.si=c():n.si&&l(e,t,n.si)}function o(e,t){e===`si`?(t.strings.push(t.si.string),t.si=void 0):t.si&&u(e,t.si)}function s(e,t){t.si&&d(e,t.si)}function c(){return{t:!1,r:!1,rPh:!1,string:``}}function l(e,t,n){e===`t`?n.t=!0:e===`r`?n.r=!0:e===`rPh`&&(n.rPh=!0)}function u(e,t){e===`t`?t.t=!1:e===`r`?t.r=!1:e===`rPh`&&(t.rPh=!1)}function d(e,t){t.rPh||t.t&&(t.r?t.string+=e:t.string=e)}}function gn(e,t){var n=17,r=1,i=1,a=864e5,o=365;t&&(e+=4*o+r+i);var s=r+i+70*o+n;return Math.floor((e-s)*a)}var _n=/;@$/,vn=/[^a-z0#\\?%]+/;function yn(e,t,n){var r=n[e];return r===void 0?n[e]=bn(t):r}function bn(e){return e=e.toLowerCase(),e=e.replace(_n,``),e=e.replace(/\\\\./g,` `),e.split(`;`).some(t);function t(e){e=e.replace(/\"[^\"]*\"/g,` `),e=e.replace(/(\\[?[smhd]{1,2}\\]?)[\\.\\,]00?0?/g,`$1`),e=e.replace(/\\[([smhd]{1,2})\\]/g,`$1`),e=e.replace(/\\[[^\\]]*\\]/g,``);var t=e.split(vn).filter(function(e){return e});return t.length!==0&&t.every(function(e){return xn.indexOf(e)>=0})}}var xn=/* @__PURE__ */ `s.ss.m.mm.h.hh.am.pm.a.p.d.dd.ddd.dddd.aaa.aaaa.aaaaa.m.mm.mmm.mmmm.mmmmm.y.yy.yyyy.e.ee.eeee`.split(`.`);function Sn(e,t,n,r){return e.numberFormat?!!(En.indexOf(e.numberFormat.id)>=0||t&&e.numberFormat.template===t||n&&e.numberFormat.template&&yn(e.numberFormat.id,e.numberFormat.template,r)):!1}var Cn=[14,15,16,17,18,19,20,21,22,45,46,47],wn=[27,28,29,30,31,32,33,34,35,36,50,51,52,53,54,55,56,57,58],Tn=[27,28,29,30,31,32,33,34,35,36,50,51,52,53,54,55,56,57,58],En=Cn.concat(wn).concat(Tn.filter(function(e){return wn.indexOf(e)<0})).concat([71,72,73,74,75,76,77,78,79,80,81].filter(function(e){return wn.indexOf(e)<0}).filter(function(e){return Tn.indexOf(e)<0}));function Dn(e,t){return Mn(e)||jn(e,t)||kn(e,t)||On()}function On(){throw TypeError(`Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function kn(e,t){if(e){if(typeof e==`string`)return An(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return An(e,t)}}function An(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}function jn(e,t){var n=e==null?null:typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n!=null){var r,i,a,o,s=[],c=!0,l=!1;try{if(a=(n=n.call(e)).next,t===0){if(Object(n)!==n)return;c=!1}else for(;!(c=(r=a.call(n)).done)&&(s.push(r.value),s.length!==t);c=!0);}catch(e){l=!0,i=e}finally{try{if(!c&&n.return!=null&&(o=n.return(),Object(o)!==o))return}finally{if(l)throw i}}return s}}function Mn(e){if(Array.isArray(e))return e}var Nn=[null,null];function Pn(e,t,n,r,i){var a=Dn(i,7),o=a[0],s=a[1],c=a[2],l=a[3],u=a[4],d=a[5],f=a[6];switch(e||`n`){case`str`:return n===void 0?`VALUE_MISSING`:n?[`s`,n]:Nn;case`inlineStr`:return r===void 0?`VALUE_MISSING`:[`s`,r];case`s`:if(!n)return`VALUE_MISSING`;var p=Number(n);return isNaN(p)||o[p]===void 0?`VALUE_INVALID`:[`s`,o[p]];case`b`:return n?n===`1`?[`b`,!0]:n===`0`?[`b`,!1]:`VALUE_INVALID`:`VALUE_MISSING`;case`e`:return n?[`e`,n]:`VALUE_MISSING`;case`d`:if(!n)return Nn;var m=new Date(n);return isNaN(m.valueOf())?`VALUE_INVALID`:[`d`,m.getTime()];case`n`:if(!n)return Nn;if(t){var h=Number(t);if(isNaN(h)||s[h]===void 0)return`FORMAT_INVALID`;if(Sn(s[h],u,d,l)){var g=Number(n);return isNaN(g)?`VALUE_INVALID`:[`d`,gn(g,c)]}}if(f)return[`n`,n];var _=Number(n);return isNaN(_)?`VALUE_INVALID`:[`n`,_];default:return`TYPE_INVALID`}}function Fn(e){for(var t=0,n=0;n<e.length;){var r=e.charCodeAt(n);if(r>=48&&r<=57){var i=Number(e.slice(n));return isNaN(i)&&In(e),[i,t]}t*=26,t+=e.charCodeAt(n)-64,n++}In(e)}function In(e){throw Error(`<c r=\"${e}\">`)}function Ln(e,t){return Bn(e)||zn(e,t)||Hn(e,t)||Rn()}function Rn(){throw TypeError(`Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function zn(e,t){var n=e==null?null:typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n!=null){var r,i,a,o,s=[],c=!0,l=!1;try{if(a=(n=n.call(e)).next,t===0){if(Object(n)!==n)return;c=!1}else for(;!(c=(r=a.call(n)).done)&&(s.push(r.value),s.length!==t);c=!0);}catch(e){l=!0,i=e}finally{try{if(!c&&n.return!=null&&(o=n.return(),Object(o)!==o))return}finally{if(l)throw i}}return s}}function Bn(e){if(Array.isArray(e))return e}function Vn(e,t){var n=typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n)return(n=n.call(e)).next.bind(n);if(Array.isArray(e)||(n=Hn(e))||t&&e&&typeof e.length==`number`){n&&(e=n);var r=0;return function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}}}throw TypeError(`Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function Hn(e,t){if(e){if(typeof e==`string`)return Un(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return Un(e,t)}}function Un(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}var Wn=null;function Gn(e,t,n){var r=n.sharedStrings,i=n.styles,a=n.epoch1904,o=n.dateFormatDetectionCache,s=n.options,c=[r,i,a,o,s.dateFormat,s.smartDateParser!==!1,s.parseNumber],l=[],u=[],d=f();return t(e,d,y,b,x,v).then(function(){var e=d.sheetData,t=e.rowCount,n=e.columnCount,r=e.dataRowCount,i=e.dataColumnCount;if(r<t&&(l=l.slice(0,r)),i<n)for(var a=0;a<l.length;)l[a].length>i&&(l[a]=l[a].slice(0,i)),a++;for(var o=Vn(l),s;!(s=o()).done;)for(var c=s.value;c.length<i;)c.push(Wn);return l});function f(){return{dimension:void 0,sheetData:void 0}}function p(e){return e.sheetData.rows}function m(e,t){e.sheetData.rowIndexShift+=e.sheetData.rows.length-t.length,e.sheetData.rows=t}function h(e){return e.sheetData.errors}function g(e,t){e.sheetData.errors=t}function _(e){var t=e.row,n=e.column,r=e.error;throw new Xe(`<c/> at row ${t}, col ${n}: ${r}`)}function v(e){if(d.sheetData){var t=p(d),n=h(d);if(e)l=l.concat(t),u=u.concat(n),u.length>0&&_(u[0]);else if(t.length>1){var r=t.slice(0,-1);l=l.concat(r),u=u.concat(n),m(d,t.slice(-1)),g(d,[])}}}function y(e,t,n){e===`dimension`?n.dimension=S(t.ref):e===`sheetData`?n.sheetData=C():n.sheetData&&w(e,t,n.sheetData)}function b(e,t){t.sheetData&&ee(e,t.sheetData)}function x(e,t){t.sheetData&&T(e,t.sheetData)}function S(e){var t=e.split(`:`).map(Fn);return t.length===1&&(t=[t[0],t[0]]),t}function C(){return{c:void 0,rows:[],row:void 0,rowNumber:void 0,rowIndexShift:0,cursor:[0,0],rowCount:0,columnCount:0,dataRowCount:0,dataColumnCount:0,errors:[]}}function w(e,t,n){e===`row`?(t.r&&(n.rowNumber=Number(t.r)),n.row=[]):e===`c`?(n.c=A(),n.c.attributes=t):n.c&&j(e,t,n.c)}function ee(e,t){if(e===`row`){if(t.rowNumber){var n=t.rowIndexShift+t.rows.length;if(t.rowNumber<=n)throw new Xe(`Out-of-place <row/> number ${t.rowNumber} follows <row/> number ${n}`);for(;t.rowNumber>t.rowIndexShift+t.rows.length+1;)t.rows.push([])}t.rows.push(t.row),t.row.length>0&&(t.dataRowCount=t.rowNumber),t.rowNumber>t.rowCount&&(t.rowCount=t.rowNumber),t.row=void 0,t.rowNumber=void 0}else if(e===`c`){var r=E(t.c);if(r.row<t.cursor[0]||r.row===t.cursor[0]&&r.column<=t.cursor[1])throw new Xe(`Out-of-place <c/> at row ${r.row} col ${r.column} follows <c/> at row ${t.cursor[0]} col ${t.cursor[1]}`);if(t.cursor[0]=r.row,t.cursor[1]=r.column,t.rowNumber||=r.row,r.error)P&&_(r),t.errors.push(r);else if(r.value!==Wn){for(;r.column>t.row.length+1;)t.row.push(Wn);t.row.push(r.value),r.column>t.dataColumnCount&&(t.dataColumnCount=r.column)}r.column>t.columnCount&&(t.columnCount=r.column),t.c=void 0}else t.c&&M(e,t.c)}function T(e,t){t.c&&N(e,t.c)}function E(e){var t=e.attributes,n=e.inlineString,r=e.vText,i=Ln(Fn(t.r),2),a=i[0],o=i[1],l=D(t.t,t.s,r,n,c,s.trim!==!1);return typeof l==`string`?{row:a,column:o,error:l}:{row:a,column:o,value:k(l[1],l[0])}}function D(e,t,n,r,i,a){var o=O(e,t,n,r,i);return Array.isArray(o)&&o[0]===`s`&&(a&&(o[1]=o[1].trim()),o[1]===``)?Nn:o}function O(e,t,n,r,i){var a=Pn(e,t,n,r,i);if(a===`VALUE_MISSING`)switch(e||`n`){case`str`:case`inlineStr`:case`s`:case`b`:return Nn}return e===`e`?Nn:a}function k(e,t){return t===`n`?s.parseNumber?s.parseNumber(e):e:t===`d`?new Date(e):e}function A(){return{v:!1,is:!1,t:!1,r:!1,rPh:!1,vText:void 0,inlineString:void 0,attributes:void 0}}function j(e,t,n){e===`v`?n.v=!0:e===`is`?(n.is=!0,n.inlineString=``):e===`t`?n.t=!0:e===`r`?n.r=!0:e===`rPh`&&(n.rPh=!0)}function M(e,t){e===`v`?(t.v=!1,t.vText||=``):e===`is`?t.is=!1:e===`t`?t.t=!1:e===`r`?t.r=!1:e===`rPh`&&(t.rPh=!1)}function N(e,t){t.v?t.vText=e:t.is&&(t.rPh||t.t&&(t.r?t.inlineString+=e:t.inlineString=e))}var P}function Kn(e){Qt(`convert files to strings`);for(var t={},n=0,r=Object.keys(e);n<r.length;n++){var i=r[n];t[i]=qn(e[i])}return t}function qn(e){return typeof TextDecoder<`u`?new TextDecoder().decode(e):_e(e)}function Jn(e){\"@babel/helpers - typeof\";return Jn=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Jn(e)}function Yn(e){return Jn(e)===`object`&&typeof e.then==`function`}function Xn(e){\"@babel/helpers - typeof\";return Xn=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Xn(e)}function Zn(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,$n(r.key),r)}}function Qn(e,t,n){return t&&Zn(e.prototype,t),n&&Zn(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function $n(e){var t=er(e,`string`);return Xn(t)===`symbol`?t:String(t)}function er(e,t){if(Xn(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(Xn(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function tr(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function nr(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&ur(e,t)}function rr(e){var t=cr();return function(){var n=dr(e),r;if(t){var i=dr(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return ir(this,r)}}function ir(e,t){if(t&&(Xn(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return ar(e)}function ar(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function or(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return or=function(e){if(e===null||!lr(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return sr(e,arguments,dr(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),ur(n,e)},or(e)}function sr(e,t,n){return sr=cr()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&ur(i,n.prototype),i},sr.apply(null,arguments)}function cr(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function lr(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function ur(e,t){return ur=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},ur(e,t)}function dr(e){return dr=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},dr(e)}var fr=/*#__PURE__*/ function(e){nr(n,e);var t=rr(n);function n(e,r){var i;return tr(this,n),i=t.call(this,`Sheet not found: ${typeof e==`number`?e+`. Sheet count: `+r.length:e+`. Available sheets: `+r.join(`, `)}`),i.name=`SheetNotFoundError`,i.sheet=e,i.sheets=r,i}return Qn(n)}(/*#__PURE__*/ or(Error));function pr(e){\"@babel/helpers - typeof\";return pr=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},pr(e)}function mr(e,t){var n=typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n)return(n=n.call(e)).next.bind(n);if(Array.isArray(e)||(n=hr(e))||t&&e&&typeof e.length==`number`){n&&(e=n);var r=0;return function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}}}throw TypeError(`Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function hr(e,t){if(e){if(typeof e==`string`)return gr(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return gr(e,t)}}function gr(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}function _r(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),n.push.apply(n,r)}return n}function vr(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]==null?{}:arguments[t];t%2?_r(Object(n),!0).forEach(function(t){yr(e,t,n[t])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):_r(Object(n)).forEach(function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(n,t))})}return e}function yr(e,t,n){return t=br(t),t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function br(e){var t=xr(e,`string`);return pr(t)===`symbol`?t:String(t)}function xr(e,t){if(pr(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(pr(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function Sr(e,t){var n=arguments.length>2&&arguments[2]!==void 0?arguments[2]:{},r=Kn(t);return Qt(`parse spreadsheet info and file paths`),kr(Er(),r,e).then(function(t){var i=t.spreadsheetInfo,a=t.filePaths;return Qt(`parse \"shared strings\" and \"styles\"`),kr(Dr(a),r,e).then(function(t){var o=t.sharedStrings,s=t.styles,c=n.sheets?n.sheets.map(function(e){return wr(e,i.sheets)}):i.sheets.map(function(e){return e.relationId});return Qt(`parse sheet${c.length===1?``:`s`} data`),kr(Or(a,c,{sharedStrings:o,styles:s,epoch1904:i.epoch1904,dateFormatDetectionCache:[],options:n}),r,e).then(function(e){return Qt(`end`),c.map(function(t){return{sheet:Tr(t,i.sheets),data:e[t]}})})})})}function Cr(e,t,n,r){return r&&r.parseNumber||(r=vr(vr({},r),{},{parseNumber:null})),Sr(t,n,r)}function wr(e,t){if(typeof e==`string`)for(var n=mr(t),r;!(r=n()).done;){var i=r.value;if(i.name===e)return i.relationId}else if(e<=t.length)return t[e-1].relationId;throw new fr(e,t.map(function(e){return e.name}))}function Tr(e,t){for(var n=mr(t),r;!(r=n()).done;){var i=r.value;if(i.relationId===e)return i.name}throw Error(`Sheet relation ID not found: ${e}`)}function Er(){return{\"xl/_rels/workbook.xml.rels\":{name:`filePaths`,parse:rn},\"xl/workbook.xml\":{name:`spreadsheetInfo`,parse:nn}}}function Dr(e){var t={};return yr(t,e.sharedStrings||`xl/sharedStrings.xml`,{name:`sharedStrings`,parse:hn,fallback:Promise.resolve([])}),yr(t,e.styles||`xl/styles.xml`,{name:`styles`,parse:mn,fallback:{}}),t}function Or(e,t,n){return Object.keys(e.sheets).filter(function(e){return t.includes(e)}).reduce(function(t,r){return vr(vr({},t),{},yr({},e.sheets[r],{name:r,parse:function(e,t){return Gn(e,t,n)}}))},{})}function kr(e,t,n){for(var r={},i=function(){var i=o[a],s=e[i];r[s.name]=t[i]===void 0?s.fallback===void 0?function(){throw new Xe(`\"${i}\" file not found inside the \\`.xlsx\\` file`)}():s.fallback:s.parse(t[i],n)},a=0,o=Object.keys(e);a<o.length;a++)i();for(var s=[],c=function(){var e=u[l];Yn(r[e])&&s.push(r[e].then(function(t){r[e]=t}))},l=0,u=Object.keys(r);l<u.length;l++)c();return s.length>0?Promise.all(s).then(function(){return r}):r}var Ar=void 0;function jr(e,t){return en(e).then(function(e){return Cr(Ar,Ze,e,t)})}let Mr=/^([+-]?)(?:(\\d+)(?:\\.(\\d*))?|\\.(\\d+))(?:[eE]([+-]?\\d+))?$/,Nr=10n;function Pr(e){if(e.length>256)throw Error(`Decimal exceeds the supported range.`);let t=Mr.exec(e);if(!t)throw Error(`Enter a finite decimal value.`);let n=Number(t[5]??`0`);if(!Number.isSafeInteger(n)||Math.abs(n)>128)throw Error(`Decimal exponent exceeds the supported range.`);let r=t[3]??t[4]??``;return{coefficient:BigInt(`${t[1]===`-`?`-`:``}${t[2]??`0`}${r}`),scale:r.length-n}}function Fr({coefficient:e,scale:t}){if(e===0n)return`0`;let n=e<0n?`-`:``,r=(e<0n?-e:e).toString();return t<=0?n+r+`0`.repeat(-t):(r=r.padStart(t+1,`0`),(n+r.slice(0,-t)+`.`+r.slice(-t)).replace(/0+$/,``).replace(/\\.$/,``))}function Ir(e){return Fr(Pr(e))}function Lr(e,t){let n=Pr(e),r=Pr(t),i=Math.max(n.scale,r.scale),a=n.coefficient*Nr**BigInt(i-n.scale),o=r.coefficient*Nr**BigInt(i-r.scale);return a<o?-1:+(a>o)}function Rr(e){let t=Ir(e),n=Pr(e);if((n.coefficient<0n?-n.coefficient:n.coefficient).toString().length>34||Lr(t.startsWith(`-`)?t.slice(1):t,`1e30`)>0||n.coefficient!==0n&&Lr(t.startsWith(`-`)?t.slice(1):t,`1e-30`)<0)throw Error(`Financial input exceeds 34 digits or the supported range [1e-30, 1e30].`);return t}let zr={empty:`Enter an amount.`,invalid:`Enter a finite number such as 1,250,000, (1,250,000) or -1,250,000.`,suffix:`Enter the full amount; K, M and B suffixes are not supported.`,exponent:`Enter the full amount without scientific notation.`,grouping:`Use commas only between groups of three digits, such as 1,250,000.`,sign:`Use either a minus sign or parentheses for a negative amount, not both.`,parentheses:`Close the parentheses around a negative amount, such as (58,000).`,percent:`Enter an amount without a percent sign.`,digits:`Use at most 34 significant digits.`,range:`Enter zero or an amount whose magnitude is from 1e-30 to 1e30.`,negative:`Enter zero or a positive amount.`},Br=/^[\\s\xA0  ]+|[\\s\xA0  ]+$/g;function Q(e,t=zr[e]){return{ok:!1,code:e,message:t}}function Vr(e,t={}){let n=e.replace(/−/g,`-`).replace(Br,``);if(!n)return Q(`empty`);if(/%/.test(n))return Q(`percent`);if(/\\d/.test(n)&&/[kmb]{1,2}\\)?$/i.test(n))return Q(`suffix`);if(/\\d/.test(n)&&/e/i.test(n))return Q(`exponent`);if((n.match(/-/g)??[]).length>1||/-\\s*\\(|\\(\\s*-/.test(n))return Q(`sign`);if((n.match(/\\(/g)??[]).length!==(n.match(/\\)/g)??[]).length)return Q(`parentheses`);if((n.match(/\\$/g)??[]).length>(t.currency===!1?0:1))return Q(`invalid`);let r=/^\\$?(\\()?(-)?\\$?(\\d[\\d,]*(?:\\.\\d*)?|\\.\\d+)\\)?$/.exec(n);if(!r)return Q(`invalid`);let[i]=r[3].split(`.`);if(i.includes(`,`)&&!/^\\d{1,3}(?:,\\d{3})+$/.test(i))return Q(`grouping`);let a=!!r[1]||!!r[2],o=r[3].replace(/,/g,``),s=(a?`-`:``)+(o.startsWith(`.`)?`0`+o:o);if(o.replace(`.`,``).replace(/^0+(?=\\d)/,``).length>34)return Q(`digits`);let c;try{c=Rr(s)}catch{return Q(`range`)}return t.allowNegative===!1&&Lr(c,`0`)<0?Q(`negative`):{ok:!0,value:c}}let Hr=`Enter a whole number, such as 120.`;function Ur(e){if(/[$%]/.test(e))return Q(`invalid`,Hr);let t=Vr(e,{currency:!1});return t.ok?/^-?\\d+$/.test(t.value)?t:Q(`invalid`,Hr):Q(t.code,Hr)}function Wr(e,t){let n=typeof t==`string`||typeof t==`number`?String(t):``;if(e.optional&&!n.trim())return null;if(!n.trim())throw Error(`Enter a value for this field.`);if(e.kind===`text`)return n;if(e.kind===`date`){if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(n)||!Number.isFinite(Date.parse(n))||new Date(n).toISOString().slice(0,10)!==n)throw Error(`Enter a valid calendar date, for example 2025-12-31.`);return n}let r=e.kind===`integer`?Ur(n):Vr(n,{currency:e.kind===`money`});if(!r.ok)throw Error(r.message);if(e.min!==void 0&&Lr(r.value,e.min)<0||e.max!==void 0&&Lr(r.value,e.max)>0)throw Error(`Use ${e.min??`the supported minimum`} through ${e.max??`the supported maximum`}.`);if(e.kind!==`integer`)return r.value;let i=Number(r.value);if(!Number.isSafeInteger(i))throw Error(`Enter an exact safe integer.`);return i}let Gr=[{name:`Borrower`,fields:[{label:`Borrower name`,key:`borrower_name`,kind:`text`,helper:`Business name`},{label:`Geography`,key:`geography`,kind:`text`,helper:`Postal code or geography; keep leading zeros`},{label:`Assessment date`,key:`assessment_as_of`,kind:`date`,helper:`Calendar date, YYYY-MM-DD`}],prefix:null,maximum:1},{name:`Financials`,fields:[{label:`Period start`,key:`period_start`,kind:`date`,helper:`First day of a complete fiscal year`},{label:`Period end`,key:`period_end`,kind:`date`,helper:`Last day of the same fiscal year`},{label:`Revenue`,key:`gross_receipts`,kind:`money`,helper:`USD dollars`},{label:`Cost of goods sold`,key:`cogs`,kind:`money`,helper:`USD dollars`},{label:`Operating expense excl. D&A, interest and officer pay`,key:`operating_expense_excl_dna_interest_comp`,kind:`money`,helper:`USD dollars; exclude D&A, interest and officer pay`},{label:`Officer compensation`,key:`officer_compensation`,kind:`money`,helper:`USD dollars`},{label:`Depreciation`,key:`depreciation`,kind:`money`,helper:`USD dollars`},{label:`Amortization`,key:`amortization`,kind:`money`,helper:`USD dollars`},{label:`Interest expense`,key:`interest_expense`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`},{label:`Section 179 expense`,key:`section_179`,kind:`money`,helper:`USD dollars`},{label:`K-1 distributions`,key:`k1_distribution`,kind:`money`,helper:`USD dollars`}],prefix:`Year`,maximum:10},{name:`Debt and loan`,fields:[{label:`Loan amount`,key:`proposed_loan.amount`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`},{label:`Annual nominal rate`,key:`proposed_loan.annual_rate`,kind:`rate`,helper:`Decimal fraction 0–1 or a percentage; 0.105 = 10.5%`,min:`0`,max:`1`},{label:`Term months`,key:`proposed_loan.term_months`,kind:`integer`,helper:`Integer from 12 through 12,000`,min:`12`,max:`12000`},{label:`Existing annual principal payments`,key:`existing_debt.cpltd_annual`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`},{label:`Annual operating lease payments`,key:`existing_debt.operating_lease_annual`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`}],prefix:null,maximum:1},{name:`Guarantors`,fields:[{label:`Guarantor name`,key:`name`,kind:`text`,helper:`Name`},{label:`Ownership`,key:`ownership_percentage`,kind:`rate`,helper:`Decimal fraction 0–1 or a percentage; 1 = 100%`,min:`0`,max:`1`},{label:`Annual wages`,key:`wages`,kind:`money`,helper:`USD dollars per year`},{label:`Annual interest and dividend income`,key:`interest_dividend_income`,kind:`money`,helper:`USD dollars per year`},{label:`Annual mortgage principal and interest`,key:`mortgage_pi_annual`,kind:`money`,helper:`USD dollars per year; zero or positive`,min:`0`},{label:`Annual auto loan payments`,key:`auto_loan_annual`,kind:`money`,helper:`USD dollars per year; zero or positive`,min:`0`},{label:`Annual credit card minimum payments`,key:`credit_card_min_annual`,kind:`money`,helper:`USD dollars per year; zero or positive`,min:`0`}],prefix:`Guarantor`,maximum:100},{name:`Working capital`,fields:[{label:`Period start`,key:`period_start`,kind:`date`,helper:`Match the latest financial year`},{label:`Period end`,key:`period_end`,kind:`date`,helper:`Match the latest financial year`},{label:`Increase in accounts receivable`,key:`ar_increase`,kind:`money`,helper:`USD dollars; a decrease is negative`},{label:`Increase in inventory`,key:`inventory_increase`,kind:`money`,helper:`USD dollars; a decrease is negative`},{label:`Increase in accounts payable`,key:`ap_increase`,kind:`money`,helper:`USD dollars; a decrease is negative`},{label:`Cash taxes paid`,key:`cash_taxes_paid`,kind:`money`,helper:`USD dollars`}],prefix:null,maximum:1}],Kr=e=>e==null||e===``;function qr(e){let t=``;for(let n=e+1;n>0;n=Math.floor((n-1)/26))t=String.fromCharCode(65+(n-1)%26)+t;return t}function Jr(e){if(e.length!==Gr.length||new Set(e.map(e=>e.sheet)).size!==e.length||e.some(e=>!Gr.some(t=>t.name===e.sheet)))throw Error(`Use the five sheets in the Spreadline Excel template without renaming them.`);let t=[];for(let n of Gr){let r=e.find(e=>e.sheet===n.name).data;if(r[3]?.[1]!==`1`)throw Error(`${n.name}!B4: use template version 1.`);let i=(r[6]??[]).slice();for(;i.length&&Kr(i[i.length-1]);)i.pop();if(i[0]!==`Field`)throw Error(`${n.name}!A7: restore the Field header from the template.`);let a=i.indexOf(`Format`);if(a<2||a!==i.length-1)throw Error(`${n.name}: keep the Format column after the input columns.`);let o=i.slice(1,a);if(o.length>n.maximum||n.prefix===null&&o.length!==1)throw Error(`${n.name}: the number of input columns exceeds the template limit.`);o.forEach((e,t)=>{if(e!==(n.prefix?`${n.prefix} ${t+1}`:`Value`))throw Error(`${n.name}!${qr(t+1)}7: restore the template column heading.`)});let s=/* @__PURE__ */ new Map;for(let e=7;e<r.length;e++){let t=r[e];if(t.every(Kr))continue;let i=t[0];if(typeof i!=`string`||!n.fields.some(e=>e.label===i))throw Error(`${n.name}!A${e+1}: unknown field label. Use the template labels.`);if(s.has(i))throw Error(`${n.name}!A${e+1}: duplicate field label ${i}.`);if(t.slice(a+1).some(e=>!Kr(e)))throw Error(`${n.name}: unexpected data beyond the template columns.`);s.set(i,e)}for(let e of n.fields)if(!s.has(e.label))throw Error(`${n.name}: restore the missing field label ${e.label}.`);let c=o.map((e,t)=>n.fields.some(e=>!Kr(r[s.get(e.label)]?.[t+1]))),l=!1;c.forEach(e=>{if(!e)l=!0;else if(l&&n.prefix)throw Error(`${n.name}: remove empty input columns between populated columns.`)});let u=Math.max(0,c.lastIndexOf(!0));for(let e=0;e<=u;e++)for(let i of n.fields){let a=s.get(i.label),o=r[a]?.[e+1],c=``,l;if(o instanceof Date)!Number.isFinite(o.getTime())||o.getUTCHours()!==0||o.getUTCMinutes()!==0||o.getUTCSeconds()!==0||o.getUTCMilliseconds()!==0?l=`Use a calendar date without a time.`:i.kind===`date`?c=o.toISOString().slice(0,10):l=`This financial cell is formatted as a date. Restore its text format and value.`;else if(typeof o==`string`){if(o.length>2e3)throw Error(`${n.name}!${qr(e+1)}${a+1}: input text exceeds 2,000 characters.`);c=o}else Kr(o)||(l=`Use text or an exact numeric Excel cell, not a boolean or unsupported cell type.`);let u=n.name===`Financials`?`/years/${e}/`:n.name===`Guarantors`?`/guarantors/${e}/`:n.name===`Working capital`?`/working_capital/`:`/`;t.push({...i,pointer:u+i.key.replace(/\\./g,`/`),sheet:n.name,cell:`${qr(e+1)}${a+1}`,group:n.prefix?`${n.prefix} ${e+1}`:n.name,value:c,readError:l})}}return{fields:t}}let Yr=8e6,Xr=2e6,Zr=new TextDecoder(`utf-8`,{fatal:!0});function $(e=`The Excel archive is malformed. Save a fresh .xlsx copy using the template.`){throw Error(e)}let Qr=Uint32Array.from({length:256},(e,t)=>{let n=t;for(let e=0;e<8;e++)n=n&1?3988292384^n>>>1:n>>>1;return n>>>0});function $r(e){e.length>2e6&&$(`Use an .xlsx file no larger than 2 MB (2,000,000 bytes).`),e.length<22&&$(`Use a standard Excel .xlsx archive.`);let t=new DataView(e.buffer,e.byteOffset,e.byteLength);t.getUint32(0,!0)!==67324752&&$(`Use a standard Excel .xlsx file. Legacy .xls and encrypted files are not supported.`);let n=-1;for(let r=e.length-22;r>=Math.max(0,e.length-65557);r--)if(t.getUint32(r,!0)===101010256&&r+22+t.getUint16(r+20,!0)===e.length){n=r;break}n<0&&$();let r=t.getUint16(n+10,!0),i=t.getUint32(n+12,!0),a=t.getUint32(n+16,!0);(r===65535||i===4294967295||a===4294967295)&&$(`ZIP64 archives are unsupported. Save a small template workbook.`),(t.getUint16(n+4,!0)||t.getUint16(n+6,!0)||t.getUint16(n+8,!0)!==r||r<1||r>128||a+i!==n)&&$(`The Excel archive exceeds the entry limit or has an invalid directory.`);let o=/* @__PURE__ */ new Map,s=a,c=0,l=[];for(let i=0;i<r;i++){(s+46>n||t.getUint32(s,!0)!==33639248)&&$();let r=t.getUint16(s+8,!0),i=t.getUint16(s+10,!0),u=t.getUint32(s+20,!0),d=t.getUint32(s+24,!0),f=t.getUint16(s+28,!0),p=t.getUint16(s+30,!0),m=t.getUint16(s+32,!0),h=t.getUint32(s+42,!0);(u===4294967295||d===4294967295||h===4294967295)&&$(`ZIP64 archives are unsupported.`),r&1&&$(`Encrypted workbooks are unsupported. Save an unencrypted template copy.`),(![0,8].includes(i)||s+46+f+p+m>n||h+30>a)&&$();let g=Zr.decode(e.subarray(s+46,s+46+f));(!g||/[\\\\:\\x00]/.test(g)||g.startsWith(`/`)||g.split(`/`).some(e=>[`..`,`.`,`__proto__`,`constructor`,`prototype`].includes(e))||g.includes(`//`)||o.has(g))&&$(`The Excel archive contains a duplicate or invalid part path.`),/vbaProject|externalLinks|embeddings|activeX|\\.bin$/i.test(g)&&$(`Remove macros, external workbook links and embedded objects, then save as .xlsx.`),c+=d,(d>Xr||c>Yr)&&$(`The expanded workbook is too large. Use the small intake template.`),(t.getUint32(h,!0)!==67324752||t.getUint16(h+6,!0)!==r||t.getUint16(h+8,!0)!==i)&&$(`The Excel archive has inconsistent or encrypted headers.`);let _=t.getUint16(h+26,!0),v=t.getUint16(h+28,!0),y=h+30+_+v;(y+u>a||Zr.decode(e.subarray(h+30,h+30+_))!==g)&&$(),r&8||t.getUint32(h+18,!0)===u&&t.getUint32(h+22,!0)===d||$(),l.push([h,y+u]),o.set(g,{size:d,compressed:u,checksum:t.getUint32(s+16,!0),method:i,offset:h}),s+=46+f+p+m}return l.sort((e,t)=>e[0]-t[0]),(s!==n||l.some((e,t)=>t>0&&e[0]<l[t-1][1]))&&$(),o.has(`xl/workbook.xml`)&&o.has(`[Content_Types].xml`)||$(`The archive is not a supported Excel workbook.`),o}function ei(e,t){let n=Object.create(null),r=0,i=/* @__PURE__ */ new Set,a=new De(e=>{let a=t.get(e.name);(!a||i.has(e.name)||a.method!==e.compression)&&$(),i.add(e.name);let o=[],s=0,c=4294967295,l=null,u=t=>{throw l=Error(t),e.terminate(),l};e.ondata=(t,i,d)=>{if(t){if(l)throw l;$(`The Excel archive could not be decompressed. Save a fresh copy.`)}s+=i.length,r+=i.length,(s>a.size||s>Xr||r>Yr)&&u(`The actual expanded workbook exceeds the size limit.`);for(let e of i)c=Qr[(c^e)&255]^c>>>8;if(o.push(i),d){(s!==a.size||(c^4294967295)>>>0!==a.checksum)&&u(`The Excel archive checksum or expanded size is invalid. Save a fresh copy.`);let t=new Uint8Array(s),r=0;for(let e of o)t.set(e,r),r+=e.length;n[e.name]=t}},e.start()});a.register(Ee);for(let t=0;t<e.length;t+=1024)a.push(e.subarray(t,t+1024),t+1024>=e.length);return(i.size!==t.size||Object.keys(n).length!==t.size)&&$(),n}let ti=String.raw`(?:[^\\s<>/:]+:)?`,ni=String.raw`(?:[^\"'<>]|\"[^\"]*\"|'[^']*')*`;function ri(e,t){return e.matchAll(RegExp(`<${ti}${t}(?=[\\\\s/>])${ni}>`,`g`))}function ii(e){let t=Object.create(null);for(let n of e.matchAll(/([^\\s<>=/\"']+)\\s*=\\s*([\"'])(.*?)\\2/gs))Object.prototype.hasOwnProperty.call(t,n[1])&&$(`Duplicate XML attributes are unsupported.`),t[n[1]]=n[3].replace(/&#(x[\\da-f]+|\\d+);|&(amp|quot|apos|lt|gt);/gi,(e,t,n)=>t?String.fromCodePoint(Number(t.startsWith(`x`)?`0`+t:t)):{amp:`&`,quot:`\"`,apos:`'`,lt:`<`,gt:`>`}[n.toLowerCase()]);return t}function ai(e){let t=/^([A-Z]{1,3})([1-9]\\d{0,6})$/.exec(e);t||$(`Invalid worksheet cell coordinates.`);let n=0;for(let e of t[1])n=n*26+e.charCodeAt(0)-64;(n>128||Number(t[2])>256)&&$(`Worksheet dimensions exceed the template limit.`)}function oi(e){let t=0,n=/* @__PURE__ */ new Map;for(let[r,i]of Object.entries(e))if(/\\.xml$|\\.rels$/i.test(r)){let e=Zr.decode(i).replace(/<!--[\\s\\S]*?-->/g,``);if(n.set(r,e),/<!DOCTYPE|<!ENTITY/i.test(e)&&$(`XML document types and entities are unsupported in the intake template.`),/<!\\[CDATA\\[/.test(e)&&$(`Save a fresh .xlsx copy of the Spreadline template using standard Excel values.`),/macroEnabled|vbaProject|oleObject|activeX/i.test(e)&&r===`[Content_Types].xml`&&$(`Use a macro-free .xlsx template workbook.`),r.endsWith(`.rels`)){let t=/* @__PURE__ */ new Set;for(let n of ri(e,`Relationship`)){let e=ii(n[0]);t.has(e.Id)&&$(`Duplicate workbook relationship identifiers are unsupported.`),t.add(e.Id),(e.TargetMode?.toLowerCase()===`external`||/^[a-z]+:/i.test(e.Target??``))&&$(`Remove external workbook links before importing.`)}}if(/^xl\\/worksheets\\/[^/]+\\.xml$/.test(r)){ri(e,`f`).next().done||$(`Formulas are unsupported, including cached results. Copy and paste values before importing.`);for(let t of ri(e,`dimension`))for(let e of(ii(t[0]).ref??``).split(`:`))ai(e);for(let t of ri(e,`row`)){let e=ii(t[0]);e.r!==void 0&&ai(`A`+e.r)}for(let t of ri(e,`col`)){let e=ii(t[0]);(!/^\\d+$/.test(e.min??``)||!/^\\d+$/.test(e.max??``)||Number(e.min)<1||Number(e.max)>128)&&$(`Worksheet column dimensions exceed the template limit.`)}let n=/* @__PURE__ */ new Set;for(let r of ri(e,`c`)){let e=ii(r[0]);ai(e.r??``),n.has(e.r)&&$(`Duplicate worksheet cell coordinates are unsupported.`),n.add(e.r),++t>5e3&&$(`The workbook exceeds the 5,000-cell limit.`),e.t===`e`&&$(`An Excel cell contains an error. Replace errors with reviewed values.`)}}}let r=n.get(`xl/workbook.xml`),i=[...ri(r,`sheet`)],a=i.map(e=>ii(e[0]).name);(a.length!==5||new Set(a).size!==5||a.some(e=>!Gr.some(t=>t.name===e)))&&$(`Use the five sheets in the Spreadline template without renaming them.`),i.some(e=>[`hidden`,`veryHidden`].includes(ii(e[0]).state))&&$(`Unhide the five template sheets before importing.`);let o=new Map([...ri(n.get(`xl/_rels/workbook.xml.rels`)??``,`Relationship`)].map(e=>{let t=ii(e[0]);return[t.Id,t.Target]})),s=i.map(e=>{let t=ii(e[0]),n=Object.entries(t).filter(([e])=>e.endsWith(`:id`));n.length!==1&&$(`The template's worksheet relationship is invalid.`);let r=o.get(n[0][1])??``;return r.startsWith(`/`)?r.slice(1):`xl/`+r});(new Set(s).size!==5||s.some(e=>!/^xl\\/worksheets\\/[^/]+\\.xml$/.test(e)||!n.has(e)))&&$(`Use five distinct worksheets from the Spreadline template.`);let c=ii(ri(r,`workbookPr`).next().value?.[0]??``).date1904;c!==void 0&&![`0`,`1`,`true`,`false`].includes(c)&&$(`The workbook date system is invalid. Save a fresh template copy.`);let l=/* @__PURE__ */ new Map;return s.forEach((e,t)=>{let r=/* @__PURE__ */ new Map;for(let t of n.get(e).matchAll(RegExp(`<${ti}c(?=[\\\\s/>])${ni}(?<!/)>([\\\\s\\\\S]*?)<\\\\/${ti}c>`,`g`))){let e=ri(t[0],`c`).next().value[0],n=ii(e),i=t[1].match(RegExp(`<${ti}v(?=[\\\\s>])${ni}>([^<]*)<\\\\/`))?.[1];i!==void 0&&r.set(n.r,{type:n.t,value:i})}l.set(a[t],r)}),{epoch1904:c===`1`||c===`true`,sheets:l}}function si(e,t){for(let n of e)n.data.forEach((e,r)=>e.forEach((i,a)=>{if(!(i instanceof Date))return;let o=`${qr(a)}${r+1}`,s=t.sheets.get(n.sheet)?.get(o),c=s?.value.trim()??``,l=`${n.sheet}!${o}: use a valid calendar date without a time.`;if(s?.type===`d`){let t=/^(\\d{4}-\\d{2}-\\d{2})(?:T00:00(?::00(?:\\.0+)?)?(?:Z|[+]00:00)?)?$/.exec(c);t||$(l);try{let n=Wr({pointer:``,label:`Date`,kind:`date`},t[1]);e[a]=/* @__PURE__ */ new Date(`${n}T00:00:00Z`)}catch{$(l)}}else{let n=Number(c);try{c&&Number.isSafeInteger(n)&&Lr(c,String(n))===0||$(l)}catch{$(l)}!t.epoch1904&&n===60&&$(`Excel's fictitious 1900-02-29 is not a calendar date. Correct the date cell.`);let r=t.epoch1904?`1904-01-01`:n<60?`1899-12-31`:`1899-12-30`,i=new Date(Date.parse(`${r}T00:00:00Z`)+n*864e5);(!Number.isFinite(i.getTime())||i.getUTCFullYear()<1||i.getUTCFullYear()>9999)&&$(l),e[a]=i}}))}async function ci(e){let t=ei(e,$r(e)),n=oi(t),r=we(t,{level:0}),i;try{i=await jr(r.buffer,{parseNumber:e=>e,trim:!1})}catch{throw Error(`The Excel XML could not be read. Save a fresh .xlsx template copy with values only.`)}return si(i,n),Jr(i)}self.onmessage=async e=>{try{let t=await ci(new Uint8Array(e.data));self.postMessage({review:t})}catch(e){self.postMessage({error:e instanceof Error?e.message:`The workbook could not be read. Use the Spreadline .xlsx template.`})}}})();", Vo = typeof self < "u" && self.Blob && new Blob(["(self.URL || self.webkitURL).revokeObjectURL(self.location.href);", Bo], { type: "text/javascript;charset=utf-8" });
-function Ho(e) {
+var Vo = "(function(){var e={},t=(function(t,n,r,i,a){var o=new Worker(e[n]||(e[n]=URL.createObjectURL(new Blob([t+`;addEventListener(\"error\",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})`],{type:`text/javascript`}))));return o.onmessage=function(e){var t=e.data,n=t.$e$;if(n){var r=Error(n[0]);r.code=n[1],r.stack=n[2],a(r,null)}else a(null,t)},o.postMessage(r,i),o}),n=Uint8Array,r=Uint16Array,i=Int32Array,a=new n([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0,0]),o=new n([0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,0,0]),s=new n([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),c=function(e,t){for(var n=new r(31),a=0;a<31;++a)n[a]=t+=1<<e[a-1];for(var o=new i(n[30]),a=1;a<30;++a)for(var s=n[a];s<n[a+1];++s)o[s]=s-n[a]<<5|a;return{b:n,r:o}},l=c(a,2),u=l.b,d=l.r;u[28]=258,d[258]=28;for(var f=c(o,0),p=f.b,m=f.r,h=new r(32768),g=0;g<32768;++g){var _=(g&43690)>>1|(g&21845)<<1;_=(_&52428)>>2|(_&13107)<<2,_=(_&61680)>>4|(_&3855)<<4,h[g]=((_&65280)>>8|(_&255)<<8)>>1}for(var v=(function(e,t,n){for(var i=e.length,a=0,o=new r(t);a<i;++a)e[a]&&++o[e[a]-1];var s=new r(t);for(a=1;a<t;++a)s[a]=s[a-1]+o[a-1]<<1;var c;if(n){c=new r(1<<t);var l=15-t;for(a=0;a<i;++a)if(e[a])for(var u=a<<4|e[a],d=t-e[a],f=s[e[a]-1]++<<d,p=f|(1<<d)-1;f<=p;++f)c[h[f]>>l]=u}else for(c=new r(i),a=0;a<i;++a)e[a]&&(c[a]=h[s[e[a]-1]++]>>15-e[a]);return c}),y=new n(288),g=0;g<144;++g)y[g]=8;for(var g=144;g<256;++g)y[g]=9;for(var g=256;g<280;++g)y[g]=7;for(var g=280;g<288;++g)y[g]=8;for(var b=new n(32),g=0;g<32;++g)b[g]=5;var x=/*#__PURE__*/ v(y,9,0),S=/*#__PURE__*/ v(y,9,1),C=/*#__PURE__*/ v(b,5,0),w=/*#__PURE__*/ v(b,5,1),ee=function(e){for(var t=e[0],n=1;n<e.length;++n)e[n]>t&&(t=e[n]);return t},T=function(e,t,n){var r=t/8|0;return(e[r]|e[r+1]<<8)>>(t&7)&n},E=function(e,t){var n=t/8|0;return(e[n]|e[n+1]<<8|e[n+2]<<16)>>(t&7)},D=function(e){return(e+7)/8|0},O=function(e,t,r){return(t==null||t<0)&&(t=0),(r==null||r>e.length)&&(r=e.length),new n(e.subarray(t,r))},k=[`unexpected EOF`,`invalid block type`,`invalid length/literal`,`invalid distance`,`stream finished`,`no stream handler`,,`no callback`,`invalid UTF-8 data`,`extra field too long`,`date not in range 1980-2099`,`filename too long`,`stream finishing`,`invalid zip data`],A=function(e,t,n){var r=Error(t||k[e]);if(r.code=e,Error.captureStackTrace&&Error.captureStackTrace(r,A),!n)throw r;return r},j=function(e,t,r,i){var c=e.length,l=i?i.length:0;if(!c||t.f&&!t.l)return r||new n(0);var d=!r,f=d||t.i!=2,m=t.i;d&&(r=new n(c*3));var h=function(e){var t=r.length;if(e>t){var i=new n(Math.max(t*2,e));i.set(r),r=i}},g=t.f||0,_=t.p||0,y=t.b||0,b=t.l,x=t.d,C=t.m,k=t.n,j=c*8;do{if(!b){g=T(e,_,1);var M=T(e,_+1,3);if(_+=3,!M){var N=D(_)+4,P=e[N-4]|e[N-3]<<8,F=N+P;if(F>c){m&&A(0);break}f&&h(y+P),r.set(e.subarray(N,F),y),t.b=y+=P,t.p=_=F*8,t.f=g;continue}if(M==1)b=S,x=w,C=9,k=5;else if(M==2){var I=T(e,_,31)+257,L=T(e,_+10,15)+4,R=I+T(e,_+5,31)+1;_+=14;for(var z=new n(R),B=new n(19),V=0;V<L;++V)B[s[V]]=T(e,_+V*3,7);_+=L*3;for(var H=ee(B),te=(1<<H)-1,U=v(B,H,1),V=0;V<R;){var W=U[T(e,_,te)];_+=W&15;var N=W>>4;if(N<16)z[V++]=N;else{var G=0,K=0;for(N==16?(K=3+T(e,_,3),_+=2,G=z[V-1]):N==17?(K=3+T(e,_,7),_+=3):N==18&&(K=11+T(e,_,127),_+=7);K--;)z[V++]=G}}var q=z.subarray(0,I),ne=z.subarray(I);C=ee(q),k=ee(ne),b=v(q,C,1),x=v(ne,k,1)}else A(1);if(_>j){m&&A(0);break}}f&&h(y+131072);for(var re=(1<<C)-1,ie=(1<<k)-1,J=_;;J=_){var G=b[E(e,_)&re],ae=G>>4;if(_+=G&15,_>j){m&&A(0);break}if(G||A(2),ae<256)r[y++]=ae;else if(ae==256){J=_,b=null;break}else{var oe=ae-254;if(ae>264){var V=ae-257,Y=a[V];oe=T(e,_,(1<<Y)-1)+u[V],_+=Y}var X=x[E(e,_)&ie],se=X>>4;X||A(3),_+=X&15;var ne=p[se];if(se>3){var Y=o[se];ne+=E(e,_)&(1<<Y)-1,_+=Y}if(_>j){m&&A(0);break}f&&h(y+131072);var Z=y+oe;if(y<ne){var ce=l-ne,le=Math.min(ne,Z);for(ce+y<0&&A(3);y<le;++y)r[y]=i[ce+y]}for(;y<Z;++y)r[y]=r[y-ne]}}t.l=b,t.p=J,t.b=y,t.f=g,b&&(g=1,t.m=C,t.d=x,t.n=k)}while(!g);return y!=r.length&&d?O(r,0,y):r.subarray(0,y)},M=function(e,t,n){n<<=t&7;var r=t/8|0;e[r]|=n,e[r+1]|=n>>8},N=function(e,t,n){n<<=t&7;var r=t/8|0;e[r]|=n,e[r+1]|=n>>8,e[r+2]|=n>>16},P=function(e,t){for(var i=[],a=0;a<e.length;++a)e[a]&&i.push({s:a,f:e[a]});var o=i.length,s=i.slice();if(!o)return{t:V,l:0};if(o==1){var c=new n(i[0].s+1);return c[i[0].s]=1,{t:c,l:1}}i.sort(function(e,t){return e.f-t.f}),i.push({s:-1,f:25001});var l=i[0],u=i[1],d=0,f=1,p=2;for(i[0]={s:-1,f:l.f+u.f,l,r:u};f!=o-1;)l=i[i[d].f<i[p].f?d++:p++],u=i[d!=f&&i[d].f<i[p].f?d++:p++],i[f++]={s:-1,f:l.f+u.f,l,r:u};for(var m=s[0].s,a=1;a<o;++a)s[a].s>m&&(m=s[a].s);var h=new r(m+1),g=F(i[f-1],h,0);if(g>t){var a=0,_=0,v=g-t,y=1<<v;for(s.sort(function(e,t){return h[t.s]-h[e.s]||e.f-t.f});a<o;++a){var b=s[a].s;if(h[b]>t)_+=y-(1<<g-h[b]),h[b]=t;else break}for(_>>=v;_>0;){var x=s[a].s;h[x]<t?_-=1<<t-h[x]++-1:++a}for(;a>=0&&_;--a){var S=s[a].s;h[S]==t&&(--h[S],++_)}g=t}return{t:new n(h),l:g}},F=function(e,t,n){return e.s==-1?Math.max(F(e.l,t,n+1),F(e.r,t,n+1)):t[e.s]=n},I=function(e){for(var t=e.length;t&&!e[--t];);for(var n=new r(++t),i=0,a=e[0],o=1,s=function(e){n[i++]=e},c=1;c<=t;++c)if(e[c]==a&&c!=t)++o;else{if(!a&&o>2){for(;o>138;o-=138)s(32754);o>2&&(s(o>10?o-11<<5|28690:o-3<<5|12305),o=0)}else if(o>3){for(s(a),--o;o>6;o-=6)s(8304);o>2&&(s(o-3<<5|8208),o=0)}for(;o--;)s(a);o=1,a=e[c]}return{c:n.subarray(0,i),n:t}},L=function(e,t){for(var n=0,r=0;r<t.length;++r)n+=e[r]*t[r];return n},R=function(e,t,n){var r=n.length,i=D(t+2);e[i]=r&255,e[i+1]=r>>8,e[i+2]=e[i]^255,e[i+3]=e[i+1]^255;for(var a=0;a<r;++a)e[i+a+4]=n[a];return(i+4+r)*8},z=function(e,t,n,i,c,l,u,d,f,p,m){M(t,m++,n),++c[256];for(var h=P(c,15),g=h.t,_=h.l,S=P(l,15),w=S.t,ee=S.l,T=I(g),E=T.c,D=T.n,O=I(w),k=O.c,A=O.n,j=new r(19),F=0;F<E.length;++F)++j[E[F]&31];for(var F=0;F<k.length;++F)++j[k[F]&31];for(var z=P(j,7),B=z.t,V=z.l,H=19;H>4&&!B[s[H-1]];--H);var te=p+5<<3,U=L(c,y)+L(l,b)+u,W=L(c,g)+L(l,w)+u+14+3*H+L(j,B)+2*j[16]+3*j[17]+7*j[18];if(f>=0&&te<=U&&te<=W)return R(t,m,e.subarray(f,f+p));var G,K,q,ne;if(M(t,m,1+(W<U)),m+=2,W<U){G=v(g,_,0),K=g,q=v(w,ee,0),ne=w;var re=v(B,V,0);M(t,m,D-257),M(t,m+5,A-1),M(t,m+10,H-4),m+=14;for(var F=0;F<H;++F)M(t,m+3*F,B[s[F]]);m+=3*H;for(var ie=[E,k],J=0;J<2;++J)for(var ae=ie[J],F=0;F<ae.length;++F){var oe=ae[F]&31;M(t,m,re[oe]),m+=B[oe],oe>15&&(M(t,m,ae[F]>>5&127),m+=ae[F]>>12)}}else G=x,K=y,q=C,ne=b;for(var F=0;F<d;++F){var Y=i[F];if(Y>255){var oe=Y>>18&31;N(t,m,G[oe+257]),m+=K[oe+257],oe>7&&(M(t,m,Y>>23&31),m+=a[oe]);var X=Y&31;N(t,m,q[X]),m+=ne[X],X>3&&(N(t,m,Y>>5&8191),m+=o[X])}else N(t,m,G[Y]),m+=K[Y]}return N(t,m,G[256]),m+K[256]},B=/*#__PURE__*/ new i([65540,131080,131088,131104,262176,1048704,1048832,2114560,2117632]),V=/*#__PURE__*/ new n(0),H=function(e,t,s,c,l,u){var f=u.z||e.length,p=new n(c+f+5*(1+Math.ceil(f/7e3))+l),h=p.subarray(c,p.length-l),g=u.l,_=(u.r||0)&7;if(t){_&&(h[0]=u.r>>3);for(var v=B[t-1],y=v>>13,b=v&8191,x=(1<<s)-1,S=u.p||new r(32768),C=u.h||new r(x+1),w=Math.ceil(s/3),ee=2*w,T=function(t){return(e[t]^e[t+1]<<w^e[t+2]<<ee)&x},E=new i(25e3),k=new r(288),A=new r(32),j=0,M=0,N=u.i||0,P=0,F=u.w||0,I=0;N+2<f;++N){var L=T(N),V=N&32767,H=C[L];if(S[V]=H,C[L]=V,F<=N){var te=f-N;if((j>7e3||P>24576)&&(te>423||!g)){_=z(e,h,0,E,k,A,M,P,I,N-I,_),P=j=M=0,I=N;for(var U=0;U<286;++U)k[U]=0;for(var U=0;U<30;++U)A[U]=0}var W=2,G=0,K=b,q=V-H&32767;if(te>2&&L==T(N-q))for(var ne=Math.min(y,te)-1,re=Math.min(32767,N),ie=Math.min(258,te);q<=re&&--K&&V!=H;){if(e[N+W]==e[N+W-q]){for(var J=0;J<ie&&e[N+J]==e[N+J-q];++J);if(J>W){if(W=J,G=q,J>ne)break;for(var ae=Math.min(q,J-2),oe=0,U=0;U<ae;++U){var Y=N-q+U&32767,X=Y-S[Y]&32767;X>oe&&(oe=X,H=Y)}}}V=H,H=S[V],q+=V-H&32767}if(G){E[P++]=268435456|d[W]<<18|m[G];var se=d[W]&31,Z=m[G]&31;M+=a[se]+o[Z],++k[257+se],++A[Z],F=N+W,++j}else E[P++]=e[N],++k[e[N]]}}for(N=Math.max(N,F);N<f;++N)E[P++]=e[N],++k[e[N]];_=z(e,h,g,E,k,A,M,P,I,N-I,_),g||(u.r=_&7|h[_/8|0]<<3,_-=7,u.h=C,u.p=S,u.i=N,u.w=F)}else{for(var N=u.w||0;N<f+g;N+=65535){var ce=N+65535;ce>=f&&(h[_/8|0]=g,ce=f),_=R(h,_+1,e.subarray(N,ce))}u.i=f}return O(p,0,c+D(_)+l)},te=/*#__PURE__*/ (function(){for(var e=/* @__PURE__ */ new Int32Array(256),t=0;t<256;++t){for(var n=t,r=9;--r;)n=(n&1&&-306674912)^n>>>1;e[t]=n}return e})(),U=function(){var e=-1;return{p:function(t){for(var n=e,r=0;r<t.length;++r)n=te[n&255^t[r]]^n>>>8;e=n},d:function(){return~e}}},W=function(e,t,r,i,a){if(!a&&(a={l:1},t.dictionary)){var o=t.dictionary.subarray(-32768),s=new n(o.length+e.length);s.set(o),s.set(e,o.length),e=s,a.w=o.length}return H(e,t.level==null?6:t.level,t.mem==null?a.l?Math.ceil(Math.max(8,Math.min(13,Math.log(e.length)))*1.5):20:12+t.mem,r,i,a)},G=function(e,t){var n={};for(var r in e)n[r]=e[r];for(var r in t)n[r]=t[r];return n},K=function(e,t,n){for(var r=e(),i=e.toString(),a=i.slice(i.indexOf(`[`)+1,i.lastIndexOf(`]`)).replace(/\\s+/g,``).split(`,`),o=0;o<r.length;++o){var s=r[o],c=a[o];if(typeof s==`function`){t+=`;`+c+`=`;var l=s.toString();if(s.prototype){if(l.indexOf(`[native code]`)!=-1){var u=l.indexOf(` `,8)+1;t+=l.slice(u,l.indexOf(`(`,u))}else for(var d in t+=l,s.prototype)t+=`;`+c+`.prototype.`+d+`=`+s.prototype[d].toString()}else t+=l}else n[c]=s}return t},q=[],ne=function(e){var t=[];for(var n in e)e[n].buffer&&t.push((e[n]=new e[n].constructor(e[n])).buffer);return t},re=function(e,n,r,i){if(!q[r]){for(var a=``,o={},s=e.length-1,c=0;c<s;++c)a=K(e[c],a,o);q[r]={c:K(e[s],a,o),e:o}}var l=G({},q[r].e);return t(q[r].c+`;onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage=`+n.toString()+`}`,r,l,ne(l),i)},ie=function(){return[n,r,i,a,o,s,u,p,S,w,h,k,v,ee,T,E,D,O,A,j,de,J,ae]},J=function(e){return postMessage(e,[e.buffer])},ae=function(e){return e&&{out:e.size&&new n(e.size),dictionary:e.dictionary}},oe=function(e,t,n,r,i,a){var o=re(n,r,i,function(e,t){o.terminate(),a(e,t)});return o.postMessage([e,t],t.consume?[e.buffer]:[]),function(){o.terminate()}},Y=function(e,t){return e[t]|e[t+1]<<8},X=function(e,t){return(e[t]|e[t+1]<<8|e[t+2]<<16|e[t+3]<<24)>>>0},se=function(e,t){return X(e,t)+X(e,t+4)*4294967296},Z=function(e,t,n){for(;n;++t)e[t]=n,n>>>=8};function ce(e,t){return W(e,t||{},0,0)}var le=/* @__PURE__ */ function(){function e(e,t){typeof e==`function`&&(t=e,e={}),this.ondata=t;var r=e&&e.dictionary&&e.dictionary.subarray(-32768);this.s={i:0,b:r?r.length:0},this.o=new n(32768),this.p=new n(0),r&&this.o.set(r)}return e.prototype.e=function(e){if(this.ondata||A(5),this.d&&A(4),!this.p.length)this.p=e;else if(e.length){var t=new n(this.p.length+e.length);t.set(this.p),t.set(e,this.p.length),this.p=t}},e.prototype.c=function(e){this.s.i=+(this.d=e||!1);var t=this.s.b,n=j(this.p,this.s,this.o);this.ondata(O(n,t,this.s.b),this.d),this.o=O(n,this.s.b-32768),this.s.b=this.o.length,this.p=O(this.p,this.s.p/8|0),this.s.p&=7},e.prototype.push=function(e,t){this.e(e),this.c(t)},e}();function ue(e,t,n){return n||(n=t,t={}),typeof n!=`function`&&A(7),oe(e,t,[ie],function(e){return J(de(e.data[0],ae(e.data[1])))},1,n)}function de(e,t){return j(e,{i:2},t&&t.out,t&&t.dictionary)}var fe=function(e,t,r,i){for(var a in e){var o=e[a],s=t+a,c=i;Array.isArray(o)&&(c=G(i,o[1]),o=o[0]),ArrayBuffer.isView(o)?r[s]=[o,c]:(r[s+=`/`]=[new n(0),c],fe(o,s,r,i))}},pe=typeof TextEncoder<`u`&&/*#__PURE__*/ new TextEncoder,me=typeof TextDecoder<`u`&&/*#__PURE__*/ new TextDecoder;try{me.decode(V,{stream:!0})}catch{}var he=function(e){for(var t=``,n=0;;){var r=e[n++],i=(r>127)+(r>223)+(r>239);if(n+i>e.length)return{s:t,r:O(e,n-1)};i?i==3?(r=((r&15)<<18|(e[n++]&63)<<12|(e[n++]&63)<<6|e[n++]&63)-65536,t+=String.fromCharCode(55296|r>>10,56320|r&1023)):i&1?t+=String.fromCharCode((r&31)<<6|e[n++]&63):t+=String.fromCharCode((r&15)<<12|(e[n++]&63)<<6|e[n++]&63):t+=String.fromCharCode(r)}};function ge(e,t){if(t){for(var r=new n(e.length),i=0;i<e.length;++i)r[i]=e.charCodeAt(i);return r}if(pe)return pe.encode(e);for(var a=e.length,o=new n(e.length+(e.length>>1)),s=0,c=function(e){o[s++]=e},i=0;i<a;++i){if(s+5>o.length){var l=new n(s+8+(a-i<<1));l.set(o),o=l}var u=e.charCodeAt(i);u<128||t?c(u):u<2048?(c(192|u>>6),c(128|u&63)):u>55295&&u<57344?(u=65536+(u&1047552)|e.charCodeAt(++i)&1023,c(240|u>>18),c(128|u>>12&63),c(128|u>>6&63),c(128|u&63)):(c(224|u>>12),c(128|u>>6&63),c(128|u&63))}return O(o,0,s)}function _e(e,t){if(t){for(var n=``,r=0;r<e.length;r+=16384)n+=String.fromCharCode.apply(null,e.subarray(r,r+16384));return n}if(me)return me.decode(e);var i=he(e),a=i.s,n=i.r;return n.length&&A(8),a}var ve=function(e,t){return t+30+Y(e,t+26)+Y(e,t+28)},ye=function(e,t,n){var r=Y(e,t+28),i=Y(e,t+30),a=_e(e.subarray(t+46,t+46+r),!(Y(e,t+8)&2048)),o=t+46+r,s=be(e,o,i,n,X(e,t+20),X(e,t+24),X(e,t+42)),c=s[0],l=s[1],u=s[2];return[Y(e,t+10),c,l,a,o+i+Y(e,t+32),u]},be=function(e,t,n,r,i,a,o){var s=i==4294967295,c=a==4294967295,l=o==4294967295,u=t+n,d=s+c+l;if(r&&d){for(;t+4<u;t+=4+Y(e,t+2))if(Y(e,t)==1)return[s?se(e,t+4+8*c):i,c?se(e,t+4):a,l?se(e,t+4+8*(c+s)):o,1];r<2&&A(13)}return[i,a,o,0]},xe=function(e){var t=0;if(e)for(var n in e){var r=e[n].length;r>65535&&A(9),t+=r+4}return t},Se=function(e,t,n,r,i,a,o,s){var c=r.length,l=n.extra,u=s&&s.length,d=xe(l);Z(e,t,o==null?67324752:33639248),t+=4,o!=null&&(e[t++]=20,e[t++]=n.os),e[t]=20,t+=2,e[t++]=n.flag<<1|(a<0&&8),e[t++]=i&&8,e[t++]=n.compression&255,e[t++]=n.compression>>8;var f=new Date(n.mtime==null?Date.now():n.mtime),p=f.getFullYear()-1980;if((p<0||p>119)&&A(10),Z(e,t,p<<25|f.getMonth()+1<<21|f.getDate()<<16|f.getHours()<<11|f.getMinutes()<<5|f.getSeconds()>>1),t+=4,a!=-1&&(Z(e,t,n.crc),Z(e,t+4,a<0?-a-2:a),Z(e,t+8,n.size)),Z(e,t+12,c),Z(e,t+14,d),t+=16,o!=null&&(Z(e,t,u),Z(e,t+6,n.attrs),Z(e,t+10,o),t+=14),e.set(r,t),t+=c,d)for(var m in l){var h=l[m],g=h.length;Z(e,t,+m),Z(e,t+2,g),e.set(h,t+4),t+=4+g}return u&&(e.set(s,t),t+=u),t},Ce=function(e,t,n,r,i){Z(e,t,101010256),Z(e,t+8,n),Z(e,t+10,n),Z(e,t+12,r),Z(e,t+16,i)};function we(e,t){t||={};var r={},i=[];fe(e,``,r,t);var a=0,o=0;for(var s in r){var c=r[s],l=c[0],u=c[1],d=u.level==0?0:8,f=ge(s),p=f.length,m=u.comment,h=m&&ge(m),g=h&&h.length,_=xe(u.extra);p>65535&&A(11);var v=d?ce(l,u):l,y=v.length,b=U();b.p(l),i.push(G(u,{size:l.length,crc:b.d(),c:v,f,m:h,u:p!=s.length||h&&m.length!=g,o:a,compression:d})),a+=30+p+_+y,o+=76+2*(p+_)+(g||0)+y}for(var x=new n(o+22),S=a,C=o-a,w=0;w<i.length;++w){var f=i[w];Se(x,f.o,f,f.f,f.u,f.c.length);var ee=30+f.f.length+xe(f.extra);x.set(f.c,f.o+ee),Se(x,a,f,f.f,f.u,f.c.length,f.o,f.m),a+=16+ee+(f.m?f.m.length:0)}return Ce(x,a,i.length,C,S),x}var Te=/* @__PURE__ */ function(){function e(){}return e.prototype.push=function(e,t){this.ondata(null,e,t)},e.compression=0,e}(),Ee=/* @__PURE__ */ function(){function e(){var e=this;this.i=new le(function(t,n){e.ondata(null,t,n)})}return e.prototype.push=function(e,t){try{this.i.push(e,t)}catch(e){this.ondata(e,null,t)}},e.compression=8,e}(),De=/* @__PURE__ */ function(){function e(e){this.onfile=e,this.k=[],this.o={0:Te},this.p=V}return e.prototype.push=function(e,t){var r=this;if(this.onfile||A(5),this.p||A(4),this.c>0){var i=Math.min(this.c,e.length),a=e.subarray(0,i);if(this.c-=i,this.d?this.d.push(a,!this.c):this.k[0].push(a),e=e.subarray(i),e.length)return this.push(e,t)}else{var o=0,s=0,c=void 0,l=void 0;this.p.length?e.length?(l=new n(this.p.length+e.length),l.set(this.p),l.set(e,this.p.length)):l=this.p:l=e;for(var u=l.length,d=this.c,f=d&&this.d,p=function(){var e=X(l,s);if(e==67324752){o=1,c=s,m.d=null,m.c=0;var t=Y(l,s+6),n=Y(l,s+8),i=t&2048,a=t&8,f=Y(l,s+26),p=Y(l,s+28);if(u>s+30+f+p){var h=[];m.k.unshift(h),o=2;var g=X(l,s+18),_=X(l,s+22),v=_e(l.subarray(s+30,s+=30+f),!i),y=be(l,s,p,2,g,_,0),b=y[0],x=y[1],S=y[3];a&&(b=-1-S),s+=p,m.c=b;var C,w={name:v,compression:n,start:function(){if(w.ondata||A(5),!b)w.ondata(null,V,!0);else{var e=r.o[n];e||w.ondata(A(14,`unknown compression type `+n,1),null,!1),C=b<0?new e(v):new e(v,b,x),C.ondata=function(e,t,n){w.ondata(e,t,n)};for(var t=0,i=h;t<i.length;t++){var a=i[t];C.push(a,!1)}r.k[0]==h&&r.c?r.d=C:C.push(V,!0)}},terminate:function(){C&&C.terminate&&C.terminate()}};b>=0&&(w.size=b,w.originalSize=x),m.onfile(w)}return`break`}if(d){if(e==134695760)return c=s+=12+(d==-2&&8),o=3,m.c=0,`break`;if(e==33639248)return c=s-=4,o=3,m.c=0,`break`}},m=this;s<u-4&&p()!==`break`;++s);if(this.p=V,d<0){var h=o?l.subarray(0,c-12-(d==-2&&8)-(X(l,c-16)==134695760&&4)):l.subarray(0,s);f?f.push(h,!!o):this.k[+(o==2)].push(h)}if(o&2)return this.push(l.subarray(s),t);this.p=l.subarray(s)}t&&(this.c&&A(13),this.p=null)},e.prototype.register=function(e){this.o[e.compression]=e},e}(),Oe=typeof queueMicrotask==`function`?queueMicrotask:typeof setTimeout==`function`?setTimeout:function(e){e()};function ke(e,t,r){r||(r=t,t={}),typeof r!=`function`&&A(7);var i=[],a=function(){for(var e=0;e<i.length;++e)i[e]()},o={},s=function(e,t){Oe(function(){r(e,t)})};Oe(function(){s=r});for(var c=e.length-22;X(e,c)!=101010256;--c)if(!c||e.length-c>65558)return s(A(13,0,1),null),a;var l=Y(e,c+8);if(l){var u=l,d=X(e,c+16),f=X(e,c-20)==117853008;if(f){var p=X(e,c-12);f=X(e,p)==101075792,f&&(u=l=X(e,p+32),d=X(e,p+48))}for(var m=t&&t.filter,h=function(t){var r=ye(e,d,f),c=r[0],u=r[1],p=r[2],h=r[3],g=r[4],_=r[5],v=ve(e,_);d=g;var y=function(e,t){e?(a(),s(e,null)):(t&&(o[h]=t),--l||s(null,o))};if(!m||m({name:h,size:u,originalSize:p,compression:c})){if(!c)y(null,O(e,v,v+u));else if(c==8){var b=e.subarray(v,v+u);if(p<524288||u>.8*p)try{y(null,de(b,{out:new n(p)}))}catch(e){y(e,null)}else i.push(ue(b,{size:p},y))}else y(A(14,`unknown compression type `+c,1),null)}else y(null,null)},g=0;g<u;++g)h(g)}else s(null,{});return a}function Ae(e){\"@babel/helpers - typeof\";return Ae=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Ae(e)}function je(e){var t=String.fromCharCode,n=Object.prototype.hasOwnProperty,r=/&#(\\d+);|&#x([0-9a-f]+);|&(\\w+);/gi,i={amp:`&`,apos:`'`,gt:`>`,lt:`<`,quot:`\"`};Object.keys(i).forEach(function(e){i[e.toUpperCase()]=i[e]});function a(e,r,a,o){return o?n.call(i,o)?i[o]:`&`+o+`;`:t(r||parseInt(a,16))}function o(e){return e.length>3&&e.indexOf(`&`)!==-1?e.replace(r,a):e}var s=`non-whitespace outside of root node`;function c(e){return Error(e)}function l(e){return`missing namespace for prefix <`+e+`>`}function u(e){return{get:e,enumerable:!0}}function d(e){var t={},n;for(n in e)t[n]=e[n];return t}var f=Symbol(`nameCache`);function p(e){return e+`$uri`}function m(e){var t={},n,r;for(n in e)r=e[n],t[r]=r,t[p(r)]=n;return t}function h(){return{line:0,column:0}}function g(e){throw e}function _(e){if(!this)return new _(e);var t=e&&e.proxy,n,r,i,a,v=g,y,b,x,S,C=h,w=!1,ee=!1,T=``,E=!1,D=!1,O=null,k=!1,A,j,M,N;function P(e){e instanceof Error||(e=c(e)),O=e,v(e,C)}function F(e){y&&(e instanceof Error||(e=c(e)),y(e,C))}this.on=function(e,t){if(typeof t!=`function`)throw c(`required args <name, cb>`);switch(e){case`openTag`:r=t;break;case`text`:n=t;break;case`closeTag`:i=t;break;case`error`:v=t;break;case`warn`:y=t;break;case`cdata`:a=t;break;case`attention`:S=t;break;case`question`:x=t;break;case`comment`:b=t;break;default:throw c(`unsupported event: `+e)}return this},this.ns=function(e){if(e===void 0&&(e={}),Ae(e)!==`object`)throw c(`required args <nsMap={}>`);var t={},n;for(n in e)t[n]=e[n];return D=!0,N=t,this};function I(){A=D?[]:null,j=D?m(N):null,M=[],C=h,k=!1,O=null,ee=!1,T=``}this.parse=function(e){if(typeof e!=`string`)throw c(`required args <xml=string>`);if(w)throw c(`parse during stream; call end() first`);return I(),L(e),C=h,k=!1,O},this.write=function(e){if(typeof e!=`string`)throw c(`required args <xml=string>`);return w||=(I(),!0),O||(T=L(T+e,!0)||``),this},this.end=function(){return w||I(),w=!1,O||L(T),T=``,C=h,k=!1,O},this.stop=function(){k=!0};function L(e){var c=arguments.length>1&&arguments[1]!==void 0&&arguments[1],m=null,h=null,g,_=0,v=!1,y=!1,w=0,T=0,O,I,L,R,z,B,V,H,te,U=``,W=0,G;function K(e,t){var n=e.indexOf(`:`);if(n===-1)return e;var r=j[e.substring(0,n)];return r?t===r?e.substr(n+1):r+e.substr(n):(F(l(e.substring(0,n))),null)}function q(){if(G!==null)return G;var e,t,n=D&&j.xmlns,r=D&&E?[]:null,i=W,a=U,s=a.length,c,l,u,f,m,h={},g=/* @__PURE__ */ new Set,v,y,b;parseAttr:for(;i<s;i++)if(v=!1,y=a.charCodeAt(i),!(y===32||y<14&&y>8)){for((y<65||y>122||y>90&&y<97)&&y!==95&&y!==58&&(F(`illegal first char attribute name`),v=!0),b=i+1;b<s;b++)if(y=a.charCodeAt(b),!(y>96&&y<123||y>64&&y<91||y>47&&y<59||y===46||y===45||y===95)){if(y===32||y<14&&y>8){F(`missing attribute value`),i=b;continue parseAttr}if(y===61)break;F(`illegal attribute name char`),v=!0}if(m=a.substring(i,b),m===`xmlns:xmlns`&&(F(`illegal declaration of xmlns`),v=!0),y=a.charCodeAt(b+1),y===34)b=a.indexOf(`\"`,i=b+2),b===-1&&(b=a.indexOf(`'`,i),b!==-1&&(F(`attribute value quote missmatch`),v=!0));else if(y===39)b=a.indexOf(`'`,i=b+2),b===-1&&(b=a.indexOf(`\"`,i),b!==-1&&(F(`attribute value quote missmatch`),v=!0));else for(F(`missing attribute value quotes`),v=!0,b+=1;b<s&&(y=a.charCodeAt(b+1),!(y===32||y<14&&y>8));b++);for(b===-1&&(F(`missing closing quotes`),b=s,v=!0),v||(u=a.substring(i,b)),i=b;b+1<s&&(y=a.charCodeAt(b+1),!(y===32||y<14&&y>8));b++)i===b&&(F(`illegal character after attribute end`),v=!0);if(i=b+1,v)continue parseAttr;if(g.has(m))F(`attribute <`+m+`> already defined`);else if(g.add(m),!D)h[m]=u;else if(E){if(l=m===`xmlns`?`xmlns`:m.charCodeAt(0)===120&&m.substr(0,6)===`xmlns:`?m.substr(6):null,l!==null){if(e=o(u),t=p(l),f=N[e],!f){if(l===`xmlns`||t in j&&j[t]!==e)do f=`ns`+_++;while(j[f]!==void 0);else f=l;N[e]=f}j[l]!==f&&(c||=(j=d(j),!0),j[l]=f,l===`xmlns`&&(j[p(f)]=e,n=f),j[t]=e),h[m]=u;continue}r.push(m,u)}else m=K(m,n),m!==null&&(h[m]=u)}if(E)for(i=0,s=r.length;i<s;i++)m=K(r[i++],n),u=r[i],m!==null&&(h[m]=u);return G=h}function ne(){for(var t=/(\\r\\n|\\r|\\n)/g,n=0,r=0,i=0,a=T,o,s;w>=i&&(o=t.exec(e),!(!o||(a=o[0].length+o.index,a>w)));)n+=1,i=a;return w==-1?(r=a,s=e.substring(T)):T===0?s=e.substring(T,w):(r=w-i,s=T==-1?e.substring(w):e.substring(w,T+1)),{data:s,line:n,column:r}}for(C=ne,t&&(te=Object.create({},{name:u(function(){return V}),originalName:u(function(){return H}),attrs:u(q),ns:u(function(){return j})}));T!==-1;){if(w=e.charCodeAt(T)===60?T:e.indexOf(`<`,T),w===-1){if(c)return e.substring(T);if(M.length)return P(`unexpected end of file`);if(!ee)return P(`missing start tag`);T<e.length&&e.substring(T).trim()&&F(s);return}if(ee||=!0,T!==w){if(M.length){if(n&&(n(e.substring(T,w),o,C),k))return}else if(e.substring(T,w).trim()&&(F(s),k))return}if(R=e.charCodeAt(w+1),R===33){if(L=e.charCodeAt(w+2),L===91&&e.substr(w+3,6)===`CDATA[`){if(T=e.indexOf(`]]>`,w),T===-1)return c?e.substring(w):P(`unclosed cdata`);if(a&&(a(e.substring(w+9,T),C),k))return;T+=3;continue}if(L===45&&e.charCodeAt(w+3)===45){if(T=e.indexOf(`-->`,w),T===-1)return c?e.substring(w):P(`unclosed comment`);if(b&&(b(e.substring(w+4,T),o,C),k))return;T+=3;continue}}if(R===63){if(T=e.indexOf(`?>`,w),T===-1)return c?e.substring(w):P(`unclosed question`);if(x&&(x(e.substring(w,T+2),C),k))return;T+=2}else{for(O=w+1;;O++){if(z=e.charCodeAt(O),isNaN(z))return c?e.substring(w):(T=-1,P(`unclosed tag`));if(z===34)L=e.indexOf(`\"`,O+1),O=L===-1?O:L;else if(z===39)L=e.indexOf(`'`,O+1),O=L===-1?O:L;else if(z===62){T=O;break}}if(R===33){if(S&&(S(e.substring(w,T+1),o,C),k))return;T+=1}else{if(G={},R===47){if(v=!1,y=!0,!M.length)return P(`missing open tag`);if(O=V=M.pop(),L=w+2+O.length,e.substring(w+2,L)!==O)return P(`closing tag mismatch`);for(;L<T;L++)if(R=e.charCodeAt(L),!(R===32||R>8&&R<14))return P(`close tag`)}else{if(e.charCodeAt(T-1)===47?(O=V=e.substring(w+1,T-1),v=!0,y=!0):(O=V=e.substring(w+1,T),v=!0,y=!1),!(R>96&&R<123||R>64&&R<91||R===95||R===58))return P(`illegal first char nodeName`);for(L=1,I=O.length;L<I;L++)if(R=O.charCodeAt(L),!(R>96&&R<123||R>64&&R<91||R>47&&R<59||R===45||R===95||R==46)){if(R===32||R<14&&R>8){V=O.substring(0,L),G=null;break}return P(`invalid nodeName`)}y||M.push(V)}if(D){g=j,v&&(y||A.push(g),G===null&&(E=O.indexOf(`xmlns`,L)!==-1)&&(W=L,U=O,q(),E=!1)),H=V,h!==j&&(m=j[f],m===void 0&&(m=j[f]={}),h=j);var re=m[V];if(re!==void 0)V=re;else{if(R=V.indexOf(`:`),R!==-1){if(B=j[V.substring(0,R)],!B)return P(`missing namespace on <`+H+`>`);V=V.substr(R+1)}else B=j.xmlns;B&&(V=B+`:`+V),m[H]=V}}if(v&&(W=L,U=O,r&&(t?r(te,o,y,C):r(V,q,o,y,C),k)))return;if(y){if(i&&(i(t?te:V,o,v,C),k))return;D&&(j=v?g:A.pop())}T+=1}}}}}return new _(e)}function Me(e,t,n,r){var i=!1,a=function(){if(i)throw Error(`Errored`)},o,s=new je;return{promise:new Promise(function(a,c){o=a,s.on(`error`,function(e){throw i=!0,e}),s.on(`text`,function(t,n){r&&r(n(t),e)}),s.on(`openTag`,function(n,r,i,a,o){if(t){var s=r();for(var c in s)s[Ne(c,!0)]=i(s[c]);t(Ne(n),s,e)}}),s.on(`closeTag`,function(t){n&&n(Ne(t),e)})}),write:function(e){a(),s.write(e)},end:function(){a(),s.end(),o()}}}function Ne(e,t){for(var n=0;n<e.length;){if(e[n]===`:`&&!(t&&n===5&&e.slice(0,5)===`xmlns`))return e.slice(n+1);n++}return e}function Pe(e){\"@babel/helpers - typeof\";return Pe=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Pe(e)}function Fe(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,Le(r.key),r)}}function Ie(e,t,n){return t&&Fe(e.prototype,t),n&&Fe(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function Le(e){var t=Re(e,`string`);return Pe(t)===`symbol`?t:String(t)}function Re(e,t){if(Pe(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(Pe(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function ze(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function Be(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&Je(e,t)}function Ve(e){var t=Ke();return function(){var n=Ye(e),r;if(t){var i=Ye(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return He(this,r)}}function He(e,t){if(t&&(Pe(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return Ue(e)}function Ue(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function We(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return We=function(e){if(e===null||!qe(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return Ge(e,arguments,Ye(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),Je(n,e)},We(e)}function Ge(e,t,n){return Ge=Ke()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&Je(i,n.prototype),i},Ge.apply(null,arguments)}function Ke(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function qe(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function Je(e,t){return Je=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},Je(e,t)}function Ye(e){return Ye=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},Ye(e)}var Xe=/*#__PURE__*/ function(e){Be(n,e);var t=Ve(n);function n(e){var r;return ze(this,n),r=t.call(this,e),r.name=`InvalidSpreadsheetError`,r}return Ie(n)}(/*#__PURE__*/ We(Error));function Ze(e,t,n,r,i,a){var o=Me(t,n,r,i);return a?s(o,e,a):(o.write(e),o.end()),o.promise.then(function(e){return e},function(e){var t=new Xe(e.message);throw t.stack=e.stack,t.cause=e,t});function s(e,t,n,r){var i=65536,a=0,o=i,s=function(){a++;var r=Date.now();if(t.length>o){e.write(t.slice(0,o)),n&&n(!1),t=t.slice(o);var i=Date.now()-r;return i<3.5?o*=2:i>7&&(o/=2),!0}return e.write(t),e.end(),n&&n(!0),!1};(function e(){s()&&(r?typeof setImmediate<`u`?setImmediate(e):setTimeout(e,0):e())})()}}function Qe(e){\"@babel/helpers - typeof\";return Qe=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Qe(e)}function $e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,tt(r.key),r)}}function et(e,t,n){return t&&$e(e.prototype,t),n&&$e(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function tt(e){var t=nt(e,`string`);return Qe(t)===`symbol`?t:String(t)}function nt(e,t){if(Qe(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(Qe(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function rt(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function it(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&ft(e,t)}function at(e){var t=ut();return function(){var n=pt(e),r;if(t){var i=pt(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return ot(this,r)}}function ot(e,t){if(t&&(Qe(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return st(e)}function st(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function ct(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return ct=function(e){if(e===null||!dt(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return lt(e,arguments,pt(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),ft(n,e)},ct(e)}function lt(e,t,n){return lt=ut()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&ft(i,n.prototype),i},lt.apply(null,arguments)}function ut(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function dt(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function ft(e,t){return ft=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},ft(e,t)}function pt(e){return pt=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},pt(e)}var mt=/*#__PURE__*/ function(e){it(n,e);var t=at(n);function n(){return rt(this,n),t.apply(this,arguments)}return et(n)}(/*#__PURE__*/ ct(Error));function ht(e){var t=new mt(e.message);return e.stack&&(t.stack=e.stack),Error.captureStackTrace&&Error.captureStackTrace(t,ht),t.cause=e,t}function gt(e,t){return _t(e,t,vt,!0)}function _t(e){var t=(arguments.length>1&&arguments[1]!==void 0?arguments[1]:{}).filter,n=arguments.length>2?arguments[2]:void 0;return arguments.length>3&&arguments[3],n(new Uint8Array(e),{filter:function(e){return!t||t({path:e.name})}}).then(function(e){return e},function(e){throw yt(e)?ht(e):e})}function vt(e){return new Promise(function(t,n){ke(e,function(e,r){e?n(e):t(r)})})}function yt(e){return typeof e.code==`number`}function bt(e){\"@babel/helpers - typeof\";return bt=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},bt(e)}function xt(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,Ct(r.key),r)}}function St(e,t,n){return t&&xt(e.prototype,t),n&&xt(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function Ct(e){var t=wt(e,`string`);return bt(t)===`symbol`?t:String(t)}function wt(e,t){if(bt(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(bt(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function Tt(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function Et(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&Pt(e,t)}function Dt(e){var t=Mt();return function(){var n=Ft(e),r;if(t){var i=Ft(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return Ot(this,r)}}function Ot(e,t){if(t&&(bt(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return kt(e)}function kt(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function At(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return At=function(e){if(e===null||!Nt(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return jt(e,arguments,Ft(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),Pt(n,e)},At(e)}function jt(e,t,n){return jt=Mt()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&Pt(i,n.prototype),i},jt.apply(null,arguments)}function Mt(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function Nt(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function Pt(e,t){return Pt=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},Pt(e,t)}function Ft(e){return Ft=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},Ft(e)}var It={XLS_FILE_NOT_SUPPORTED:\"You passed a legacy `.xls` file. Only `.xlsx` files are supported\",FILE_NOT_SUPPORTED:\"Doesn't look like an `.xlsx` file\",INVALID_ZIP:\"Couldn't unzip `.xlsx` file contents\",NO_DATA:`No data`},Lt=/*#__PURE__*/ function(e){Et(n,e);var t=Dt(n);function n(e,r){var i;return Tt(this,n),i=t.call(this,It[e]||e),i.code=e,i.name=`InvalidInputError`,i.cause=r,i}return St(n)}(/*#__PURE__*/ At(Error));function Rt(e){var t=e.path;return t.endsWith(`.xml`)||t.endsWith(`.xml.rels`)}var zt=[80,75],Bt=[208,207,17,224],Vt=[zt,Bt];Vt.indexOf(zt);var Ht=Vt.indexOf(Bt);function Ut(){var e,t=Wt(Vt),n=0;return function(r){if(isNaN(e)){var i;t=t.filter(function(e){if(r===Vt[e][n])return Vt[e].length===n+1&&(i=e),!0}),t.length===1?e=i:t.length===0&&(e=-1)}return n++,e}}function Wt(e){for(var t=[],n=0;n<e.length;)t.push(n),n++;return t}function Gt(e,t){var n=typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n)return(n=n.call(e)).next.bind(n);if(Array.isArray(e)||(n=Kt(e))||t&&e&&typeof e.length==`number`){n&&(e=n);var r=0;return function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}}}throw TypeError(`Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function Kt(e,t){if(e){if(typeof e==`string`)return qt(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return qt(e,t)}}function qt(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}function Jt(e){for(var t=Ut(),n=Gt(e),r;!(r=n()).done;){var i=r.value;if(Yt(i,t))return}Xt(e.length)}function Yt(e,t){var n=t(e);if(n!==void 0){if(n===Ht)throw new Lt(`XLS_FILE_NOT_SUPPORTED`);if(n<0)throw new Lt(`FILE_NOT_SUPPORTED`);return!0}}function Xt(e){throw new Lt(e===0?`NO_DATA`:`FILE_NOT_SUPPORTED`)}var Zt;function Qt(e){var t=Date.now();(typeof global<`u`?global.READ_EXCEL_FILE_CHECKPOINTS:typeof window<`u`&&window.READ_EXCEL_FILE_CHECKPOINTS)&&(Zt&&console.log(`  -`,t-Zt,`ms`),console.log(`*`,e)),Zt=t}function $t(){Zt=void 0}function en(e){return $t(),Qt(`unpack files`),tn(e).then(function(e){return Jt(new Uint8Array(e)),gt(e,{filter:Rt}).then(function(e){return e},function(e){throw e instanceof mt?new Lt(`INVALID_ZIP`,e.cause):e})})}function tn(e){if(e instanceof Blob)return e.arrayBuffer();if(e instanceof ArrayBuffer)return Promise.resolve(e);throw new Lt(`INPUT_TYPE_NOT_SUPPORTED`)}function nn(e,t){var n=r();return t(e,n,a,null,null).then(function(){return i(n)});function r(){return{workbookPr:void 0,sheets:[]}}function i(e){return{epoch1904:e.workbookPr?e.workbookPr.epoch1904:!1,sheets:e.sheets}}function a(e,t,n){e===`workbookPr`?n.workbookPr||={epoch1904:t.date1904===`1`}:e===`sheet`&&t.name&&n.sheets.push({id:Number(t.sheetId),name:t.name,relationId:t.id})}}function rn(e,t){var n=`http://schemas.openxmlformats.org/officeDocument/2006/relationships/`,r=`http://purl.oclc.org/ooxml/officeDocument/relationships/`,i=a();return t(e,i,s,null,null).then(function(){return o(i)});function a(){return{sheets:{},sharedStrings:void 0,styles:void 0}}function o(e){return e}function s(e,t,n){e===`Relationship`&&c(n,t.Id,t.Type,t.Target)}function c(e,t,i,a){switch(i){case n+`styles`:case r+`styles`:e.styles=l(a);break;case n+`sharedStrings`:case r+`sharedStrings`:e.sharedStrings=l(a);break;case n+`worksheet`:case r+`worksheet`:e.sheets[t]=l(a)}}function l(e){return e[0]===`/`?e.slice(1):`xl/`+e}}function an(e){\"@babel/helpers - typeof\";return an=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},an(e)}var on=[`xfId`];function sn(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),n.push.apply(n,r)}return n}function cn(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]==null?{}:arguments[t];t%2?sn(Object(n),!0).forEach(function(t){ln(e,t,n[t])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):sn(Object(n)).forEach(function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(n,t))})}return e}function ln(e,t,n){return t=un(t),t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function un(e){var t=dn(e,`string`);return an(t)===`symbol`?t:String(t)}function dn(e,t){if(an(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(an(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function fn(e,t){if(e==null)return{};var n=pn(e,t),r,i;if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(e);for(i=0;i<a.length;i++)r=a[i],!(t.indexOf(r)>=0)&&Object.prototype.propertyIsEnumerable.call(e,r)&&(n[r]=e[r])}return n}function pn(e,t){if(e==null)return{};for(var n={},r=Object.keys(e),i,a=0;a<r.length;a++)i=r[a],!(t.indexOf(i)>=0)&&(n[i]=e[i]);return n}function mn(e,t){var n=r();return t(e,n,a,o,null).then(function(){return i(n)});function r(){return{numberFormats:[],baseStyles:[],styles:[],cellStyleXfs:!1,cellXfs:!1}}function i(e){return e.styles.map(function(t){if(t.xfId){var n=t.xfId,r=fn(t,on);return cn(cn({},e.baseStyles[n]),r)}return t})}function a(e,t,n){if(e===`numFmt`){var r=Number(t.numFmtId),i={id:r};r>=100&&(i.template=t.formatCode),n.numberFormats[r]=i}else if(e===`cellStyleXfs`)n.cellStyleXfs=!0;else if(e===`cellXfs`)n.cellXfs=!0;else if(e===`xf`){if(n.cellStyleXfs)n.baseStyles.push(s(t));else if(n.cellXfs){var a=s(t,n.numberFormats);t.xfId&&(a.xfId=Number(t.xfId)),n.styles.push(a)}}}function o(e,t){e===`cellStyleXfs`?t.cellStyleXfs=!1:e===`cellXfs`&&(t.cellXfs=!1)}function s(e,t){var n={};if(e.numFmtId){var r=Number(e.numFmtId);n.numberFormat=t&&t[r]?t[r]:{id:r}}return n}}function hn(e,t){var n=r();return t(e,n,a,o,s).then(function(){return i(n)});function r(){return{si:void 0,strings:[]}}function i(e){return e.strings}function a(e,t,n){e===`si`?n.si=c():n.si&&l(e,t,n.si)}function o(e,t){e===`si`?(t.strings.push(t.si.string),t.si=void 0):t.si&&u(e,t.si)}function s(e,t){t.si&&d(e,t.si)}function c(){return{t:!1,r:!1,rPh:!1,string:``}}function l(e,t,n){e===`t`?n.t=!0:e===`r`?n.r=!0:e===`rPh`&&(n.rPh=!0)}function u(e,t){e===`t`?t.t=!1:e===`r`?t.r=!1:e===`rPh`&&(t.rPh=!1)}function d(e,t){t.rPh||t.t&&(t.r?t.string+=e:t.string=e)}}function gn(e,t){var n=17,r=1,i=1,a=864e5,o=365;t&&(e+=4*o+r+i);var s=r+i+70*o+n;return Math.floor((e-s)*a)}var _n=/;@$/,vn=/[^a-z0#\\?%]+/;function yn(e,t,n){var r=n[e];return r===void 0?n[e]=bn(t):r}function bn(e){return e=e.toLowerCase(),e=e.replace(_n,``),e=e.replace(/\\\\./g,` `),e.split(`;`).some(t);function t(e){e=e.replace(/\"[^\"]*\"/g,` `),e=e.replace(/(\\[?[smhd]{1,2}\\]?)[\\.\\,]00?0?/g,`$1`),e=e.replace(/\\[([smhd]{1,2})\\]/g,`$1`),e=e.replace(/\\[[^\\]]*\\]/g,``);var t=e.split(vn).filter(function(e){return e});return t.length!==0&&t.every(function(e){return xn.indexOf(e)>=0})}}var xn=/* @__PURE__ */ `s.ss.m.mm.h.hh.am.pm.a.p.d.dd.ddd.dddd.aaa.aaaa.aaaaa.m.mm.mmm.mmmm.mmmmm.y.yy.yyyy.e.ee.eeee`.split(`.`);function Sn(e,t,n,r){return e.numberFormat?!!(En.indexOf(e.numberFormat.id)>=0||t&&e.numberFormat.template===t||n&&e.numberFormat.template&&yn(e.numberFormat.id,e.numberFormat.template,r)):!1}var Cn=[14,15,16,17,18,19,20,21,22,45,46,47],wn=[27,28,29,30,31,32,33,34,35,36,50,51,52,53,54,55,56,57,58],Tn=[27,28,29,30,31,32,33,34,35,36,50,51,52,53,54,55,56,57,58],En=Cn.concat(wn).concat(Tn.filter(function(e){return wn.indexOf(e)<0})).concat([71,72,73,74,75,76,77,78,79,80,81].filter(function(e){return wn.indexOf(e)<0}).filter(function(e){return Tn.indexOf(e)<0}));function Dn(e,t){return Mn(e)||jn(e,t)||kn(e,t)||On()}function On(){throw TypeError(`Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function kn(e,t){if(e){if(typeof e==`string`)return An(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return An(e,t)}}function An(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}function jn(e,t){var n=e==null?null:typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n!=null){var r,i,a,o,s=[],c=!0,l=!1;try{if(a=(n=n.call(e)).next,t===0){if(Object(n)!==n)return;c=!1}else for(;!(c=(r=a.call(n)).done)&&(s.push(r.value),s.length!==t);c=!0);}catch(e){l=!0,i=e}finally{try{if(!c&&n.return!=null&&(o=n.return(),Object(o)!==o))return}finally{if(l)throw i}}return s}}function Mn(e){if(Array.isArray(e))return e}var Nn=[null,null];function Pn(e,t,n,r,i){var a=Dn(i,7),o=a[0],s=a[1],c=a[2],l=a[3],u=a[4],d=a[5],f=a[6];switch(e||`n`){case`str`:return n===void 0?`VALUE_MISSING`:n?[`s`,n]:Nn;case`inlineStr`:return r===void 0?`VALUE_MISSING`:[`s`,r];case`s`:if(!n)return`VALUE_MISSING`;var p=Number(n);return isNaN(p)||o[p]===void 0?`VALUE_INVALID`:[`s`,o[p]];case`b`:return n?n===`1`?[`b`,!0]:n===`0`?[`b`,!1]:`VALUE_INVALID`:`VALUE_MISSING`;case`e`:return n?[`e`,n]:`VALUE_MISSING`;case`d`:if(!n)return Nn;var m=new Date(n);return isNaN(m.valueOf())?`VALUE_INVALID`:[`d`,m.getTime()];case`n`:if(!n)return Nn;if(t){var h=Number(t);if(isNaN(h)||s[h]===void 0)return`FORMAT_INVALID`;if(Sn(s[h],u,d,l)){var g=Number(n);return isNaN(g)?`VALUE_INVALID`:[`d`,gn(g,c)]}}if(f)return[`n`,n];var _=Number(n);return isNaN(_)?`VALUE_INVALID`:[`n`,_];default:return`TYPE_INVALID`}}function Fn(e){for(var t=0,n=0;n<e.length;){var r=e.charCodeAt(n);if(r>=48&&r<=57){var i=Number(e.slice(n));return isNaN(i)&&In(e),[i,t]}t*=26,t+=e.charCodeAt(n)-64,n++}In(e)}function In(e){throw Error(`<c r=\"${e}\">`)}function Ln(e,t){return Bn(e)||zn(e,t)||Hn(e,t)||Rn()}function Rn(){throw TypeError(`Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function zn(e,t){var n=e==null?null:typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n!=null){var r,i,a,o,s=[],c=!0,l=!1;try{if(a=(n=n.call(e)).next,t===0){if(Object(n)!==n)return;c=!1}else for(;!(c=(r=a.call(n)).done)&&(s.push(r.value),s.length!==t);c=!0);}catch(e){l=!0,i=e}finally{try{if(!c&&n.return!=null&&(o=n.return(),Object(o)!==o))return}finally{if(l)throw i}}return s}}function Bn(e){if(Array.isArray(e))return e}function Vn(e,t){var n=typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n)return(n=n.call(e)).next.bind(n);if(Array.isArray(e)||(n=Hn(e))||t&&e&&typeof e.length==`number`){n&&(e=n);var r=0;return function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}}}throw TypeError(`Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function Hn(e,t){if(e){if(typeof e==`string`)return Un(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return Un(e,t)}}function Un(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}var Wn=null;function Gn(e,t,n){var r=n.sharedStrings,i=n.styles,a=n.epoch1904,o=n.dateFormatDetectionCache,s=n.options,c=[r,i,a,o,s.dateFormat,s.smartDateParser!==!1,s.parseNumber],l=[],u=[],d=f();return t(e,d,y,b,x,v).then(function(){var e=d.sheetData,t=e.rowCount,n=e.columnCount,r=e.dataRowCount,i=e.dataColumnCount;if(r<t&&(l=l.slice(0,r)),i<n)for(var a=0;a<l.length;)l[a].length>i&&(l[a]=l[a].slice(0,i)),a++;for(var o=Vn(l),s;!(s=o()).done;)for(var c=s.value;c.length<i;)c.push(Wn);return l});function f(){return{dimension:void 0,sheetData:void 0}}function p(e){return e.sheetData.rows}function m(e,t){e.sheetData.rowIndexShift+=e.sheetData.rows.length-t.length,e.sheetData.rows=t}function h(e){return e.sheetData.errors}function g(e,t){e.sheetData.errors=t}function _(e){var t=e.row,n=e.column,r=e.error;throw new Xe(`<c/> at row ${t}, col ${n}: ${r}`)}function v(e){if(d.sheetData){var t=p(d),n=h(d);if(e)l=l.concat(t),u=u.concat(n),u.length>0&&_(u[0]);else if(t.length>1){var r=t.slice(0,-1);l=l.concat(r),u=u.concat(n),m(d,t.slice(-1)),g(d,[])}}}function y(e,t,n){e===`dimension`?n.dimension=S(t.ref):e===`sheetData`?n.sheetData=C():n.sheetData&&w(e,t,n.sheetData)}function b(e,t){t.sheetData&&ee(e,t.sheetData)}function x(e,t){t.sheetData&&T(e,t.sheetData)}function S(e){var t=e.split(`:`).map(Fn);return t.length===1&&(t=[t[0],t[0]]),t}function C(){return{c:void 0,rows:[],row:void 0,rowNumber:void 0,rowIndexShift:0,cursor:[0,0],rowCount:0,columnCount:0,dataRowCount:0,dataColumnCount:0,errors:[]}}function w(e,t,n){e===`row`?(t.r&&(n.rowNumber=Number(t.r)),n.row=[]):e===`c`?(n.c=A(),n.c.attributes=t):n.c&&j(e,t,n.c)}function ee(e,t){if(e===`row`){if(t.rowNumber){var n=t.rowIndexShift+t.rows.length;if(t.rowNumber<=n)throw new Xe(`Out-of-place <row/> number ${t.rowNumber} follows <row/> number ${n}`);for(;t.rowNumber>t.rowIndexShift+t.rows.length+1;)t.rows.push([])}t.rows.push(t.row),t.row.length>0&&(t.dataRowCount=t.rowNumber),t.rowNumber>t.rowCount&&(t.rowCount=t.rowNumber),t.row=void 0,t.rowNumber=void 0}else if(e===`c`){var r=E(t.c);if(r.row<t.cursor[0]||r.row===t.cursor[0]&&r.column<=t.cursor[1])throw new Xe(`Out-of-place <c/> at row ${r.row} col ${r.column} follows <c/> at row ${t.cursor[0]} col ${t.cursor[1]}`);if(t.cursor[0]=r.row,t.cursor[1]=r.column,t.rowNumber||=r.row,r.error)P&&_(r),t.errors.push(r);else if(r.value!==Wn){for(;r.column>t.row.length+1;)t.row.push(Wn);t.row.push(r.value),r.column>t.dataColumnCount&&(t.dataColumnCount=r.column)}r.column>t.columnCount&&(t.columnCount=r.column),t.c=void 0}else t.c&&M(e,t.c)}function T(e,t){t.c&&N(e,t.c)}function E(e){var t=e.attributes,n=e.inlineString,r=e.vText,i=Ln(Fn(t.r),2),a=i[0],o=i[1],l=D(t.t,t.s,r,n,c,s.trim!==!1);return typeof l==`string`?{row:a,column:o,error:l}:{row:a,column:o,value:k(l[1],l[0])}}function D(e,t,n,r,i,a){var o=O(e,t,n,r,i);return Array.isArray(o)&&o[0]===`s`&&(a&&(o[1]=o[1].trim()),o[1]===``)?Nn:o}function O(e,t,n,r,i){var a=Pn(e,t,n,r,i);if(a===`VALUE_MISSING`)switch(e||`n`){case`str`:case`inlineStr`:case`s`:case`b`:return Nn}return e===`e`?Nn:a}function k(e,t){return t===`n`?s.parseNumber?s.parseNumber(e):e:t===`d`?new Date(e):e}function A(){return{v:!1,is:!1,t:!1,r:!1,rPh:!1,vText:void 0,inlineString:void 0,attributes:void 0}}function j(e,t,n){e===`v`?n.v=!0:e===`is`?(n.is=!0,n.inlineString=``):e===`t`?n.t=!0:e===`r`?n.r=!0:e===`rPh`&&(n.rPh=!0)}function M(e,t){e===`v`?(t.v=!1,t.vText||=``):e===`is`?t.is=!1:e===`t`?t.t=!1:e===`r`?t.r=!1:e===`rPh`&&(t.rPh=!1)}function N(e,t){t.v?t.vText=e:t.is&&(t.rPh||t.t&&(t.r?t.inlineString+=e:t.inlineString=e))}var P}function Kn(e){Qt(`convert files to strings`);for(var t={},n=0,r=Object.keys(e);n<r.length;n++){var i=r[n];t[i]=qn(e[i])}return t}function qn(e){return typeof TextDecoder<`u`?new TextDecoder().decode(e):_e(e)}function Jn(e){\"@babel/helpers - typeof\";return Jn=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Jn(e)}function Yn(e){return Jn(e)===`object`&&typeof e.then==`function`}function Xn(e){\"@babel/helpers - typeof\";return Xn=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},Xn(e)}function Zn(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,`value`in r&&(r.writable=!0),Object.defineProperty(e,$n(r.key),r)}}function Qn(e,t,n){return t&&Zn(e.prototype,t),n&&Zn(e,n),Object.defineProperty(e,\"prototype\",{writable:!1}),e}function $n(e){var t=er(e,`string`);return Xn(t)===`symbol`?t:String(t)}function er(e,t){if(Xn(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(Xn(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function tr(e,t){if(!(e instanceof t))throw TypeError(`Cannot call a class as a function`)}function nr(e,t){if(typeof t!=`function`&&t!==null)throw TypeError(`Super expression must either be null or a function`);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),Object.defineProperty(e,\"prototype\",{writable:!1}),t&&ur(e,t)}function rr(e){var t=cr();return function(){var n=dr(e),r;if(t){var i=dr(this).constructor;r=Reflect.construct(n,arguments,i)}else r=n.apply(this,arguments);return ir(this,r)}}function ir(e,t){if(t&&(Xn(t)===`object`||typeof t==`function`))return t;if(t!==void 0)throw TypeError(`Derived constructors may only return object or undefined`);return ar(e)}function ar(e){if(e===void 0)throw ReferenceError(`this hasn't been initialised - super() hasn't been called`);return e}function or(e){var t=typeof Map==`function`?/* @__PURE__ */ new Map:void 0;return or=function(e){if(e===null||!lr(e))return e;if(typeof e!=`function`)throw TypeError(`Super expression must either be null or a function`);if(t!==void 0){if(t.has(e))return t.get(e);t.set(e,n)}function n(){return sr(e,arguments,dr(this).constructor)}return n.prototype=Object.create(e.prototype,{constructor:{value:n,enumerable:!1,writable:!0,configurable:!0}}),ur(n,e)},or(e)}function sr(e,t,n){return sr=cr()?Reflect.construct.bind():function(e,t,n){var r=[null];r.push.apply(r,t);var i=new(Function.bind.apply(e,r));return n&&ur(i,n.prototype),i},sr.apply(null,arguments)}function cr(){if(typeof Reflect>`u`||!Reflect.construct||Reflect.construct.sham)return!1;if(typeof Proxy==`function`)return!0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],function(){})),!0}catch{return!1}}function lr(e){return Function.toString.call(e).indexOf(`[native code]`)!==-1}function ur(e,t){return ur=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(e,t){return e.__proto__=t,e},ur(e,t)}function dr(e){return dr=Object.setPrototypeOf?Object.getPrototypeOf.bind():function(e){return e.__proto__||Object.getPrototypeOf(e)},dr(e)}var fr=/*#__PURE__*/ function(e){nr(n,e);var t=rr(n);function n(e,r){var i;return tr(this,n),i=t.call(this,`Sheet not found: ${typeof e==`number`?e+`. Sheet count: `+r.length:e+`. Available sheets: `+r.join(`, `)}`),i.name=`SheetNotFoundError`,i.sheet=e,i.sheets=r,i}return Qn(n)}(/*#__PURE__*/ or(Error));function pr(e){\"@babel/helpers - typeof\";return pr=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},pr(e)}function mr(e,t){var n=typeof Symbol<`u`&&e[Symbol.iterator]||e[`@@iterator`];if(n)return(n=n.call(e)).next.bind(n);if(Array.isArray(e)||(n=hr(e))||t&&e&&typeof e.length==`number`){n&&(e=n);var r=0;return function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}}}throw TypeError(`Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.`)}function hr(e,t){if(e){if(typeof e==`string`)return gr(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);if(n===`Object`&&e.constructor&&(n=e.constructor.name),n===`Map`||n===`Set`)return Array.from(e);if(n===`Arguments`||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return gr(e,t)}}function gr(e,t){(t==null||t>e.length)&&(t=e.length);for(var n=0,r=Array(t);n<t;n++)r[n]=e[n];return r}function _r(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),n.push.apply(n,r)}return n}function vr(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]==null?{}:arguments[t];t%2?_r(Object(n),!0).forEach(function(t){yr(e,t,n[t])}):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(n)):_r(Object(n)).forEach(function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(n,t))})}return e}function yr(e,t,n){return t=br(t),t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function br(e){var t=xr(e,`string`);return pr(t)===`symbol`?t:String(t)}function xr(e,t){if(pr(e)!==`object`||e===null)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(pr(r)!==`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function Sr(e,t){var n=arguments.length>2&&arguments[2]!==void 0?arguments[2]:{},r=Kn(t);return Qt(`parse spreadsheet info and file paths`),kr(Er(),r,e).then(function(t){var i=t.spreadsheetInfo,a=t.filePaths;return Qt(`parse \"shared strings\" and \"styles\"`),kr(Dr(a),r,e).then(function(t){var o=t.sharedStrings,s=t.styles,c=n.sheets?n.sheets.map(function(e){return wr(e,i.sheets)}):i.sheets.map(function(e){return e.relationId});return Qt(`parse sheet${c.length===1?``:`s`} data`),kr(Or(a,c,{sharedStrings:o,styles:s,epoch1904:i.epoch1904,dateFormatDetectionCache:[],options:n}),r,e).then(function(e){return Qt(`end`),c.map(function(t){return{sheet:Tr(t,i.sheets),data:e[t]}})})})})}function Cr(e,t,n,r){return r&&r.parseNumber||(r=vr(vr({},r),{},{parseNumber:null})),Sr(t,n,r)}function wr(e,t){if(typeof e==`string`)for(var n=mr(t),r;!(r=n()).done;){var i=r.value;if(i.name===e)return i.relationId}else if(e<=t.length)return t[e-1].relationId;throw new fr(e,t.map(function(e){return e.name}))}function Tr(e,t){for(var n=mr(t),r;!(r=n()).done;){var i=r.value;if(i.relationId===e)return i.name}throw Error(`Sheet relation ID not found: ${e}`)}function Er(){return{\"xl/_rels/workbook.xml.rels\":{name:`filePaths`,parse:rn},\"xl/workbook.xml\":{name:`spreadsheetInfo`,parse:nn}}}function Dr(e){var t={};return yr(t,e.sharedStrings||`xl/sharedStrings.xml`,{name:`sharedStrings`,parse:hn,fallback:Promise.resolve([])}),yr(t,e.styles||`xl/styles.xml`,{name:`styles`,parse:mn,fallback:{}}),t}function Or(e,t,n){return Object.keys(e.sheets).filter(function(e){return t.includes(e)}).reduce(function(t,r){return vr(vr({},t),{},yr({},e.sheets[r],{name:r,parse:function(e,t){return Gn(e,t,n)}}))},{})}function kr(e,t,n){for(var r={},i=function(){var i=o[a],s=e[i];r[s.name]=t[i]===void 0?s.fallback===void 0?function(){throw new Xe(`\"${i}\" file not found inside the \\`.xlsx\\` file`)}():s.fallback:s.parse(t[i],n)},a=0,o=Object.keys(e);a<o.length;a++)i();for(var s=[],c=function(){var e=u[l];Yn(r[e])&&s.push(r[e].then(function(t){r[e]=t}))},l=0,u=Object.keys(r);l<u.length;l++)c();return s.length>0?Promise.all(s).then(function(){return r}):r}var Ar=void 0;function jr(e,t){return en(e).then(function(e){return Cr(Ar,Ze,e,t)})}let Mr=/^([+-]?)(?:(\\d+)(?:\\.(\\d*))?|\\.(\\d+))(?:[eE]([+-]?\\d+))?$/,Nr=10n;function Pr(e){if(e.length>256)throw Error(`Decimal exceeds the supported range.`);let t=Mr.exec(e);if(!t)throw Error(`Enter a finite decimal value.`);let n=Number(t[5]??`0`);if(!Number.isSafeInteger(n)||Math.abs(n)>128)throw Error(`Decimal exponent exceeds the supported range.`);let r=t[3]??t[4]??``;return{coefficient:BigInt(`${t[1]===`-`?`-`:``}${t[2]??`0`}${r}`),scale:r.length-n}}function Fr({coefficient:e,scale:t}){if(e===0n)return`0`;let n=e<0n?`-`:``,r=(e<0n?-e:e).toString();return t<=0?n+r+`0`.repeat(-t):(r=r.padStart(t+1,`0`),(n+r.slice(0,-t)+`.`+r.slice(-t)).replace(/0+$/,``).replace(/\\.$/,``))}function Ir(e){return Fr(Pr(e))}function Lr(e,t){let n=Pr(e),r=Pr(t),i=Math.max(n.scale,r.scale),a=n.coefficient*Nr**BigInt(i-n.scale),o=r.coefficient*Nr**BigInt(i-r.scale);return a<o?-1:+(a>o)}function Rr(e){let t=Ir(e),n=Pr(e);if((n.coefficient<0n?-n.coefficient:n.coefficient).toString().length>34||Lr(t.startsWith(`-`)?t.slice(1):t,`1e30`)>0||n.coefficient!==0n&&Lr(t.startsWith(`-`)?t.slice(1):t,`1e-30`)<0)throw Error(`Financial input exceeds 34 digits or the supported range [1e-30, 1e30].`);return t}let zr={empty:`Enter an amount.`,invalid:`Enter a finite number such as 1,250,000, (1,250,000) or -1,250,000.`,suffix:`Enter the full amount; K, M and B suffixes are not supported.`,exponent:`Enter the full amount without scientific notation.`,grouping:`Use commas only between groups of three digits, such as 1,250,000.`,sign:`Use either a minus sign or parentheses for a negative amount, not both.`,parentheses:`Close the parentheses around a negative amount, such as (58,000).`,percent:`Enter an amount without a percent sign.`,digits:`Use at most 34 significant digits.`,range:`Enter zero or an amount whose magnitude is from 1e-30 to 1e30.`,negative:`Enter zero or a positive amount.`},Br=/^[\\s\xA0  ]+|[\\s\xA0  ]+$/g;function Q(e,t=zr[e]){return{ok:!1,code:e,message:t}}function Vr(e,t={}){let n=e.replace(/−/g,`-`).replace(Br,``);if(!n)return Q(`empty`);if(/%/.test(n))return Q(`percent`);if(/\\d/.test(n)&&/[kmb]{1,2}\\)?$/i.test(n))return Q(`suffix`);if(/\\d/.test(n)&&/e/i.test(n))return Q(`exponent`);if((n.match(/-/g)??[]).length>1||/-\\s*\\(|\\(\\s*-/.test(n))return Q(`sign`);if((n.match(/\\(/g)??[]).length!==(n.match(/\\)/g)??[]).length)return Q(`parentheses`);if((n.match(/\\$/g)??[]).length>(t.currency===!1?0:1))return Q(`invalid`);let r=/^\\$?(\\()?(-)?\\$?(\\d[\\d,]*(?:\\.\\d*)?|\\.\\d+)\\)?$/.exec(n);if(!r)return Q(`invalid`);let[i]=r[3].split(`.`);if(i.includes(`,`)&&!/^\\d{1,3}(?:,\\d{3})+$/.test(i))return Q(`grouping`);let a=!!r[1]||!!r[2],o=r[3].replace(/,/g,``),s=(a?`-`:``)+(o.startsWith(`.`)?`0`+o:o);if(o.replace(`.`,``).replace(/^0+(?=\\d)/,``).length>34)return Q(`digits`);let c;try{c=Rr(s)}catch{return Q(`range`)}return t.allowNegative===!1&&Lr(c,`0`)<0?Q(`negative`):{ok:!0,value:c}}let Hr=`Enter a whole number, such as 120.`;function Ur(e){if(/[$%]/.test(e))return Q(`invalid`,Hr);let t=Vr(e,{currency:!1});return t.ok?/^-?\\d+$/.test(t.value)?t:Q(`invalid`,Hr):Q(t.code,Hr)}function Wr(e,t){let n=typeof t==`string`||typeof t==`number`?String(t):``;if(e.optional&&!n.trim())return null;if(!n.trim())throw Error(`Enter a value for this field.`);if(e.kind===`text`)return n;if(e.kind===`date`){if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(n)||!Number.isFinite(Date.parse(n))||new Date(n).toISOString().slice(0,10)!==n)throw Error(`Enter a valid calendar date, for example 2025-12-31.`);return n}let r=e.kind===`integer`?Ur(n):Vr(n,{currency:e.kind===`money`});if(!r.ok)throw Error(r.message);if(e.min!==void 0&&Lr(r.value,e.min)<0||e.max!==void 0&&Lr(r.value,e.max)>0)throw Error(`Use ${e.min??`the supported minimum`} through ${e.max??`the supported maximum`}.`);if(e.kind!==`integer`)return r.value;let i=Number(r.value);if(!Number.isSafeInteger(i))throw Error(`Enter an exact safe integer.`);return i}let Gr=[{name:`Borrower`,fields:[{label:`Borrower name`,key:`borrower_name`,kind:`text`,helper:`Business name`},{label:`Geography`,key:`geography`,kind:`text`,helper:`Postal code or geography; keep leading zeros`},{label:`Assessment date`,key:`assessment_as_of`,kind:`date`,helper:`Calendar date, YYYY-MM-DD`}],prefix:null,maximum:1},{name:`Financials`,fields:[{label:`Period start`,key:`period_start`,kind:`date`,helper:`First day of a complete fiscal year`},{label:`Period end`,key:`period_end`,kind:`date`,helper:`Last day of the same fiscal year`},{label:`Revenue`,key:`gross_receipts`,kind:`money`,helper:`USD dollars`},{label:`Cost of goods sold`,key:`cogs`,kind:`money`,helper:`USD dollars`},{label:`Operating expense excl. D&A, interest and officer pay`,key:`operating_expense_excl_dna_interest_comp`,kind:`money`,helper:`USD dollars; exclude D&A, interest and officer pay`},{label:`Officer compensation`,key:`officer_compensation`,kind:`money`,helper:`USD dollars`},{label:`Depreciation`,key:`depreciation`,kind:`money`,helper:`USD dollars`},{label:`Amortization`,key:`amortization`,kind:`money`,helper:`USD dollars`},{label:`Interest expense`,key:`interest_expense`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`},{label:`Section 179 expense`,key:`section_179`,kind:`money`,helper:`USD dollars`},{label:`K-1 distributions`,key:`k1_distribution`,kind:`money`,helper:`USD dollars`}],prefix:`Year`,maximum:10},{name:`Debt and loan`,fields:[{label:`Loan amount`,key:`proposed_loan.amount`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`},{label:`Annual nominal rate`,key:`proposed_loan.annual_rate`,kind:`rate`,helper:`Decimal fraction 0–1 or a percentage; 0.105 = 10.5%`,min:`0`,max:`1`},{label:`Term months`,key:`proposed_loan.term_months`,kind:`integer`,helper:`Integer from 12 through 12,000`,min:`12`,max:`12000`},{label:`Existing annual principal payments`,key:`existing_debt.cpltd_annual`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`},{label:`Annual operating lease payments`,key:`existing_debt.operating_lease_annual`,kind:`money`,helper:`USD dollars; zero or positive`,min:`0`}],prefix:null,maximum:1},{name:`Guarantors`,fields:[{label:`Guarantor name`,key:`name`,kind:`text`,helper:`Name`},{label:`Ownership`,key:`ownership_percentage`,kind:`rate`,helper:`Decimal fraction 0–1 or a percentage; 1 = 100%`,min:`0`,max:`1`},{label:`Annual wages`,key:`wages`,kind:`money`,helper:`USD dollars per year`},{label:`Annual interest and dividend income`,key:`interest_dividend_income`,kind:`money`,helper:`USD dollars per year`},{label:`Annual mortgage principal and interest`,key:`mortgage_pi_annual`,kind:`money`,helper:`USD dollars per year; zero or positive`,min:`0`},{label:`Annual auto loan payments`,key:`auto_loan_annual`,kind:`money`,helper:`USD dollars per year; zero or positive`,min:`0`},{label:`Annual credit card minimum payments`,key:`credit_card_min_annual`,kind:`money`,helper:`USD dollars per year; zero or positive`,min:`0`}],prefix:`Guarantor`,maximum:100},{name:`Working capital`,fields:[{label:`Period start`,key:`period_start`,kind:`date`,helper:`Match the latest financial year`},{label:`Period end`,key:`period_end`,kind:`date`,helper:`Match the latest financial year`},{label:`Increase in accounts receivable`,key:`ar_increase`,kind:`money`,helper:`USD dollars; a decrease is negative`},{label:`Increase in inventory`,key:`inventory_increase`,kind:`money`,helper:`USD dollars; a decrease is negative`},{label:`Increase in accounts payable`,key:`ap_increase`,kind:`money`,helper:`USD dollars; a decrease is negative`},{label:`Cash taxes paid`,key:`cash_taxes_paid`,kind:`money`,helper:`USD dollars`}],prefix:null,maximum:1}],Kr=e=>e==null||e===``;function qr(e){let t=``;for(let n=e+1;n>0;n=Math.floor((n-1)/26))t=String.fromCharCode(65+(n-1)%26)+t;return t}function Jr(e){if(e.length!==Gr.length||new Set(e.map(e=>e.sheet)).size!==e.length||e.some(e=>!Gr.some(t=>t.name===e.sheet)))throw Error(`Use the five sheets in the Spreadline Excel template without renaming them.`);let t=[];for(let n of Gr){let r=e.find(e=>e.sheet===n.name).data;if(r[3]?.[1]!==`1`)throw Error(`${n.name}!B4: use template version 1.`);let i=(r[6]??[]).slice();for(;i.length&&Kr(i[i.length-1]);)i.pop();if(i[0]!==`Field`)throw Error(`${n.name}!A7: restore the Field header from the template.`);let a=i.indexOf(`Format`);if(a<2||a!==i.length-1)throw Error(`${n.name}: keep the Format column after the input columns.`);let o=i.slice(1,a);if(o.length>n.maximum||n.prefix===null&&o.length!==1)throw Error(`${n.name}: the number of input columns exceeds the template limit.`);o.forEach((e,t)=>{if(e!==(n.prefix?`${n.prefix} ${t+1}`:`Value`))throw Error(`${n.name}!${qr(t+1)}7: restore the template column heading.`)});let s=/* @__PURE__ */ new Map;for(let e=7;e<r.length;e++){let t=r[e];if(t.every(Kr))continue;let i=t[0];if(typeof i!=`string`||!n.fields.some(e=>e.label===i))throw Error(`${n.name}!A${e+1}: unknown field label. Use the template labels.`);if(s.has(i))throw Error(`${n.name}!A${e+1}: duplicate field label ${i}.`);if(t.slice(a+1).some(e=>!Kr(e)))throw Error(`${n.name}: unexpected data beyond the template columns.`);s.set(i,e)}for(let e of n.fields)if(!s.has(e.label))throw Error(`${n.name}: restore the missing field label ${e.label}.`);let c=o.map((e,t)=>n.fields.some(e=>!Kr(r[s.get(e.label)]?.[t+1]))),l=!1;c.forEach(e=>{if(!e)l=!0;else if(l&&n.prefix)throw Error(`${n.name}: remove empty input columns between populated columns.`)});let u=Math.max(0,c.lastIndexOf(!0));for(let e=0;e<=u;e++)for(let i of n.fields){let a=s.get(i.label),o=r[a]?.[e+1],c=``,l;if(o instanceof Date)!Number.isFinite(o.getTime())||o.getUTCHours()!==0||o.getUTCMinutes()!==0||o.getUTCSeconds()!==0||o.getUTCMilliseconds()!==0?l=`Use a calendar date without a time.`:i.kind===`date`?c=o.toISOString().slice(0,10):l=`This financial cell is formatted as a date. Restore its text format and value.`;else if(typeof o==`string`){if(o.length>2e3)throw Error(`${n.name}!${qr(e+1)}${a+1}: input text exceeds 2,000 characters.`);c=o}else Kr(o)||(l=`Use text or an exact numeric Excel cell, not a boolean or unsupported cell type.`);let u=n.name===`Financials`?`/years/${e}/`:n.name===`Guarantors`?`/guarantors/${e}/`:n.name===`Working capital`?`/working_capital/`:`/`;t.push({...i,pointer:u+i.key.replace(/\\./g,`/`),sheet:n.name,cell:`${qr(e+1)}${a+1}`,group:n.prefix?`${n.prefix} ${e+1}`:n.name,value:c,readError:l})}}return{fields:t}}let Yr=8e6,Xr=2e6,Zr=new TextDecoder(`utf-8`,{fatal:!0});function $(e=`The Excel archive is malformed. Save a fresh .xlsx copy using the template.`){throw Error(e)}let Qr=Uint32Array.from({length:256},(e,t)=>{let n=t;for(let e=0;e<8;e++)n=n&1?3988292384^n>>>1:n>>>1;return n>>>0});function $r(e){e.length>2e6&&$(`Use an .xlsx file no larger than 2 MB (2,000,000 bytes).`),e.length<22&&$(`Use a standard Excel .xlsx archive.`);let t=new DataView(e.buffer,e.byteOffset,e.byteLength);t.getUint32(0,!0)!==67324752&&$(`Use a standard Excel .xlsx file. Legacy .xls and encrypted files are not supported.`);let n=-1;for(let r=e.length-22;r>=Math.max(0,e.length-65557);r--)if(t.getUint32(r,!0)===101010256&&r+22+t.getUint16(r+20,!0)===e.length){n=r;break}n<0&&$();let r=t.getUint16(n+10,!0),i=t.getUint32(n+12,!0),a=t.getUint32(n+16,!0);(r===65535||i===4294967295||a===4294967295)&&$(`ZIP64 archives are unsupported. Save a small template workbook.`),(t.getUint16(n+4,!0)||t.getUint16(n+6,!0)||t.getUint16(n+8,!0)!==r||r<1||r>128||a+i!==n)&&$(`The Excel archive exceeds the entry limit or has an invalid directory.`);let o=/* @__PURE__ */ new Map,s=a,c=0,l=[];for(let i=0;i<r;i++){(s+46>n||t.getUint32(s,!0)!==33639248)&&$();let r=t.getUint16(s+8,!0),i=t.getUint16(s+10,!0),u=t.getUint32(s+20,!0),d=t.getUint32(s+24,!0),f=t.getUint16(s+28,!0),p=t.getUint16(s+30,!0),m=t.getUint16(s+32,!0),h=t.getUint32(s+42,!0);(u===4294967295||d===4294967295||h===4294967295)&&$(`ZIP64 archives are unsupported.`),r&1&&$(`Encrypted workbooks are unsupported. Save an unencrypted template copy.`),(![0,8].includes(i)||s+46+f+p+m>n||h+30>a)&&$();let g=Zr.decode(e.subarray(s+46,s+46+f));(!g||/[\\\\:\\x00]/.test(g)||g.startsWith(`/`)||g.split(`/`).some(e=>[`..`,`.`,`__proto__`,`constructor`,`prototype`].includes(e))||g.includes(`//`)||o.has(g))&&$(`The Excel archive contains a duplicate or invalid part path.`),/vbaProject|externalLinks|embeddings|activeX|\\.bin$/i.test(g)&&$(`Remove macros, external workbook links and embedded objects, then save as .xlsx.`),c+=d,(d>Xr||c>Yr)&&$(`The expanded workbook is too large. Use the small intake template.`),(t.getUint32(h,!0)!==67324752||t.getUint16(h+6,!0)!==r||t.getUint16(h+8,!0)!==i)&&$(`The Excel archive has inconsistent or encrypted headers.`);let _=t.getUint16(h+26,!0),v=t.getUint16(h+28,!0),y=h+30+_+v;(y+u>a||Zr.decode(e.subarray(h+30,h+30+_))!==g)&&$(),r&8||t.getUint32(h+18,!0)===u&&t.getUint32(h+22,!0)===d||$(),l.push([h,y+u]),o.set(g,{size:d,compressed:u,checksum:t.getUint32(s+16,!0),method:i,offset:h}),s+=46+f+p+m}return l.sort((e,t)=>e[0]-t[0]),(s!==n||l.some((e,t)=>t>0&&e[0]<l[t-1][1]))&&$(),o.has(`xl/workbook.xml`)&&o.has(`[Content_Types].xml`)||$(`The archive is not a supported Excel workbook.`),o}function ei(e,t){let n=Object.create(null),r=0,i=/* @__PURE__ */ new Set,a=new De(e=>{let a=t.get(e.name);(!a||i.has(e.name)||a.method!==e.compression)&&$(),i.add(e.name);let o=[],s=0,c=4294967295,l=null,u=t=>{throw l=Error(t),e.terminate(),l};e.ondata=(t,i,d)=>{if(t){if(l)throw l;$(`The Excel archive could not be decompressed. Save a fresh copy.`)}s+=i.length,r+=i.length,(s>a.size||s>Xr||r>Yr)&&u(`The actual expanded workbook exceeds the size limit.`);for(let e of i)c=Qr[(c^e)&255]^c>>>8;if(o.push(i),d){(s!==a.size||(c^4294967295)>>>0!==a.checksum)&&u(`The Excel archive checksum or expanded size is invalid. Save a fresh copy.`);let t=new Uint8Array(s),r=0;for(let e of o)t.set(e,r),r+=e.length;n[e.name]=t}},e.start()});a.register(Ee);for(let t=0;t<e.length;t+=1024)a.push(e.subarray(t,t+1024),t+1024>=e.length);return(i.size!==t.size||Object.keys(n).length!==t.size)&&$(),n}let ti=String.raw`(?:[^\\s<>/:]+:)?`,ni=String.raw`(?:[^\"'<>]|\"[^\"]*\"|'[^']*')*`;function ri(e,t){return e.matchAll(RegExp(`<${ti}${t}(?=[\\\\s/>])${ni}>`,`g`))}function ii(e){let t=Object.create(null);for(let n of e.matchAll(/([^\\s<>=/\"']+)\\s*=\\s*([\"'])(.*?)\\2/gs))Object.prototype.hasOwnProperty.call(t,n[1])&&$(`Duplicate XML attributes are unsupported.`),t[n[1]]=n[3].replace(/&#(x[\\da-f]+|\\d+);|&(amp|quot|apos|lt|gt);/gi,(e,t,n)=>t?String.fromCodePoint(Number(t.startsWith(`x`)?`0`+t:t)):{amp:`&`,quot:`\"`,apos:`'`,lt:`<`,gt:`>`}[n.toLowerCase()]);return t}function ai(e){let t=/^([A-Z]{1,3})([1-9]\\d{0,6})$/.exec(e);t||$(`Invalid worksheet cell coordinates.`);let n=0;for(let e of t[1])n=n*26+e.charCodeAt(0)-64;(n>128||Number(t[2])>256)&&$(`Worksheet dimensions exceed the template limit.`)}function oi(e){let t=0,n=/* @__PURE__ */ new Map;for(let[r,i]of Object.entries(e))if(/\\.xml$|\\.rels$/i.test(r)){let e=Zr.decode(i).replace(/<!--[\\s\\S]*?-->/g,``);if(n.set(r,e),/<!DOCTYPE|<!ENTITY/i.test(e)&&$(`XML document types and entities are unsupported in the intake template.`),/<!\\[CDATA\\[/.test(e)&&$(`Save a fresh .xlsx copy of the Spreadline template using standard Excel values.`),/macroEnabled|vbaProject|oleObject|activeX/i.test(e)&&r===`[Content_Types].xml`&&$(`Use a macro-free .xlsx template workbook.`),r.endsWith(`.rels`)){let t=/* @__PURE__ */ new Set;for(let n of ri(e,`Relationship`)){let e=ii(n[0]);t.has(e.Id)&&$(`Duplicate workbook relationship identifiers are unsupported.`),t.add(e.Id),(e.TargetMode?.toLowerCase()===`external`||/^[a-z]+:/i.test(e.Target??``))&&$(`Remove external workbook links before importing.`)}}if(/^xl\\/worksheets\\/[^/]+\\.xml$/.test(r)){ri(e,`f`).next().done||$(`Formulas are unsupported, including cached results. Copy and paste values before importing.`);for(let t of ri(e,`dimension`))for(let e of(ii(t[0]).ref??``).split(`:`))ai(e);for(let t of ri(e,`row`)){let e=ii(t[0]);e.r!==void 0&&ai(`A`+e.r)}for(let t of ri(e,`col`)){let e=ii(t[0]);(!/^\\d+$/.test(e.min??``)||!/^\\d+$/.test(e.max??``)||Number(e.min)<1||Number(e.max)>128)&&$(`Worksheet column dimensions exceed the template limit.`)}let n=/* @__PURE__ */ new Set;for(let r of ri(e,`c`)){let e=ii(r[0]);ai(e.r??``),n.has(e.r)&&$(`Duplicate worksheet cell coordinates are unsupported.`),n.add(e.r),++t>5e3&&$(`The workbook exceeds the 5,000-cell limit.`),e.t===`e`&&$(`An Excel cell contains an error. Replace errors with reviewed values.`)}}}let r=n.get(`xl/workbook.xml`),i=[...ri(r,`sheet`)],a=i.map(e=>ii(e[0]).name);(a.length!==5||new Set(a).size!==5||a.some(e=>!Gr.some(t=>t.name===e)))&&$(`Use the five sheets in the Spreadline template without renaming them.`),i.some(e=>[`hidden`,`veryHidden`].includes(ii(e[0]).state))&&$(`Unhide the five template sheets before importing.`);let o=new Map([...ri(n.get(`xl/_rels/workbook.xml.rels`)??``,`Relationship`)].map(e=>{let t=ii(e[0]);return[t.Id,t.Target]})),s=i.map(e=>{let t=ii(e[0]),n=Object.entries(t).filter(([e])=>e.endsWith(`:id`));n.length!==1&&$(`The template's worksheet relationship is invalid.`);let r=o.get(n[0][1])??``;return r.startsWith(`/`)?r.slice(1):`xl/`+r});(new Set(s).size!==5||s.some(e=>!/^xl\\/worksheets\\/[^/]+\\.xml$/.test(e)||!n.has(e)))&&$(`Use five distinct worksheets from the Spreadline template.`);let c=ii(ri(r,`workbookPr`).next().value?.[0]??``).date1904;c!==void 0&&![`0`,`1`,`true`,`false`].includes(c)&&$(`The workbook date system is invalid. Save a fresh template copy.`);let l=/* @__PURE__ */ new Map;return s.forEach((e,t)=>{let r=/* @__PURE__ */ new Map;for(let t of n.get(e).matchAll(RegExp(`<${ti}c(?=[\\\\s/>])${ni}(?<!/)>([\\\\s\\\\S]*?)<\\\\/${ti}c>`,`g`))){let e=ri(t[0],`c`).next().value[0],n=ii(e),i=t[1].match(RegExp(`<${ti}v(?=[\\\\s>])${ni}>([^<]*)<\\\\/`))?.[1];i!==void 0&&r.set(n.r,{type:n.t,value:i})}l.set(a[t],r)}),{epoch1904:c===`1`||c===`true`,sheets:l}}function si(e,t){for(let n of e)n.data.forEach((e,r)=>e.forEach((i,a)=>{if(!(i instanceof Date))return;let o=`${qr(a)}${r+1}`,s=t.sheets.get(n.sheet)?.get(o),c=s?.value.trim()??``,l=`${n.sheet}!${o}: use a valid calendar date without a time.`;if(s?.type===`d`){let t=/^(\\d{4}-\\d{2}-\\d{2})(?:T00:00(?::00(?:\\.0+)?)?(?:Z|[+]00:00)?)?$/.exec(c);t||$(l);try{let n=Wr({pointer:``,label:`Date`,kind:`date`},t[1]);e[a]=/* @__PURE__ */ new Date(`${n}T00:00:00Z`)}catch{$(l)}}else{let n=Number(c);try{c&&Number.isSafeInteger(n)&&Lr(c,String(n))===0||$(l)}catch{$(l)}!t.epoch1904&&n===60&&$(`Excel's fictitious 1900-02-29 is not a calendar date. Correct the date cell.`);let r=t.epoch1904?`1904-01-01`:n<60?`1899-12-31`:`1899-12-30`,i=new Date(Date.parse(`${r}T00:00:00Z`)+n*864e5);(!Number.isFinite(i.getTime())||i.getUTCFullYear()<1||i.getUTCFullYear()>9999)&&$(l),e[a]=i}}))}async function ci(e){let t=ei(e,$r(e)),n=oi(t),r=we(t,{level:0}),i;try{i=await jr(r.buffer,{parseNumber:e=>e,trim:!1})}catch{throw Error(`The Excel XML could not be read. Save a fresh .xlsx template copy with values only.`)}return si(i,n),Jr(i)}self.onmessage=async e=>{try{let t=await ci(new Uint8Array(e.data));self.postMessage({review:t})}catch(e){self.postMessage({error:e instanceof Error?e.message:`The workbook could not be read. Use the Spreadline .xlsx template.`})}}})();", Ho = typeof self < "u" && self.Blob && new Blob(["(self.URL || self.webkitURL).revokeObjectURL(self.location.href);", Vo], { type: "text/javascript;charset=utf-8" });
+function Uo(e) {
 	let t;
 	try {
-		if (t = Vo && (self.URL || self.webkitURL).createObjectURL(Vo), !t) throw "";
+		if (t = Ho && (self.URL || self.webkitURL).createObjectURL(Ho), !t) throw "";
 		let n = new Worker(t, { name: e?.name });
 		return n.addEventListener("error", () => {
 			(self.URL || self.webkitURL).revokeObjectURL(t);
 		}), n;
 	} catch {
-		return new Worker("data:text/javascript;charset=utf-8," + encodeURIComponent(Bo), { name: e?.name });
+		return new Worker("data:text/javascript;charset=utf-8," + encodeURIComponent(Vo), { name: e?.name });
 	}
 }
 // src/excel/workbookJob.ts
-function Uo(e, t) {
+function Wo(e, t) {
 	return new Promise((n, r) => {
 		if (t.aborted) {
 			r(/* @__PURE__ */ Error("Excel import cancelled."));
@@ -14492,7 +14498,7 @@ function Uo(e, t) {
 		}
 		let i;
 		try {
-			i = new Ho();
+			i = new Uo();
 		} catch {
 			r(/* @__PURE__ */ Error("The browser could not start Excel import. Try again in a supported browser."));
 			return;
@@ -14522,7 +14528,7 @@ function Uo(e, t) {
 		}).catch(() => s("The browser could not read this file. Select it again."));
 	});
 }
-var Wo = [
+var Go = [
 	{
 		name: "Borrower",
 		fields: [
@@ -14765,18 +14771,18 @@ var Wo = [
 	}
 ];
 // src/excel/workbookModel.ts
-function Go(e) {
+function Ko(e) {
 	if (e.readError) throw Error(e.readError);
 	let t = e.value.trim();
 	if (t.length > 2e3) throw Error("Use no more than 2,000 characters in an input cell.");
 	if (e.kind === "text" || e.kind === "date" || e.kind === "integer") {
 		if (e.kind === "date" && t.startsWith("0000-")) throw Error("Use a supported calendar year from 0001 onward.");
-		return Wr({
+		return Gr({
 			...e,
 			placeholder: void 0
 		}, t);
 	}
-	let n = e.kind === "rate" && t.endsWith("%"), r = n ? t.slice(0, -1).trim() : t, i = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(r) ? _e(r) : Wr({
+	let n = e.kind === "rate" && t.endsWith("%"), r = n ? t.slice(0, -1).trim() : t, i = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(r) ? _e(r) : Gr({
 		...e,
 		kind: "money",
 		min: void 0,
@@ -14785,7 +14791,7 @@ function Go(e) {
 	if (n && (i = _e(he(i, -2))), e.min !== void 0 && M(i, e.min) < 0 || e.max !== void 0 && M(i, e.max) > 0) throw Error(`Use ${e.min ?? "the supported minimum"} through ${e.max ?? "the supported maximum"}.`);
 	return i;
 }
-function Ko(e) {
+function qo(e) {
 	let t = [], n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
 	for (let t of e.fields) {
 		let e = t.sheet + t.group;
@@ -14793,7 +14799,7 @@ function Ko(e) {
 	}
 	let i = new Set([...r.values()].filter((e) => e[0].sheet === "Guarantors" && e.every((e) => !e.value.trim() && !e.readError)).flatMap((e) => e.map((e) => e.pointer)));
 	for (let r of e.fields) if (!i.has(r.pointer)) try {
-		n.set(r.pointer, Go(r));
+		n.set(r.pointer, Ko(r));
 	} catch (e) {
 		t.push({
 			...r,
@@ -14855,54 +14861,54 @@ function Ko(e) {
 	};
 }
 // src/excel/templates/spreadline-intake-template-v1.xlsx?url&inline
-var qo = "data:application/octet-stream;base64,UEsDBBQAAAAIAF1bU12Lrs+CLwEAAG4DAAAPAAAAeGwvd29ya2Jvb2sueG1stdM9a8MwEAbgvyK0N7JcxV/ECZTQ0rVL57N0ikX0YSSl8c8vTYtrOnXJdrzD8fBytzvMzpIPjMkE31O+KShBL4My/tTTS9YPDT3sd3N3DfE8hHAms7M+dXNPx5ynjrEkR3SQNmFCPzurQ3SQ0ybEE0tTRFBpRMzOsrIoKubAePq175amZSIeHPb0KcQYrhgpuaWvqqecktgZ1dM3WWotyrapdA2iUJr+WOJ/LEFrI/EY5MWhz9+YiBayCT6NZkqUsL+aZ+PBSwM2rTzl4imxHoZyqOptC6LheHfPEYdMwCtiA/gV6XEhVU3dKjGIBrASXKm7k14uEMHnENcVicXTYlMXNZctrwoB2/tX9B7i2fgTkTCZDHaF2i6oGlox6AoLWXIhgd8BxX4PnP3+zv4TUEsDBBQAAAAIAF1bU13G0A33lwIAAF0WAAANAAAAeGwvc3R5bGVzLnhtbO1YTW+jMBD9K8j3hq+SrKrSbjct0l56aQ97dcCApbGNjNOF/voVNhDSTdrSdLUhai7MjDxv3jD2mMzldcXAeiKypIKHyJ05yCI8FgnlWYjWKj37hq6vLquLUtVAHnJClFUx4OVFFaJcqeLCtss4JwyXM1EQXjFIhWRYlTMhM7ssJMFJ2bgxsD3HmdsMU44aRL5mEVOlFYs1VyHyBkbLPH4mIfIcB1kGcikSEqLvyLL3rHS3V9Z1XZ8xdpYk2sXuQzbuqeCb2HPUmXSqz9YThhC5bhcKM2JMSyyBKtHhdR57PWMBQloyW4UoityFt/Rv/8K8kRTDPsSVWd0Dzz8LuEd0diEG83mwOD+M6s53YH4fpLoT0XGC4OZdVFvBlJ8C9OU/N+WnAM2zwEoRySMKYLXyY12QEHHBSY/YLn7TKZO4dr1gtF8pgCaGV7Yc5uv5/l3gdXgD/0/Cj/xoES1fx28F/SZXQiZEvjjGxthIQFJlaiNplreiEoURVkIpwYycUJwJjqGNvIEYCaY7VYhU3vaZrd1yG9ze3S267IzHK8F7UacaE4CHBv1X2ufr6hhVOmhEumHxXqQArWigWsUEGkJ2IQbonvdR+CrdxNkP4L4DABcF1PdrtiIy0t1Vu2lrJPhQowAb7YcG0/oRUND6DdCMM7IpG+4MzQ2oaNw0jphwRWRXnyp9jbs3Ye7+hLkP9ow3Ne7nX9wP5J4LSZ8FV0P2I/Jpvygn2n222Aenwt7/Yn/4WdDfRKOOwgQOwm+Ji0dSGfAp32ujE9lXEXcSibzrrLjTPCv+6Vfm/3Wx5j/eyPvcPa2dduQJ/ZsCTenaPPKE4M0CtYOHwcxBzyBeDDV6u9WM1UJ031CH7dHCcIRRanUzKL76A1BLAwQUAAAACABdW1Nd+lwBWQMDAADaDQAAEwAAAHhsL3RoZW1lL3RoZW1lMS54bWy9V9tymzAU/BVG7w03c/OEZBLHbh/SaafJD8ggQI0QHkmOnb/vIG4CjOM0duwHS2LP2UXnsMLXt/ucaK+IcVzQEJhXBtAQjYoY0zQEW5F888HtzTWciwzlSKMwRyFYZFB8//0MtH1OKJ/DEGRCbOa6zqMM5ZBfFRtE9zlJCpZDwa8KluoxgztM05zolmG4eg4xBW3eJUE5ooKXCxFhT9EBsvJa/GKWP/yNLwjTXiEJwQ7TuNg9o70AGoFcLAgLgSE/QNNvrvU2ioiJYCVwJT9NYB0Rv1gykKXrNtJYWv7M7BgkgogxcOmX3y6jRMAoQrSWo4JNxzV8qwErqGp4IHvgmfYgQGGwxwyBe2/N+gESVQ1n4xtdBcsHpx8gUdXQGQXcGdZ9YPcDJKoauqOA2fLOs5b9AInKCKYvY7jr+b7bwFtMUpAfB/GB6xreQ4PvYLrSalUCKnqN9ytJcIRk3+Xwb8FWBRWyylBgqom3DUpgVDYoJHjNsPaI00xIHjhH8B1AxI8C9AFnjum7Ao5QHyFt6ToGXd0MuTW5mHwkE0zIk3gj6JFLcbwgOF5hQuRERrWl2GQLwhrCHjBlsBvzOlXKtU3BQ2CAyVzSQTAV1ZrrNU89nJNt/rOI66Y3WzuAcw5Fd8FwFJ9oGeQs5aqGEneyDs+e0NHRDXXYJ+qQd3KyEN/8sJDgqBBdKQ/BVIPlKeHMarvlESQoLgtWJ+iV9SwlDmZTd2R9dmtPKDHPYIyavMaUkqlm67rwDEVWpHj+YSVBMCGk3KpLFFkf2wGh/Zm2K/m95u7+yyw2jIsHyLMKJy+15ytVaALD+QIaq9yZy9Howz1ESYIiMbHSTR+5qLMcvPxZdDkptgKxpyzeaWuyZX9gHALHMx0DaDHmoimAFmPWtc/4/aJbh2STwdrJew9thZfjllMRK+UMpffnteJ1ujrLcfV+1MC1puzWm34SL3A+Bsq5pPhH4H/UUyurPPexqepQ5U0arT0hz76Q0XZd+XWGOmzZ0mOb1zE5G/yBalZu/gFQSwMEFAAAAAgAXVtTXQ0euehlAAAAcwAAABQAAAB4bC9zaGFyZWRTdHJpbmdzLnhtbAXBUQrDIAwA0KtI/mfcPsaQ2p5F2rQKJhaTDY+/95ZtcnM/Glq7JHj6AI5k70eVK8HXzscHtnWZUdXc5CYaZ4JidkdE3QtxVt9vksnt7IOzqe/jQr0H5UMLkXHDVwhv5FwFHK5/UEsDBBQAAAAIAF1bU10iSegT8QIAAJwJAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDEueG1slVZhb9owEP0rJ39eE0ggFNZQtUXtpq1Sta6d+GiSg1g4dmQ7QPfrJxtCCxjKPhFf/N69d5x9ubpelRwWqDSTIiXtoEUARSZzJmYpqc304pJcD69Wg6VUc10gGliVXOjBKiWFMdUgDHVWYEl1ICsUq5JPpSqp0YFUs1BXCmnuYCUPo1YrCUvKBLGELvrKcKl3VqALuXxQLP/JBOqUtAjY1BMp5/b199yFwuFV6KW4d9mfFOQ4pTU3v+TyG7JZYVLS7jrcapBJ7gCZ5FAy65pASVfud8lyU6Qk6RAoWJ6jcOmyWhtZ/lm/a7/TrOHRBh5t4XH0H/B4A4+38G7yGTx8d+Fsj6ihdqHkEpTbZB1HSQPe1sCVPrN7btoEtBMdbmO3ntjdx1joUnzIZI2ateHjmSLHEBMwKdFGuTeL4bNrDs4EQibLElXGKAcmDJ2jTbRY23wXF3nERafExeeUIXYMnT1x94xzmPAagYmqNjqAH4gVTBnyHDidINcBvGiEBeU16i8gpAHb+jWnOvDKjz3y41PyO+fI7zQMO/J/Y1lxarA52V5Bfmjbt/euc0po9xyhXW+dbQn1mzAFGpZBTg0FKfhbACNqUEOtEcbj8fji8fFiNPLXteupa/eU3OQcucmRthBUbPrUtgVQhWBwZcBIqBRqVAu0DxmzZV+3yMvzCHLJOVVHOiPxOEhOOehtTl3rlIOeY+gdOECee1X497/a/va2xBF+dwHvAA7kX57zB1w6+vZ+e95KpeQSFQha+q+JDbC3U85NcP8Ouq21HTP6kO1AdP8c0X2/6AeUM0Wr4s0ruO8T3PcLfpLaUA6ZzBGkgllD/BXm9n7iSO3khr+opD7tp906a0i01jr2D8KN1qh1icLYQ+v/Ixpsf3ecbKLJHuMd5Shyqhzflw+n/hMb580677DzTjvfuGu+NZoxW9EZPlI1Y0IDx6lJSSvoEVDrxO7ZyMo9dQlMpDGybFYF0hyVXcUEplKa7WKdcPuhNfwHUEsDBBQAAAAIAF1bU12OY5sjPAQAABcSAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDIueG1snZhdU9s4FIb/yhld7BXNh/NFKKZD8Xa3U3aWgbY7eyns40RTWfJISmL49R0pdiBwYkyuYr3Re3Qefdvnn6pCwhqNFVrFbNgbMECV6kyoRcxWLv9wyj5dnFdnG21+2SWig6qQyp5VMVs6V571+zZdYsFtT5eoqkLm2hTc2Z42i74tDfIs2ArZjwaDab/gQjEfMKg/BW7sXgnsUm/+MiK7FgptzAYMfNP3Wv/yf3/NvOQdJVcI1V0phYvZkMFD/Thj4HR5jbm7Qilj9vmUAU+dWOMNVxize+2cLm7FYukYWMcdxiw3+hEVg/7Fef9ZLvulpzy/BMQbAxnmfCXdrd78jT5gzIaTEKU6S7UMhlRLKITvWgYFr8LvRmRuGbPpmMFSZBmqgJmurNPFf9v/hk9htvaotkc7+yh6h31U20fH2ce1fbyzT6Zv2ftPnRB6LeGO+4LRGzChku+waNqYd10Yhjf1dS6HDGxg7u+0z4R2RWjJc60fmn3Wuod320443HoUIowYuJhZZ8I/64svQnGVCi6tD7vegj6lFxHpEVoStaU36tI5oxBh/Co9KeFerhCEKlfO9uAbYgm5QJmB5PcobQ9+WIQ1lyu0J6C0A79oV5LbHok0IpAILRm1IY27II2bCHtI37EoJXfY7FNkkrR1SNW9GhPJj9uSn3RJfkKOx2WWQaqLUqJDyIVNuYQH5MaegJYZWge5MNb14E/l0ACu0TwAL/RKOXo0JsRoEFoyaQOadgGaHphg9fyvJxhwg+CwcuA0lAYtmjX6h1T4wdpOth93CWRaSm4OzLEpQUVoybSNalav6kEb1SxEmL2iQpmRmdH1/0dugJ5dLYaIMiQHMgqnzJ7hFfBpl2E8DeGHL5fGDRqhM38EGkeCb33R7jAIcJSY1C283imNdZDxB9A5cHIVtOPNu+DNW/FQ0aM6p+AoMZnTcNf8ic0tESwv3kE2HHQ6/gY02y2uUa2QBGs8+2SkmjTqS7Znq/UNjG6n+JDGuNLW+e5baJ1ZsPrAAmzsL4goNWnU44nqm8G49Wbga1FE/5ZouBNqAViVqCwCVqnsQfIHL8qPlycg/CbvN32uMtB5LlI0UPIHGjwiwSk1adQW8I8hmVWG70zndR91up74WmQf1c347QCV5e7Qid4EeIFPqUmjHj/une4nvhbFlGA471pYxiQLpSaNejxLp+uKr0WxXBbaOPHYwjIhWSg1adTjWTrdVHwtiuVrM7/r5UjzTEkeSk0atXWZPaLRoA2U2gr/4vkG4awT4YwmvMPUDxQMZ/N2yBkJSalJox4/aJ3uJb6Wb+blBfPbhyFkwjoj7leejX7PatyTfSBKTRp1ejTQvBNQfX/Yf10lxCtKTPbEJoXmC0Tz9lzyBf7DzUIoCxJzF7NBb8bAbLMJz06X4WnCYPuxoyktkWdofGnEINfa7QrbBnffeC5+A1BLAwQUAAAACABdW1NdMlCK3UgDAABrCwAAGAAAAHhsL3dvcmtzaGVldHMvc2hlZXQzLnhtbK2W227cNhCGX2VAoHeJjqv1IZaD2G7aoClQtEl6zZVmJSI8CCS1q/Sq79A37JMUpKS116bXKpCrFUf6Z/5vNEvq6u0gOOxQG6ZkSdIoIYCyUjWTTUl6u319Tt5eXw2Xe6W/mhbRwiC4NJdDSVpru8s4NlWLgppIdSgHwbdKC2pNpHQTm04jrb1M8DhLknUsKJPEJfTRLwz35mgFplX7nzSrPzKJpiQJAVd6o9RXd/tD7UPx9VUcTPHeV/9NQ41b2nP7u9r/jKxpbUnSwuuGy0pxL6gUB8EcNQFBB/+7Z7VtS7JeEWhZXaP05areWCX+HO+l92lGeTbJs4M8z/6HPJ/k+UFerF+Sx/cUHvuOWuoWWu1B+4cccbaexYce+NZX7pl3KQHjTceH2E0gdvswFvsSDyo5UDsCP18p8xlyArYkxmp/Z3d9hxsLVNbAFZUu827kuneTBdxkp9zkS7hzn2H1yM17xjlseI/AZNdbE8EviB1sGfIaON0gNxF8Ngg7yns0r0AqC27We05NFLSfB+znp+yvlthfzRmO7H9C0XFqcf4rBw2FpWno2dvVKaPFEqNFsM+uhVTKnnLo6DeB0ho/BBT2reL4WvZig9rPBFjUItzaItDa4pTj9RLH62cmQ1JZMcqnyQCqESwOFqyCTqNBvUN3UTHX+XFKPv9xB7XinOpnhmMdIFifIjib/mnJKYIzn+HsCQHyOugi/PwXN+LBqXgmv990jwRP7J8veQHnPn36eEI/umGgQvXSBikm2WFn9Van4ONd58GLeQN/oVagNHTKMMt2eBrhYgnCRRjh3TjyUgkmKQdNbbDBNxchlCn4dAOtmKActppWlikJyb9//5M6Hgod6gqlpQ2+gSRKkwJKSJOo+OE0YposOjmSMOQn1AKEkrY1QbhZd0w3Rx/jfZAWG9Sw1UpAmoFtteqbFtLsVZIkL3AsOwHTMMePAzOWyeawUWkmK9Y92LLCeGkQL/3ug+gML6Abj8p0FR5F1aGmnpIjNfgC2pSrOEabouvviJYvQgscrTeh4O1RcK42fzrOX00dbfBXqhsmDXDc2pIk0RkBPRb211Z1/qogsFHWKjGvWqQ1arfKCWyVsofFWPDw3Xz9H1BLAwQUAAAACABdW1NdOvd2C2sDAAARDQAAGAAAAHhsL3dvcmtzaGVldHMvc2hlZXQ0LnhtbLWX23LbNhCGX2UHM71rxZMOtmM6k9iTtNOk7bRNcr0iVyTGIMABQEnpVd4hb5gn6QASZUuGaHamuTKxxL/7f2scqOuX20bAmrThSuYsmcQMSBaq5LLKWWdXP12wlzfX26uN0vemJrKwbYQ0V9uc1da2V1FkipoaNBPVktw2YqV0g9ZMlK4i02rC0ssaEaVxPI8a5JK5hD76kdPGHI3A1GrzVvPyHZdkchYzcKWXSt2717+UPhTdXEfBFG989T80lLTCTtg/1eZn4lVtc5bMvG57VSjhBYUS0HBHzaDBrf+74aWtczafMqh5WZL05YrOWNV82r1LHtLs5Olenh7kWfof5Nlenh3ks/lz8uiBwmPfoUU30GoD2k9yxOm8Fx964FtfuDmvEgbGm44OsdeB2O3jWORLPKrkQO0O+Hyl1GfIGNicGav9m/XN2w41Squ0cWnXO6gHK2nASjpkJRsDnfkM0xMrb7gQsBQdAZdtZ80EfiVqYcVJlCBwScJM4IMhWKPoyPwIUllwC70TaCZB+1nAfjZkfzrG/rTPcGT/b2pagZb6fRw0FJYmobm30yGjszFGZ8E+vyNcE6AQ+z7DUqC8h01NEmxNmgA1gVRQHdZGuLuzQHdnQ6bnY0zPzywOibLgeDDtPFraWrAKWk2G9JrcQ8Fd83cL5cNfd1AqIfAcwTxAMB8iWOx3WjxEsPAZFk8ISJRBF+H5h50J4eVxpoo/eo8ETyAuxvwbLnz6JD3rSmJDQZy9cnHU1X3w9Pj57TTJE7OXY8xehs3+vpGkTc3boM+9KDnyeRn2eUcFb1DASmNhuZIQf/vyNQGlAaElXZC0WNELSCCHJI5/GGZK4lFXQxymeiVlhwI2WFH40O6Fx2R99BTt0SZxKPCZUD9jf9zNlgza59KSJmMBZQklX/OSZAlcFurMsurznVAl/xtVOooqHaRqlLYVVu4k4rLgLQrP18OGwdIgWDoe7AX8Q1q51dgqwy1fP7OnXNIRqNkgKnZWgVAoocXPDUl7ZjFmQbrsO9KNusTdLOdgGqYrNJXcQoG6dB+IvOmaZzj3+WbHnPvo/HtwzkZxBm7p16Hg7VGwr9Z/4Pffti1W9B51xaUBQSubs3iyYKB3hf2zVa1/mjFYKmtV049qwpK0G2UMVkrZw2BX8PDr5uZfUEsDBBQAAAAIAF1bU102q1IHHwMAACIMAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDUueG1stZZNb9s4EIb/yoCXXnYtS7KVj41TbFN0W7QFit1te6bFsUWEIgVybCv/viBlObFDK+ohJ4lDzsz7kMOPm7dtrWCL1kmjFyydTBmgLo2Qer1gG1r9ecne3t601ztj712FSNDWSrvrdsEqouY6SVxZYc3dxDSo21qtjK05uYmx68Q1FrkIbrVKsum0SGouNfMBg/WHxJ07aoGrzO4fK8UXqdEt2JSBT7005t53fxLBlNzeJNEQH0L2bxYErvhG0b9m9xHluqIFS+fBr70ujQoOpVFQS0/NoOZt+O6koGrBihmDSgqBOqQrN45M/bPrSx/DdO7Z3j07uOfZb7jne/f84D4vXnJPHikC9ntO3Des2YENgzxxVvTOhzkIU1/6MX+nDFwQnRxs7yK2u6e2JKR4ksmDUgd8PlMWIuQMaMEc2dCzvf1p7L3Uayh5I4krH3vbkT3qySJ6siE9+RjyPESYnej5IJWCpdogSN1syE3gM2IDK4lKgOJLVG4C3x3ClqsNuj9AGwJf7RvF3SQqP4/Iz4fkz8bIn/URjuT/j3WjOGG/maOC4q5pbOzdbEjofIzQeXSe/RRSheDFOoKV1FyXkit4QG7fOHDELQHXAlALEH5UfHbnkdmdD4kuxoguzhRHr7IrDuAWgbAlIAONRYd2i/6nlH7yu0L5/t97EEYpbs8QFBGCYojgYr/dpkMEFyHCxTMCVCKqIj7+h6/yaGGciR9O3iOHZ/IvxyzAZQifnhbpN7TSiK46ohidX3Y4X4PWfbDTs+crp7I6X4XDFFdjKK4GKVDHl+IqxnD1CgzpdNQVMY1TfNKlRe78SQm8LM1GkwOLJcotX6po1bzrYx2z9dZTuCdb5y/gILBP6EDjmpPc4guA4+7A9GVAqbeoydiHOFYaxUpfCysbhZX9xro1/OH8omVRuuy16EZd336UT396Rt9xVwHxFj2TjG+w3nd+DLS3FueBboaFj7q4/ajnT66I8e7I2GfrX7z9Y6/ha/zK7VpqBwpXtGDTyQUD2yUO/2Sa8DdnsDREpu5bFXKB1rdyBitj6NDoEh6e+7e/AFBLAwQUAAAAAABdW1NdS5ZZWigBAAAoAQAACwAAAF9yZWxzLy5yZWxz77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48UmVsYXRpb25zaGlwcyB4bWxucz0iaHR0cDovL3NjaGVtYXMub3BlbnhtbGZvcm1hdHMub3JnL3BhY2thZ2UvMjAwNi9yZWxhdGlvbnNoaXBzIj48UmVsYXRpb25zaGlwIFR5cGU9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy9vZmZpY2VEb2N1bWVudC8yMDA2L3JlbGF0aW9uc2hpcHMvb2ZmaWNlRG9jdW1lbnQiIFRhcmdldD0iL3hsL3dvcmtib29rLnhtbCIgSWQ9IlJlZDJlN2VjMDIyZGE0Y2NiIiAvPjwvUmVsYXRpb25zaGlwcz5QSwMEFAAAAAgAXVtTXZNtbzpQAQAAbgUAABoAAAB4bC9fcmVscy93b3JrYm9vay54bWwucmVsc83UP27DIBQG8KtY7A2GYsBVnCxduqa5AOCHbcUYy5DWOVuHHqlXqPpHFa46dInkheFD+vTjSY+3l9ftfnZ99gRT6PxQIbLJUQaD8XU3NBU6R3sj0X63PUCvYueH0HZjyGbXD6FCbYzjHcbBtOBU2PgRhtn11k9OxbDxU4NHZU6qAUzznOMp7UDLzux4GeE/jd7azsC9N2cHQ/yjGId46SGg7KimBmKF8Nx/Z5vZ9Sh7qCt00KpkXDKuteZM6xxl+Gqg2IKDpecz+jpJohLGgpRcqIJbpoFfUxVaNUH9GKduaH5PK71KecqwgiptypqzQtBr8p79dAotQFzSfuKPBwDEdHqGWstoKbkViuW1XQGPJjwKQmuquShKxSSBFfBuEx6XoqyZZlIBZ6SuV8BjCa8EKXJBTEl4zlSxhukVi9UombYcckMJM4p88vDi19y9A1BLAwQUAAAACABdW1Nd3zOGgycBAAB3BQAAEwAAAFtDb250ZW50X1R5cGVzXS54bWzNlM9KAzEQh19lyVWadOsfRLrtQb2qoC8QsrO7ockkZKbr9tk8+Ei+gjSVIiIsxQq9ZC6T3/f9LvPx9j5fDt4VPSSyAStRyqkoAE2oLbaVWHMzuRbLxfxlE4GKwTukSnTM8UYpMh14TTJEwMG7JiSvmWRIrYrarHQLajadXikTkAF5wtsMsZjfQaPXjov7gQF32ME7Udzu9raoSugYnTWabUDVY/0DMglNYw3Uwaw9IEuKCXRNHQB7J/OUXls8y8HqV2YCR4dBv1rJBC7vUGcj7RGPPaRkayiedOIH7aESanCKeOOA5JEb5tAxNHfgYfeWfxbIMaNlO52gfuZksT165+/ZYyKvIa3yR1J5lEeW2ecfKjI7FZHzUxG5OBWRy38XUfmMLj4BUEsBAhQDFAAAAAgAXVtTXYuuz4IvAQAAbgMAAA8AAAAAAAAAAAAAAKSBAAAAAHhsL3dvcmtib29rLnhtbFBLAQIUAxQAAAAIAF1bU13G0A33lwIAAF0WAAANAAAAAAAAAAAAAACkgVwBAAB4bC9zdHlsZXMueG1sUEsBAhQDFAAAAAgAXVtTXfpcAVkDAwAA2g0AABMAAAAAAAAAAAAAAKSBHgQAAHhsL3RoZW1lL3RoZW1lMS54bWxQSwECFAMUAAAACABdW1NdDR656GUAAABzAAAAFAAAAAAAAAAAAAAApIFSBwAAeGwvc2hhcmVkU3RyaW5ncy54bWxQSwECFAMUAAAACABdW1NdIknoE/ECAACcCQAAGAAAAAAAAAAAAAAApIHpBwAAeGwvd29ya3NoZWV0cy9zaGVldDEueG1sUEsBAhQDFAAAAAgAXVtTXY5jmyM8BAAAFxIAABgAAAAAAAAAAAAAAKSBEAsAAHhsL3dvcmtzaGVldHMvc2hlZXQyLnhtbFBLAQIUAxQAAAAIAF1bU10yUIrdSAMAAGsLAAAYAAAAAAAAAAAAAACkgYIPAAB4bC93b3Jrc2hlZXRzL3NoZWV0My54bWxQSwECFAMUAAAACABdW1NdOvd2C2sDAAARDQAAGAAAAAAAAAAAAAAApIEAEwAAeGwvd29ya3NoZWV0cy9zaGVldDQueG1sUEsBAhQDFAAAAAgAXVtTXTarUgcfAwAAIgwAABgAAAAAAAAAAAAAAKSBoRYAAHhsL3dvcmtzaGVldHMvc2hlZXQ1LnhtbFBLAQIUAxQAAAAAAF1bU11LlllaKAEAACgBAAALAAAAAAAAAAAAAACkgfYZAABfcmVscy8ucmVsc1BLAQIUAxQAAAAIAF1bU12TbW86UAEAAG4FAAAaAAAAAAAAAAAAAACkgUcbAAB4bC9fcmVscy93b3JrYm9vay54bWwucmVsc1BLAQIUAxQAAAAIAF1bU13fM4aDJwEAAHcFAAATAAAAAAAAAAAAAACkgc8cAABbQ29udGVudF9UeXBlc10ueG1sUEsFBgAAAAAMAAwAGwMAACceAAAAAA==", Jo = "data:application/octet-stream;base64,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", Yo = {
+var Jo = "data:application/octet-stream;base64,UEsDBBQAAAAIAF1bU12Lrs+CLwEAAG4DAAAPAAAAeGwvd29ya2Jvb2sueG1stdM9a8MwEAbgvyK0N7JcxV/ECZTQ0rVL57N0ikX0YSSl8c8vTYtrOnXJdrzD8fBytzvMzpIPjMkE31O+KShBL4My/tTTS9YPDT3sd3N3DfE8hHAms7M+dXNPx5ynjrEkR3SQNmFCPzurQ3SQ0ybEE0tTRFBpRMzOsrIoKubAePq175amZSIeHPb0KcQYrhgpuaWvqqecktgZ1dM3WWotyrapdA2iUJr+WOJ/LEFrI/EY5MWhz9+YiBayCT6NZkqUsL+aZ+PBSwM2rTzl4imxHoZyqOptC6LheHfPEYdMwCtiA/gV6XEhVU3dKjGIBrASXKm7k14uEMHnENcVicXTYlMXNZctrwoB2/tX9B7i2fgTkTCZDHaF2i6oGlox6AoLWXIhgd8BxX4PnP3+zv4TUEsDBBQAAAAIAF1bU13G0A33lwIAAF0WAAANAAAAeGwvc3R5bGVzLnhtbO1YTW+jMBD9K8j3hq+SrKrSbjct0l56aQ97dcCApbGNjNOF/voVNhDSTdrSdLUhai7MjDxv3jD2mMzldcXAeiKypIKHyJ05yCI8FgnlWYjWKj37hq6vLquLUtVAHnJClFUx4OVFFaJcqeLCtss4JwyXM1EQXjFIhWRYlTMhM7ssJMFJ2bgxsD3HmdsMU44aRL5mEVOlFYs1VyHyBkbLPH4mIfIcB1kGcikSEqLvyLL3rHS3V9Z1XZ8xdpYk2sXuQzbuqeCb2HPUmXSqz9YThhC5bhcKM2JMSyyBKtHhdR57PWMBQloyW4UoityFt/Rv/8K8kRTDPsSVWd0Dzz8LuEd0diEG83mwOD+M6s53YH4fpLoT0XGC4OZdVFvBlJ8C9OU/N+WnAM2zwEoRySMKYLXyY12QEHHBSY/YLn7TKZO4dr1gtF8pgCaGV7Yc5uv5/l3gdXgD/0/Cj/xoES1fx28F/SZXQiZEvjjGxthIQFJlaiNplreiEoURVkIpwYycUJwJjqGNvIEYCaY7VYhU3vaZrd1yG9ze3S267IzHK8F7UacaE4CHBv1X2ufr6hhVOmhEumHxXqQArWigWsUEGkJ2IQbonvdR+CrdxNkP4L4DABcF1PdrtiIy0t1Vu2lrJPhQowAb7YcG0/oRUND6DdCMM7IpG+4MzQ2oaNw0jphwRWRXnyp9jbs3Ye7+hLkP9ow3Ne7nX9wP5J4LSZ8FV0P2I/Jpvygn2n222Aenwt7/Yn/4WdDfRKOOwgQOwm+Ji0dSGfAp32ujE9lXEXcSibzrrLjTPCv+6Vfm/3Wx5j/eyPvcPa2dduQJ/ZsCTenaPPKE4M0CtYOHwcxBzyBeDDV6u9WM1UJ031CH7dHCcIRRanUzKL76A1BLAwQUAAAACABdW1Nd+lwBWQMDAADaDQAAEwAAAHhsL3RoZW1lL3RoZW1lMS54bWy9V9tymzAU/BVG7w03c/OEZBLHbh/SaafJD8ggQI0QHkmOnb/vIG4CjOM0duwHS2LP2UXnsMLXt/ucaK+IcVzQEJhXBtAQjYoY0zQEW5F888HtzTWciwzlSKMwRyFYZFB8//0MtH1OKJ/DEGRCbOa6zqMM5ZBfFRtE9zlJCpZDwa8KluoxgztM05zolmG4eg4xBW3eJUE5ooKXCxFhT9EBsvJa/GKWP/yNLwjTXiEJwQ7TuNg9o70AGoFcLAgLgSE/QNNvrvU2ioiJYCVwJT9NYB0Rv1gykKXrNtJYWv7M7BgkgogxcOmX3y6jRMAoQrSWo4JNxzV8qwErqGp4IHvgmfYgQGGwxwyBe2/N+gESVQ1n4xtdBcsHpx8gUdXQGQXcGdZ9YPcDJKoauqOA2fLOs5b9AInKCKYvY7jr+b7bwFtMUpAfB/GB6xreQ4PvYLrSalUCKnqN9ytJcIRk3+Xwb8FWBRWyylBgqom3DUpgVDYoJHjNsPaI00xIHjhH8B1AxI8C9AFnjum7Ao5QHyFt6ToGXd0MuTW5mHwkE0zIk3gj6JFLcbwgOF5hQuRERrWl2GQLwhrCHjBlsBvzOlXKtU3BQ2CAyVzSQTAV1ZrrNU89nJNt/rOI66Y3WzuAcw5Fd8FwFJ9oGeQs5aqGEneyDs+e0NHRDXXYJ+qQd3KyEN/8sJDgqBBdKQ/BVIPlKeHMarvlESQoLgtWJ+iV9SwlDmZTd2R9dmtPKDHPYIyavMaUkqlm67rwDEVWpHj+YSVBMCGk3KpLFFkf2wGh/Zm2K/m95u7+yyw2jIsHyLMKJy+15ytVaALD+QIaq9yZy9Howz1ESYIiMbHSTR+5qLMcvPxZdDkptgKxpyzeaWuyZX9gHALHMx0DaDHmoimAFmPWtc/4/aJbh2STwdrJew9thZfjllMRK+UMpffnteJ1ujrLcfV+1MC1puzWm34SL3A+Bsq5pPhH4H/UUyurPPexqepQ5U0arT0hz76Q0XZd+XWGOmzZ0mOb1zE5G/yBalZu/gFQSwMEFAAAAAgAXVtTXQ0euehlAAAAcwAAABQAAAB4bC9zaGFyZWRTdHJpbmdzLnhtbAXBUQrDIAwA0KtI/mfcPsaQ2p5F2rQKJhaTDY+/95ZtcnM/Glq7JHj6AI5k70eVK8HXzscHtnWZUdXc5CYaZ4JidkdE3QtxVt9vksnt7IOzqe/jQr0H5UMLkXHDVwhv5FwFHK5/UEsDBBQAAAAIAF1bU10iSegT8QIAAJwJAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDEueG1slVZhb9owEP0rJ39eE0ggFNZQtUXtpq1Sta6d+GiSg1g4dmQ7QPfrJxtCCxjKPhFf/N69d5x9ubpelRwWqDSTIiXtoEUARSZzJmYpqc304pJcD69Wg6VUc10gGliVXOjBKiWFMdUgDHVWYEl1ICsUq5JPpSqp0YFUs1BXCmnuYCUPo1YrCUvKBLGELvrKcKl3VqALuXxQLP/JBOqUtAjY1BMp5/b199yFwuFV6KW4d9mfFOQ4pTU3v+TyG7JZYVLS7jrcapBJ7gCZ5FAy65pASVfud8lyU6Qk6RAoWJ6jcOmyWhtZ/lm/a7/TrOHRBh5t4XH0H/B4A4+38G7yGTx8d+Fsj6ihdqHkEpTbZB1HSQPe1sCVPrN7btoEtBMdbmO3ntjdx1joUnzIZI2ateHjmSLHEBMwKdFGuTeL4bNrDs4EQibLElXGKAcmDJ2jTbRY23wXF3nERafExeeUIXYMnT1x94xzmPAagYmqNjqAH4gVTBnyHDidINcBvGiEBeU16i8gpAHb+jWnOvDKjz3y41PyO+fI7zQMO/J/Y1lxarA52V5Bfmjbt/euc0po9xyhXW+dbQn1mzAFGpZBTg0FKfhbACNqUEOtEcbj8fji8fFiNPLXteupa/eU3OQcucmRthBUbPrUtgVQhWBwZcBIqBRqVAu0DxmzZV+3yMvzCHLJOVVHOiPxOEhOOehtTl3rlIOeY+gdOECee1X497/a/va2xBF+dwHvAA7kX57zB1w6+vZ+e95KpeQSFQha+q+JDbC3U85NcP8Ouq21HTP6kO1AdP8c0X2/6AeUM0Wr4s0ruO8T3PcLfpLaUA6ZzBGkgllD/BXm9n7iSO3khr+opD7tp906a0i01jr2D8KN1qh1icLYQ+v/Ixpsf3ecbKLJHuMd5Shyqhzflw+n/hMb580677DzTjvfuGu+NZoxW9EZPlI1Y0IDx6lJSSvoEVDrxO7ZyMo9dQlMpDGybFYF0hyVXcUEplKa7WKdcPuhNfwHUEsDBBQAAAAIAF1bU12OY5sjPAQAABcSAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDIueG1snZhdU9s4FIb/yhld7BXNh/NFKKZD8Xa3U3aWgbY7eyns40RTWfJISmL49R0pdiBwYkyuYr3Re3Qefdvnn6pCwhqNFVrFbNgbMECV6kyoRcxWLv9wyj5dnFdnG21+2SWig6qQyp5VMVs6V571+zZdYsFtT5eoqkLm2hTc2Z42i74tDfIs2ArZjwaDab/gQjEfMKg/BW7sXgnsUm/+MiK7FgptzAYMfNP3Wv/yf3/NvOQdJVcI1V0phYvZkMFD/Thj4HR5jbm7Qilj9vmUAU+dWOMNVxize+2cLm7FYukYWMcdxiw3+hEVg/7Fef9ZLvulpzy/BMQbAxnmfCXdrd78jT5gzIaTEKU6S7UMhlRLKITvWgYFr8LvRmRuGbPpmMFSZBmqgJmurNPFf9v/hk9htvaotkc7+yh6h31U20fH2ce1fbyzT6Zv2ftPnRB6LeGO+4LRGzChku+waNqYd10Yhjf1dS6HDGxg7u+0z4R2RWjJc60fmn3Wuod320443HoUIowYuJhZZ8I/64svQnGVCi6tD7vegj6lFxHpEVoStaU36tI5oxBh/Co9KeFerhCEKlfO9uAbYgm5QJmB5PcobQ9+WIQ1lyu0J6C0A79oV5LbHok0IpAILRm1IY27II2bCHtI37EoJXfY7FNkkrR1SNW9GhPJj9uSn3RJfkKOx2WWQaqLUqJDyIVNuYQH5MaegJYZWge5MNb14E/l0ACu0TwAL/RKOXo0JsRoEFoyaQOadgGaHphg9fyvJxhwg+CwcuA0lAYtmjX6h1T4wdpOth93CWRaSm4OzLEpQUVoybSNalav6kEb1SxEmL2iQpmRmdH1/0dugJ5dLYaIMiQHMgqnzJ7hFfBpl2E8DeGHL5fGDRqhM38EGkeCb33R7jAIcJSY1C283imNdZDxB9A5cHIVtOPNu+DNW/FQ0aM6p+AoMZnTcNf8ic0tESwv3kE2HHQ6/gY02y2uUa2QBGs8+2SkmjTqS7Znq/UNjG6n+JDGuNLW+e5baJ1ZsPrAAmzsL4goNWnU44nqm8G49Wbga1FE/5ZouBNqAViVqCwCVqnsQfIHL8qPlycg/CbvN32uMtB5LlI0UPIHGjwiwSk1adQW8I8hmVWG70zndR91up74WmQf1c347QCV5e7Qid4EeIFPqUmjHj/une4nvhbFlGA471pYxiQLpSaNejxLp+uKr0WxXBbaOPHYwjIhWSg1adTjWTrdVHwtiuVrM7/r5UjzTEkeSk0atXWZPaLRoA2U2gr/4vkG4awT4YwmvMPUDxQMZ/N2yBkJSalJox4/aJ3uJb6Wb+blBfPbhyFkwjoj7leejX7PatyTfSBKTRp1ejTQvBNQfX/Yf10lxCtKTPbEJoXmC0Tz9lzyBf7DzUIoCxJzF7NBb8bAbLMJz06X4WnCYPuxoyktkWdofGnEINfa7QrbBnffeC5+A1BLAwQUAAAACABdW1NdMlCK3UgDAABrCwAAGAAAAHhsL3dvcmtzaGVldHMvc2hlZXQzLnhtbK2W227cNhCGX2VAoHeJjqv1IZaD2G7aoClQtEl6zZVmJSI8CCS1q/Sq79A37JMUpKS116bXKpCrFUf6Z/5vNEvq6u0gOOxQG6ZkSdIoIYCyUjWTTUl6u319Tt5eXw2Xe6W/mhbRwiC4NJdDSVpru8s4NlWLgppIdSgHwbdKC2pNpHQTm04jrb1M8DhLknUsKJPEJfTRLwz35mgFplX7nzSrPzKJpiQJAVd6o9RXd/tD7UPx9VUcTPHeV/9NQ41b2nP7u9r/jKxpbUnSwuuGy0pxL6gUB8EcNQFBB/+7Z7VtS7JeEWhZXaP05areWCX+HO+l92lGeTbJs4M8z/6HPJ/k+UFerF+Sx/cUHvuOWuoWWu1B+4cccbaexYce+NZX7pl3KQHjTceH2E0gdvswFvsSDyo5UDsCP18p8xlyArYkxmp/Z3d9hxsLVNbAFZUu827kuneTBdxkp9zkS7hzn2H1yM17xjlseI/AZNdbE8EviB1sGfIaON0gNxF8Ngg7yns0r0AqC27We05NFLSfB+znp+yvlthfzRmO7H9C0XFqcf4rBw2FpWno2dvVKaPFEqNFsM+uhVTKnnLo6DeB0ho/BBT2reL4WvZig9rPBFjUItzaItDa4pTj9RLH62cmQ1JZMcqnyQCqESwOFqyCTqNBvUN3UTHX+XFKPv9xB7XinOpnhmMdIFifIjib/mnJKYIzn+HsCQHyOugi/PwXN+LBqXgmv990jwRP7J8veQHnPn36eEI/umGgQvXSBikm2WFn9Van4ONd58GLeQN/oVagNHTKMMt2eBrhYgnCRRjh3TjyUgkmKQdNbbDBNxchlCn4dAOtmKActppWlikJyb9//5M6Hgod6gqlpQ2+gSRKkwJKSJOo+OE0YposOjmSMOQn1AKEkrY1QbhZd0w3Rx/jfZAWG9Sw1UpAmoFtteqbFtLsVZIkL3AsOwHTMMePAzOWyeawUWkmK9Y92LLCeGkQL/3ug+gML6Abj8p0FR5F1aGmnpIjNfgC2pSrOEabouvviJYvQgscrTeh4O1RcK42fzrOX00dbfBXqhsmDXDc2pIk0RkBPRb211Z1/qogsFHWKjGvWqQ1arfKCWyVsofFWPDw3Xz9H1BLAwQUAAAACABdW1NdOvd2C2sDAAARDQAAGAAAAHhsL3dvcmtzaGVldHMvc2hlZXQ0LnhtbLWX23LbNhCGX2UHM71rxZMOtmM6k9iTtNOk7bRNcr0iVyTGIMABQEnpVd4hb5gn6QASZUuGaHamuTKxxL/7f2scqOuX20bAmrThSuYsmcQMSBaq5LLKWWdXP12wlzfX26uN0vemJrKwbYQ0V9uc1da2V1FkipoaNBPVktw2YqV0g9ZMlK4i02rC0ssaEaVxPI8a5JK5hD76kdPGHI3A1GrzVvPyHZdkchYzcKWXSt2717+UPhTdXEfBFG989T80lLTCTtg/1eZn4lVtc5bMvG57VSjhBYUS0HBHzaDBrf+74aWtczafMqh5WZL05YrOWNV82r1LHtLs5Olenh7kWfof5Nlenh3ks/lz8uiBwmPfoUU30GoD2k9yxOm8Fx964FtfuDmvEgbGm44OsdeB2O3jWORLPKrkQO0O+Hyl1GfIGNicGav9m/XN2w41Squ0cWnXO6gHK2nASjpkJRsDnfkM0xMrb7gQsBQdAZdtZ80EfiVqYcVJlCBwScJM4IMhWKPoyPwIUllwC70TaCZB+1nAfjZkfzrG/rTPcGT/b2pagZb6fRw0FJYmobm30yGjszFGZ8E+vyNcE6AQ+z7DUqC8h01NEmxNmgA1gVRQHdZGuLuzQHdnQ6bnY0zPzywOibLgeDDtPFraWrAKWk2G9JrcQ8Fd83cL5cNfd1AqIfAcwTxAMB8iWOx3WjxEsPAZFk8ISJRBF+H5h50J4eVxpoo/eo8ETyAuxvwbLnz6JD3rSmJDQZy9cnHU1X3w9Pj57TTJE7OXY8xehs3+vpGkTc3boM+9KDnyeRn2eUcFb1DASmNhuZIQf/vyNQGlAaElXZC0WNELSCCHJI5/GGZK4lFXQxymeiVlhwI2WFH40O6Fx2R99BTt0SZxKPCZUD9jf9zNlgza59KSJmMBZQklX/OSZAlcFurMsurznVAl/xtVOooqHaRqlLYVVu4k4rLgLQrP18OGwdIgWDoe7AX8Q1q51dgqwy1fP7OnXNIRqNkgKnZWgVAoocXPDUl7ZjFmQbrsO9KNusTdLOdgGqYrNJXcQoG6dB+IvOmaZzj3+WbHnPvo/HtwzkZxBm7p16Hg7VGwr9Z/4Pffti1W9B51xaUBQSubs3iyYKB3hf2zVa1/mjFYKmtV049qwpK0G2UMVkrZw2BX8PDr5uZfUEsDBBQAAAAIAF1bU102q1IHHwMAACIMAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDUueG1stZZNb9s4EIb/yoCXXnYtS7KVj41TbFN0W7QFit1te6bFsUWEIgVybCv/viBlObFDK+ohJ4lDzsz7kMOPm7dtrWCL1kmjFyydTBmgLo2Qer1gG1r9ecne3t601ztj712FSNDWSrvrdsEqouY6SVxZYc3dxDSo21qtjK05uYmx68Q1FrkIbrVKsum0SGouNfMBg/WHxJ07aoGrzO4fK8UXqdEt2JSBT7005t53fxLBlNzeJNEQH0L2bxYErvhG0b9m9xHluqIFS+fBr70ujQoOpVFQS0/NoOZt+O6koGrBihmDSgqBOqQrN45M/bPrSx/DdO7Z3j07uOfZb7jne/f84D4vXnJPHikC9ntO3Des2YENgzxxVvTOhzkIU1/6MX+nDFwQnRxs7yK2u6e2JKR4ksmDUgd8PlMWIuQMaMEc2dCzvf1p7L3Uayh5I4krH3vbkT3qySJ6siE9+RjyPESYnej5IJWCpdogSN1syE3gM2IDK4lKgOJLVG4C3x3ClqsNuj9AGwJf7RvF3SQqP4/Iz4fkz8bIn/URjuT/j3WjOGG/maOC4q5pbOzdbEjofIzQeXSe/RRSheDFOoKV1FyXkit4QG7fOHDELQHXAlALEH5UfHbnkdmdD4kuxoguzhRHr7IrDuAWgbAlIAONRYd2i/6nlH7yu0L5/t97EEYpbs8QFBGCYojgYr/dpkMEFyHCxTMCVCKqIj7+h6/yaGGciR9O3iOHZ/IvxyzAZQifnhbpN7TSiK46ohidX3Y4X4PWfbDTs+crp7I6X4XDFFdjKK4GKVDHl+IqxnD1CgzpdNQVMY1TfNKlRe78SQm8LM1GkwOLJcotX6po1bzrYx2z9dZTuCdb5y/gILBP6EDjmpPc4guA4+7A9GVAqbeoydiHOFYaxUpfCysbhZX9xro1/OH8omVRuuy16EZd336UT396Rt9xVwHxFj2TjG+w3nd+DLS3FueBboaFj7q4/ajnT66I8e7I2GfrX7z9Y6/ha/zK7VpqBwpXtGDTyQUD2yUO/2Sa8DdnsDREpu5bFXKB1rdyBitj6NDoEh6e+7e/AFBLAwQUAAAAAABdW1NdS5ZZWigBAAAoAQAACwAAAF9yZWxzLy5yZWxz77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48UmVsYXRpb25zaGlwcyB4bWxucz0iaHR0cDovL3NjaGVtYXMub3BlbnhtbGZvcm1hdHMub3JnL3BhY2thZ2UvMjAwNi9yZWxhdGlvbnNoaXBzIj48UmVsYXRpb25zaGlwIFR5cGU9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy9vZmZpY2VEb2N1bWVudC8yMDA2L3JlbGF0aW9uc2hpcHMvb2ZmaWNlRG9jdW1lbnQiIFRhcmdldD0iL3hsL3dvcmtib29rLnhtbCIgSWQ9IlJlZDJlN2VjMDIyZGE0Y2NiIiAvPjwvUmVsYXRpb25zaGlwcz5QSwMEFAAAAAgAXVtTXZNtbzpQAQAAbgUAABoAAAB4bC9fcmVscy93b3JrYm9vay54bWwucmVsc83UP27DIBQG8KtY7A2GYsBVnCxduqa5AOCHbcUYy5DWOVuHHqlXqPpHFa46dInkheFD+vTjSY+3l9ftfnZ99gRT6PxQIbLJUQaD8XU3NBU6R3sj0X63PUCvYueH0HZjyGbXD6FCbYzjHcbBtOBU2PgRhtn11k9OxbDxU4NHZU6qAUzznOMp7UDLzux4GeE/jd7azsC9N2cHQ/yjGId46SGg7KimBmKF8Nx/Z5vZ9Sh7qCt00KpkXDKuteZM6xxl+Gqg2IKDpecz+jpJohLGgpRcqIJbpoFfUxVaNUH9GKduaH5PK71KecqwgiptypqzQtBr8p79dAotQFzSfuKPBwDEdHqGWstoKbkViuW1XQGPJjwKQmuquShKxSSBFfBuEx6XoqyZZlIBZ6SuV8BjCa8EKXJBTEl4zlSxhukVi9UombYcckMJM4p88vDi19y9A1BLAwQUAAAACABdW1Nd3zOGgycBAAB3BQAAEwAAAFtDb250ZW50X1R5cGVzXS54bWzNlM9KAzEQh19lyVWadOsfRLrtQb2qoC8QsrO7ockkZKbr9tk8+Ei+gjSVIiIsxQq9ZC6T3/f9LvPx9j5fDt4VPSSyAStRyqkoAE2oLbaVWHMzuRbLxfxlE4GKwTukSnTM8UYpMh14TTJEwMG7JiSvmWRIrYrarHQLajadXikTkAF5wtsMsZjfQaPXjov7gQF32ME7Udzu9raoSugYnTWabUDVY/0DMglNYw3Uwaw9IEuKCXRNHQB7J/OUXls8y8HqV2YCR4dBv1rJBC7vUGcj7RGPPaRkayiedOIH7aESanCKeOOA5JEb5tAxNHfgYfeWfxbIMaNlO52gfuZksT165+/ZYyKvIa3yR1J5lEeW2ecfKjI7FZHzUxG5OBWRy38XUfmMLj4BUEsBAhQDFAAAAAgAXVtTXYuuz4IvAQAAbgMAAA8AAAAAAAAAAAAAAKSBAAAAAHhsL3dvcmtib29rLnhtbFBLAQIUAxQAAAAIAF1bU13G0A33lwIAAF0WAAANAAAAAAAAAAAAAACkgVwBAAB4bC9zdHlsZXMueG1sUEsBAhQDFAAAAAgAXVtTXfpcAVkDAwAA2g0AABMAAAAAAAAAAAAAAKSBHgQAAHhsL3RoZW1lL3RoZW1lMS54bWxQSwECFAMUAAAACABdW1NdDR656GUAAABzAAAAFAAAAAAAAAAAAAAApIFSBwAAeGwvc2hhcmVkU3RyaW5ncy54bWxQSwECFAMUAAAACABdW1NdIknoE/ECAACcCQAAGAAAAAAAAAAAAAAApIHpBwAAeGwvd29ya3NoZWV0cy9zaGVldDEueG1sUEsBAhQDFAAAAAgAXVtTXY5jmyM8BAAAFxIAABgAAAAAAAAAAAAAAKSBEAsAAHhsL3dvcmtzaGVldHMvc2hlZXQyLnhtbFBLAQIUAxQAAAAIAF1bU10yUIrdSAMAAGsLAAAYAAAAAAAAAAAAAACkgYIPAAB4bC93b3Jrc2hlZXRzL3NoZWV0My54bWxQSwECFAMUAAAACABdW1NdOvd2C2sDAAARDQAAGAAAAAAAAAAAAAAApIEAEwAAeGwvd29ya3NoZWV0cy9zaGVldDQueG1sUEsBAhQDFAAAAAgAXVtTXTarUgcfAwAAIgwAABgAAAAAAAAAAAAAAKSBoRYAAHhsL3dvcmtzaGVldHMvc2hlZXQ1LnhtbFBLAQIUAxQAAAAAAF1bU11LlllaKAEAACgBAAALAAAAAAAAAAAAAACkgfYZAABfcmVscy8ucmVsc1BLAQIUAxQAAAAIAF1bU12TbW86UAEAAG4FAAAaAAAAAAAAAAAAAACkgUcbAAB4bC9fcmVscy93b3JrYm9vay54bWwucmVsc1BLAQIUAxQAAAAIAF1bU13fM4aDJwEAAHcFAAATAAAAAAAAAAAAAACkgc8cAABbQ29udGVudF9UeXBlc10ueG1sUEsFBgAAAAAMAAwAGwMAACceAAAAAA==", Yo = "data:application/octet-stream;base64,UEsDBBQAAAAIAF1bU10UOYyWMAEAAG4DAAAPAAAAeGwvd29ya2Jvb2sueG1stdPLasMwEAXQXxHaN/JDfsTECZTQ0m03XY/kUSyih5GUxp9fmhbHdNVNdsNdDIfLzO4wW0M+MUTtXU/zTUYJOukH7U49vST11NLDfjd3Vx/Owvszma1xsZt7OqY0dYxFOaKFuPETutka5YOFFDc+nFicAsIQR8RkDSuyrGYWtKPf+25pXCbiwGJPn30I/oqBklv6NvQ0pyR0eujpO9ai3JaYSYWSFwD01xL+Y/FKaYlHLy8WXfrBBDSQtHdx1FOkhP3VvGgHTmowceUpFo9QVVk3BW5Fo3gp8OGeI4pEwA3EeHArUrmQCtFk7TAUIBvk21Y9nPR6gQAu+bCuiC8enud5zatKtk3LgdcP93z4cNbuRCRMOoFZoaoFVUOeq6wQKGrgvJEPQLH7gbP77+y/AFBLAwQUAAAACABdW1NdxtAN95cCAABdFgAADQAAAHhsL3N0eWxlcy54bWztWE1vozAQ/SvI94avkqyq0m43LdJeemkPe3XAgKWxjYzThf76FTYQ0k3a0nS1IWouzIw8b94w9pjM5XXFwHoisqSCh8idOcgiPBYJ5VmI1io9+4aury6ri1LVQB5yQpRVMeDlRRWiXKniwrbLOCcMlzNREF4xSIVkWJUzITO7LCTBSdm4MbA9x5nbDFOOGkS+ZhFTpRWLNVch8gZGyzx+JiHyHAdZBnIpEhKi78iy96x0t1fWdV2fMXaWJNrF7kM27qngm9hz1Jl0qs/WE4YQuW4XCjNiTEssgSrR4XUeez1jAUJaMluFKIrchbf0b//CvJEUwz7ElVndA88/C7hHdHYhBvN5sDg/jOrOd2B+H6S6E9FxguDmXVRbwZSfAvTlPzflpwDNs8BKEckjCmC18mNdkBBxwUmP2C5+0ymTuHa9YLRfKYAmhle2HObr+f5d4HV4A/9Pwo/8aBEtX8dvBf0mV0ImRL44xsbYSEBSZWojaZa3ohKFEVZCKcGMnFCcCY6hjbyBGAmmO1WIVN72ma3dchvc3t0tuuyMxyvBe1GnGhOAhwb9V9rn6+oYVTpoRLph8V6kAK1ooFrFBBpCdiEG6J73Ufgq3cTZD+C+AwAXBdT3a7YiMtLdVbtpayT4UKMAG+2HBtP6EVDQ+g3QjDOyKRvuDM0NqGjcNI6YcEVkV58qfY27N2Hu/oS5D/aMNzXu51/cD+SeC0mfBVdD9iPyab8oJ9p9ttgHp8Le/2J/+FnQ30SjjsIEDsJviYtHUhnwKd9roxPZVxF3Eom866y40zwr/ulX5v91seY/3sj73D2tnXbkCf2bAk3p2jzyhODNArWDh8HMQc8gXgw1ervVjNVCdN9Qh+3RwnCEUWp1Myi++gNQSwMEFAAAAAgAXVtTXfpcAVkDAwAA2g0AABMAAAB4bC90aGVtZS90aGVtZTEueG1svVfbcpswFPwVRu8NN3PzhGQSx24f0mmnyQ/IIECNEB5Jjp2/7yBuAozjNHbsB0tiz9lF57DC17f7nGiviHFc0BCYVwbQEI2KGNM0BFuRfPPB7c01nIsM5UijMEchWGRQfP/9DLR9TiifwxBkQmzmus6jDOWQXxUbRPc5SQqWQ8GvCpbqMYM7TNOc6JZhuHoOMQVt3iVBOaKClwsRYU/RAbLyWvxilj/8jS8I014hCcEO07jYPaO9ABqBXCwIC4EhP0DTb671NoqIiWAlcCU/TWAdEb9YMpCl6zbSWFr+zOwYJIKIMXDpl98uo0TAKEK0lqOCTcc1fKsBK6hqeCB74Jn2IEBhsMcMgXtvzfoBElUNZ+MbXQXLB6cfIFHV0BkF3BnWfWD3AySqGrqjgNnyzrOW/QCJygimL2O46/m+28BbTFKQHwfxgesa3kOD72C60mpVAip6jfcrSXCEZN/l8G/BVgUVsspQYKqJtw1KYFQ2KCR4zbD2iNNMSB44R/AdQMSPAvQBZ47puwKOUB8hbek6Bl3dDLk1uZh8JBNMyJN4I+iRS3G8IDheYULkREa1pdhkC8Iawh4wZbAb8zpVyrVNwUNggMlc0kEwFdWa6zVPPZyTbf6ziOumN1s7gHMORXfBcBSfaBnkLOWqhhJ3sg7PntDR0Q112CfqkHdyshDf/LCQ4KgQXSkPwVSD5SnhzGq75REkKC4LVifolfUsJQ5mU3dkfXZrTygxz2CMmrzGlJKpZuu68AxFVqR4/mElQTAhpNyqSxRZH9sBof2Ztiv5vebu/sssNoyLB8izCicvtecrVWgCw/kCGqvcmcvR6MM9REmCIjGx0k0fuaizHLz8WXQ5KbYCsacs3mlrsmV/YBwCxzMdA2gx5qIpgBZj1rXP+P2iW4dkk8HayXsPbYWX45ZTESvlDKX357Xidbo6y3H1ftTAtabs1pt+Ei9wPgbKuaT4R+B/1FMrqzz3sanqUOVNGq09Ic++kNF2Xfl1hjps2dJjm9cxORv8gWpWbv4BUEsDBBQAAAAIAF1bU10NHrnoZQAAAHMAAAAUAAAAeGwvc2hhcmVkU3RyaW5ncy54bWwFwVEKwyAMANCrSP5n3D7GkNqeRdq0CiYWkw2Pv/eWbXJzPxpauyR4+gCOZO9HlSvB187HB7Z1mVHV3OQmGmeCYnZHRN0LcVbfb5LJ7eyDs6nv40K9B+VDC5Fxw1cIb+RcBRyuf1BLAwQUAAAACABdW1Ndud4EQRoDAAAOCgAAGAAAAHhsL3dvcmtzaGVldHMvc2hlZXQxLnhtbJVWa2/aMBT9K1f+PBKTQFpYadUWtZu2StX6mLpvJrkQq44d2Q7Q/frJhtCWGsokJOLHueecm2vfnJwtKwFz1IYrOSLdiBJAmauCy9mINHbaOSZnpyfL4ULpZ1MiWlhWQprhckRKa+thHJu8xIqZSNUol5WYKl0xayKlZ7GpNbLCwyoRJ5RmccW4JC6gn33kuDDvRmBKtbjWvPjJJZoRoQQc9USpZ7f8vfBT8elJHAxx5dlvNRQ4ZY2wv9TiG/JZaUek2/e45TBXwgNyJaDizjWBii39/4IXthyRrEeg5EWB0tPljbGq+r1a676GWcGTNTzZwNPkP+DpGp5u4P3sM3j86sLbHjPL3ECrBWi/yTlOsha8yYFPfe72nHcJGC863sxdBOYu387FnuINkzNqV4Z3MyU+QkrAjoix2q/MT+98cQguEXJVVahzzgRwadkzOqL5yuaruCQgLtknLj0kDamP0NsSd8WFgIloELisG2si+IFYw5SjKECwCQoTwYNBmDPRoPkCUllwpd8IZqKg/DQgP90nv3eI/F4b4Z38e6xqwSy2JzsoKAzthvZe9vYJ7R8itB/Ms0uheZG2RMtzKJhloKR4iWDMLBpoDMLT09NT5+amMx6H89oP5LW/T252iNxsR1lIJtd16soCmEawuLRgFdQaDeo5uoecu7SvSuThbgyFEoLpHZWRBRxk+xwcrU8d3efgyEc4+uAARRFUEd7/6Oo7WBI74vsL+B3gg/zjQ17AsQ/f3S7PC6W1WqAGyarwNbEGbgs7F7W7aq7YRPOc2R2H4nKN3r6sLhrj+pH5SPvB3eAQd4Owu2tUM83q8iXobBB2ltGMhk/tIGzmVhnLBOSqQFAaZi3pV3h2l5xA5to//EWtzH6vXXpQp6ErHdun6dwYNKZCad3JD7/NFjvw2GKNTGiSdbq0Q7N7Sof+F1FK/wSz0IbItugvmUBZMO3Jv7y5Zz7xfFh3DbbXYH8NNdj266Zt7DWb4Q3TMy4NCJzaEaHREQG9IvbPVtX+qU9goqxVVTsqkRWo3SglMFXKbgYrws2n3ek/UEsDBBQAAAAIAF1bU11BqIAnpgQAAM0UAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDIueG1spZhtb9s2EMe/yoEv9qqx9aw4rVOk0boV7bAiaTds7xjpZBOlRIGkHSefviAt5cEhFSUNDEQ883+8+5Eiz3z3ftdw2KJUTLRLEs4CAtiWomLtakk2uj46Ju9P3+1OroX8odaIGnYNb9XJbknWWncn87kq19hQNRMdtruG10I2VKuZkKu56iTSysoaPo+CIJs3lLXEOLTWfxheq0ctUGtx/Ydk1RfWolqSgIAZ+kqIH+brT5UxGUVHW4TdZceZXpKQwE3/mBPQovuCtT5HzpfkwzEBWmq2xa+0xSW5ElqL5oKt1pqA0lTjktRS3GJLYH76bv4glset+zg/2hS/SqiwphuuL8T1n2gcLkmYWi+7k1JwKygFh4YZtAQaurP/r1ml10uSJQTWrKqwtWmWG6VF8+/+u/DezV4e9fLoTh5HL5DHvTx+nTzp5cmdPM2ek8/vIVhqBdXUNKS4Bmk7GWBRNojvENrpLU2fs5CAsjnP72wfHLZzh614aJvbYR+MbpLXewj+0SPrISagl0Rpab/Znn5kLW1LRrkybrf7RO/DixzhOWxFNBZePAVObD0kT8LjHK74BoG13UarGXxG7KBmyCvg9Aq5msF3hbClfIPqDbRCg3lpN5yqmTOl2JGSw1bEYyklU1JKBg+PUvqGTcepxmGfcgbploauvueJI/hkLPh0SvCpcz7OqgpK0XQcNULNVEk53CCV6g0IXqHSUDOp9Ax+bzVKwC3KG6CN2LTaPRupYzYctiIdSyibklDmWWD9+u8XGFCJoHGnQQvoJCqUWzQPJTOTtV9s3y8LqATnVHrWWObIymErsrGs8v6tDsayyq2H/ElWyCtnZO7+/yGV4F5dI4LIJSg8EdlT5pHgScLHU6bx2LoPD1+NryiZqMwRKLUz8b0uCq2u6lVRECVHQXgUhN+C4MR+ZkEQ/O8k4fOQTvVQ9LE/3YOl0lDRGxA1UOf7NQ5uMQXcYhQctu71svBiC6OjeAo2n4d0qodi4cb2hd5T02sERZsXMAuDSUd24KZ2gVtsN+hENmjCA028CMyfE5JPk0ReTTFoDrk82J2eQTCtagndCM6F0gb9SohKgRKeDWeQH2YWpbmfhk+Tp34a4a/S6KuoZLSKMr1cNP7uUFLN2hXgrsNWIeCu5DMofqNN9/bsDTBzIJoDkrYViLpmJUro6I0bWuQGkAW5l5lPkviRRc8ie2vT2FT4wkSe0p1UBJpeTrr9MGZrxFZR7aubBgeHFEK7ctzgfJJjP7j4V9fapPrR9HLRKNDWIyMUEndKdgNyQ/ApfNiKQfF6BpPKUNPLxeCsEVKz2xEGqWda/QxeqigGxesZTKpcTS8Xg0/Dm9hvOW4OmTur9NjLwaPIIi+HbMJGcotSgJDQCcXMBcYzZPJJZHI3mUsszcKAMF+Mw8ndqXrAeHqP7LD5ry6QSTWx6WWGOfxx8/kohIopLdnVxvBw/8Yf1OnhaevdAM99knikWukl2atRLCah6MvNx5csDuO5y1g8Mg4hDPdmw51PR1f4F5Ur1irgWOslCWY5AbmPxj5r0dmnlMD+im5orZFWKE0rJlALoe8a+wHvbiZPfwJQSwMEFAAAAAgAXVtTXXc3181eAwAA9gsAABgAAAB4bC93b3Jrc2hlZXRzL3NoZWV0My54bWytlttu2zgQhl9lQGDvWutkOYdGKZqk7RbbBRa7bfealsYSUR4EkrLVXvUd9g37JAUpyUkc2tUC9Y1Fiv/M/41GpK5e9oLDFrVhShYkWcQEUJaqYrIuSGc3z8/Jy+ur/nKn9GfTIFroBZfmsi9IY217GUWmbFBQs1Atyl7wjdKCWrNQuo5Mq5FWXiZ4lMbxKhKUSeIC+tlPDHfm0QhMo3ZvNaveM4mmIDEBl3qt1Gd3+13lp6LrqygY4o3P/peGCje04/ZvtfsdWd3YgiS51/WXpeJeUCoOgjlqAoL2/n/HKtsUZLUk0LCqQunTlZ2xSvw73EvuwwzydJSne3mW/g95NsqzvTxf/Uwe3VN47DtqqRtotQPtFznidDWJ9zXwpS/dmlcJAeNNR/u5m8Dc7cO5yKd4kMmB2gH4eKbUR8gI2IIYq/2d7fUdri1QWQFXVLrI24Hr3k0acJOecpPN4c58hOWBmzeMc1jzDoHJtrNmAX8gtrBhyCvgdI3cLOCjQdhS3qF5BlJZcL3ecWoWQftZwH52yv5yjv3lFOGR/Q8oWk4tTq9y0FBYmoTW3i5PGc3nGM2DdXYlpFJ2lENLvwiU1vgmoLBrFMfnshNr1L4nwKIW4dLmgdLmpxyv5jheHekMSWXJKB87A6hGsNhbsApajQb1Ft1FyVzlhy75+M8dVIpzqo80xypAsDpFcDa+afEpgjMf4ewJAfIq6CK8/pNr8WBXHInvN91Hgif2z+c8gHMfPjns0PeuGahQnbRBilGWHMjy2P2CHKPicEt68NRewFfUCpSGVhlm2RZP813M4bsI870a3gepBJOUg6Y2WP2bizBnvEjiPIg5Cp7uvCUTlMNG09IyJSH+/u2/xLFSaFGXKC2t8QX4wFBAEi/y307jJ/GsIycOF+ADagFCSduYIPikOyRP0vDjndYfgr+TFmvUsNFKQJKCbbTq6gaS9NlhpzwlnHeoJmHC1z0zlsl6v/dpJkvWPtgFw+DJkdY+P9bZk+IXtraDmUE+nMzJMtzcqkVNfQU4UoM/wR5j5Qex0uVR7FGx+oXY2SzswCl/E5q8fTQ5ZZu+YqcPuJbW+CfVNZMGOG5sQeLFGQE9JPbXVrX+KiewVtYqMY0apBVqN8oIbJSy+8GQcP8Jf/0DUEsDBBQAAAAIAF1bU107LXDNigMAANQNAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDQueG1stZfbbuM2EIZfZSCgd1vrZMlONs4im2C3RbcHtHu4HktjiQhFCiRle3vVd+gb9kkK0paTOJSiAt0rixT/mf8bDynp6s2+4bAlpZkUqyCeRQGQKGTJRLUKOrP5fhm8ub7aX+6kutc1kYF9w4W+3K+C2pj2Mgx1UVODeiZbEvuGb6Rq0OiZVFWoW0VYOlnDwySK8rBBJgIb0M1+ZrTTT0aga7l7r1j5gQnSqyAKwKZeS3lvb/9Yuqnw+ir0hnjnsv+moKQNdtz8Lnc/EKtqswrizOn2l4XkTlBIDg2z1AE0uHe/O1aaehXk8wBqVpYkXLqi00Y2Xw734ocwB3lylCcneZr8B3l6lKcneZa/JA8fKBz2HRq0AyV3oNwiS5zkvfhUA1f6wq65iQPQznR4mnvrmbt9PBe6FI8yWVBzAB7OlLgIaQBmFWij3J3t9fsOFQojlbZhtweoByuJx0oyZiWdAp26CPMzK+8Y57DmHQETbWf0DH4iamHDiJfAcU1cz+CTJtgi70i/AiEN2EbvOOqZ137qsZ+O2Z9PsT/vIzyx/5GalqOhfh97DfmlsW/t7XzMaDbFaOat8wfCLQFyfqwzrDmKe9jVJMDUpAhQEQgJ1ak3/NXNPNXNxkznU0znA80hUBQMT6atR0N7A0ZCq0iT2pK9KJgt/qFRPv1xB6XkHIcIcg9BPkawOO60aIxg4SIsnhEQL70u/OtPOxP87TGQxR29TwTPIJZT/oalCx8ng64ENuTFOSrPnd2hQLjhLRNe2e1Rdn5A/XKe5hnOxRScCz/OrztBStes9ZIcRfGk7Xrh939HBWuQw0ZhYZgUEP3z198xSAUILamChMGKXkMMK4ij6Ltx1jia9FCJ/LQ3QnTIYYcV+Y/7XnhOnGdRFHmpe8U59qOtZzHhK6F6AW3a8zIeRWPCkCJtAEUJJduykkQJTBRyoFn7eOfE6SBw/L8BJ5OAk1HgRipTYWWPPiYK1iJ36H0d/MyJnzlZLoegk+nQr+FPUtI2eCs1M2z7wva1QSeUIR0tA3ZGApcooMWvDQkz0N+pn3yRDIGn3xB80suGXWUdzP3ghaKSGShQlfZFljVd80IJjvGy84bPh0pwFOTfogTZpBJ4XjTe+iZvn0z22fpvlP71vMWKfkZVMaGB08asgmi2CEAdErtrI1t3lQWwlsbIph/VhCUpO0oD2EhpToNDwtMH2vW/UEsDBBQAAAAIAF1bU13c8+xPSwMAAO0MAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDUueG1stZfdbts4EIVfZcCb3mwsSrKU2Bun2KbotugWKHb7A+wdLY0tIhQpkLStvH1BynISh1LUiwABIlI8M+cjhxR9/batBexRG67kisQzSgBloUoutyuys5uLK/L25rpdHpS+MxWihbYW0izbFamsbZZRZIoKa2ZmqkHZ1mKjdM2smSm9jUyjkZVeVosooTSPasYlcQF97w+OB/OkBaZSh781L//hEs2KUAIu9VqpO/f6U+m7opvrKBjig8/+VUOJG7YT9l91+Ih8W9kViTOva5eFEl5QKAE1d9QEatb6/wde2mpF8jmBipclSp+u2Bmr6p/du/ghTCdPjvLkJE+T35CnR3l6kmf5S/LogcJjv2eWuYZWB9B+kCNO8l58mgM/9YUb81dMwHjT0anvXaDv9nFf5FM8yuRAbQc8nCnxEVICdkWM1f7N/uan0ndcbqFgDbdMuNj7juzBTxLwk4z5SaeQpz7C/MzPBy4ErMUOgctmZ80MPiM2sOEoShBsjcLM4LtB2DOxQ/MHSGXBVftOMDML2k8D9tMx+/Mp9ud9hCf2v2HdCGax38xBQ2FpHBp7Ox8zmk0xmgXn2U2hrRCcWWNhwyWTBWcC7pHpNwaMZdoCkyWgLKF0o8KzmwVmNxsznU8xnQ8UR++yKw5gGsFia8EqaDQa1Ht0DwV3k98Vyvf/3kOphGB6gCAPEORjBJfH7UbHCC59hMtnBCjKoIvw+B+uyoOFMRDfn7xPBM/sX01ZgCsfPj4v0q+ouSq76ghidLok9rryqEpokl3Q+ILG3yhd+r8ZpfT/INgx8/lB9YXZohou2XHkxRTkxSgyyvC6LQaB4+QinQK8eAXgmE76+NAw8idZaGTGncHAikLtpDWgsUC+Z2sRrMd3faz4/FibU0ppELyXnJM/2rF/AoMSezcGJG6Z5Xt8gX7apzd+mZ7LPUqr9H2YOQ4z58PI8WshJ5OQk99Y8IbdD692EibPhsmT1yKfdNtwo1z680/KLTMVWNai4+XhLd5rszPtIhuEPSryYdjrcahJdxA36vntMdB5+6Szz9Zf3vt7a8O2+IXpLZcGBG7sitDZJQHdJfbPVjX+KSOwVtaqum9VyErUrpUS2ChlT40u4emXy80vUEsDBBQAAAAAAF1bU10y5doWKAEAACgBAAALAAAAX3JlbHMvLnJlbHPvu788P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJ1dGYtOCI/PjxSZWxhdGlvbnNoaXBzIHhtbG5zPSJodHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvcGFja2FnZS8yMDA2L3JlbGF0aW9uc2hpcHMiPjxSZWxhdGlvbnNoaXAgVHlwZT0iaHR0cDovL3NjaGVtYXMub3BlbnhtbGZvcm1hdHMub3JnL29mZmljZURvY3VtZW50LzIwMDYvcmVsYXRpb25zaGlwcy9vZmZpY2VEb2N1bWVudCIgVGFyZ2V0PSIveGwvd29ya2Jvb2sueG1sIiBJZD0iUmExZTdmNTJjOTc4ODRjZDUiIC8+PC9SZWxhdGlvbnNoaXBzPlBLAwQUAAAACABdW1NdC9i6NFEBAABuBQAAGgAAAHhsL19yZWxzL3dvcmtib29rLnhtbC5yZWxzzdS/TsMwEAbwV4m8U9vJOUlR0y4srIUXODvnJGoSR7EL6bMx8Ei8AuKPkIsYWCp1ueE76dPPN/jt5XWzW4Y+eaLZd26smFwJltBoXN2NTcWOwd6UbLfd7KnH0LnRt93kk2XoR1+xNoTplnNvWhrQr9xE4zL01s0DBr9yc8MnNAdsiKdC5HyOO9h5Z/J4mug/jc7aztCdM8eBxvBHMffh1JNnySPODYWK8aX/zlbL0LPkvq7YHotSYaZBIVqQClnCLwYKLQ107vmMvqaMVAVqCZpEKWsJJhOXVPkWZ6ofwtyNze9rxauIJ+RaaZsLyBSAtnBJ3rObD74lCue0n/jjAUQhvh7lOltnJIwlAyniFfDSiKetyvIipbUuLGSaroCXRbxUF6Ks6xRNQbAu7RXwIOKBlDIHpUxZlICQXwFPRbwcpbQi1aRzBCjMJ4+f/Zrbd1BLAwQUAAAACABdW1Nd3zOGgycBAAB3BQAAEwAAAFtDb250ZW50X1R5cGVzXS54bWzNlM9KAzEQh19lyVWadOsfRLrtQb2qoC8QsrO7ockkZKbr9tk8+Ei+gjSVIiIsxQq9ZC6T3/f9LvPx9j5fDt4VPSSyAStRyqkoAE2oLbaVWHMzuRbLxfxlE4GKwTukSnTM8UYpMh14TTJEwMG7JiSvmWRIrYrarHQLajadXikTkAF5wtsMsZjfQaPXjov7gQF32ME7Udzu9raoSugYnTWabUDVY/0DMglNYw3Uwaw9IEuKCXRNHQB7J/OUXls8y8HqV2YCR4dBv1rJBC7vUGcj7RGPPaRkayiedOIH7aESanCKeOOA5JEb5tAxNHfgYfeWfxbIMaNlO52gfuZksT165+/ZYyKvIa3yR1J5lEeW2ecfKjI7FZHzUxG5OBWRy38XUfmMLj4BUEsBAhQDFAAAAAgAXVtTXRQ5jJYwAQAAbgMAAA8AAAAAAAAAAAAAAKSBAAAAAHhsL3dvcmtib29rLnhtbFBLAQIUAxQAAAAIAF1bU13G0A33lwIAAF0WAAANAAAAAAAAAAAAAACkgV0BAAB4bC9zdHlsZXMueG1sUEsBAhQDFAAAAAgAXVtTXfpcAVkDAwAA2g0AABMAAAAAAAAAAAAAAKSBHwQAAHhsL3RoZW1lL3RoZW1lMS54bWxQSwECFAMUAAAACABdW1NdDR656GUAAABzAAAAFAAAAAAAAAAAAAAApIFTBwAAeGwvc2hhcmVkU3RyaW5ncy54bWxQSwECFAMUAAAACABdW1Ndud4EQRoDAAAOCgAAGAAAAAAAAAAAAAAApIHqBwAAeGwvd29ya3NoZWV0cy9zaGVldDEueG1sUEsBAhQDFAAAAAgAXVtTXUGogCemBAAAzRQAABgAAAAAAAAAAAAAAKSBOgsAAHhsL3dvcmtzaGVldHMvc2hlZXQyLnhtbFBLAQIUAxQAAAAIAF1bU113N9fNXgMAAPYLAAAYAAAAAAAAAAAAAACkgRYQAAB4bC93b3Jrc2hlZXRzL3NoZWV0My54bWxQSwECFAMUAAAACABdW1NdOy1wzYoDAADUDQAAGAAAAAAAAAAAAAAApIGqEwAAeGwvd29ya3NoZWV0cy9zaGVldDQueG1sUEsBAhQDFAAAAAgAXVtTXdzz7E9LAwAA7QwAABgAAAAAAAAAAAAAAKSBahcAAHhsL3dvcmtzaGVldHMvc2hlZXQ1LnhtbFBLAQIUAxQAAAAAAF1bU10y5doWKAEAACgBAAALAAAAAAAAAAAAAACkgesaAABfcmVscy8ucmVsc1BLAQIUAxQAAAAIAF1bU10L2Lo0UQEAAG4FAAAaAAAAAAAAAAAAAACkgTwcAAB4bC9fcmVscy93b3JrYm9vay54bWwucmVsc1BLAQIUAxQAAAAIAF1bU13fM4aDJwEAAHcFAAATAAAAAAAAAAAAAACkgcUdAABbQ29udGVudF9UeXBlc10ueG1sUEsFBgAAAAAMAAwAGwMAAB0fAAAAAA==", Xo = {
 	text: "Enter name or reference",
 	date: "2025-12-31",
 	integer: "120",
 	rate: "0.105 or 10.5%",
 	money: "500000.00"
 };
-function Xo({ onCancel: e }) {
+function Zo({ onCancel: e }) {
 	let [t, n] = (0, k.useState)(0);
 	return (0, k.useEffect)(() => {
 		let e = setTimeout(() => n(1), 100), t = setTimeout(() => n(2), 1e3);
 		return () => {
 			clearTimeout(e), clearTimeout(t);
 		};
-	}, []), t ? /* @__PURE__ */ (0, W.jsxs)("div", {
+	}, []), t ? /* @__PURE__ */ (0, U.jsxs)("div", {
 		role: "status",
 		"aria-busy": "true",
 		children: [
 			"Reading workbook…",
 			" ",
-			/* @__PURE__ */ (0, W.jsx)("button", {
+			/* @__PURE__ */ (0, U.jsx)("button", {
 				type: "button",
 				onClick: e,
 				children: "Cancel reading workbook"
 			}),
-			t === 2 && /* @__PURE__ */ (0, W.jsxs)("div", {
+			t === 2 && /* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "formGrid excelReadingSkeleton",
 				"aria-hidden": "true",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("span", {}),
-					/* @__PURE__ */ (0, W.jsx)("span", {}),
-					/* @__PURE__ */ (0, W.jsx)("span", {}),
-					/* @__PURE__ */ (0, W.jsx)("span", {})
+					/* @__PURE__ */ (0, U.jsx)("span", {}),
+					/* @__PURE__ */ (0, U.jsx)("span", {}),
+					/* @__PURE__ */ (0, U.jsx)("span", {}),
+					/* @__PURE__ */ (0, U.jsx)("span", {})
 				]
 			})
 		]
 	}) : null;
 }
-function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate: i, onClose: a }) {
+function Qo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate: i, onClose: a }) {
 	let o = (0, k.useId)(), s = (0, k.useRef)(null), c = (0, k.useRef)(null), l = (0, k.useRef)(null), u = (0, k.useRef)(0), d = (0, k.useRef)(!1), [f, p] = (0, k.useState)(null), [m, h] = (0, k.useState)(""), [g, _] = (0, k.useState)(!1), [v, y] = (0, k.useState)(""), [b, x] = (0, k.useState)([]), [S, C] = (0, k.useState)(() => /* @__PURE__ */ new Set());
 	(0, k.useEffect)(() => () => {
 		u.current++, l.current?.abort();
 	}, []), (0, k.useEffect)(() => {
-		d.current && (x(n), n.length && qr(n[0].pointer, s.current));
+		d.current && (x(n), n.length && Jr(n[0].pointer, s.current));
 	}, [n]), (0, k.useEffect)(() => {
 		f && c.current?.focus();
 	}, [m, !!f]);
-	let ee = f ? Ko(f) : {
+	let ee = f ? qo(f) : {
 		input: null,
 		issues: []
 	}, te = [...ee.issues.filter((e) => S.has(e.pointer)), ...b.map((e) => {
@@ -14938,57 +14944,57 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 		let r = new AbortController();
 		l.current = r, _(!0);
 		try {
-			let e = await Uo(t, r.signal);
-			n === u.current && !r.signal.aborted && (C(new Set(Ko(e).issues.map((e) => e.pointer))), p(e));
+			let e = await Wo(t, r.signal);
+			n === u.current && !r.signal.aborted && (C(new Set(qo(e).issues.map((e) => e.pointer))), p(e));
 		} catch (e) {
 			n === u.current && !r.signal.aborted && y(e instanceof Error ? e.message : "The workbook could not be imported.");
 		} finally {
 			n === u.current && (l.current = null, _(!1));
 		}
 	}
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "excelImport panel",
 		"aria-label": "Excel intake",
 		children: [
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "sectionHeading",
-				children: [/* @__PURE__ */ (0, W.jsxs)("div", { children: [/* @__PURE__ */ (0, W.jsx)("p", {
+				children: [/* @__PURE__ */ (0, U.jsxs)("div", { children: [/* @__PURE__ */ (0, U.jsx)("p", {
 					className: "eyebrow",
 					children: "Commercial assessment"
-				}), /* @__PURE__ */ (0, W.jsx)("h1", { children: "Import Excel workbook" })] }), /* @__PURE__ */ (0, W.jsx)("button", {
+				}), /* @__PURE__ */ (0, U.jsx)("h1", { children: "Import Excel workbook" })] }), /* @__PURE__ */ (0, U.jsx)("button", {
 					type: "button",
 					disabled: e,
 					onClick: a,
 					children: "Cancel Excel import"
 				})]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("p", { children: "Fill in the Spreadline template with one to ten complete fiscal years, the loan and any guarantors, then choose it below. You review every input before it is evaluated. Use synthetic data only." }),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsx)("p", { children: "Fill in the Spreadline template with one to ten complete fiscal years, the loan and any guarantors, then choose it below. You review every input before it is evaluated. Use synthetic data only." }),
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "excelDownloads",
-				children: [/* @__PURE__ */ (0, W.jsx)("a", {
-					className: "buttonLink",
-					href: qo,
-					download: "spreadline-intake-template-v1.xlsx",
-					children: "Download blank Excel template"
-				}), /* @__PURE__ */ (0, W.jsx)("a", {
+				children: [/* @__PURE__ */ (0, U.jsx)("a", {
 					className: "buttonLink",
 					href: Jo,
+					download: "spreadline-intake-template-v1.xlsx",
+					children: "Download blank Excel template"
+				}), /* @__PURE__ */ (0, U.jsx)("a", {
+					className: "buttonLink",
+					href: Yo,
 					download: "spreadline-alpine-example-v1.xlsx",
 					children: "Download filled Excel example"
 				})]
 			}),
-			/* @__PURE__ */ (0, W.jsx)("p", {
+			/* @__PURE__ */ (0, U.jsx)("p", {
 				className: "fine",
 				children: "Financial cells in the template use text to preserve precision. The importer reads Excel's stored values and cannot restore digits Excel already rounded. Replace formulas with values. General-purpose workbook layouts require conversion into this template."
 			}),
-			/* @__PURE__ */ (0, W.jsxs)("div", {
+			/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "formField",
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("label", {
+					/* @__PURE__ */ (0, U.jsx)("label", {
 						htmlFor: `${o}-file`,
 						children: "Excel workbook"
 					}),
-					/* @__PURE__ */ (0, W.jsx)("input", {
+					/* @__PURE__ */ (0, U.jsx)("input", {
 						id: `${o}-file`,
 						className: f ? void 0 : "primary",
 						type: "file",
@@ -14999,20 +15005,20 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 							T(e.target.files?.[0]), e.target.value = "";
 						}
 					}),
-					/* @__PURE__ */ (0, W.jsx)("small", {
+					/* @__PURE__ */ (0, U.jsx)("small", {
 						id: `${o}-file-help`,
 						children: ".xlsx up to 2 MB · read in this page, not uploaded · reading stops after five seconds"
 					})
 				]
 			}),
-			g && /* @__PURE__ */ (0, W.jsx)(Xo, { onCancel: () => {
+			g && /* @__PURE__ */ (0, U.jsx)(Zo, { onCancel: () => {
 				u.current++, l.current?.abort(), l.current = null, _(!1), y("Excel import cancelled. Select a workbook to try again.");
 			} }),
-			v && /* @__PURE__ */ (0, W.jsx)("p", {
+			v && /* @__PURE__ */ (0, U.jsx)("p", {
 				role: "alert",
 				children: v
 			}),
-			f && /* @__PURE__ */ (0, W.jsxs)("form", {
+			f && /* @__PURE__ */ (0, U.jsxs)("form", {
 				className: "guidedForm excelReview",
 				ref: s,
 				noValidate: !0,
@@ -15022,33 +15028,33 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 						payload: ee.input,
 						filename: m,
 						resetHistory: !0
-					}).catch((e) => y(e instanceof Error ? e.message : "Evaluation failed. Your workbook inputs are preserved."))) : (C(new Set(ee.issues.map((e) => e.pointer))), qr(ee.issues[0]?.pointer ?? "", s.current)));
+					}).catch((e) => y(e instanceof Error ? e.message : "Evaluation failed. Your workbook inputs are preserved."))) : (C(new Set(ee.issues.map((e) => e.pointer))), Jr(ee.issues[0]?.pointer ?? "", s.current)));
 				},
 				children: [
-					/* @__PURE__ */ (0, W.jsx)("h2", {
+					/* @__PURE__ */ (0, U.jsx)("h2", {
 						ref: c,
 						tabIndex: -1,
 						children: "Review Excel inputs"
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("p", {
+					/* @__PURE__ */ (0, U.jsxs)("p", {
 						className: "excelFilename",
 						children: [m, " · USD dollars · fixed-rate, fully amortizing monthly loan"]
 					}),
-					/* @__PURE__ */ (0, W.jsx)("p", { children: "Correct inputs here or select a replacement workbook. An entirely blank guarantor column means no guarantor. Evaluation sends only the reviewed assessment fields. Saving is a separate action." }),
-					te.length > 0 && /* @__PURE__ */ (0, W.jsxs)("section", {
+					/* @__PURE__ */ (0, U.jsx)("p", { children: "Correct inputs here or select a replacement workbook. An entirely blank guarantor column means no guarantor. Evaluation sends only the reviewed assessment fields. Saving is a separate action." }),
+					te.length > 0 && /* @__PURE__ */ (0, U.jsxs)("section", {
 						className: "validationSummary",
 						role: "region",
 						"aria-label": "Excel validation summary",
 						"aria-live": "polite",
-						children: [/* @__PURE__ */ (0, W.jsxs)("h2", { children: [
+						children: [/* @__PURE__ */ (0, U.jsxs)("h2", { children: [
 							"Review ",
 							te.length,
 							" input",
 							" ",
 							te.length === 1 ? "issue" : "issues"
-						] }), /* @__PURE__ */ (0, W.jsx)("ul", { children: te.map((e, t) => /* @__PURE__ */ (0, W.jsx)("li", { children: /* @__PURE__ */ (0, W.jsxs)("button", {
+						] }), /* @__PURE__ */ (0, U.jsx)("ul", { children: te.map((e, t) => /* @__PURE__ */ (0, U.jsx)("li", { children: /* @__PURE__ */ (0, U.jsxs)("button", {
 							type: "button",
-							onClick: () => qr(e.pointer, s.current),
+							onClick: () => Jr(e.pointer, s.current),
 							children: [
 								e.sheet,
 								e.cell ? `!${e.cell}` : "",
@@ -15057,17 +15063,17 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 							]
 						}) }, `${e.pointer}:${t}`)) })]
 					}),
-					Wo.map((t) => /* @__PURE__ */ (0, W.jsxs)("details", {
+					Go.map((t) => /* @__PURE__ */ (0, U.jsxs)("details", {
 						className: "excelSheet",
 						open: t.name === "Borrower",
-						children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: t.name }), /* @__PURE__ */ (0, W.jsx)("div", {
+						children: [/* @__PURE__ */ (0, U.jsx)("summary", { children: t.name }), /* @__PURE__ */ (0, U.jsx)("div", {
 							className: "formGrid",
 							children: f.fields.filter((e) => e.sheet === t.name).map((t) => {
 								let n = f.fields.indexOf(t), r = `${o}-${n}`, i = te.find((e) => e.pointer === t.pointer);
-								return /* @__PURE__ */ (0, W.jsxs)("div", {
+								return /* @__PURE__ */ (0, U.jsxs)("div", {
 									className: "formField",
 									children: [
-										/* @__PURE__ */ (0, W.jsxs)("label", {
+										/* @__PURE__ */ (0, U.jsxs)("label", {
 											htmlFor: r,
 											children: [
 												t.label,
@@ -15075,7 +15081,7 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 												t.group
 											]
 										}),
-										/* @__PURE__ */ (0, W.jsx)("input", {
+										/* @__PURE__ */ (0, U.jsx)("input", {
 											id: r,
 											"data-pointer": t.pointer,
 											type: "text",
@@ -15083,13 +15089,13 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 											value: t.value,
 											readOnly: e,
 											maxLength: 2e3,
-											placeholder: Yo[t.kind],
+											placeholder: Xo[t.kind],
 											"aria-invalid": i ? "true" : void 0,
 											"aria-describedby": `${r}-help${i ? ` ${r}-error` : ""}`,
 											onBlur: () => C((e) => /* @__PURE__ */ new Set([...e, t.pointer])),
 											onChange: (e) => w(t, e.target.value)
 										}),
-										/* @__PURE__ */ (0, W.jsxs)("small", {
+										/* @__PURE__ */ (0, U.jsxs)("small", {
 											id: `${r}-help`,
 											children: [
 												t.sheet,
@@ -15099,7 +15105,7 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 												t.helper
 											]
 										}),
-										i && /* @__PURE__ */ (0, W.jsx)("span", {
+										i && /* @__PURE__ */ (0, U.jsx)("span", {
 											className: "fieldError",
 											id: `${r}-error`,
 											children: i.message
@@ -15109,15 +15115,15 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 							})
 						})]
 					}, t.name)),
-					t && /* @__PURE__ */ (0, W.jsx)("p", {
+					t && /* @__PURE__ */ (0, U.jsx)("p", {
 						role: "status",
 						children: t
 					}),
-					d.current && r && /* @__PURE__ */ (0, W.jsxs)("p", {
+					d.current && r && /* @__PURE__ */ (0, U.jsxs)("p", {
 						role: "alert",
 						children: [r, " Your Excel review values are preserved."]
 					}),
-					/* @__PURE__ */ (0, W.jsx)("button", {
+					/* @__PURE__ */ (0, U.jsx)("button", {
 						type: "submit",
 						className: "primary",
 						"aria-busy": e,
@@ -15129,34 +15135,34 @@ function Zo({ busy: e, blocked: t, serverErrors: n, serverMessage: r, onEvaluate
 	});
 }
 // src/views/AssessmentPreparation.tsx
-function Qo({ received: e }) {
-	return /* @__PURE__ */ (0, W.jsxs)("section", {
+function $o({ received: e }) {
+	return /* @__PURE__ */ (0, U.jsxs)("section", {
 		className: "assessmentPreparation",
 		role: "status",
 		"aria-label": "Assessment preparation",
 		"aria-live": "polite",
 		"aria-atomic": "true",
-		children: [/* @__PURE__ */ (0, W.jsx)("span", {
+		children: [/* @__PURE__ */ (0, U.jsx)("span", {
 			className: "preparationSpinner",
 			"aria-hidden": "true"
-		}), /* @__PURE__ */ (0, W.jsxs)("div", {
+		}), /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "preparationContent",
 			children: [
-				/* @__PURE__ */ (0, W.jsx)("strong", { children: "Preparing your assessment" }),
-				/* @__PURE__ */ (0, W.jsx)("p", { children: e ? "Calculation received. Preparing your decision summary…" : "Waiting for the calculation service…" }),
-				/* @__PURE__ */ (0, W.jsx)("div", {
+				/* @__PURE__ */ (0, U.jsx)("strong", { children: "Preparing your assessment" }),
+				/* @__PURE__ */ (0, U.jsx)("p", { children: e ? "Calculation received. Preparing your decision summary…" : "Waiting for the calculation service…" }),
+				/* @__PURE__ */ (0, U.jsx)("div", {
 					className: "preparationTrack",
 					"aria-hidden": "true",
-					children: /* @__PURE__ */ (0, W.jsx)("span", { style: { animationDuration: `${co}ms` } })
+					children: /* @__PURE__ */ (0, U.jsx)("span", { style: { animationDuration: `${co}ms` } })
 				}),
-				/* @__PURE__ */ (0, W.jsx)("small", { children: "Your recommendation and supporting figures will appear together." })
+				/* @__PURE__ */ (0, U.jsx)("small", { children: "Your recommendation and supporting figures will appear together." })
 			]
 		})]
 	});
 }
 // src/App.tsx
-function $o({ onDisconnect: e }) {
-	let t = po(), n = zr(t), { state: r, submit: i, demo: a, upload: o } = t, [s, c] = (0, k.useState)("spread"), [l, u] = (0, k.useState)("commercial"), [d, f] = (0, k.useState)(!1), [p, m] = (0, k.useState)("dated"), [h, g] = (0, k.useState)(!1), _ = (0, k.useRef)(null), [v, y] = (0, k.useState)(1), [b, x] = (0, k.useState)(!1), [S, C] = (0, k.useState)(!1), [ee, te] = (0, k.useState)(!1), w = (0, k.useRef)(0);
+function es({ onDisconnect: e }) {
+	let t = po(), n = Br(t), { state: r, submit: i, demo: a, upload: o } = t, [s, c] = (0, k.useState)("spread"), [l, u] = (0, k.useState)("commercial"), [d, f] = (0, k.useState)(!1), [p, m] = (0, k.useState)("dated"), [h, g] = (0, k.useState)(!1), _ = (0, k.useRef)(null), [v, y] = (0, k.useState)(1), [b, x] = (0, k.useState)(!1), [S, C] = (0, k.useState)(!1), [ee, te] = (0, k.useState)(!1), w = (0, k.useRef)(0);
 	(0, k.useLayoutEffect)(() => {
 		w.current++;
 	}, [
@@ -15184,7 +15190,7 @@ function $o({ onDisconnect: e }) {
 		resetHistory: !0
 	} : pe?.kind === "edit" && ae && r.saved?.view.snapshot.case_id === pe.caseId && j?.new_value !== void 0 ? {
 		mode: ae.mode,
-		payload: Bn(ae.input, {
+		payload: Vn(ae.input, {
 			path: pe.review.path,
 			prior: pe.review.value,
 			next: j.new_value,
@@ -15195,20 +15201,20 @@ function $o({ onDisconnect: e }) {
 	} : null : null) : null, he = r.draft ? t.fieldErrors : t.writeError?.fieldErrors ?? [], M = () => {
 		g(!0), f(!1), u("commercial"), C(!1);
 	};
-	return /* @__PURE__ */ (0, W.jsx)(qi, {
+	return /* @__PURE__ */ (0, U.jsx)(qi, {
 		subject: ie.analysisSubject,
 		paused: t.inFlight,
-		children: /* @__PURE__ */ (0, W.jsxs)("main", {
+		children: /* @__PURE__ */ (0, U.jsxs)("main", {
 			className: "analystWorkspace",
 			children: [
-				/* @__PURE__ */ (0, W.jsxs)(ra, { children: [!ue && l === "commercial" && !d && !h && /* @__PURE__ */ (0, W.jsx)(ia, {
+				/* @__PURE__ */ (0, U.jsxs)(ra, { children: [!ue && l === "commercial" && !d && !h && /* @__PURE__ */ (0, U.jsx)(ia, {
 					showCases: S,
 					canSave: t.canSave,
 					onToggleCases: () => C((e) => !e),
 					onSave: (e) => {
 						T.current = e, x(!0);
 					}
-				}), /* @__PURE__ */ (0, W.jsx)(aa, {
+				}), /* @__PURE__ */ (0, U.jsx)(aa, {
 					onEditDraft: l === "commercial" && !d && !h && !ue && ae ? () => {
 						m(ae.mode), f(!0);
 					} : void 0,
@@ -15218,19 +15224,19 @@ function $o({ onDisconnect: e }) {
 					onImport: de,
 					onDisconnect: e
 				})] }),
-				/* @__PURE__ */ (0, W.jsx)(ho, { actor: r.saved?.view.snapshot.event.actor }),
-				/* @__PURE__ */ (0, W.jsxs)("nav", {
+				/* @__PURE__ */ (0, U.jsx)(ho, { actor: r.saved?.view.snapshot.event.actor }),
+				/* @__PURE__ */ (0, U.jsxs)("nav", {
 					className: "primaryNavigation",
 					"aria-label": "Underwriting workflows",
 					children: [
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",
 							ref: _,
 							"aria-current": h ? "page" : void 0,
 							onClick: M,
 							children: "Excel intake"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",
 							"aria-current": l === "commercial" && p === "dated" && !h ? "page" : void 0,
 							onClick: () => {
@@ -15238,7 +15244,7 @@ function $o({ onDisconnect: e }) {
 							},
 							children: "Commercial Assessment"
 						}),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",
 							"aria-current": l === "commercial" && p === "legacy" && !h ? "page" : void 0,
 							onClick: () => {
@@ -15246,14 +15252,14 @@ function $o({ onDisconnect: e }) {
 							},
 							children: "Undated decision"
 						}),
-						!re() && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)("button", {
+						!re() && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",
 							"aria-current": l === "consumer" ? "page" : void 0,
 							onClick: () => {
 								g(!1), u("consumer"), C(!1);
 							},
 							children: "Consumer Decision"
-						}), /* @__PURE__ */ (0, W.jsx)("button", {
+						}), /* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",
 							"aria-current": l === "sba" ? "page" : void 0,
 							onClick: () => {
@@ -15261,7 +15267,7 @@ function $o({ onDisconnect: e }) {
 							},
 							children: "SBA Screen"
 						})] }),
-						/* @__PURE__ */ (0, W.jsx)("button", {
+						/* @__PURE__ */ (0, U.jsx)("button", {
 							type: "button",
 							"aria-expanded": S,
 							onClick: () => {
@@ -15271,8 +15277,8 @@ function $o({ onDisconnect: e }) {
 						})
 					]
 				}),
-				l === "commercial" && t.preparation && /* @__PURE__ */ (0, W.jsx)(Qo, { received: t.preparation.received }, t.preparation.id),
-				l === "consumer" ? /* @__PURE__ */ (0, W.jsx)(Po, {}) : l === "sba" ? /* @__PURE__ */ (0, W.jsx)(Io, {}) : h ? /* @__PURE__ */ (0, W.jsx)(Zo, {
+				l === "commercial" && t.preparation && /* @__PURE__ */ (0, U.jsx)($o, { received: t.preparation.received }, t.preparation.id),
+				l === "consumer" ? /* @__PURE__ */ (0, U.jsx)(Fo, {}) : l === "sba" ? /* @__PURE__ */ (0, U.jsx)(Lo, {}) : h ? /* @__PURE__ */ (0, U.jsx)(Qo, {
 					busy: r.status === "evaluating",
 					blocked: t.operation || t.recoveryError || t.conflict || t.inFlight ? "Resolve the saved-write recovery banner before evaluating an imported case." : "",
 					serverErrors: t.fieldErrors,
@@ -15284,7 +15290,7 @@ function $o({ onDisconnect: e }) {
 						let n = w.current, r = await t.submitImport(e);
 						return r && n === w.current && (g(!1), c("spread")), r;
 					}
-				}) : d ? /* @__PURE__ */ (0, W.jsx)(vo, {
+				}) : d ? /* @__PURE__ */ (0, U.jsx)(vo, {
 					mode: p,
 					initial: ae?.mode === p ? ae.input : void 0,
 					serverErrors: t.fieldErrors,
@@ -15295,31 +15301,31 @@ function $o({ onDisconnect: e }) {
 						let t = w.current, n = await i(e);
 						return n && t === w.current && (f(!1), c("spread")), n;
 					}
-				}, p) : ue ? /* @__PURE__ */ (0, W.jsx)(sa, {
+				}, p) : ue ? /* @__PURE__ */ (0, U.jsx)(sa, {
 					showCases: S,
 					onExample: () => a("dated"),
 					onToggleCases: () => C((e) => !e),
 					onImport: de,
 					onExcel: M
-				}) : /* @__PURE__ */ (0, W.jsx)(oa, {
+				}) : /* @__PURE__ */ (0, U.jsx)(oa, {
 					view: ie,
 					filename: r.filename,
 					legacy: ae?.mode === "legacy"
 				}),
-				/* @__PURE__ */ (0, W.jsx)(ca, {}),
-				S && l === "commercial" && /* @__PURE__ */ (0, W.jsx)(vr, {
+				/* @__PURE__ */ (0, U.jsx)(ca, {}),
+				S && l === "commercial" && /* @__PURE__ */ (0, U.jsx)(yr, {
 					onOpen: (e) => {
 						C(!1), fe(e);
 					},
 					onClose: () => {
-						C(!1), Kn("[data-focus-fallback]")?.focus();
+						C(!1), qn("[data-focus-fallback]")?.focus();
 					}
 				}),
-				/* @__PURE__ */ (0, W.jsx)(Cr, {
+				/* @__PURE__ */ (0, U.jsx)(wr, {
 					workspace: t,
 					onOpenComparison: (e) => {
 						let n = e.record;
-						Ir(n.case_id, n.comparison_id), t.openSaved({
+						Lr(n.case_id, n.comparison_id), t.openSaved({
 							caseId: n.case_id,
 							revision: n.baseline_revision
 						}).then(() => c("stress")), t.dismissComparisonAck();
@@ -15332,7 +15338,7 @@ function $o({ onDisconnect: e }) {
 						n && E.review(n.field, n.proposal, e);
 					}
 				}),
-				!d && !h && me && he.length > 0 && /* @__PURE__ */ (0, W.jsx)(zo, {
+				!d && !h && me && he.length > 0 && /* @__PURE__ */ (0, U.jsx)(Bo, {
 					draft: me,
 					errors: he,
 					savedField: pe?.kind === "edit" ? pe.review.path : void 0,
@@ -15343,8 +15349,8 @@ function $o({ onDisconnect: e }) {
 						i && E.review(i.field, i.proposal, r);
 					}
 				}, `${r.id}:${pe?.id ?? "draft"}`),
-				l === "commercial" && !d && !h && !ue && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [
-					/* @__PURE__ */ (0, W.jsx)(Ca, {
+				l === "commercial" && !d && !h && !ue && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [
+					/* @__PURE__ */ (0, U.jsx)(Ca, {
 						state: r,
 						view: ie,
 						preparing: !!t.preparation,
@@ -15352,23 +15358,23 @@ function $o({ onDisconnect: e }) {
 						onSubmit: (e) => void i(e),
 						onOpen: fe
 					}),
-					/* @__PURE__ */ (0, W.jsx)(da, { view: ie }),
-					oe && /* @__PURE__ */ (0, W.jsx)(Sa, { assessment: oe }),
-					oe && /* @__PURE__ */ (0, W.jsx)(Ta, { assessment: oe }),
-					r.saved && /* @__PURE__ */ (0, W.jsx)(yr, {
+					/* @__PURE__ */ (0, U.jsx)(da, { view: ie }),
+					oe && /* @__PURE__ */ (0, U.jsx)(Sa, { assessment: oe }),
+					oe && /* @__PURE__ */ (0, U.jsx)(Ta, { assessment: oe }),
+					r.saved && /* @__PURE__ */ (0, U.jsx)(br, {
 						saved: r.saved,
 						active: D,
 						onOpen: fe
 					}),
-					oe && /* @__PURE__ */ (0, W.jsx)(Lo, {}),
-					D && r.saved?.view.compatibility && /* @__PURE__ */ (0, W.jsx)(wa, { view: r.saved.view }),
-					/* @__PURE__ */ (0, W.jsxs)(Yi, {
+					oe && /* @__PURE__ */ (0, U.jsx)(Ro, {}),
+					D && r.saved?.view.compatibility && /* @__PURE__ */ (0, U.jsx)(wa, { view: r.saved.view }),
+					/* @__PURE__ */ (0, U.jsxs)(Yi, {
 						label: "Workspace views",
 						tabs: Ea,
 						selected: s,
 						onSelect: c,
 						children: [
-							s === "spread" && /* @__PURE__ */ (0, W.jsx)(Ma, {
+							s === "spread" && /* @__PURE__ */ (0, U.jsx)(Ma, {
 								ready: D,
 								canEdit: t.canEdit,
 								input: O,
@@ -15379,45 +15385,45 @@ function $o({ onDisconnect: e }) {
 								onSelectPeriod: y,
 								onEdit: E.open
 							}),
-							s === "overview" && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)(qa, { view: ie }), /* @__PURE__ */ (0, W.jsx)(Ro, { kind: "breakevens" })] }),
-							s === "debt" && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)(Ya, {
+							s === "overview" && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)(qa, { view: ie }), /* @__PURE__ */ (0, U.jsx)(zo, { kind: "breakevens" })] }),
+							s === "debt" && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)(Ya, {
 								ready: D,
 								accepted: ae,
 								canEdit: t.canEdit,
 								onEdit: E.open
-							}), /* @__PURE__ */ (0, W.jsx)(Ro, { kind: "schedule" })] }),
-							s === "global" && /* @__PURE__ */ (0, W.jsx)(Xa, {
+							}), /* @__PURE__ */ (0, U.jsx)(zo, { kind: "schedule" })] }),
+							s === "global" && /* @__PURE__ */ (0, U.jsx)(Xa, {
 								ready: D,
 								accepted: ae,
 								canEdit: t.canEdit,
 								onEdit: E.open
 							}),
-							s === "stress" && /* @__PURE__ */ (0, W.jsxs)(W.Fragment, { children: [/* @__PURE__ */ (0, W.jsx)(Ro, { kind: "grid" }), /* @__PURE__ */ (0, W.jsx)(di, {
+							s === "stress" && /* @__PURE__ */ (0, U.jsxs)(U.Fragment, { children: [/* @__PURE__ */ (0, U.jsx)(zo, { kind: "grid" }), /* @__PURE__ */ (0, U.jsx)(fi, {
 								model: n,
 								onSaveBaseline: (e) => {
 									t.canSave && (T.current = e, x(!0));
 								},
 								onOpenBaseline: fe
 							})] }),
-							s === "memo" && /* @__PURE__ */ (0, W.jsx)($a, { decision: se }),
-							s === "audit" && /* @__PURE__ */ (0, W.jsxs)("div", {
+							s === "memo" && /* @__PURE__ */ (0, U.jsx)($a, { decision: se }),
+							s === "audit" && /* @__PURE__ */ (0, U.jsxs)("div", {
 								className: "historyAudit",
 								children: [
-									/* @__PURE__ */ (0, W.jsx)(eo, {
+									/* @__PURE__ */ (0, U.jsx)(eo, {
 										saved: r.saved,
 										ready: D,
 										history: r.history,
 										input: O,
 										onOpen: fe
 									}),
-									/* @__PURE__ */ (0, W.jsx)(Za, {
+									/* @__PURE__ */ (0, U.jsx)(Za, {
 										ready: D,
 										input: O,
 										assessment: oe,
 										decision: se,
 										index: le
 									}),
-									/* @__PURE__ */ (0, W.jsx)(bi, {
+									/* @__PURE__ */ (0, U.jsx)(xi, {
 										view: D ? r.saved?.view ?? null : null,
 										selection: r.saved?.selection ?? null,
 										headRevision: r.saved?.headRevision ?? null,
@@ -15431,7 +15437,7 @@ function $o({ onDisconnect: e }) {
 						]
 					})
 				] }),
-				/* @__PURE__ */ (0, W.jsx)("input", {
+				/* @__PURE__ */ (0, U.jsx)("input", {
 					ref: ne,
 					type: "file",
 					accept: ".json,application/json",
@@ -15440,7 +15446,7 @@ function $o({ onDisconnect: e }) {
 						o(e.target.files?.[0]), e.target.value = "";
 					}
 				}),
-				E.editing && /* @__PURE__ */ (0, W.jsx)($n, {
+				E.editing && /* @__PURE__ */ (0, U.jsx)(er, {
 					restoreFocus: T.current,
 					field: E.editing,
 					saved: !!r.saved,
@@ -15448,18 +15454,18 @@ function $o({ onDisconnect: e }) {
 					onCancel: E.cancel,
 					onSubmit: E.submit
 				}, `${E.editing.path}:${r.id}`),
-				b && ae?.mode === "dated" && /* @__PURE__ */ (0, W.jsx)(Zn, {
+				b && ae?.mode === "dated" && /* @__PURE__ */ (0, U.jsx)(Qn, {
 					input: ae.input,
 					restoreFocus: T.current,
 					onSave: t.save,
 					onCancel: () => x(!1)
 				}),
-				ee && /* @__PURE__ */ (0, W.jsx)(Qn, {
+				ee && /* @__PURE__ */ (0, U.jsx)($n, {
 					restoreFocus: T.current,
 					onDiscard: t.discardTracking,
 					onCancel: () => te(!1)
 				}),
-				/* @__PURE__ */ (0, W.jsxs)("footer", { children: [
+				/* @__PURE__ */ (0, U.jsxs)("footer", { children: [
 					"Spreadline · Synthetic analyst demonstration ·",
 					" ",
 					r.saved ? `Saved revisions · recorded credential ${r.saved.view.snapshot.event.actor}` : "Unsaved session workspace"
@@ -15469,7 +15475,7 @@ function $o({ onDisconnect: e }) {
 	});
 }
 // src/embeddedTransport.ts
-var es = 16777216, ts = class {
+var ts = 16777216, ns = class {
 	generation;
 	publish;
 	pending = /* @__PURE__ */ new Map();
@@ -15522,7 +15528,7 @@ var es = 16777216, ts = class {
 				this.pending.delete(n.id), e.clean(), t = !0;
 				try {
 					if (typeof n.error == "string") throw Error(n.error);
-					if (!Number.isInteger(n.status) || n.status < 200 || n.status > 599 || typeof n.body != "string" || new TextEncoder().encode(n.body).length > es || !n.headers || typeof n.headers != "object" || Object.values(n.headers).some((e) => typeof e != "string")) throw Error("Unreadable embedded response. Review any pending write before retrying.");
+					if (!Number.isInteger(n.status) || n.status < 200 || n.status > 599 || typeof n.body != "string" || new TextEncoder().encode(n.body).length > ts || !n.headers || typeof n.headers != "object" || Object.values(n.headers).some((e) => typeof e != "string")) throw Error("Unreadable embedded response. Review any pending write before retrying.");
 					e.resolve(new Response(n.body, {
 						status: n.status,
 						headers: n.headers
@@ -15539,30 +15545,30 @@ var es = 16777216, ts = class {
 		for (let e of this.pending.values()) e.clean(), e.reject(/* @__PURE__ */ Error("The embedded workspace disconnected. Review pending writes after reconnecting."));
 		this.pending.clear();
 	}
-}, ns = ":root,.themeRoot{--fs-12:12px;--fs-13:14px;--fs-14:14px;--fs-16:16px;--fs-20:20px;--fs-24:24px;--fs-28:28px;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-7:28px;--space-8:32px;--radius-sm:4px;--radius:8px;--radius-lg:12px;--font-sans:Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;--font-mono:ui-monospace, \"SF Mono\", Menlo, Consolas, monospace;--lightningcss-light:initial;--lightningcss-dark: ;--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light;--canvas:#f3f6f4;--surface:#fff;--raised:#fff;--sunken:#eef3f0;--band:#f3f8f5;--text:#14201b;--muted:#4d5b54;--subtle:#56645d;--border:#d3dcd7;--rule:#e1e8e4;--rule-strong:#9fb0a7;--border-strong:#7b8b83;--control:#fff;--control-hover:#eaf1ed;--control-border:#b4c1ba;--control-text:#14201b;--input-bg:#fff;--input-border:#7b8b83;--disabled-bg:#eef2f0;--disabled-text:#5f6c66;--disabled-border:#d3dcd7;--edit-underline:#8a9c93;--accent:#0d6845;--accent-hover:#0a5538;--on-accent:#fff;--accent-soft:#e5f2ea;--accent-border:#93c4aa;--on-accent-soft:#0d6845;--positive:#0d6845;--positive-soft:#e5f2ea;--positive-border:#93c4aa;--positive-muted:#3b5f4f;--caution:#7f5300;--caution-soft:#fbf1da;--caution-border:#d9b86d;--caution-muted:#6a5326;--negative:#a3301c;--negative-soft:#fbebe6;--negative-border:#df9f90;--negative-muted:#7c4136;--info:#2c5683;--info-soft:#e9f0f7;--info-border:#a7bfd9;--info-muted:#3f5671;--focus:#0d6845;--selection:#cbe6d6;--derived:#eef3f0;--derived-label:#3b5f4f;--ebitda-bg:#e5f2ea;--ebitda-text:#0d6845;--shadow-dialog:0 16px 40px #14201b2e, 0 2px 6px #14201b14;--backdrop:#14201b73}@media screen{:root[data-theme=dark],.themeRoot[data-theme=dark]{--lightningcss-light: ;--lightningcss-dark:initial;color-scheme:dark;--canvas:#0b0d10;--surface:#101419;--raised:#151b22;--sunken:#12191c;--band:#131a20;--text:#eef1f4;--muted:#b5bfc9;--subtle:#a5b2bd;--border:#303b46;--rule:#29333d;--rule-strong:#4a5a68;--border-strong:#556f82;--control:#18212a;--control-hover:#22313c;--control-border:#40515f;--control-text:#d4dee7;--input-bg:#18212a;--input-border:#556f82;--disabled-bg:#141a20;--disabled-text:#8c98a3;--disabled-border:#29333d;--edit-underline:#586c7c;--accent:#8de0bb;--accent-hover:#a2e8c9;--on-accent:#10291f;--accent-soft:#13241c;--accent-border:#437c63;--on-accent-soft:#c6d8cf;--positive:#8de0bb;--positive-soft:#111d18;--positive-border:#375447;--positive-muted:#a9c4b6;--caution:#e0d5a1;--caution-soft:#1d1b12;--caution-border:#6e6339;--caution-muted:#c9c1a0;--negative:#ffb5a7;--negative-soft:#211716;--negative-border:#69473e;--negative-muted:#d6b2aa;--info:#b5c9df;--info-soft:#15202a;--info-border:#4a6074;--info-muted:#aebccb;--focus:#8de0bb;--selection:#2b5543;--derived:#12191c;--derived-label:#98bdaa;--ebitda-bg:#14221b;--ebitda-text:#bce8d2;--shadow-dialog:0 16px 40px #00000080;--backdrop:#000000b8}}*{box-sizing:border-box}body{background:var(--canvas);color:var(--text);margin:0}.themeRoot{font-family:var(--font-sans);font-synthesis:none;font-variant-numeric:tabular-nums;color:var(--text);background:var(--canvas);accent-color:var(--accent);caret-color:var(--accent);scrollbar-color:var(--border-strong) transparent}.themeRoot ::selection{background:var(--selection);color:var(--text)}main{max-width:1280px;padding:var(--space-7);margin:auto}h1{font-size:var(--fs-28);margin:var(--space-1) 0 var(--space-2);letter-spacing:-.025em;overflow-wrap:anywhere}h2{margin:0 0 var(--space-3);font-size:var(--fs-16)}h3{font-size:var(--fs-14);color:var(--accent);margin-top:var(--space-6)}h4{font-size:var(--fs-14)}p{color:var(--muted);line-height:1.6}small{font-size:var(--fs-12)}a{color:var(--accent);text-underline-offset:3px}code{font-family:var(--font-mono);overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}.eyebrow{font-size:var(--fs-12);letter-spacing:.1em;color:var(--accent);font-weight:500}.fine{border-top:1px solid var(--border);margin-top:var(--space-6);padding-top:var(--space-4);font-size:var(--fs-12);overflow-wrap:anywhere}.accessGate{max-width:620px;padding-top:12vh}.accessGate form{gap:var(--space-3);display:grid}.hostingNotice{justify-content:space-between;gap:var(--space-2) var(--space-6);max-width:1280px;padding:var(--space-3) var(--space-7);color:var(--on-accent-soft);background:var(--accent-soft);border-bottom:1px solid var(--accent-border);font-size:var(--fs-12);flex-wrap:wrap;margin:auto;line-height:1.6;display:flex}.hostingNotice>span:first-child{letter-spacing:.08em;font-weight:600}.workspaceBrand{align-items:center;gap:var(--space-3) var(--space-5);padding-bottom:var(--space-4);margin-bottom:var(--space-6);border-bottom:1px solid var(--border);flex-wrap:wrap;display:flex}.wordmark{align-items:center;gap:var(--space-2);font-size:var(--fs-20);letter-spacing:-.03em;font-weight:600;display:flex}.wordmark svg{color:var(--accent);flex-shrink:0}.workspaceType{align-items:center;gap:var(--space-3);color:var(--muted);font-size:var(--fs-13);display:flex}.workspaceType>span{border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 var(--space-2);font-size:var(--fs-12);letter-spacing:.04em}.brandActions{align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-left:auto;display:flex}.caseHeader{margin-bottom:var(--space-4)}.caseHeader h1{margin:0 0 var(--space-2)}.caseMeta{align-items:center;gap:var(--space-2) var(--space-3);font-size:var(--fs-13);color:var(--muted);flex-wrap:wrap;display:flex}.modeBadge,.statusChip{min-height:24px;padding:0 var(--space-2);border-radius:var(--radius-sm);font-size:var(--fs-12);white-space:nowrap;align-items:center;font-weight:600;display:inline-flex}.modeBadge{color:var(--on-accent-soft);background:var(--accent-soft);border:1px solid var(--accent-border)}.statusChip{color:var(--caution);background:var(--caution-soft);border:1px solid var(--caution-border)}.statusChip[data-saved=true]{color:var(--info);background:var(--info-soft);border-color:var(--info-border)}.pendingNote{color:var(--info);font-weight:600}.caseSource{color:var(--subtle);font-size:var(--fs-12);overflow-wrap:anywhere;min-width:0}.legacyNote{margin:var(--space-2) 0 0;font-size:var(--fs-12)}.startScreen{padding:var(--space-4) 0 var(--space-2);margin-bottom:var(--space-6)}.startScreen h1{margin:0 0 var(--space-2)}.startLead{max-width:68ch;margin:0 0 var(--space-6)}.startOptions{gap:var(--space-4);grid-template-columns:repeat(3,minmax(0,1fr));display:grid}.startOption{align-items:flex-start;gap:var(--space-2);min-height:132px;padding:var(--space-5);text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);flex-direction:column;display:flex}@media (hover:hover){.startOption:hover{background:var(--surface);border-color:var(--accent)}}.startOption[aria-expanded=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.startOptionTitle{font-size:var(--fs-16);color:var(--text);font-weight:600}.startOptionDetail{font-size:var(--fs-13);color:var(--muted);line-height:1.6}input[type=file].primary,input[type=file].primary:hover{color:var(--text);background:0 0;border-color:#0000;font-weight:400}input[type=file].primary::file-selector-button{margin-right:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--accent);border-radius:var(--radius);background:var(--accent);color:var(--on-accent);cursor:pointer;font-weight:600}.startOption.primary .startOptionTitle,.startOption.primary .startOptionDetail{color:var(--on-accent)}.disclosureMenu{position:relative}.menuToggle{align-items:center;gap:var(--space-2);display:inline-flex}.menuToggle svg{transition:transform .12s ease-out}.menuToggle[aria-expanded=true] svg{transform:rotate(180deg)}.moreMenu{right:0;top:calc(100% + var(--space-1));z-index:20;width:244px;max-width:calc(100vw - 32px);padding:var(--space-1) 0;background:var(--raised);border:1px solid var(--border-strong);border-radius:var(--radius);box-shadow:var(--shadow-dialog);position:absolute}.menuGroup{padding:var(--space-1) 0;display:grid}.menuGroup+.menuGroup{border-top:1px solid var(--rule)}.moreMenu button{text-align:left;width:100%;padding:var(--space-2) var(--space-4);font-size:var(--fs-13);background:0 0;border:0;border-radius:0}@media (hover:hover){.moreMenu button:hover{background:var(--control-hover)}}.moreMenu button:focus-visible{outline-offset:-2px}.workspaceTabs{gap:var(--space-6);margin:var(--space-6) 0 var(--space-5);border-bottom:1px solid var(--border);scrollbar-width:thin;display:flex;overflow-x:auto}.workspaceTabs [role=tab]{padding:var(--space-3) 0;color:var(--muted);font-size:var(--fs-14);white-space:nowrap;background:0 0;border:0;border-bottom:2px solid #0000;border-radius:0;flex:none}@media (hover:hover){.workspaceTabs [role=tab]:hover{color:var(--text);background:0 0}}.workspaceTabs [role=tab][aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}.workspaceTabs [role=tab]:focus-visible{outline-offset:-2px}.tabPanel:focus-visible{outline:2px solid var(--focus);outline-offset:4px;border-radius:var(--radius-sm)}.context{gap:var(--space-2) var(--space-6);font-size:var(--fs-12);color:var(--muted);margin-top:var(--space-4);flex-wrap:wrap;display:flex}.context>span{flex:240px;line-height:1.7}footer{padding-top:var(--space-6);color:var(--subtle);font-size:var(--fs-12)}.actions{gap:var(--space-2);flex-wrap:wrap;display:flex}button{font:inherit;background:var(--control);border:1px solid var(--control-border);color:var(--control-text);padding:var(--space-2) var(--space-4);border-radius:var(--radius);cursor:pointer;transition:opacity .12s ease-out}@media (hover:hover){button:hover{background:var(--control-hover)}}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--focus);outline-offset:3px}button:disabled{background:var(--disabled-bg);border-color:var(--disabled-border);color:var(--disabled-text);cursor:not-allowed}.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}@media (hover:hover){.primary:hover{color:var(--on-accent);background:var(--accent-hover);border-color:var(--accent-hover)}}.primary:disabled{color:var(--disabled-text);background:var(--disabled-bg);border-color:var(--disabled-border)}.active{color:var(--accent);border-color:var(--accent)}.themeToggle{align-items:center;gap:var(--space-2);display:flex}.themeToggle:before{content:\"\";border:2px solid;border-radius:50%;width:10px;height:10px}.themeToggle[aria-pressed=true]{color:var(--accent)}.linkButton{color:var(--accent);font-size:inherit;text-underline-offset:3px;background:0 0;border:0;padding:0;text-decoration:underline;display:inline}@media (hover:hover){.linkButton:hover{color:var(--accent-hover);background:0 0}}.themeToggle[aria-pressed=true]:before{background:currentColor}.accessGate input,dialog input,dialog textarea,.scenarioFields input,.scenarioFields textarea,.scenarioFields select,.scenarioSelect select{width:100%;min-width:0;padding:var(--space-2) var(--space-3);color:var(--text);background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius);font:inherit;display:block}.accessGate input{padding:var(--space-3)}.warning{margin:var(--space-5) 0 var(--space-4);padding:var(--space-3) var(--space-4);border:1px solid var(--caution-border);background:var(--caution-soft);color:var(--caution);border-radius:var(--radius);font-size:var(--fs-13);overflow-wrap:anywhere}.environmentWarning{align-items:baseline;gap:var(--space-1) var(--space-3);margin:0 0 var(--space-4);padding:var(--space-2) var(--space-4);background:var(--sunken);border-color:var(--border);flex-wrap:wrap;display:flex}.environmentWarning .noticeDetail{flex-basis:100%}.environmentWarning>span{font-size:var(--fs-12);color:var(--caution);white-space:nowrap;font-weight:600}.environmentWarning p{color:var(--muted);font-size:var(--fs-12);margin:0;line-height:1.7}.pending{padding:var(--space-4);border:1px solid var(--info-border);border-radius:var(--radius);margin:var(--space-4) 0;background:var(--info-soft);overflow-wrap:anywhere}.pending p{font-size:var(--fs-13);color:var(--info-muted);margin-bottom:0}.writeNotice{border:1px solid var(--accent-border);border-radius:var(--radius);background:var(--accent-soft);color:var(--text);padding:var(--space-2) var(--space-3);font-size:var(--fs-13);overflow-wrap:anywhere}.compatibility{margin:var(--space-4) 0}.decision{align-items:stretch;gap:var(--space-2) var(--space-6);margin:var(--space-4) 0 0;padding:var(--space-4) var(--space-5);border:1px solid var(--positive-border);border-radius:var(--radius);background:var(--positive-soft);overflow-wrap:anywhere;border-left-width:6px;display:flex}.decisionStatus{flex:none;min-width:168px}.decision span,.decision small{color:var(--positive-muted);display:block}.decisionStatus span{font-size:var(--fs-12);margin-bottom:var(--space-1)}.decision strong{font-size:var(--fs-28);letter-spacing:.02em;color:var(--positive);font-weight:600;line-height:1.1;display:block}.decisionReason{flex:1;align-self:center;min-width:0}.decisionReason p{font-size:var(--fs-16);color:var(--text);max-width:70ch;margin:0;line-height:1.5}.decision small{font-size:var(--fs-12);margin-top:var(--space-1);line-height:1.6}.decision .previousResult{font-weight:600}.decision[data-outcome=review]{background:var(--caution-soft);border-color:var(--caution-border)}.decision[data-outcome=review] strong{color:var(--caution)}.decision[data-outcome=review] span,.decision[data-outcome=review] small{color:var(--caution-muted)}.decision[data-outcome=decline]{background:var(--negative-soft);border-color:var(--negative-border)}.decision[data-outcome=decline] strong{color:var(--negative)}.decision[data-outcome=decline] span,.decision[data-outcome=decline] small{color:var(--negative-muted)}.decision[data-outcome=unavailable]{background:var(--info-soft);border-color:var(--info-border)}.decision[data-outcome=unavailable] strong{color:var(--info)}.decision[data-outcome=unavailable] span,.decision[data-outcome=unavailable] small{color:var(--info-muted)}.kpiTiles{margin-top:var(--space-4);border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);grid-template-columns:repeat(6,minmax(0,1fr));display:grid;overflow:hidden}.kpiTile{gap:var(--space-1);min-width:0;padding:var(--space-4);border-left:1px solid var(--border);flex-direction:column;display:flex}.kpiTile:first-child{border-left:0}.kpiLabel{font-size:var(--fs-13);color:var(--muted)}.kpiTile strong{font-size:var(--fs-24);letter-spacing:-.02em;overflow-wrap:anywhere;font-weight:600}.kpiStatus{align-items:flex-start;gap:var(--space-2);font-size:var(--fs-12);color:var(--muted);font-weight:600;display:flex}.kpiStatus:before{content:\"\";background:var(--subtle);border-radius:50%;flex:none;width:8px;height:8px;margin-top:.4em}.kpiTile[data-state=pass] .kpiStatus{color:var(--positive)}.kpiTile[data-state=pass] .kpiStatus:before{background:var(--positive)}.kpiTile[data-state=review] .kpiStatus{color:var(--caution)}.kpiTile[data-state=review] .kpiStatus:before{background:var(--caution)}.kpiTile[data-state=fail] .kpiStatus{color:var(--negative)}.kpiTile[data-state=fail] .kpiStatus:before{background:var(--negative)}.kpiTile small{font-size:var(--fs-12);color:var(--subtle);line-height:1.5}.kpiTile .kpiCushion{padding-top:var(--space-1);color:var(--text);font-variant-numeric:tabular-nums;margin-top:auto}.grid{gap:var(--space-4);grid-template-columns:minmax(0,2.8fr) minmax(260px,1fr);display:grid}.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-width:0;padding:var(--space-6)}.panelTitle{justify-content:space-between;align-items:start;gap:var(--space-5);display:flex}.panelTitle span{font-size:var(--fs-12);color:var(--subtle);line-height:1.5}.memo{min-height:300px}.tableScroll{border:1px solid var(--border);border-radius:var(--radius-sm);max-width:100%;overflow-x:auto}.tableScroll:has(tbody th){scroll-padding-inline-start:170px}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:var(--space-3);border-bottom:1px solid var(--rule);font-size:var(--fs-13)}thead th{color:var(--subtle);font-weight:500}tbody th{z-index:1;background:var(--surface);min-width:170px;font-weight:500;position:sticky;left:0}tbody tr:nth-child(2n):not(.derived)>*{background:var(--band)}.num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}.rowEdit{font:inherit;text-align:inherit;border-radius:var(--radius-sm);padding:var(--space-1) 0;color:inherit;text-decoration:underline;-webkit-text-decoration-color:var(--edit-underline);text-decoration-color:var(--edit-underline);text-underline-offset:4px;background:0 0;border:0}@media (hover:hover){.rowEdit:hover{background:var(--control-hover);-webkit-text-decoration-color:var(--accent);text-decoration-color:var(--accent)}}.rowEdit:disabled{color:inherit;cursor:default;background:0 0;text-decoration:none}.period{font-size:var(--fs-12);white-space:nowrap;padding:var(--space-2)}.period.active{background:var(--accent-soft)}.derived,.derived th{background:var(--derived)}tbody tr:not(.derived)+.derived>*{border-top:2px solid var(--rule-strong)}.derived[data-fact=ebitda],.derived[data-fact=ebitda] th{background:var(--ebitda-bg);color:var(--ebitda-text)}.derived small{color:var(--derived-label);font-size:var(--fs-12);margin-top:var(--space-1);display:block}.metric{gap:var(--space-2);border-bottom:1px solid var(--rule);padding:var(--space-4) 0;font-size:var(--fs-13);grid-template-columns:1fr auto;display:grid}.metric strong{font-size:var(--fs-20);overflow-wrap:anywhere}.metric>span:before{content:\"\";width:6px;height:6px;margin-right:var(--space-2);background:var(--subtle);vertical-align:middle;border-radius:50%;display:inline-block}.metric[data-state=pass]>span:before{background:var(--positive)}.metric[data-state=fail]>span:before{background:var(--negative)}.metric[data-state=review]>span:before{background:var(--caution)}.metric small{color:var(--muted);grid-column:1/-1;line-height:1.7}.assumptionsGrid{gap:var(--space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.assumption{justify-content:space-between;align-items:start;gap:var(--space-3);padding:var(--space-3) 0;border-bottom:1px solid var(--rule);font-size:var(--fs-13);display:flex}.assumption strong{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}details{border:1px solid var(--border);border-radius:var(--radius);margin:var(--space-2) 0;padding:var(--space-3);font-size:var(--fs-13);overflow-wrap:anywhere}summary{cursor:pointer;color:var(--text);line-height:1.5}.operand{gap:var(--space-2);margin:var(--space-3) 0;padding:var(--space-2);border-bottom:1px solid var(--rule);font-size:var(--fs-12);overflow-wrap:anywhere;grid-template-columns:1fr auto;display:grid}.operand small{color:var(--subtle);grid-column:1/-1}.expression{font-family:var(--font-mono);font-size:var(--fs-12)}.audit{gap:var(--space-2);padding:var(--space-4) 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere;grid-template-columns:1fr auto;display:grid}.audit small{color:var(--muted);grid-column:1/-1}.overviewGrid{gap:var(--space-4);grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);display:grid}.overviewTrends{grid-column:1/-1}.overviewHeadline{font-size:var(--fs-16);color:var(--text);margin-top:0;font-weight:600}.conditionList,.factorList,.constraintList{margin:0;padding:0;list-style:none}.conditionList li,.constraintList li{justify-content:space-between;align-items:baseline;gap:var(--space-4);padding:var(--space-2) 0;border-bottom:1px solid var(--rule);font-size:var(--fs-13);display:flex}.conditionList strong,.constraintList strong{white-space:nowrap;font-variant-numeric:tabular-nums}.constraintList li[data-binding=true]{font-weight:600}.factorList li{padding:var(--space-3) 0;border-bottom:1px solid var(--rule)}.factorList li>div{justify-content:space-between;gap:var(--space-1) var(--space-3);flex-wrap:wrap;display:flex}.factorList p{margin:var(--space-1) 0;font-size:var(--fs-13)}.factorList small{color:var(--subtle)}.factorStatus{font-size:var(--fs-12);color:var(--muted);font-weight:600}.factorList [data-status=meets_approval] .factorStatus{color:var(--positive)}.factorList [data-status=review_band] .factorStatus{color:var(--caution)}.factorList [data-status=below_decline_floor] .factorStatus{color:var(--negative)}.capacityFacts{gap:var(--space-3);margin:0;display:grid}.capacityFacts dt{font-size:var(--fs-12);color:var(--muted)}.capacityFacts dd{margin:var(--space-1) 0 0;font-size:var(--fs-16);font-variant-numeric:tabular-nums;font-weight:600}.analysisNotice{font-size:var(--fs-13)}.analysisNotice p{margin-top:0}.trendGrid{gap:var(--space-6);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.trendChart{min-width:0;margin:0}.trendChart figcaption{font-size:var(--fs-13);margin-bottom:var(--space-2);font-weight:600}.trendChart svg{width:100%;height:64px;display:block}.trendBar{fill:var(--accent)}.trendBar.negative{fill:var(--negative)}.trendBaseline{stroke:var(--rule-strong);stroke-width:1px;vector-effect:non-scaling-stroke}.trendLegend{gap:var(--space-1) var(--space-5);margin:var(--space-2) 0 0;font-size:var(--fs-12);color:var(--muted);flex-wrap:wrap;padding:0;list-style:none;display:flex}.trendLegend strong{margin-left:var(--space-2);color:var(--text);font-variant-numeric:tabular-nums}.historyAudit{gap:var(--space-4);display:grid}.compatibilityJson pre{max-height:600px;overflow-y:auto}.savedContext .recordDetails>span{margin-top:var(--space-2);display:block}.savedContext{align-items:flex-start;gap:var(--space-2);margin:var(--space-4) 0;padding:var(--space-4);border:1px solid var(--accent-border);border-radius:var(--radius);background:var(--accent-soft);font-size:var(--fs-12);overflow-wrap:anywhere;flex-direction:column;display:flex}.caseList{margin:var(--space-4) 0}.caseRow{align-items:center;gap:var(--space-4);padding:var(--space-4) 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere;flex-wrap:wrap;display:flex}.caseRow>div{flex:1;min-width:180px}.caseRow h3{margin:0 0 var(--space-2)}.caseRow p,.savedEvent p{font-size:var(--fs-12)}.savedEvent{overflow-wrap:anywhere;margin:var(--space-5) 0;border-top:1px solid var(--border)}.scenariosWorkspace{gap:var(--space-4);min-width:0;display:grid}.scenariosWorkspace p,.scenariosWorkspace small{font-size:var(--fs-13)}.scenarioComposer,.originalComparison,.comparisonArchive,.scenarioResult{overflow-wrap:anywhere}.scenarioRow{margin:var(--space-5) 0;padding:var(--space-4);border:1px solid var(--control-border);border-radius:var(--radius);min-width:0}.scenarioRow legend{color:var(--accent);padding:0 var(--space-2)}.scenarioFields{gap:var(--space-4);margin-bottom:var(--space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.scenarioFields label,.scenarioSelect{min-width:0;font-size:var(--fs-13);display:block}.scenarioFields input,.scenarioFields textarea,.scenarioFields select,.scenarioSelect select{margin:var(--space-2) 0}.scenarioFields small{color:var(--subtle);line-height:1.5}.scenarioRationale{grid-column:1/-1}.scenarioOutcome strong{color:var(--positive)}.scenarioOutcome [data-outcome=review]{color:var(--caution)}.scenarioOutcome [data-outcome=decline]{color:var(--negative)}.scenarioFact{padding:var(--space-2) 0;border-bottom:1px solid var(--rule)}.scenarioFact h4{margin:var(--space-2) 0}.scenarioResult td small{white-space:normal;max-width:200px;display:block}.scenarioResult caption{text-align:left;font-size:var(--fs-13);color:var(--muted);padding:var(--space-3) 0}.scenariosWorkspace [role=alert]{color:var(--negative)}.originalComparisonJson pre{max-height:600px;overflow-y:auto}.reviewWorkspace{gap:var(--space-4);display:grid}.reviewWorkspace .panel{overflow-wrap:anywhere;min-width:0;margin-top:0}.reviewFacts{gap:var(--space-3) var(--space-6);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));display:grid}.reviewFacts div{min-width:0}.reviewFacts dt,.reviewMetrics span{color:var(--muted);font-size:var(--fs-12)}.reviewFacts dd{margin:var(--space-1) 0 0;font-size:var(--fs-13)}.reviewMetrics{gap:var(--space-3);grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));display:grid}.reviewMetrics>div{padding:var(--space-4);border-radius:var(--radius);background:var(--sunken)}.reviewMetrics strong,.reviewMetrics small{margin-top:var(--space-2);display:block}.reviewMetrics small{color:var(--muted)}.reviewInclude{align-items:center;gap:var(--space-2);min-height:44px;margin-top:var(--space-4);display:flex}.reviewInclude input{flex:none;width:18px;height:18px}.reviewDownload{min-width:44px;min-height:44px;color:var(--accent);margin-bottom:var(--space-3);overflow-wrap:anywhere;align-items:center;display:inline-flex}.reviewWorkspace button{white-space:normal;max-width:100%}dialog{color:var(--text);background:var(--raised);border:1px solid var(--border-strong);border-radius:var(--radius-lg);box-shadow:var(--shadow-dialog);padding:var(--space-6);overflow-wrap:anywhere;width:480px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow-y:auto}dialog::backdrop{background:var(--backdrop,#090e0c99)}dialog label{font-size:var(--fs-14);margin:var(--space-4) 0;display:block}dialog input,dialog textarea{margin-top:var(--space-2)}dialog [role=alert]{color:var(--negative);font-size:var(--fs-13)}@media (width<=1200px){.kpiTiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kpiTile:nth-child(4){border-left:0}.kpiTile:nth-child(n+4){border-top:1px solid var(--border)}}@media (width<=900px){main{padding:var(--space-5)}.grid,.overviewGrid,.startOptions{grid-template-columns:1fr}.startOption{min-height:0}.panelTitle{gap:var(--space-1);flex-direction:column}}@media (width<=600px){.workspaceBrand{gap:var(--space-3)}.workspaceType{display:none}.brandActions{width:100%;margin-left:0}.brandActions>.disclosureMenu{margin-left:auto}.workspaceTabs{gap:var(--space-5)}.kpiTiles{grid-template-columns:repeat(2,minmax(0,1fr))}.kpiTile:nth-child(n){border-left:1px solid var(--border);border-top:1px solid var(--border)}.kpiTile:nth-child(odd){border-left:0}.kpiTile:nth-child(-n+2){border-top:0}.kpiTile{padding:var(--space-3)}.kpiTile strong{font-size:var(--fs-20)}.decision{padding:var(--space-4);flex-direction:column}.decision strong{font-size:var(--fs-24)}.trendGrid{grid-template-columns:1fr}.hostingNotice{padding:var(--space-3) var(--space-5)}.scenarioFields{grid-template-columns:1fr}.caseRow>div{flex-basis:100%;min-width:0}h1{font-size:var(--fs-24)}.panel{padding:var(--space-4)}.assumptionsGrid,.operand,.audit{grid-template-columns:1fr}.operand small,.audit small{grid-column:1}.assumption{gap:var(--space-2)}.assumption strong{white-space:normal}.panelTitle span{margin-bottom:var(--space-3)}}@media print{@page{margin:14mm}:root,.themeRoot{--canvas:var(--surface)}.themeRoot{-webkit-print-color-adjust:exact;print-color-adjust:exact}main{max-width:none;padding:0}.brandActions,.workspaceTabs,.moreMenu,.startOptions,.reviewInclude,.reviewDownload,button:not(.period,.rowEdit),dialog{display:none}.period,.rowEdit{color:inherit;background:0 0;border:0;padding:0;text-decoration:none}.panel{margin-top:var(--space-6);border:0;padding:0}.grid,.overviewGrid{grid-template-columns:1fr}.tableScroll{overflow:visible}tbody th{position:static}thead{display:table-header-group}tr,.metric,.assumption,.audit,.decision,.kpiTile,.trendChart{break-inside:avoid}h2,h3{break-after:avoid}}.assessmentPreparation{align-items:flex-start;gap:var(--space-4);padding:var(--space-5);margin-block:var(--space-4);border:1px solid var(--accent-border);border-radius:var(--radius-lg);background:var(--surface);color:var(--text);display:flex}.preparationContent{flex:1;min-width:0}.preparationContent strong{font-size:var(--fs-16)}.preparationContent p{margin:var(--space-2) 0 var(--space-3);color:var(--muted)}.preparationContent small{color:var(--muted)}.preparationSpinner{border:3px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;flex:0 0 28px;height:28px;animation:.9s linear infinite preparationSpin}.preparationTrack{border-radius:var(--radius);background:var(--sunken);height:4px;margin-bottom:var(--space-3);overflow:hidden}.preparationTrack span{background:var(--accent);transform-origin:0;width:100%;height:100%;animation:linear forwards preparationFill;display:block}@keyframes preparationSpin{to{transform:rotate(360deg)}}@keyframes preparationFill{0%{transform:scaleX(.03)}to{transform:scaleX(.92)}}@media (prefers-reduced-motion:reduce){.preparationSpinner,.preparationTrack span{animation:none}.preparationTrack span{width:50%}}@media print{.assessmentPreparation{display:none}}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}:root,.themeRoot{--space-5:24px;--space-7:32px;--space-9:48px;--space-10:64px;--control-border:#7b8b83;--border:#7b8b83}@media screen{:root[data-theme=dark],.themeRoot[data-theme=dark]{--control-border:#7d8d9a;--input-border:#7d8d9a;--border:#7d8d9a}}h1,h2,h3,h4,strong,b,summary{font-weight:600}p{max-width:70ch}button,select,input:not([type=checkbox]),summary{min-height:44px}button{min-width:44px}input[type=checkbox]{flex-shrink:0;width:24px;height:24px}select,input,textarea{font-variant-numeric:tabular-nums}.primaryNavigation{gap:var(--space-2);margin:var(--space-6) 0;flex-wrap:wrap;display:flex}.primaryNavigation button{font-size:var(--fs-14);flex:160px}.primaryNavigation [aria-current=page]{color:var(--accent);border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent);font-weight:600}.sessionStatus{align-items:center;gap:var(--space-2) var(--space-4);font-size:var(--fs-12);padding:var(--space-3) 0;color:var(--muted);overflow-wrap:anywhere;flex-wrap:wrap;display:flex}.connectionBadge,.statusBadge,.allocationBadge{border:1px solid var(--border);border-radius:var(--radius-sm);padding:var(--space-1) var(--space-2);color:var(--text);background:var(--sunken);font-size:var(--fs-12);font-weight:600;display:inline-block}.requestDeadline{min-width:0;font-size:var(--fs-12);display:block}.requestSkeleton{background:var(--border);width:180px;max-width:100%;height:8px;margin-top:var(--space-1);opacity:.5;display:block}.composerPanel,.domainWorkspace,.contextPane,.analystWorkspace>*,.formField{min-width:0}.composerPanel h1{font-size:var(--fs-24)}.guidedForm{gap:var(--space-6);display:grid}.guidedForm fieldset{min-width:0;padding:var(--space-4);border:1px solid var(--border);border-radius:var(--radius);margin:0}.guidedForm legend{font-size:var(--fs-14);padding:0 var(--space-2);font-weight:600}.guidedForm details{border:1px solid var(--border);padding:var(--space-4);border-radius:var(--radius)}.guidedForm summary{cursor:pointer;align-items:center;display:flex}.guidedForm details[open]>summary{margin-bottom:var(--space-4)}.formGrid{gap:var(--space-4) var(--space-6);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.formField{align-content:start;gap:var(--space-2);display:grid}.formField label,.sampleSelector,.spreadMode{font-size:var(--fs-14);font-weight:500}.formField input,.formField select,.sampleSelector select,.spreadMode select,.caseFilters input,.caseFilters select{width:100%;min-width:0;padding:var(--space-2) var(--space-3);color:var(--text);background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);font:inherit;display:block}.formField small{color:var(--muted);font-size:var(--fs-12)}.formField input[aria-invalid=true],.formField select[aria-invalid=true]{border:2px solid var(--negative)}.fieldError{font-size:var(--fs-14);color:var(--negative)}.sampleSelector,.spreadMode{gap:var(--space-2);max-width:540px;margin-bottom:var(--space-6);display:grid}.structuralHints{gap:var(--space-2);flex-wrap:wrap;display:flex}.structuralHints>span{font-size:var(--fs-12);border:1px solid var(--border);padding:var(--space-2);border-radius:var(--radius-sm)}.structuralHints [data-valid=true]{background:var(--accent-soft)}.validationSummary{border:2px solid var(--negative);border-radius:var(--radius);padding:var(--space-4);background:var(--surface)}.validationSummary ul{padding-left:var(--space-6);margin-bottom:0}.validationSummary li small{font-size:var(--fs-12);display:block}.validationSummary button{text-align:left;overflow-wrap:anywhere;background:0 0;border:0;padding-left:0;text-decoration:underline}.checkboxField{align-items:center;gap:var(--space-3);min-height:44px;font-size:var(--fs-14);display:flex}.domainMetrics{gap:var(--space-4);margin:var(--space-6) 0;grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.domainMetrics article{border:1px solid var(--border);padding:var(--space-4);border-radius:var(--radius)}.domainMetrics article h3{margin-top:0}.domainMetrics article>strong{font-size:var(--fs-24);margin-bottom:var(--space-4);display:block}.domainWorkspace{gap:var(--space-6);overflow-wrap:anywhere;display:grid}.modelScope{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:var(--space-4);margin:var(--space-4) 0;font-size:var(--fs-14)}.modelScope p{margin-top:0}.modelScope>p{max-width:70ch}.analysisPanel{margin-top:var(--space-6)}.analysisPanel>summary{cursor:pointer;align-items:center;display:flex}.analysisPanel .tableScroll{margin-top:var(--space-4)}.scheduleScroll{max-height:480px;overflow:auto}.scheduleScroll thead th{z-index:2;background:var(--surface);position:sticky;top:0}.analysisPanel table{min-width:700px}.analysisPanel caption{text-align:left;padding:var(--space-3);font-size:var(--fs-14);font-weight:600}.gridCell{vertical-align:top;min-width:180px}.gridCell>span{font-size:var(--fs-14);text-align:right;margin-top:var(--space-2);display:block}.traceLink{color:inherit;text-underline-offset:3px;font:inherit;padding:var(--space-2) var(--space-1);background:0 0;border:0;text-decoration:underline}.traceFact{margin:var(--space-2) 0;text-align:left;width:100%;display:block}.contextPane{align-content:start;gap:var(--space-4);display:grid}.traceInspector{top:var(--space-4);overflow-wrap:anywhere;max-height:calc(100vh - 32px);position:sticky;overflow:auto}.traceInspector .panelTitle{align-items:flex-start}.traceOperands{padding:0;list-style:none}.traceOperands li{gap:var(--space-2);padding:var(--space-3) 0;border-bottom:1px solid var(--border);display:grid}.traceOperands strong{text-align:right;font-variant-numeric:tabular-nums}.traceOperands code,.traceOperands small{font-size:var(--fs-12)}.traceOperands [data-allocated=true]{background:var(--accent-soft);padding:var(--space-3)}.traceSupplied div{gap:var(--space-3);padding:var(--space-2) 0;grid-template-columns:1fr 1fr;display:grid}.traceSupplied dd{text-align:right;overflow-wrap:anywhere;margin:0}.reconciliationEquation{padding:var(--space-3);background:var(--sunken);border:1px solid var(--border)}.reconciliationEquation small{font-size:var(--fs-12);margin-top:var(--space-2);display:block}.editCompleteDraft{margin-bottom:var(--space-4)}.caseFilters{gap:var(--space-4);margin-bottom:var(--space-6);grid-template-columns:2fr 1fr 1fr;display:grid}.caseFilters label{gap:var(--space-2);font-size:var(--fs-14);min-width:0;display:grid}.scenarioChips{gap:var(--space-2);margin:var(--space-4) 0;flex-wrap:wrap;display:flex}.pendingPayload{white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto}@media (width<=900px){.traceInspector{max-height:none;position:static}}@media (width<=600px){main{padding:var(--space-4)}.formGrid,.caseFilters,.domainMetrics{grid-template-columns:minmax(0,1fr)}.primaryNavigation button{padding-inline:var(--space-2);flex-basis:calc(50% - 8px)}.composerPanel .panelTitle{flex-direction:column}.traceSupplied div{grid-template-columns:minmax(0,1fr)}}@media print{.primaryNavigation,.sessionStatus,.spreadMode,.editCompleteDraft{display:none}}.excelImport{min-width:0}.excelImport .sectionHeading{justify-content:space-between;align-items:flex-start;gap:var(--space-3);flex-wrap:wrap;display:flex}.excelDownloads{gap:var(--space-3);flex-wrap:wrap;margin-block:16px;display:flex}.buttonLink{border:1px solid var(--border-strong);border-radius:4px;justify-content:center;align-items:center;min-height:44px;padding:8px 16px;text-decoration:underline;display:inline-flex}.excelSheet{border:1px solid var(--border-strong);border-radius:4px;margin-block:16px;padding:12px}.excelSheet summary{cursor:pointer;align-content:center;min-height:44px;font-weight:600}.excelSheet .formGrid{margin-top:12px}.excelFilename{overflow-wrap:anywhere}.excelImport input[type=file]{width:100%;max-width:100%}.excelImport .fieldError,.excelImport small,.excelImport label{overflow-wrap:anywhere}.startScreen .startOption:first-child{grid-column:1/-1;min-width:0}.excelReadingSkeleton span{opacity:.45;background:var(--border);border-radius:4px;height:44px;display:block}", rs = /* @__PURE__ */ new WeakMap(), is = ({ parentElement: e, data: t, setStateValue: n }) => {
-	let r = rs.get(e);
-	if (r && r.transport.generation !== t.generation && (r.root.unmount(), r.transport.dispose(), rs.delete(e), r = void 0), !r) {
+}, rs = ":root,.themeRoot{--fs-12:12px;--fs-13:14px;--fs-14:14px;--fs-16:16px;--fs-20:20px;--fs-24:24px;--fs-28:28px;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-7:28px;--space-8:32px;--radius-sm:4px;--radius:8px;--radius-lg:12px;--font-sans:Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;--font-mono:ui-monospace, \"SF Mono\", Menlo, Consolas, monospace;--lightningcss-light:initial;--lightningcss-dark: ;--lightningcss-light:initial;--lightningcss-dark: ;color-scheme:light;--canvas:#f3f6f4;--surface:#fff;--raised:#fff;--sunken:#eef3f0;--band:#f3f8f5;--text:#14201b;--muted:#4d5b54;--subtle:#56645d;--border:#d3dcd7;--rule:#e1e8e4;--rule-strong:#9fb0a7;--border-strong:#7b8b83;--control:#fff;--control-hover:#eaf1ed;--control-border:#b4c1ba;--control-text:#14201b;--input-bg:#fff;--input-border:#7b8b83;--disabled-bg:#eef2f0;--disabled-text:#5f6c66;--disabled-border:#d3dcd7;--edit-underline:#8a9c93;--accent:#0d6845;--accent-hover:#0a5538;--on-accent:#fff;--accent-soft:#e5f2ea;--accent-border:#93c4aa;--on-accent-soft:#0d6845;--positive:#0d6845;--positive-soft:#e5f2ea;--positive-border:#93c4aa;--positive-muted:#3b5f4f;--caution:#7f5300;--caution-soft:#fbf1da;--caution-border:#d9b86d;--caution-muted:#6a5326;--negative:#a3301c;--negative-soft:#fbebe6;--negative-border:#df9f90;--negative-muted:#7c4136;--info:#2c5683;--info-soft:#e9f0f7;--info-border:#a7bfd9;--info-muted:#3f5671;--focus:#0d6845;--selection:#cbe6d6;--derived:#eef3f0;--derived-label:#3b5f4f;--ebitda-bg:#e5f2ea;--ebitda-text:#0d6845;--shadow-dialog:0 16px 40px #14201b2e, 0 2px 6px #14201b14;--backdrop:#14201b73}@media screen{:root[data-theme=dark],.themeRoot[data-theme=dark]{--lightningcss-light: ;--lightningcss-dark:initial;color-scheme:dark;--canvas:#0b0d10;--surface:#101419;--raised:#151b22;--sunken:#12191c;--band:#131a20;--text:#eef1f4;--muted:#b5bfc9;--subtle:#a5b2bd;--border:#303b46;--rule:#29333d;--rule-strong:#4a5a68;--border-strong:#556f82;--control:#18212a;--control-hover:#22313c;--control-border:#40515f;--control-text:#d4dee7;--input-bg:#18212a;--input-border:#556f82;--disabled-bg:#141a20;--disabled-text:#8c98a3;--disabled-border:#29333d;--edit-underline:#586c7c;--accent:#8de0bb;--accent-hover:#a2e8c9;--on-accent:#10291f;--accent-soft:#13241c;--accent-border:#437c63;--on-accent-soft:#c6d8cf;--positive:#8de0bb;--positive-soft:#111d18;--positive-border:#375447;--positive-muted:#a9c4b6;--caution:#e0d5a1;--caution-soft:#1d1b12;--caution-border:#6e6339;--caution-muted:#c9c1a0;--negative:#ffb5a7;--negative-soft:#211716;--negative-border:#69473e;--negative-muted:#d6b2aa;--info:#b5c9df;--info-soft:#15202a;--info-border:#4a6074;--info-muted:#aebccb;--focus:#8de0bb;--selection:#2b5543;--derived:#12191c;--derived-label:#98bdaa;--ebitda-bg:#14221b;--ebitda-text:#bce8d2;--shadow-dialog:0 16px 40px #00000080;--backdrop:#000000b8}}*{box-sizing:border-box}body{background:var(--canvas);color:var(--text);margin:0}.themeRoot{font-family:var(--font-sans);font-synthesis:none;font-variant-numeric:tabular-nums;color:var(--text);background:var(--canvas);accent-color:var(--accent);caret-color:var(--accent);scrollbar-color:var(--border-strong) transparent}.themeRoot ::selection{background:var(--selection);color:var(--text)}main{max-width:1280px;padding:var(--space-7);margin:auto}h1{font-size:var(--fs-28);margin:var(--space-1) 0 var(--space-2);letter-spacing:-.025em;overflow-wrap:anywhere}h2{margin:0 0 var(--space-3);font-size:var(--fs-16)}h3{font-size:var(--fs-14);color:var(--accent);margin-top:var(--space-6)}h4{font-size:var(--fs-14)}p{color:var(--muted);line-height:1.6}small{font-size:var(--fs-12)}a{color:var(--accent);text-underline-offset:3px}code{font-family:var(--font-mono);overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}.eyebrow{font-size:var(--fs-12);letter-spacing:.1em;color:var(--accent);font-weight:500}.fine{border-top:1px solid var(--border);margin-top:var(--space-6);padding-top:var(--space-4);font-size:var(--fs-12);overflow-wrap:anywhere}.accessGate{max-width:620px;padding-top:12vh}.accessGate form{gap:var(--space-3);display:grid}.hostingNotice{justify-content:space-between;gap:var(--space-2) var(--space-6);max-width:1280px;padding:var(--space-3) var(--space-7);color:var(--on-accent-soft);background:var(--accent-soft);border-bottom:1px solid var(--accent-border);font-size:var(--fs-12);flex-wrap:wrap;margin:auto;line-height:1.6;display:flex}.hostingNotice>span:first-child{letter-spacing:.08em;font-weight:600}.workspaceBrand{align-items:center;gap:var(--space-3) var(--space-5);padding-bottom:var(--space-4);margin-bottom:var(--space-6);border-bottom:1px solid var(--border);flex-wrap:wrap;display:flex}.wordmark{align-items:center;gap:var(--space-2);font-size:var(--fs-20);letter-spacing:-.03em;font-weight:600;display:flex}.wordmark svg{color:var(--accent);flex-shrink:0}.workspaceType{align-items:center;gap:var(--space-3);color:var(--muted);font-size:var(--fs-13);display:flex}.workspaceType>span{border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 var(--space-2);font-size:var(--fs-12);letter-spacing:.04em}.brandActions{align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-left:auto;display:flex}.caseHeader{margin-bottom:var(--space-4)}.caseHeader h1{margin:0 0 var(--space-2)}.caseMeta{align-items:center;gap:var(--space-2) var(--space-3);font-size:var(--fs-13);color:var(--muted);flex-wrap:wrap;display:flex}.modeBadge,.statusChip{min-height:24px;padding:0 var(--space-2);border-radius:var(--radius-sm);font-size:var(--fs-12);white-space:nowrap;align-items:center;font-weight:600;display:inline-flex}.modeBadge{color:var(--on-accent-soft);background:var(--accent-soft);border:1px solid var(--accent-border)}.statusChip{color:var(--caution);background:var(--caution-soft);border:1px solid var(--caution-border)}.statusChip[data-saved=true]{color:var(--info);background:var(--info-soft);border-color:var(--info-border)}.pendingNote{color:var(--info);font-weight:600}.caseSource{color:var(--subtle);font-size:var(--fs-12);overflow-wrap:anywhere;min-width:0}.legacyNote{margin:var(--space-2) 0 0;font-size:var(--fs-12)}.startScreen{padding:var(--space-4) 0 var(--space-2);margin-bottom:var(--space-6)}.startScreen h1{margin:0 0 var(--space-2)}.startLead{max-width:68ch;margin:0 0 var(--space-6)}.startOptions{gap:var(--space-4);grid-template-columns:repeat(3,minmax(0,1fr));display:grid}.startOption{align-items:flex-start;gap:var(--space-2);min-height:132px;padding:var(--space-5);text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);flex-direction:column;display:flex}@media (hover:hover){.startOption:hover{background:var(--surface);border-color:var(--accent)}}.startOption[aria-expanded=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.startOptionTitle{font-size:var(--fs-16);color:var(--text);font-weight:600}.startOptionDetail{font-size:var(--fs-13);color:var(--muted);line-height:1.6}input[type=file].primary,input[type=file].primary:hover{color:var(--text);background:0 0;border-color:#0000;font-weight:400}input[type=file].primary::file-selector-button{margin-right:var(--space-2);padding:var(--space-2) var(--space-4);border:1px solid var(--accent);border-radius:var(--radius);background:var(--accent);color:var(--on-accent);cursor:pointer;font-weight:600}.startOption.primary .startOptionTitle,.startOption.primary .startOptionDetail{color:var(--on-accent)}.disclosureMenu{position:relative}.menuToggle{align-items:center;gap:var(--space-2);display:inline-flex}.menuToggle svg{transition:transform .12s ease-out}.menuToggle[aria-expanded=true] svg{transform:rotate(180deg)}.moreMenu{right:0;top:calc(100% + var(--space-1));z-index:20;width:244px;max-width:calc(100vw - 32px);padding:var(--space-1) 0;background:var(--raised);border:1px solid var(--border-strong);border-radius:var(--radius);box-shadow:var(--shadow-dialog);position:absolute}.menuGroup{padding:var(--space-1) 0;display:grid}.menuGroup+.menuGroup{border-top:1px solid var(--rule)}.moreMenu button{text-align:left;width:100%;padding:var(--space-2) var(--space-4);font-size:var(--fs-13);background:0 0;border:0;border-radius:0}@media (hover:hover){.moreMenu button:hover{background:var(--control-hover)}}.moreMenu button:focus-visible{outline-offset:-2px}.workspaceTabs{gap:var(--space-6);margin:var(--space-6) 0 var(--space-5);border-bottom:1px solid var(--border);scrollbar-width:thin;display:flex;overflow-x:auto}.workspaceTabs [role=tab]{padding:var(--space-3) 0;color:var(--muted);font-size:var(--fs-14);white-space:nowrap;background:0 0;border:0;border-bottom:2px solid #0000;border-radius:0;flex:none}@media (hover:hover){.workspaceTabs [role=tab]:hover{color:var(--text);background:0 0}}.workspaceTabs [role=tab][aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}.workspaceTabs [role=tab]:focus-visible{outline-offset:-2px}.tabPanel:focus-visible{outline:2px solid var(--focus);outline-offset:4px;border-radius:var(--radius-sm)}.context{gap:var(--space-2) var(--space-6);font-size:var(--fs-12);color:var(--muted);margin-top:var(--space-4);flex-wrap:wrap;display:flex}.context>span{flex:240px;line-height:1.7}footer{padding-top:var(--space-6);color:var(--subtle);font-size:var(--fs-12)}.actions{gap:var(--space-2);flex-wrap:wrap;display:flex}button{font:inherit;background:var(--control);border:1px solid var(--control-border);color:var(--control-text);padding:var(--space-2) var(--space-4);border-radius:var(--radius);cursor:pointer;transition:opacity .12s ease-out}@media (hover:hover){button:hover{background:var(--control-hover)}}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--focus);outline-offset:3px}button:disabled{background:var(--disabled-bg);border-color:var(--disabled-border);color:var(--disabled-text);cursor:not-allowed}.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}@media (hover:hover){.primary:hover{color:var(--on-accent);background:var(--accent-hover);border-color:var(--accent-hover)}}.primary:disabled{color:var(--disabled-text);background:var(--disabled-bg);border-color:var(--disabled-border)}.active{color:var(--accent);border-color:var(--accent)}.themeToggle{align-items:center;gap:var(--space-2);display:flex}.themeToggle:before{content:\"\";border:2px solid;border-radius:50%;width:10px;height:10px}.themeToggle[aria-pressed=true]{color:var(--accent)}.linkButton{color:var(--accent);font-size:inherit;text-underline-offset:3px;background:0 0;border:0;padding:0;text-decoration:underline;display:inline}@media (hover:hover){.linkButton:hover{color:var(--accent-hover);background:0 0}}.themeToggle[aria-pressed=true]:before{background:currentColor}.accessGate input,dialog input,dialog textarea,.scenarioFields input,.scenarioFields textarea,.scenarioFields select,.scenarioSelect select{width:100%;min-width:0;padding:var(--space-2) var(--space-3);color:var(--text);background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius);font:inherit;display:block}.accessGate input{padding:var(--space-3)}.warning{margin:var(--space-5) 0 var(--space-4);padding:var(--space-3) var(--space-4);border:1px solid var(--caution-border);background:var(--caution-soft);color:var(--caution);border-radius:var(--radius);font-size:var(--fs-13);overflow-wrap:anywhere}.environmentWarning{align-items:baseline;gap:var(--space-1) var(--space-3);margin:0 0 var(--space-4);padding:var(--space-2) var(--space-4);background:var(--sunken);border-color:var(--border);flex-wrap:wrap;display:flex}.environmentWarning .noticeDetail{flex-basis:100%}.environmentWarning>span{font-size:var(--fs-12);color:var(--caution);white-space:nowrap;font-weight:600}.environmentWarning p{color:var(--muted);font-size:var(--fs-12);margin:0;line-height:1.7}.pending{padding:var(--space-4);border:1px solid var(--info-border);border-radius:var(--radius);margin:var(--space-4) 0;background:var(--info-soft);overflow-wrap:anywhere}.pending p{font-size:var(--fs-13);color:var(--info-muted);margin-bottom:0}.writeNotice{border:1px solid var(--accent-border);border-radius:var(--radius);background:var(--accent-soft);color:var(--text);padding:var(--space-2) var(--space-3);font-size:var(--fs-13);overflow-wrap:anywhere}.compatibility{margin:var(--space-4) 0}.decision{align-items:stretch;gap:var(--space-2) var(--space-6);margin:var(--space-4) 0 0;padding:var(--space-4) var(--space-5);border:1px solid var(--positive-border);border-radius:var(--radius);background:var(--positive-soft);overflow-wrap:anywhere;border-left-width:6px;display:flex}.decisionStatus{flex:none;min-width:168px}.decision span,.decision small{color:var(--positive-muted);display:block}.decisionStatus span{font-size:var(--fs-12);margin-bottom:var(--space-1)}.decision strong{font-size:var(--fs-28);letter-spacing:.02em;color:var(--positive);font-weight:600;line-height:1.1;display:block}.decisionReason{flex:1;align-self:center;min-width:0}.decisionReason p{font-size:var(--fs-16);color:var(--text);max-width:70ch;margin:0;line-height:1.5}.decision small{font-size:var(--fs-12);margin-top:var(--space-1);line-height:1.6}.decision .previousResult{font-weight:600}.decision[data-outcome=review]{background:var(--caution-soft);border-color:var(--caution-border)}.decision[data-outcome=review] strong{color:var(--caution)}.decision[data-outcome=review] span,.decision[data-outcome=review] small{color:var(--caution-muted)}.decision[data-outcome=decline]{background:var(--negative-soft);border-color:var(--negative-border)}.decision[data-outcome=decline] strong{color:var(--negative)}.decision[data-outcome=decline] span,.decision[data-outcome=decline] small{color:var(--negative-muted)}.decision[data-outcome=unavailable]{background:var(--info-soft);border-color:var(--info-border)}.decision[data-outcome=unavailable] strong{color:var(--info)}.decision[data-outcome=unavailable] span,.decision[data-outcome=unavailable] small{color:var(--info-muted)}.kpiTiles{margin-top:var(--space-4);border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);grid-template-columns:repeat(6,minmax(0,1fr));display:grid;overflow:hidden}.kpiTile{gap:var(--space-1);min-width:0;padding:var(--space-4);border-left:1px solid var(--border);flex-direction:column;display:flex}.kpiTile:first-child{border-left:0}.kpiLabel{font-size:var(--fs-13);color:var(--muted)}.kpiTile strong{font-size:var(--fs-24);letter-spacing:-.02em;overflow-wrap:anywhere;font-weight:600}.kpiStatus{align-items:flex-start;gap:var(--space-2);font-size:var(--fs-12);color:var(--muted);font-weight:600;display:flex}.kpiStatus:before{content:\"\";background:var(--subtle);border-radius:50%;flex:none;width:8px;height:8px;margin-top:.4em}.kpiTile[data-state=pass] .kpiStatus{color:var(--positive)}.kpiTile[data-state=pass] .kpiStatus:before{background:var(--positive)}.kpiTile[data-state=review] .kpiStatus{color:var(--caution)}.kpiTile[data-state=review] .kpiStatus:before{background:var(--caution)}.kpiTile[data-state=fail] .kpiStatus{color:var(--negative)}.kpiTile[data-state=fail] .kpiStatus:before{background:var(--negative)}.kpiTile small{font-size:var(--fs-12);color:var(--subtle);line-height:1.5}.kpiTile .kpiCushion{padding-top:var(--space-1);color:var(--text);font-variant-numeric:tabular-nums;margin-top:auto}.grid{gap:var(--space-4);grid-template-columns:minmax(0,2.8fr) minmax(260px,1fr);display:grid}.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-width:0;padding:var(--space-6)}.panelTitle{justify-content:space-between;align-items:start;gap:var(--space-5);display:flex}.panelTitle span{font-size:var(--fs-12);color:var(--subtle);line-height:1.5}.memo{min-height:300px}.tableScroll{border:1px solid var(--border);border-radius:var(--radius-sm);max-width:100%;overflow-x:auto}.tableScroll:has(tbody th){scroll-padding-inline-start:170px}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:var(--space-3);border-bottom:1px solid var(--rule);font-size:var(--fs-13)}thead th{color:var(--subtle);font-weight:500}tbody th{z-index:1;background:var(--surface);min-width:170px;font-weight:500;position:sticky;left:0}tbody tr:nth-child(2n):not(.derived)>*{background:var(--band)}.num{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}.rowEdit{font:inherit;text-align:inherit;border-radius:var(--radius-sm);padding:var(--space-1) 0;color:inherit;text-decoration:underline;-webkit-text-decoration-color:var(--edit-underline);text-decoration-color:var(--edit-underline);text-underline-offset:4px;background:0 0;border:0}@media (hover:hover){.rowEdit:hover{background:var(--control-hover);-webkit-text-decoration-color:var(--accent);text-decoration-color:var(--accent)}}.rowEdit:disabled{color:inherit;cursor:default;background:0 0;text-decoration:none}.period{font-size:var(--fs-12);white-space:nowrap;padding:var(--space-2)}.period.active{background:var(--accent-soft)}.derived,.derived th{background:var(--derived)}tbody tr:not(.derived)+.derived>*{border-top:2px solid var(--rule-strong)}.derived[data-fact=ebitda],.derived[data-fact=ebitda] th{background:var(--ebitda-bg);color:var(--ebitda-text)}.derived small{color:var(--derived-label);font-size:var(--fs-12);margin-top:var(--space-1);display:block}.metric{gap:var(--space-2);border-bottom:1px solid var(--rule);padding:var(--space-4) 0;font-size:var(--fs-13);grid-template-columns:1fr auto;display:grid}.metric strong{font-size:var(--fs-20);overflow-wrap:anywhere}.metric>span:before{content:\"\";width:6px;height:6px;margin-right:var(--space-2);background:var(--subtle);vertical-align:middle;border-radius:50%;display:inline-block}.metric[data-state=pass]>span:before{background:var(--positive)}.metric[data-state=fail]>span:before{background:var(--negative)}.metric[data-state=review]>span:before{background:var(--caution)}.metric small{color:var(--muted);grid-column:1/-1;line-height:1.7}.assumptionsGrid{gap:var(--space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.assumption{justify-content:space-between;align-items:start;gap:var(--space-3);padding:var(--space-3) 0;border-bottom:1px solid var(--rule);font-size:var(--fs-13);display:flex}.assumption strong{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}details{border:1px solid var(--border);border-radius:var(--radius);margin:var(--space-2) 0;padding:var(--space-3);font-size:var(--fs-13);overflow-wrap:anywhere}summary{cursor:pointer;color:var(--text);line-height:1.5}.operand{gap:var(--space-2);margin:var(--space-3) 0;padding:var(--space-2);border-bottom:1px solid var(--rule);font-size:var(--fs-12);overflow-wrap:anywhere;grid-template-columns:1fr auto;display:grid}.operand small{color:var(--subtle);grid-column:1/-1}.expression{font-family:var(--font-mono);font-size:var(--fs-12)}.audit{gap:var(--space-2);padding:var(--space-4) 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere;grid-template-columns:1fr auto;display:grid}.audit small{color:var(--muted);grid-column:1/-1}.overviewGrid{gap:var(--space-4);grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);display:grid}.overviewTrends{grid-column:1/-1}.overviewHeadline{font-size:var(--fs-16);color:var(--text);margin-top:0;font-weight:600}.conditionList,.factorList,.constraintList{margin:0;padding:0;list-style:none}.conditionList li,.constraintList li{justify-content:space-between;align-items:baseline;gap:var(--space-4);padding:var(--space-2) 0;border-bottom:1px solid var(--rule);font-size:var(--fs-13);display:flex}.conditionList strong,.constraintList strong{white-space:nowrap;font-variant-numeric:tabular-nums}.constraintList li[data-binding=true]{font-weight:600}.factorList li{padding:var(--space-3) 0;border-bottom:1px solid var(--rule)}.factorList li>div{justify-content:space-between;gap:var(--space-1) var(--space-3);flex-wrap:wrap;display:flex}.factorList p{margin:var(--space-1) 0;font-size:var(--fs-13)}.factorList small{color:var(--subtle)}.factorStatus{font-size:var(--fs-12);color:var(--muted);font-weight:600}.factorList [data-status=meets_approval] .factorStatus{color:var(--positive)}.factorList [data-status=review_band] .factorStatus{color:var(--caution)}.factorList [data-status=below_decline_floor] .factorStatus{color:var(--negative)}.capacityFacts{gap:var(--space-3);margin:0;display:grid}.capacityFacts dt{font-size:var(--fs-12);color:var(--muted)}.capacityFacts dd{margin:var(--space-1) 0 0;font-size:var(--fs-16);font-variant-numeric:tabular-nums;font-weight:600}.analysisNotice{font-size:var(--fs-13)}.analysisNotice p{margin-top:0}.trendGrid{gap:var(--space-6);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.trendChart{min-width:0;margin:0}.trendChart figcaption{font-size:var(--fs-13);margin-bottom:var(--space-2);font-weight:600}.trendChart svg{width:100%;height:64px;display:block}.trendBar{fill:var(--accent)}.trendBar.negative{fill:var(--negative)}.trendBaseline{stroke:var(--rule-strong);stroke-width:1px;vector-effect:non-scaling-stroke}.trendLegend{gap:var(--space-1) var(--space-5);margin:var(--space-2) 0 0;font-size:var(--fs-12);color:var(--muted);flex-wrap:wrap;padding:0;list-style:none;display:flex}.trendLegend strong{margin-left:var(--space-2);color:var(--text);font-variant-numeric:tabular-nums}.historyAudit{gap:var(--space-4);display:grid}.compatibilityJson pre{max-height:600px;overflow-y:auto}.savedContext .recordDetails>span{margin-top:var(--space-2);display:block}.savedContext{align-items:flex-start;gap:var(--space-2);margin:var(--space-4) 0;padding:var(--space-4);border:1px solid var(--accent-border);border-radius:var(--radius);background:var(--accent-soft);font-size:var(--fs-12);overflow-wrap:anywhere;flex-direction:column;display:flex}.caseList{margin:var(--space-4) 0}.caseRow{align-items:center;gap:var(--space-4);padding:var(--space-4) 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere;flex-wrap:wrap;display:flex}.caseRow>div{flex:1;min-width:180px}.caseRow h3{margin:0 0 var(--space-2)}.caseRow p,.savedEvent p{font-size:var(--fs-12)}.savedEvent{overflow-wrap:anywhere;margin:var(--space-5) 0;border-top:1px solid var(--border)}.scenariosWorkspace{gap:var(--space-4);min-width:0;display:grid}.scenariosWorkspace p,.scenariosWorkspace small{font-size:var(--fs-13)}.scenarioComposer,.originalComparison,.comparisonArchive,.scenarioResult{overflow-wrap:anywhere}.scenarioRow{margin:var(--space-5) 0;padding:var(--space-4);border:1px solid var(--control-border);border-radius:var(--radius);min-width:0}.scenarioRow legend{color:var(--accent);padding:0 var(--space-2)}.scenarioFields{gap:var(--space-4);margin-bottom:var(--space-4);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.scenarioFields label,.scenarioSelect{min-width:0;font-size:var(--fs-13);display:block}.scenarioFields input,.scenarioFields textarea,.scenarioFields select,.scenarioSelect select{margin:var(--space-2) 0}.scenarioFields small{color:var(--subtle);line-height:1.5}.scenarioRationale{grid-column:1/-1}.scenarioOutcome strong{color:var(--positive)}.scenarioOutcome [data-outcome=review]{color:var(--caution)}.scenarioOutcome [data-outcome=decline]{color:var(--negative)}.scenarioFact{padding:var(--space-2) 0;border-bottom:1px solid var(--rule)}.scenarioFact h4{margin:var(--space-2) 0}.scenarioResult td small{white-space:normal;max-width:200px;display:block}.scenarioResult caption{text-align:left;font-size:var(--fs-13);color:var(--muted);padding:var(--space-3) 0}.scenariosWorkspace [role=alert]{color:var(--negative)}.originalComparisonJson pre{max-height:600px;overflow-y:auto}.reviewWorkspace{gap:var(--space-4);display:grid}.reviewWorkspace .panel{overflow-wrap:anywhere;min-width:0;margin-top:0}.reviewFacts{gap:var(--space-3) var(--space-6);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));display:grid}.reviewFacts div{min-width:0}.reviewFacts dt,.reviewMetrics span{color:var(--muted);font-size:var(--fs-12)}.reviewFacts dd{margin:var(--space-1) 0 0;font-size:var(--fs-13)}.reviewMetrics{gap:var(--space-3);grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));display:grid}.reviewMetrics>div{padding:var(--space-4);border-radius:var(--radius);background:var(--sunken)}.reviewMetrics strong,.reviewMetrics small{margin-top:var(--space-2);display:block}.reviewMetrics small{color:var(--muted)}.reviewInclude{align-items:center;gap:var(--space-2);min-height:44px;margin-top:var(--space-4);display:flex}.reviewInclude input{flex:none;width:18px;height:18px}.reviewDownload{min-width:44px;min-height:44px;color:var(--accent);margin-bottom:var(--space-3);overflow-wrap:anywhere;align-items:center;display:inline-flex}.reviewWorkspace button{white-space:normal;max-width:100%}dialog{color:var(--text);background:var(--raised);border:1px solid var(--border-strong);border-radius:var(--radius-lg);box-shadow:var(--shadow-dialog);padding:var(--space-6);overflow-wrap:anywhere;width:480px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow-y:auto}dialog::backdrop{background:var(--backdrop,#090e0c99)}dialog label{font-size:var(--fs-14);margin:var(--space-4) 0;display:block}dialog input,dialog textarea{margin-top:var(--space-2)}dialog [role=alert]{color:var(--negative);font-size:var(--fs-13)}@media (width<=1200px){.kpiTiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kpiTile:nth-child(4){border-left:0}.kpiTile:nth-child(n+4){border-top:1px solid var(--border)}}@media (width<=900px){main{padding:var(--space-5)}.grid,.overviewGrid,.startOptions{grid-template-columns:1fr}.startOption{min-height:0}.panelTitle{gap:var(--space-1);flex-direction:column}}@media (width<=600px){.workspaceBrand{gap:var(--space-3)}.workspaceType{display:none}.brandActions{width:100%;margin-left:0}.brandActions>.disclosureMenu{margin-left:auto}.workspaceTabs{gap:var(--space-5)}.kpiTiles{grid-template-columns:repeat(2,minmax(0,1fr))}.kpiTile:nth-child(n){border-left:1px solid var(--border);border-top:1px solid var(--border)}.kpiTile:nth-child(odd){border-left:0}.kpiTile:nth-child(-n+2){border-top:0}.kpiTile{padding:var(--space-3)}.kpiTile strong{font-size:var(--fs-20)}.decision{padding:var(--space-4);flex-direction:column}.decision strong{font-size:var(--fs-24)}.trendGrid{grid-template-columns:1fr}.hostingNotice{padding:var(--space-3) var(--space-5)}.scenarioFields{grid-template-columns:1fr}.caseRow>div{flex-basis:100%;min-width:0}h1{font-size:var(--fs-24)}.panel{padding:var(--space-4)}.assumptionsGrid,.operand,.audit{grid-template-columns:1fr}.operand small,.audit small{grid-column:1}.assumption{gap:var(--space-2)}.assumption strong{white-space:normal}.panelTitle span{margin-bottom:var(--space-3)}}@media print{@page{margin:14mm}:root,.themeRoot{--canvas:var(--surface)}.themeRoot{-webkit-print-color-adjust:exact;print-color-adjust:exact}main{max-width:none;padding:0}.brandActions,.workspaceTabs,.moreMenu,.startOptions,.reviewInclude,.reviewDownload,button:not(.period,.rowEdit),dialog{display:none}.period,.rowEdit{color:inherit;background:0 0;border:0;padding:0;text-decoration:none}.panel{margin-top:var(--space-6);border:0;padding:0}.grid,.overviewGrid{grid-template-columns:1fr}.tableScroll{overflow:visible}tbody th{position:static}thead{display:table-header-group}tr,.metric,.assumption,.audit,.decision,.kpiTile,.trendChart{break-inside:avoid}h2,h3{break-after:avoid}}.assessmentPreparation{align-items:flex-start;gap:var(--space-4);padding:var(--space-5);margin-block:var(--space-4);border:1px solid var(--accent-border);border-radius:var(--radius-lg);background:var(--surface);color:var(--text);display:flex}.preparationContent{flex:1;min-width:0}.preparationContent strong{font-size:var(--fs-16)}.preparationContent p{margin:var(--space-2) 0 var(--space-3);color:var(--muted)}.preparationContent small{color:var(--muted)}.preparationSpinner{border:3px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;flex:0 0 28px;height:28px;animation:.9s linear infinite preparationSpin}.preparationTrack{border-radius:var(--radius);background:var(--sunken);height:4px;margin-bottom:var(--space-3);overflow:hidden}.preparationTrack span{background:var(--accent);transform-origin:0;width:100%;height:100%;animation:linear forwards preparationFill;display:block}@keyframes preparationSpin{to{transform:rotate(360deg)}}@keyframes preparationFill{0%{transform:scaleX(.03)}to{transform:scaleX(.92)}}@media (prefers-reduced-motion:reduce){.preparationSpinner,.preparationTrack span{animation:none}.preparationTrack span{width:50%}}@media print{.assessmentPreparation{display:none}}@media (prefers-reduced-motion:reduce){*,:before,:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}:root,.themeRoot{--space-5:24px;--space-7:32px;--space-9:48px;--space-10:64px;--control-border:#7b8b83;--border:#7b8b83}@media screen{:root[data-theme=dark],.themeRoot[data-theme=dark]{--control-border:#7d8d9a;--input-border:#7d8d9a;--border:#7d8d9a}}h1,h2,h3,h4,strong,b,summary{font-weight:600}p{max-width:70ch}button,select,input:not([type=checkbox]),summary{min-height:44px}button{min-width:44px}input[type=checkbox]{flex-shrink:0;width:24px;height:24px}select,input,textarea{font-variant-numeric:tabular-nums}.primaryNavigation{gap:var(--space-2);margin:var(--space-6) 0;flex-wrap:wrap;display:flex}.primaryNavigation button{font-size:var(--fs-14);flex:160px}.primaryNavigation [aria-current=page]{color:var(--accent);border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent);font-weight:600}.sessionStatus{align-items:center;gap:var(--space-2) var(--space-4);font-size:var(--fs-12);padding:var(--space-3) 0;color:var(--muted);overflow-wrap:anywhere;flex-wrap:wrap;display:flex}.connectionBadge,.statusBadge,.allocationBadge{border:1px solid var(--border);border-radius:var(--radius-sm);padding:var(--space-1) var(--space-2);color:var(--text);background:var(--sunken);font-size:var(--fs-12);font-weight:600;display:inline-block}.requestDeadline{min-width:0;font-size:var(--fs-12);display:block}.requestSkeleton{background:var(--border);width:180px;max-width:100%;height:8px;margin-top:var(--space-1);opacity:.5;display:block}.composerPanel,.domainWorkspace,.contextPane,.analystWorkspace>*,.formField{min-width:0}.composerPanel h1{font-size:var(--fs-24)}.guidedForm{gap:var(--space-6);display:grid}.guidedForm fieldset{min-width:0;padding:var(--space-4);border:1px solid var(--border);border-radius:var(--radius);margin:0}.guidedForm legend{font-size:var(--fs-14);padding:0 var(--space-2);font-weight:600}.guidedForm details{border:1px solid var(--border);padding:var(--space-4);border-radius:var(--radius)}.guidedForm summary{cursor:pointer;align-items:center;display:flex}.guidedForm details[open]>summary{margin-bottom:var(--space-4)}.formGrid{gap:var(--space-4) var(--space-6);grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.formField{align-content:start;gap:var(--space-2);display:grid}.formField label,.sampleSelector,.spreadMode{font-size:var(--fs-14);font-weight:500}.formField input,.formField select,.sampleSelector select,.spreadMode select,.caseFilters input,.caseFilters select{width:100%;min-width:0;padding:var(--space-2) var(--space-3);color:var(--text);background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);font:inherit;display:block}.formField small{color:var(--muted);font-size:var(--fs-12)}.formField input[aria-invalid=true],.formField select[aria-invalid=true]{border:2px solid var(--negative)}.fieldError{font-size:var(--fs-14);color:var(--negative)}.sampleSelector,.spreadMode{gap:var(--space-2);max-width:540px;margin-bottom:var(--space-6);display:grid}.structuralHints{gap:var(--space-2);flex-wrap:wrap;display:flex}.structuralHints>span{font-size:var(--fs-12);border:1px solid var(--border);padding:var(--space-2);border-radius:var(--radius-sm)}.structuralHints [data-valid=true]{background:var(--accent-soft)}.validationSummary{border:2px solid var(--negative);border-radius:var(--radius);padding:var(--space-4);background:var(--surface)}.validationSummary ul{padding-left:var(--space-6);margin-bottom:0}.validationSummary li small{font-size:var(--fs-12);display:block}.validationSummary button{text-align:left;overflow-wrap:anywhere;background:0 0;border:0;padding-left:0;text-decoration:underline}.checkboxField{align-items:center;gap:var(--space-3);min-height:44px;font-size:var(--fs-14);display:flex}.domainMetrics{gap:var(--space-4);margin:var(--space-6) 0;grid-template-columns:repeat(2,minmax(0,1fr));display:grid}.domainMetrics article{border:1px solid var(--border);padding:var(--space-4);border-radius:var(--radius)}.domainMetrics article h3{margin-top:0}.domainMetrics article>strong{font-size:var(--fs-24);margin-bottom:var(--space-4);display:block}.domainWorkspace{gap:var(--space-6);overflow-wrap:anywhere;display:grid}.modelScope{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:var(--space-4);margin:var(--space-4) 0;font-size:var(--fs-14)}.modelScope p{margin-top:0}.modelScope>p{max-width:70ch}.analysisPanel{margin-top:var(--space-6)}.analysisPanel>summary{cursor:pointer;align-items:center;display:flex}.analysisPanel .tableScroll{margin-top:var(--space-4)}.scheduleScroll{max-height:480px;overflow:auto}.scheduleScroll thead th{z-index:2;background:var(--surface);position:sticky;top:0}.analysisPanel table{min-width:700px}.analysisPanel caption{text-align:left;padding:var(--space-3);font-size:var(--fs-14);font-weight:600}.gridCell{vertical-align:top;min-width:180px}.gridCell>span{font-size:var(--fs-14);text-align:right;margin-top:var(--space-2);display:block}.traceLink{color:inherit;text-underline-offset:3px;font:inherit;padding:var(--space-2) var(--space-1);background:0 0;border:0;text-decoration:underline}.traceFact{margin:var(--space-2) 0;text-align:left;width:100%;display:block}.contextPane{align-content:start;gap:var(--space-4);display:grid}.traceInspector{top:var(--space-4);overflow-wrap:anywhere;max-height:calc(100vh - 32px);position:sticky;overflow:auto}.traceInspector .panelTitle{align-items:flex-start}.traceOperands{padding:0;list-style:none}.traceOperands li{gap:var(--space-2);padding:var(--space-3) 0;border-bottom:1px solid var(--border);display:grid}.traceOperands strong{text-align:right;font-variant-numeric:tabular-nums}.traceOperands code,.traceOperands small{font-size:var(--fs-12)}.traceOperands [data-allocated=true]{background:var(--accent-soft);padding:var(--space-3)}.traceSupplied div{gap:var(--space-3);padding:var(--space-2) 0;grid-template-columns:1fr 1fr;display:grid}.traceSupplied dd{text-align:right;overflow-wrap:anywhere;margin:0}.reconciliationEquation{padding:var(--space-3);background:var(--sunken);border:1px solid var(--border)}.reconciliationEquation small{font-size:var(--fs-12);margin-top:var(--space-2);display:block}.editCompleteDraft{margin-bottom:var(--space-4)}.caseFilters{gap:var(--space-4);margin-bottom:var(--space-6);grid-template-columns:2fr 1fr 1fr;display:grid}.caseFilters label{gap:var(--space-2);font-size:var(--fs-14);min-width:0;display:grid}.scenarioChips{gap:var(--space-2);margin:var(--space-4) 0;flex-wrap:wrap;display:flex}.pendingPayload{white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto}@media (width<=900px){.traceInspector{max-height:none;position:static}}@media (width<=600px){main{padding:var(--space-4)}.formGrid,.caseFilters,.domainMetrics{grid-template-columns:minmax(0,1fr)}.primaryNavigation button{padding-inline:var(--space-2);flex-basis:calc(50% - 8px)}.composerPanel .panelTitle{flex-direction:column}.traceSupplied div{grid-template-columns:minmax(0,1fr)}}@media print{.primaryNavigation,.sessionStatus,.spreadMode,.editCompleteDraft{display:none}}.excelImport{min-width:0}.excelImport .sectionHeading{justify-content:space-between;align-items:flex-start;gap:var(--space-3);flex-wrap:wrap;display:flex}.excelDownloads{gap:var(--space-3);flex-wrap:wrap;margin-block:16px;display:flex}.buttonLink{border:1px solid var(--border-strong);border-radius:4px;justify-content:center;align-items:center;min-height:44px;padding:8px 16px;text-decoration:underline;display:inline-flex}.excelSheet{border:1px solid var(--border-strong);border-radius:4px;margin-block:16px;padding:12px}.excelSheet summary{cursor:pointer;align-content:center;min-height:44px;font-weight:600}.excelSheet .formGrid{margin-top:12px}.excelFilename{overflow-wrap:anywhere}.excelImport input[type=file]{width:100%;max-width:100%}.excelImport .fieldError,.excelImport small,.excelImport label{overflow-wrap:anywhere}.startScreen .startOption:first-child{grid-column:1/-1;min-width:0}.excelReadingSkeleton span{opacity:.45;background:var(--border);border-radius:4px;height:44px;display:block}", is = /* @__PURE__ */ new WeakMap(), as = ({ parentElement: e, data: t, setStateValue: n }) => {
+	let r = is.get(e);
+	if (r && r.transport.generation !== t.generation && (r.root.unmount(), r.transport.dispose(), is.delete(e), r = void 0), !r) {
 		let i = e.querySelector(".react-root");
 		if (!i) throw Error("Workspace mount unavailable");
 		let a = document.createElement("style");
-		a.textContent = ns, e.prepend(a), Gn(e);
-		let o = new ts(t.generation, (e) => n("requests", e));
+		a.textContent = rs, e.prepend(a), Kn(e);
+		let o = new ns(t.generation, (e) => n("requests", e));
 		ne(t.generation, o.request);
 		let c = (0, s.createRoot)(i);
 		r = {
 			root: c,
 			transport: o
-		}, rs.set(e, r), c.render(/* @__PURE__ */ (0, W.jsx)(ta, { children: /* @__PURE__ */ (0, W.jsxs)("div", {
+		}, is.set(e, r), c.render(/* @__PURE__ */ (0, U.jsx)(ta, { children: /* @__PURE__ */ (0, U.jsxs)("div", {
 			className: "embeddedWorkspace",
-			children: [/* @__PURE__ */ (0, W.jsxs)("div", {
+			children: [/* @__PURE__ */ (0, U.jsxs)("div", {
 				className: "hostingNotice",
-				children: [/* @__PURE__ */ (0, W.jsx)("span", { children: "TESTING WORKSPACE" }), /* @__PURE__ */ (0, W.jsx)("span", { children: "Synthetic data only · saved test cases may reset when the host restarts" })]
-			}), /* @__PURE__ */ (0, W.jsx)($o, {})]
+				children: [/* @__PURE__ */ (0, U.jsx)("span", { children: "TESTING WORKSPACE" }), /* @__PURE__ */ (0, U.jsx)("span", { children: "Synthetic data only · saved test cases may reset when the host restarts" })]
+			}), /* @__PURE__ */ (0, U.jsx)(es, {})]
 		}) }));
 	}
 	return r.transport.publish = (e) => n("requests", e), r.transport.accept(t.responses), () => {
-		let t = rs.get(e);
-		t?.root.unmount(), t?.transport.dispose(), rs.delete(e);
+		let t = is.get(e);
+		t?.root.unmount(), t?.transport.dispose(), is.delete(e);
 	};
 };
-export { is as default };
+export { as as default };
