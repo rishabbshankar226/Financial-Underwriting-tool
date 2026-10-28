@@ -175,11 +175,11 @@ const examples: Record<FieldKind, string> = {
   date: "2025-12-31",
 };
 const helpers: Record<FieldKind, string> = {
-  money: "USD decimal · up to 34 significant digits",
-  rate: "Rate [0, 1] · decimal fraction",
-  integer: "Integer",
+  money: "Dollar amount, such as 500,000",
+  rate: "Decimal rate, such as 0.105 for 10.5%",
+  integer: "Whole number",
   text: "Text",
-  date: "ISO calendar date · YYYY-MM-DD",
+  date: "Date as YYYY-MM-DD",
 };
 export function FormField({
   form,

@@ -9379,11 +9379,11 @@ var Zr = {
 	text: "Enter name or reference",
 	date: "2025-12-31"
 }, Qr = {
-	money: "USD decimal · up to 34 significant digits",
-	rate: "Rate [0, 1] · decimal fraction",
-	integer: "Integer",
+	money: "Dollar amount, such as 500,000",
+	rate: "Decimal rate, such as 0.105 for 10.5%",
+	integer: "Whole number",
 	text: "Text",
-	date: "ISO calendar date · YYYY-MM-DD"
+	date: "Date as YYYY-MM-DD"
 };
 function $r({ form: e, spec: t }) {
 	let n = (0, k.useId)(), r = e.errors.find((e) => e.pointer === t.pointer);

@@ -42,6 +42,20 @@ test("F-1: other server reasons are shown as sent, without the known-limit sente
   expect(message).not.toContain("highlighted fields");
 });
 
+test("F-2: composer fields describe their format in plain words", async ({ page }) => {
+  await openComposer(page);
+  await expect(page.getByLabel("Gross receipts · Period 1", { exact: true })).toHaveAccessibleDescription(
+    "Dollar amount, such as 500,000",
+  );
+  await expect(page.getByLabel("Annual nominal rate", { exact: true })).toHaveAccessibleDescription(
+    "Decimal rate, such as 0.105 for 10.5% · minimum 0 · maximum 1",
+  );
+  await expect(page.getByLabel("Period start · Period 1", { exact: true })).toHaveAccessibleDescription(
+    "Date as YYYY-MM-DD",
+  );
+  await expect(page.getByText("significant digits")).toHaveCount(0);
+});
+
 test("F-7: each error-summary link reaches its field on the first click", async ({ page }) => {
   await openComposer(page);
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();
