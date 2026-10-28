@@ -119,12 +119,16 @@ failing on the pre-fix file.
 | F-6 | 1 | T5 | `d45d65e` | Housing DTI says it is not returned by this prototype's decision, and that only total (back-end) DTI is judged against the DTI lines. The inspect button stays | F-6 (wording) |
 
 **Phase 5 review.**
-- **Fresh reviewer:** given only the diff and the boundaries. It found one boundary-3 edge (the memo's UCA fell
-  back to 30 rounded places), the cushion rounding that C-1 had left, print restoring the known gaps too early on
-  browsers where print doesn't block, the paste refusal reaching text and rationale fields, and several notes.
+- **Fresh reviewer:** given the branch diff and the hard boundaries, and nothing about my findings or reasoning.
+  It could also read the repo for context and run throwaway formatter scripts; it was not allowed to edit or run
+  tests. It found one boundary-3 edge (the memo's UCA fell back to 30 rounded places), the cushion rounding that
+  C-1 had left, print restoring the known gaps too early on browsers where print doesn't block, the paste refusal
+  reaching text and rationale fields, and several notes.
 - **Second reviewer:** attacked that report. It downgraded three claims (the copy losing the PD line, the housing
   copy, and the 422 text) and added two: the rationale paste, and the Streamlit host having no copy or print test.
-- **Fixed:** everything rated must-fix or should-fix, in `080d594`, `27a677c` and `bac34ea`.
+- **Fixed:** everything rated must-fix or should-fix, in `080d594`, `27a677c` and `bac34ea`, with one partial
+  exception. The copy status line no longer prints, but it still never clears and isn't re-announced on a repeat
+  copy (backlog notes).
 - **ux-audit (VectorLab):**
   - No page-level horizontal overflow at 375 or 1280 on any changed screen. The copy is verb-first and
     blameless. No modal or motion was added.
