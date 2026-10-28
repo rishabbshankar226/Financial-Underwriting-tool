@@ -174,6 +174,12 @@ test("F-8: adding or removing a period or guarantor keeps focus on a field that 
   await expect(page.getByRole("button", { name: "Add guarantor", exact: true })).toBeFocused();
 });
 
+test("F-28: the required working-capital fields are open in a new composer", async ({ page }) => {
+  await openComposer(page);
+  for (const label of ["Working capital period start", "AR increase", "Cash taxes paid"])
+    await expect(page.getByLabel(label, { exact: true })).toBeVisible();
+});
+
 test("F-7: each error-summary link reaches its field on the first click", async ({ page }) => {
   await openComposer(page);
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();

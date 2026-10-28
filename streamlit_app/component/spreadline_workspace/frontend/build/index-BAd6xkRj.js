@@ -13422,7 +13422,10 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 							})
 						]
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("details", { children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: "Working capital and cash taxes" }), b(_)] }),
+					/* @__PURE__ */ (0, W.jsxs)("details", {
+						open: !0,
+						children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: "Working capital and cash taxes" }), b(_)]
+					}),
 					/* @__PURE__ */ (0, W.jsxs)("details", { children: [
 						/* @__PURE__ */ (0, W.jsxs)("summary", { children: [
 							"Guarantors (",

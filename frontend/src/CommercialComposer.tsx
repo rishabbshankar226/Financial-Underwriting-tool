@@ -340,7 +340,8 @@ export function CommercialComposer({
             </p>
           )}
         </details>
-        <details>
+        {/* Required for an assessment, so open like the periods and debt above it. */}
+        <details open>
           <summary>Working capital and cash taxes</summary>
           {fields(capital)}
         </details>
