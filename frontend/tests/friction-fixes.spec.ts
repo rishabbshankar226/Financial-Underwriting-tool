@@ -82,6 +82,36 @@ test("F-3: memo reasons name the factor and show its formatted value and line", 
   expect(await memo.innerText()).not.toMatch(/\d{20}/);
 });
 
+test.describe("F-4", () => {
+  test.use({ permissions: ["clipboard-read", "clipboard-write"] });
+
+  test("F-4: the memo copies as text with its disclaimer and prints with the known gaps open", async ({ page }) => {
+    await page.addInitScript(() => {
+      window.print = () => {
+        const scope = document.querySelector<HTMLDetailsElement>(
+          '[aria-label="Model scope and policy limitations"] details',
+        );
+        (window as unknown as { printedScopeOpen: boolean | null }).printedScopeOpen = scope?.open ?? null;
+      };
+    });
+    await connect(page);
+    await page.getByRole("button", { name: "Try the example case", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+    await page.getByRole("tab", { name: "Credit Memo", exact: true }).click();
+    const memo = page.getByRole("tabpanel", { name: "Credit Memo" });
+    await memo.getByRole("button", { name: "Copy memo as text", exact: true }).click();
+    await expect(memo.getByRole("status")).toHaveText("Copied the memo as text.");
+    const copied = await page.evaluate(() => navigator.clipboard.readText());
+    expect(copied).toContain("Approve for prototype demonstration based on the accepted inputs.");
+    expect(copied).toContain("Business DSCR: 3.1349x");
+    expect(copied).toContain("Prototype demonstration only.");
+    expect(copied).not.toContain("Copy memo as text");
+    await memo.getByRole("button", { name: "Print memo", exact: true }).click();
+    expect(await page.evaluate(() => (window as unknown as { printedScopeOpen: boolean | null }).printedScopeOpen)).toBe(true);
+    await expect(page.getByRole("group").filter({ hasText: "Methodology scope" }).first()).not.toHaveAttribute("open");
+  });
+});
+
 test("F-7: each error-summary link reaches its field on the first click", async ({ page }) => {
   await openComposer(page);
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();
