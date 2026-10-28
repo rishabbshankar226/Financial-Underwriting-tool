@@ -1,5 +1,5 @@
 import { structuralHints } from "./formContracts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   annualFields,
   type Accepted,
@@ -14,6 +14,7 @@ import {
   FormField,
   ValidationSummary,
   cloneForm,
+  focusPointer,
   useGuidedForm,
   type FieldSpec,
   type FormValue,
@@ -78,6 +79,17 @@ export function CommercialComposer({
   useEffect(() => {
     if (serverErrors.length) form.reject(serverErrors);
   }, [serverErrors]);
+  // After a period or guarantor is added or removed, focus goes to a field that still exists: the added block's
+  // first field, or a neighbour of the removed one; otherwise it falls to the page.
+  const focusAfter = useRef<string | null>(null);
+  const addGuarantor = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const pointer = focusAfter.current;
+    if (pointer === null) return;
+    focusAfter.current = null;
+    if (pointer === "") addGuarantor.current?.focus();
+    else focusPointer(pointer, form.root.current);
+  });
   const identity = [
     spec("/borrower_name", "Borrower name", "text"),
     spec("/geography", "Geography", "text", {
@@ -287,12 +299,13 @@ export function CommercialComposer({
             {years.length > 1 && (
               <button
                 type="button"
-                onClick={() =>
+                onClick={() => {
+                  focusAfter.current = `/years/${Math.min(index, years.length - 2)}`;
                   form.setValues((previous) => ({
                     ...previous,
                     years: years.filter((_, position) => position !== index),
-                  }))
-                }
+                  }));
+                }}
               >
                 Remove period {index + 1}
               </button>
@@ -302,6 +315,7 @@ export function CommercialComposer({
         <button
           type="button"
           onClick={() => {
+            if (years.length < 10) focusAfter.current = `/years/${years.length}`;
             if (years.length < 10)
               form.setValues((previous) => ({
                 ...previous,
@@ -344,22 +358,26 @@ export function CommercialComposer({
               {fields(rows)}
               <button
                 type="button"
-                onClick={() =>
+                onClick={() => {
+                  focusAfter.current =
+                    guarantors.length > 1 ? `/guarantors/${Math.min(index, guarantors.length - 2)}` : "";
                   form.setValues((previous) => ({
                     ...previous,
                     guarantors: guarantors.filter(
                       (_, position) => position !== index,
                     ),
-                  }))
-                }
+                  }));
+                }}
               >
                 Remove guarantor {index + 1}
               </button>
             </fieldset>
           ))}
           <button
+            ref={addGuarantor}
             type="button"
-            onClick={() =>
+            onClick={() => {
+              focusAfter.current = `/guarantors/${guarantors.length}`;
               form.setValues((previous) => ({
                 ...previous,
                 guarantors: [
@@ -371,8 +389,8 @@ export function CommercialComposer({
                     ]),
                   ),
                 ],
-              }))
-            }
+              }));
+            }}
           >
             Add guarantor
           </button>

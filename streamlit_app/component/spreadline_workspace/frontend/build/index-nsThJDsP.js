@@ -9298,21 +9298,21 @@ function Jr(e, t) {
 	});
 }
 function Yr(e) {
-	let [t, n] = (0, j.useState)(e), [r, i] = (0, j.useState)([]), [a, o] = (0, j.useState)(0), s = (0, j.useRef)(null);
+	let [t, n] = (0, j.useState)(e), [r, i] = (0, j.useState)([]), [a, o] = (0, j.useState)(0), s = (0, j.useRef)(null), c = (0, j.useRef)(/* @__PURE__ */ new Set());
 	(0, j.useEffect)(() => {
 		a && r.length && Jr(r[0].pointer, s.current);
 	}, [a]);
-	function c(e) {
-		n(Vr(e)), i([]);
+	function l(e) {
+		n(Vr(e)), i([]), c.current.clear();
 	}
-	function l(e, t) {
-		n((n) => Wr(n, e.pointer, t));
+	function u(e, t) {
+		c.current.add(e.pointer), n((n) => Wr(n, e.pointer, t));
 		try {
 			Gr(e, t), i((t) => t.filter((t) => t.pointer !== e.pointer));
 		} catch {}
 	}
-	function u(e) {
-		try {
+	function d(e) {
+		if (c.current.has(e.pointer)) try {
 			Gr(e, Ur(t, e.pointer));
 		} catch (t) {
 			let n = {
@@ -9324,10 +9324,10 @@ function Yr(e) {
 			i((t) => t.some((t) => t.pointer === e.pointer) ? t.map((t) => t.pointer === e.pointer ? n : t) : [...t, n]);
 		}
 	}
-	function d(e) {
+	function f(e) {
 		i(e), o((e) => e + 1);
 	}
-	function f(e) {
+	function p(e) {
 		let n = Vr(t), r = [];
 		for (let i of e) try {
 			n = Wr(n, i.pointer, Gr(i, Ur(t, i.pointer)));
@@ -9339,18 +9339,18 @@ function Yr(e) {
 				limit: null
 			});
 		}
-		return r.length ? (d(r), null) : (i([]), n);
+		return r.length ? (f(r), null) : (i([]), n);
 	}
 	return {
 		values: t,
 		setValues: n,
 		errors: r,
 		root: s,
-		replace: c,
-		change: l,
-		blur: u,
-		reject: d,
-		prepare: f
+		replace: l,
+		change: u,
+		blur: d,
+		reject: f,
+		prepare: p
 	};
 }
 function Xr({ form: e, specs: t }) {
@@ -13259,14 +13259,19 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 	(0, j.useEffect)(() => {
 		n.length && s.reject(n);
 	}, [n]);
-	let f = [
+	let f = (0, j.useRef)(null), p = (0, j.useRef)(null);
+	(0, j.useEffect)(() => {
+		let e = f.current;
+		e !== null && (f.current = null, e === "" ? p.current?.focus() : Jr(e, s.root.current));
+	});
+	let m = [
 		bo("/borrower_name", "Borrower name", "text"),
 		bo("/geography", "Geography", "text", {
 			placeholder: "60601",
 			helper: "ZIP code or supplied geographic reference"
 		}),
 		...e === "dated" ? [bo("/assessment_as_of", "Assessment as of", "date")] : []
-	], p = u.map((t, n) => [...e === "dated" ? [bo(`/years/${n}/period_start`, `Period start · Period ${n + 1}`, "date"), bo(`/years/${n}/period_end`, `Period end · Period ${n + 1}`, "date")] : [], ...Ze.map((e) => bo(`/years/${n}/${e}`, `${ft[e]} · Period ${n + 1}`, "money", e === "interest_expense" ? { min: "0" } : {}))]), m = [
+	], h = u.map((t, n) => [...e === "dated" ? [bo(`/years/${n}/period_start`, `Period start · Period ${n + 1}`, "date"), bo(`/years/${n}/period_end`, `Period end · Period ${n + 1}`, "date")] : [], ...Ze.map((e) => bo(`/years/${n}/${e}`, `${ft[e]} · Period ${n + 1}`, "money", e === "interest_expense" ? { min: "0" } : {}))]), g = [
 		bo("/existing_debt/cpltd_annual", "Annual CPLTD", "money", { min: "0" }),
 		bo("/existing_debt/operating_lease_annual", "Annual operating lease", "money", { min: "0" }),
 		bo("/proposed_loan/amount", "Requested principal", "money", { min: "0" }),
@@ -13279,12 +13284,12 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 			max: "12000",
 			helper: e === "dated" ? "Months 12–12,000 · integer" : "Positive whole months · integer"
 		})
-	], h = [...e === "dated" ? [bo("/working_capital/period_start", "Working capital period start", "date"), bo("/working_capital/period_end", "Working capital period end", "date")] : [], ...[
+	], _ = [...e === "dated" ? [bo("/working_capital/period_start", "Working capital period start", "date"), bo("/working_capital/period_end", "Working capital period end", "date")] : [], ...[
 		"ar_increase",
 		"inventory_increase",
 		"ap_increase",
 		"cash_taxes_paid"
-	].map((e) => bo(`/working_capital/${e}`, ft[e] ?? e, "money"))], g = d.map((e, t) => [
+	].map((e) => bo(`/working_capital/${e}`, ft[e] ?? e, "money"))], v = d.map((e, t) => [
 		bo(`/guarantors/${t}/name`, `Guarantor ${t + 1} name`, "text"),
 		bo(`/guarantors/${t}/ownership_percentage`, `Guarantor ${t + 1} ownership`, "rate", {
 			min: "0",
@@ -13298,13 +13303,13 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 			"auto_loan_annual",
 			"credit_card_min_annual"
 		].map((e) => bo(`/guarantors/${t}/${e}`, `Guarantor ${t + 1} ${ft[e] ?? e.replace(/_/g, " ")}`, "money", ["wages", "interest_dividend_income"].includes(e) ? {} : { min: "0" }))
-	]), _ = [
-		...f,
-		...p.flat(),
+	]), y = [
 		...m,
-		...h,
-		...g.flat()
-	], v = (e) => /* @__PURE__ */ (0, W.jsx)("div", {
+		...h.flat(),
+		...g,
+		..._,
+		...v.flat()
+	], b = (e) => /* @__PURE__ */ (0, W.jsx)("div", {
 		className: "formGrid",
 		children: e.map((e) => /* @__PURE__ */ (0, W.jsx)($r, {
 			form: s,
@@ -13346,7 +13351,7 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 				noValidate: !0,
 				onSubmit: (t) => {
 					if (t.preventDefault(), i) return;
-					let n = s.prepare(_);
+					let n = s.prepare(y);
 					n && a({
 						mode: e,
 						payload: n,
@@ -13357,13 +13362,13 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 				children: [
 					/* @__PURE__ */ (0, W.jsx)(Xr, {
 						form: s,
-						specs: _
+						specs: y
 					}),
 					r && /* @__PURE__ */ (0, W.jsx)("p", {
 						role: "alert",
 						children: r
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("fieldset", { children: [/* @__PURE__ */ (0, W.jsx)("legend", { children: "Case identity" }), v(f)] }),
+					/* @__PURE__ */ (0, W.jsxs)("fieldset", { children: [/* @__PURE__ */ (0, W.jsx)("legend", { children: "Case identity" }), b(m)] }),
 					e === "dated" && /* @__PURE__ */ (0, W.jsxs)("div", {
 						className: "structuralHints",
 						"aria-label": "Fiscal-period structural hints",
@@ -13379,17 +13384,19 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 							children: "Structural hints are non-blocking. The server validates fiscal dates and working capital."
 						})]
 					}),
-					p.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("details", {
+					h.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("details", {
 						open: !0,
 						children: [
 							/* @__PURE__ */ (0, W.jsxs)("summary", { children: ["Financial period ", t + 1] }),
-							v(e),
+							b(e),
 							u.length > 1 && /* @__PURE__ */ (0, W.jsxs)("button", {
 								type: "button",
-								onClick: () => s.setValues((e) => ({
-									...e,
-									years: u.filter((e, n) => n !== t)
-								})),
+								onClick: () => {
+									f.current = `/years/${Math.min(t, u.length - 2)}`, s.setValues((e) => ({
+										...e,
+										years: u.filter((e, n) => n !== t)
+									}));
+								},
 								children: ["Remove period ", t + 1]
 							})
 						]
@@ -13397,7 +13404,7 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 					/* @__PURE__ */ (0, W.jsx)("button", {
 						type: "button",
 						onClick: () => {
-							u.length < 10 && s.setValues((e) => ({
+							u.length < 10 && (f.current = `/years/${u.length}`), u.length < 10 && s.setValues((e) => ({
 								...e,
 								years: [...u, Object.fromEntries(Object.keys(u[0]).map((e) => [e, ""]))]
 							}));
@@ -13408,14 +13415,14 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 						open: !0,
 						children: [
 							/* @__PURE__ */ (0, W.jsx)("summary", { children: "Debt and proposed loan" }),
-							v(m),
+							b(g),
 							e === "dated" && /* @__PURE__ */ (0, W.jsx)("p", {
 								className: "fine",
 								children: "Fixed rate · fully amortizing · monthly payments. These conventions remain explicit in the request."
 							})
 						]
 					}),
-					/* @__PURE__ */ (0, W.jsxs)("details", { children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: "Working capital and cash taxes" }), v(h)] }),
+					/* @__PURE__ */ (0, W.jsxs)("details", { children: [/* @__PURE__ */ (0, W.jsx)("summary", { children: "Working capital and cash taxes" }), b(_)] }),
 					/* @__PURE__ */ (0, W.jsxs)("details", { children: [
 						/* @__PURE__ */ (0, W.jsxs)("summary", { children: [
 							"Guarantors (",
@@ -13423,24 +13430,29 @@ function xo({ mode: e, initial: t, serverErrors: n, serverMessage: r, busy: i, o
 							")"
 						] }),
 						!d.length && /* @__PURE__ */ (0, W.jsx)("p", { children: "Business-only fallback; the backend uses full business EBITDA when guarantors are empty." }),
-						g.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("fieldset", { children: [
+						v.map((e, t) => /* @__PURE__ */ (0, W.jsxs)("fieldset", { children: [
 							/* @__PURE__ */ (0, W.jsxs)("legend", { children: ["Guarantor ", t + 1] }),
-							v(e),
+							b(e),
 							/* @__PURE__ */ (0, W.jsxs)("button", {
 								type: "button",
-								onClick: () => s.setValues((e) => ({
-									...e,
-									guarantors: d.filter((e, n) => n !== t)
-								})),
+								onClick: () => {
+									f.current = d.length > 1 ? `/guarantors/${Math.min(t, d.length - 2)}` : "", s.setValues((e) => ({
+										...e,
+										guarantors: d.filter((e, n) => n !== t)
+									}));
+								},
 								children: ["Remove guarantor ", t + 1]
 							})
 						] }, t)),
 						/* @__PURE__ */ (0, W.jsx)("button", {
+							ref: p,
 							type: "button",
-							onClick: () => s.setValues((e) => ({
-								...e,
-								guarantors: [...d, Object.fromEntries(Object.keys(io.guarantors[0]).map((e) => [e, ""]))]
-							})),
+							onClick: () => {
+								f.current = `/guarantors/${d.length}`, s.setValues((e) => ({
+									...e,
+									guarantors: [...d, Object.fromEntries(Object.keys(io.guarantors[0]).map((e) => [e, ""]))]
+								}));
+							},
 							children: "Add guarantor"
 						})
 					] }),

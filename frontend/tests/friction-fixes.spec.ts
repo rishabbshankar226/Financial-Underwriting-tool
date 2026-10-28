@@ -148,14 +148,42 @@ test("F-5: a DTI just under a policy line never reads as the line", async ({ pag
   await expect(result.getByRole("article").filter({ hasText: "Total DTI" }).getByRole("strong")).toHaveText("42.996%");
 });
 
+test("F-8: leaving a field nobody typed in shows no error; a typed invalid value still errors on blur", async ({ page }) => {
+  await openComposer(page);
+  await page.getByLabel("Gross receipts · Period 1", { exact: true }).focus();
+  await page.getByLabel("COGS · Period 1", { exact: true }).focus();
+  await expect(page.getByRole("region", { name: "Validation summary", exact: true })).toHaveCount(0);
+  await page.getByLabel("COGS · Period 1", { exact: true }).fill("12abc");
+  await page.getByLabel("Gross receipts · Period 1", { exact: true }).focus();
+  await expect(page.getByLabel("COGS · Period 1", { exact: true })).toHaveAttribute("aria-invalid", "true");
+});
+
+test("F-8: adding or removing a period or guarantor keeps focus on a field that exists", async ({ page }) => {
+  await openComposer(page);
+  await page.getByRole("button", { name: "Add financial period", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByLabel("Period start · Period 2", { exact: true })).toBeFocused();
+  await page.keyboard.type("2025-01-01");
+  await expect(page.getByLabel("Period start · Period 2", { exact: true })).toHaveValue("2025-01-01");
+  await page.getByRole("button", { name: "Remove period 2", exact: true }).click();
+  await expect(page.getByLabel("Period start · Period 1", { exact: true })).toBeFocused();
+  await page.getByText("Guarantors (0)", { exact: true }).click();
+  await page.getByRole("button", { name: "Add guarantor", exact: true }).click();
+  await expect(page.locator('[data-pointer^="/guarantors/0/"]').first()).toBeFocused();
+  await page.getByRole("button", { name: "Remove guarantor 1", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Add guarantor", exact: true })).toBeFocused();
+});
+
 test("F-7: each error-summary link reaches its field on the first click", async ({ page }) => {
   await openComposer(page);
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();
   const summary = page.getByRole("region", { name: "Validation summary", exact: true });
   await expect(summary).toBeVisible();
-  // Evaluation focuses the first invalid field; each click below blurs the field the last click reached.
-  for (const label of ["Geography", "AR increase", "Cash taxes paid", "COGS · Period 1"]) {
+  // Each field reached is given a value that is still invalid, so leaving it (the next link's mousedown) re-checks
+  // it and keeps its error; the summary must not reorder under that click.
+  for (const label of ["Gross receipts · Period 1", "AR increase", "Cash taxes paid", "COGS · Period 1"]) {
     await summary.getByRole("button", { name: new RegExp(`^${label}: `) }).click();
     await expect(page.getByLabel(label, { exact: true })).toBeFocused();
+    await page.keyboard.type("12abc");
   }
 });

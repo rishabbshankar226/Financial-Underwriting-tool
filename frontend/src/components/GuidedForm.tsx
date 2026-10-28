@@ -47,14 +47,19 @@ export function useGuidedForm(initial: FormValue) {
   const [errors, setErrors] = useState<FieldError[]>([]);
   const [focus, setFocus] = useState(0);
   const root = useRef<HTMLFormElement>(null);
+  // Fields typed in since the last reset. Leaving a field nobody typed in (focus moved there for the user, or a
+  // pass of Tab) shows no error; evaluation still checks every field.
+  const typed = useRef(new Set<string>());
   useEffect(() => {
     if (focus && errors.length) focusPointer(errors[0].pointer, root.current);
   }, [focus]);
   function replace(next: FormValue) {
     setValues(cloneForm(next));
     setErrors([]);
+    typed.current.clear();
   }
   function change(spec: FieldSpec, next: unknown) {
+    typed.current.add(spec.pointer);
     setValues((previous) => setFormValue(previous, spec.pointer, next));
     try {
       parseField(spec, next);
@@ -66,6 +71,7 @@ export function useGuidedForm(initial: FormValue) {
     }
   }
   function blur(spec: FieldSpec) {
+    if (!typed.current.has(spec.pointer)) return;
     try {
       parseField(spec, formValue(values, spec.pointer));
     } catch (reason) {
