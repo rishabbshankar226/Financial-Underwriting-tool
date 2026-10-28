@@ -103,9 +103,11 @@ Rollout:
 2. Confirm the build used Python 3.12, `/_stcore/health` returns 200, and the URL
    shows only the disabled setup screen.
 3. Set `SPREADLINE_TESTING_ENABLED` to `true`. After the redeploy, confirm the
-   access screen appears and rejects a wrong password.
-4. Unlock with the generated password and run the hosted smoke test below. Record
-   the deployed commit and URL here.
+   access screen appears and rejects a wrong password. The committed Blueprint
+   has public access on, so a new service shows the start screen here instead;
+   set `SPREADLINE_PUBLIC_ACCESS` to `false` first to verify the gate.
+4. Unlock with the generated password (not needed with public access) and run
+   the hosted smoke test below. Record the deployed commit and URL here.
 5. To open the service to the public, merge `SPREADLINE_PUBLIC_ACCESS: "true"` in
    `render.yaml`. Confirm the URL opens on the start screen with the public demo
    caption and no access screen.
