@@ -56,6 +56,32 @@ test("F-2: composer fields describe their format in plain words", async ({ page 
   await expect(page.getByText("significant digits")).toHaveCount(0);
 });
 
+async function declinedExample(page: Page): Promise<void> {
+  await connect(page);
+  await page.getByRole("button", { name: "Try the example case", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("tab", { name: "Debt & Loan", exact: true }).click();
+  await page.getByRole("button", { name: "Proposed principal", exact: true }).click();
+  await page.getByLabel("New value").fill("5000000");
+  await page.getByRole("button", { name: "Evaluate edit", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Illustrative decision", exact: true })).toContainText("DECLINE", {
+    timeout: 30_000,
+  });
+}
+
+test("F-3: memo reasons name the factor and show its formatted value and line", async ({ page }) => {
+  await declinedExample(page);
+  await page.getByRole("tab", { name: "Credit Memo", exact: true }).click();
+  const memo = page.getByRole("tabpanel", { name: "Credit Memo" });
+  const first = memo.getByRole("heading", { name: "Recorded reasons" }).locator("xpath=following-sibling::ul[1]/li[1]");
+  await expect(first).toContainText("Business DSCR of 0.6777x is below the decline floor of 1.00x.");
+  // The server's message is kept, unchanged, behind "Recorded message"; it never shows a 20-digit run.
+  const recorded = first.locator("details.recordedMessage");
+  await expect(recorded).not.toHaveAttribute("open");
+  await expect(recorded).toContainText(/^Recorded messagedscr: 0\.6777\d{20,} is below the configured prototype decline floor 1$/);
+  expect(await memo.innerText()).not.toMatch(/\d{20}/);
+});
+
 test("F-7: each error-summary link reaches its field on the first click", async ({ page }) => {
   await openComposer(page);
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();

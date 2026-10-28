@@ -923,6 +923,11 @@ dialog textarea,
 .memo {
   min-height: 300px;
 }
+.memo .recordedMessage {
+  color: var(--subtle);
+  font-size: var(--fs-12);
+  overflow-wrap: anywhere;
+}
 
 /* 7. Tables and the spread --------------------------------------------------------------------- */
 
