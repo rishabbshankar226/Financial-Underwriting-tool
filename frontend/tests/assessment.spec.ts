@@ -85,7 +85,7 @@ test("failed edits remain drafts and retry records the edit once", async ({
     .click();
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(page.locator(".audit")).toHaveCount(1);
-  await expect(page.locator(".audit")).toContainText("/years/1/gross_receipts");
+  await expect(page.locator(".audit")).toContainText("Gross receipts (period 2)");
 });
 
 import { readFileSync } from "node:fs";
@@ -347,7 +347,7 @@ test("assumption rate and signed working-capital edits use their API units", asy
   ).toContainText("-1,000");
   await openView(page, "history");
   await expect(page.locator(".audit")).toHaveCount(2);
-  await expect(page.locator(".audit").first()).toContainText("0.105 → 0.125");
+  await expect(page.locator(".audit").first()).toContainText("10.5% → 12.5%");
 });
 
 test("unavailable ratios and absent guarantors have explicit explanations", async ({

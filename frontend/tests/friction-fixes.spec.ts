@@ -180,6 +180,28 @@ test("F-28: the required working-capital fields are open in a new composer", asy
     await expect(page.getByLabel(label, { exact: true })).toBeVisible();
 });
 
+test("F-12: a saved edit in History & Audit names its field and shows exact values", async ({ page }) => {
+  await connect(page);
+  await page.getByRole("button", { name: "Try the example case", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Save case", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Save case", exact: true }).click();
+  await page.getByLabel("Save rationale").fill("Initial save");
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Saved revision context", exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "Debt & Loan", exact: true }).click();
+  await page.getByRole("button", { name: "Proposed principal", exact: true }).click();
+  await page.getByLabel("New value").fill("600000.10");
+  await page.getByLabel("Rationale").fill("Cents-level change");
+  await page.getByRole("button", { name: "Save revision", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Saved revision context", exact: true })).toContainText(/Revision 2/);
+  await page.getByRole("tab", { name: "History & Audit", exact: true }).click();
+  const event = page.getByRole("article", { name: "Selected recorded event", exact: true });
+  await expect(event.getByRole("strong")).toHaveText("Proposed principal");
+  await expect(event.getByRole("strong")).toHaveAttribute("title", "/proposed_loan/amount");
+  await expect(event).toContainText(/\$500,000 → \$600,000\.10?(?!\d)/);
+  await expect(event).toContainText("Cents-level change");
+});
+
 test("F-7: each error-summary link reaches its field on the first click", async ({ page }) => {
   await openComposer(page);
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();

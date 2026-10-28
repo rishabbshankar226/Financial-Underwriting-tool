@@ -76,6 +76,12 @@ export const assumptionFields = {
 } as const;
 
 const percentFields: readonly string[] = ["annual_rate", "ownership_percentage"];
+
+/** The editor unit of an editable path, by the same rule as `assumptionField`. */
+export function unitOfPath(path: string): EditableField["unit"] {
+  const key = path.slice(path.lastIndexOf("/") + 1);
+  return percentFields.includes(key) ? "%" : key === "term_months" ? "months" : "USD";
+}
 const nonnegativeFields: readonly string[] = [
   "cpltd_annual",
   "operating_lease_annual",

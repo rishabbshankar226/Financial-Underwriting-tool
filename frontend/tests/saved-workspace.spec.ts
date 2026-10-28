@@ -80,7 +80,7 @@ test("real save/reload/edit/history reads original runs without stateless recalc
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(page.locator(".savedContext")).toContainText("Revision 2");
   await openView(page, "history");
-  await expect(page.locator(".savedEvent")).toContainText("4200000 → 1");
+  await expect(page.locator(".savedEvent")).toContainText("$4,200,000 → $1");
   await expect(page.locator(".savedEvent")).toContainText("2025-01-01");
   await page
     .getByRole("button", { name: "Open revision 1", exact: true })

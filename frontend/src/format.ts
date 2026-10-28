@@ -5,6 +5,7 @@ import {
   formatDecimal,
   formatMultiple,
   formatRatioPercent,
+  groupDecimal,
   isDecimal,
   shiftDecimal,
   type DisplayScale,
@@ -133,6 +134,16 @@ export function ratioPercentText(metric: Metric, places = 1): string {
 /** The exact stored value as the editor shows it: percentages in percent units, nothing rounded. */
 export function editorText(value: string | number, unit: EditableField["unit"]): string {
   return unit === "%" ? shiftDecimal(String(value), 2) : String(value);
+}
+
+/** A recorded value exactly as stored, grouped and in its unit: "$500,000.1", "10.5%" for 0.105, "120 months".
+ * Nothing is rounded, so an audit entry never shows an edit as "$500,000 → $500,000". */
+export function exactValueText(value: string | number, unit: EditableField["unit"]): string {
+  const text = String(value);
+  if (!isDecimal(text)) return text;
+  if (unit === "%") return `${groupDecimal(shiftDecimal(text, 2))}%`;
+  if (unit === "months") return `${text} months`;
+  return text.startsWith("-") ? `($${groupDecimal(text.slice(1))})` : `$${groupDecimal(text)}`;
 }
 
 export function fieldValueText(value: string | number, unit: EditableField["unit"]): string {
