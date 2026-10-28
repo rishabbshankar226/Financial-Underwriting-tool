@@ -1,0 +1,36 @@
+- main [ref=f3e15]:
+  - generic [ref=f3e16]:
+    - generic [ref=f3e17]: Spreadline
+    - generic [ref=f3e21]:
+      - text: Commercial underwriting
+      - generic [ref=f3e22]: USD
+    - button "More" [ref=f3e25] [cursor=pointer]
+  - generic "Connection status" [ref=f3e28]:
+    - generic [ref=f3e29]: API access verified
+    - generic [ref=f3e30]: Operator identity not provided
+    - generic [ref=f3e31]: Reload clears drafts and retry tracking
+  - navigation "Underwriting workflows" [ref=f3e32]:
+    - button "Excel intake" [ref=f3e33] [cursor=pointer]
+    - button "Commercial Assessment" [ref=f3e34] [cursor=pointer]
+    - button "Commercial Decision" [ref=f3e35] [cursor=pointer]
+    - button "Consumer Decision" [ref=f3e36] [cursor=pointer]
+    - button "SBA Screen" [ref=f3e37] [cursor=pointer]
+    - button "Saved Cases" [ref=f3e38] [cursor=pointer]
+  - region [ref=f3e39]:
+    - heading "Start a credit analysis" [level=1] [ref=f3e40]
+    - paragraph [ref=f3e41]: Spread the borrower's statements, check coverage against the illustrative policy, and size the loan. Use synthetic data only.
+    - generic [ref=f3e42]:
+      - button "Try the example case" [ref=f3e43] [cursor=pointer]:
+        - generic [ref=f3e45]: "Alpine Fabrication: two fiscal years and a $500,000 ten-year term loan request."
+      - button "Import Excel workbook" [ref=f3e46] [cursor=pointer]:
+        - generic [ref=f3e48]: Download the standard template, review its inputs and evaluate a commercial assessment.
+      - button "Open saved case" [ref=f3e49] [cursor=pointer]:
+        - generic [ref=f3e51]: Reopen a case saved on this server, at its latest or an earlier revision.
+      - button "Import case file (JSON)" [ref=f3e52] [cursor=pointer]:
+        - generic [ref=f3e54]: A dated or legacy assessment request of up to 1,000,000 bytes.
+  - generic [ref=f3e55]:
+    - generic [ref=f3e56]: Prototype
+    - paragraph [ref=f3e57]:
+      - text: Synthetic data only. Not validated for lending decisions.
+      - button "Read full notice" [ref=f3e58] [cursor=pointer]
+  - generic [ref=f3e59]: Spreadline · Synthetic analyst demonstration · Unsaved session workspace

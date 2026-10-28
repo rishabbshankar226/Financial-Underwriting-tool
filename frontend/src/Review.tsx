@@ -78,7 +78,7 @@ export function Review({
                 <dt>Selection</dt>
                 <dd>
                   {selection === "latest"
-                    ? "Latest when fetched"
+                    ? "Latest when last refreshed"
                     : "Original selected revision"}
                   {headRevision !== null
                     ? ` · known head ${headRevision}`
@@ -140,7 +140,9 @@ export function Review({
                   ))}
                 </div>
                 <p>
-                  Recorded reasons: {assessment.decision.reasons.length}.
+                  {assessment.decision.reasons.length
+                    ? `Recorded reasons: ${assessment.decision.reasons.length}.`
+                    : "Recorded reasons: none beyond the factors."}
                   Factors and calculations are in Calculation details above and
                   in the Credit Memo.
                 </p>

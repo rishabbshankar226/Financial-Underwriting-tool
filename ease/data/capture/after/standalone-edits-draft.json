@@ -1,0 +1,35 @@
+{
+  "screens": {
+    "S57-edit-dialog-rationale": {
+      "controls": 10,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
+    },
+    "S48b-history-session-edit": {
+      "controls": 10,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
+    }
+  },
+  "coveredBy": {},
+  "probes": {
+    "edit.draft.noRationale": "(accepted without a rationale)"
+  },
+  "notCaptured": {}
+}

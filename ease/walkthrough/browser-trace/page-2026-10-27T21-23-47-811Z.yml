@@ -1,0 +1,230 @@
+- main [ref=f1e15]:
+  - generic [ref=f1e16]:
+    - generic [ref=f1e17]: Spreadline
+    - generic [ref=f1e21]:
+      - text: Commercial underwriting
+      - generic [ref=f1e22]: USD
+    - generic [ref=f1e23]:
+      - button "Open case" [ref=f1e111] [cursor=pointer]
+      - button "Save case" [ref=f1e112] [cursor=pointer]
+      - button "More" [ref=f1e25] [cursor=pointer]
+  - generic "Connection status" [ref=f1e28]:
+    - generic [ref=f1e29]: API access verified
+    - generic [ref=f1e30]: Operator identity not provided
+    - generic [ref=f1e31]: Reload clears drafts and retry tracking
+  - navigation "Underwriting workflows" [ref=f1e32]:
+    - button "Excel intake" [ref=f1e33] [cursor=pointer]
+    - button "Commercial Assessment" [ref=f1e34] [cursor=pointer]
+    - button "Commercial Decision" [ref=f1e35] [cursor=pointer]
+    - button "Consumer Decision" [ref=f1e36] [cursor=pointer]
+    - button "SBA Screen" [ref=f1e37] [cursor=pointer]
+    - button "Saved Cases" [ref=f1e38] [cursor=pointer]
+  - generic [ref=f1e113]:
+    - heading "Alpine Fabrication" [level=1] [ref=f1e114]
+    - generic [ref=f1e115]:
+      - generic [ref=f1e116]: Dated assessment
+      - generic [ref=f1e117]: Draft — not saved
+      - generic [ref=f1e118]: spreadline-alpine-example-v1.xlsx · synthetic only
+  - generic [ref=f1e55]:
+    - generic [ref=f1e56]: Prototype
+    - paragraph [ref=f1e57]:
+      - text: Synthetic data only. Not validated for lending decisions.
+      - button "Read full notice" [ref=f1e58] [cursor=pointer]
+  - region "Illustrative decision" [ref=f1e119]:
+    - generic [ref=f1e120]:
+      - generic [ref=f1e121]: Illustrative decision
+      - strong [ref=f1e122]: APPROVE
+    - generic [ref=f1e123]:
+      - paragraph [ref=f1e124]: "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy."
+      - generic "The score is the weight share of factors that meet policy. It is illustrative, never changes the outcome, and is not a probability of default." [ref=f1e125]: prototype-2026-10-03 · illustrative score 1
+  - region "Assessment overview" [ref=f1e126]:
+    - generic [ref=f1e127]:
+      - 'generic "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan''s annual payments." [ref=f1e128]': Business DSCR
+      - strong [ref=f1e129]: 3.13x
+      - generic [ref=f1e130]: Meets approval
+      - generic [ref=f1e131]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=f1e132]: Cushion +1.88x
+    - generic [ref=f1e133]:
+      - generic "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments." [ref=f1e134]: Global DSCR
+      - strong [ref=f1e135]: 2.90x
+      - generic [ref=f1e136]: Meets approval
+      - generic [ref=f1e137]: Minimum 1.25x, decline below 1.00x
+      - generic [ref=f1e138]: Cushion +1.65x
+    - generic [ref=f1e139]:
+      - generic "EBITDA divided by annual debt service plus annual operating leases." [ref=f1e140]: FCCR
+      - strong [ref=f1e141]: 2.80x
+      - generic [ref=f1e142]: Meets approval
+      - generic [ref=f1e143]: Minimum 1.20x, decline below 1.00x
+      - generic [ref=f1e144]: Cushion +1.60x
+    - generic [ref=f1e145]:
+      - generic "EBITDA minus cash taxes paid minus the net increase in working capital (receivables plus inventory minus payables)." [ref=f1e146]: UCA cash flow
+      - strong [ref=f1e147]: $385,000
+      - generic [ref=f1e148]: Meets approval
+      - generic [ref=f1e149]: Must exceed $0
+      - generic [ref=f1e150]: Cushion +$385,000
+    - generic [ref=f1e151]:
+      - generic "Ordinary business income with interest, depreciation, amortization and Section 179 added back." [ref=f1e152]: EBITDA
+      - strong [ref=f1e153]: $630,000
+      - generic [ref=f1e154]: Above approval breakeven
+      - generic [ref=f1e155]: Year ended 2025-12-31
+      - generic [ref=f1e156]: Approval breakeven $269,953 (FCCR)
+      - generic [ref=f1e157]: Cushion 57.2% of EBITDA
+    - generic [ref=f1e158]:
+      - generic "Existing interest plus annual CPLTD plus the proposed loan's annual payments." [ref=f1e159]: Annual debt service
+      - strong [ref=f1e160]: $200,961
+      - generic [ref=f1e161]: Within capacity
+      - generic [ref=f1e162]: Includes proposed $80,961 a year
+      - generic [ref=f1e163]: New payments up to $381,000 a year (FCCR)
+      - generic [ref=f1e164]: Principal headroom $1,852,985
+  - generic [ref=f1e165]:
+    - generic [ref=f1e166]: "Assessment as of: 2026-10-06 · USD · dollars · nominal annual rate"
+    - generic [ref=f1e167]: "Coverage period: 2025-01-01 – 2025-12-31"
+    - generic [ref=f1e168]: Current pro forma coverage · fixed rate · fully amortizing · monthly payments
+  - region "Model scope and policy limitations" [ref=f1e169]:
+    - paragraph [ref=f1e170]:
+      - strong [ref=f1e171]: Capacity is policy arithmetic, not a credit approval.
+      - text: Default rules are illustrative and require institutional validation. The weighted-rule score is not a probability of default.
+    - group [ref=f1e172]:
+      - generic "Methodology scope" [ref=f1e173] [cursor=pointer]
+  - tablist "Workspace views" [ref=f1e174]:
+    - tab "Spread" [selected] [ref=f1e175] [cursor=pointer]
+    - tab "Overview" [ref=f1e176] [cursor=pointer]
+    - tab "Debt & Loan" [ref=f1e177] [cursor=pointer]
+    - tab "Global Cash Flow" [ref=f1e178] [cursor=pointer]
+    - tab "Stress Tests" [ref=f1e179] [cursor=pointer]
+    - tab "Credit Memo" [ref=f1e180] [cursor=pointer]
+    - tab "History & Audit" [ref=f1e181] [cursor=pointer]
+  - tabpanel "Spread" [ref=f1e182]:
+    - generic [ref=f1e183]:
+      - generic [ref=f1e184]:
+        - generic [ref=f1e185]:
+          - heading "Annual financial spread" [level=2] [ref=f1e186]
+          - generic [ref=f1e187]: Select a supplied input to edit · derived rows are read-only
+        - generic [ref=f1e188]:
+          - text: Spread presentation
+          - combobox "Spread presentation" [ref=f1e189]:
+            - option "Accepted raw inputs"
+            - option "Reported amounts (rounded half to even)" [selected]
+            - option "Common-size (%)"
+            - option "Year-over-year change"
+        - table [ref=f1e191]:
+          - rowgroup [ref=f1e192]:
+            - row [ref=f1e193]:
+              - columnheader "Line item · USD" [ref=f1e194]
+              - columnheader [ref=f1e195]:
+                - button "2024-01-01 – 2024-12-31" [ref=f1e196] [cursor=pointer]
+              - columnheader [ref=f1e197]:
+                - button "2025-01-01 – 2025-12-31" [pressed] [ref=f1e198] [cursor=pointer]
+          - rowgroup [ref=f1e199]:
+            - row [ref=f1e200]:
+              - rowheader "Gross receipts" [ref=f1e201]
+              - cell [ref=f1e202]:
+                - button "Edit Gross receipts for 2024-01-01 – 2024-12-31" [ref=f1e203] [cursor=pointer]: $3,900,000.00
+              - cell [ref=f1e204]:
+                - button "Edit Gross receipts for 2025-01-01 – 2025-12-31" [ref=f1e205] [cursor=pointer]: $4,200,000.00
+            - row [ref=f1e206]:
+              - rowheader "COGS" [ref=f1e207]
+              - cell [ref=f1e208]:
+                - button "Edit COGS for 2024-01-01 – 2024-12-31" [ref=f1e209] [cursor=pointer]: $2,570,000.00
+              - cell [ref=f1e210]:
+                - button "Edit COGS for 2025-01-01 – 2025-12-31" [ref=f1e211] [cursor=pointer]: $2,750,000.00
+            - row [ref=f1e212]:
+              - rowheader "Operating expenses" [ref=f1e213]
+              - cell [ref=f1e214]:
+                - button "Edit Operating expenses for 2024-01-01 – 2024-12-31" [ref=f1e215] [cursor=pointer]: $607,000.00
+              - cell [ref=f1e216]:
+                - button "Edit Operating expenses for 2025-01-01 – 2025-12-31" [ref=f1e217] [cursor=pointer]: $640,000.00
+            - row [ref=f1e218]:
+              - rowheader "Officer compensation" [ref=f1e219]
+              - cell [ref=f1e220]:
+                - button "Edit Officer compensation for 2024-01-01 – 2024-12-31" [ref=f1e221] [cursor=pointer]: $175,000.00
+              - cell [ref=f1e222]:
+                - button "Edit Officer compensation for 2025-01-01 – 2025-12-31" [ref=f1e223] [cursor=pointer]: $180,000.00
+            - row [ref=f1e224]:
+              - rowheader "Depreciation" [ref=f1e225]
+              - cell [ref=f1e226]:
+                - button "Edit Depreciation for 2024-01-01 – 2024-12-31" [ref=f1e227] [cursor=pointer]: $90,000.00
+              - cell [ref=f1e228]:
+                - button "Edit Depreciation for 2025-01-01 – 2025-12-31" [ref=f1e229] [cursor=pointer]: $95,000.00
+            - row [ref=f1e230]:
+              - rowheader "Amortization" [ref=f1e231]
+              - cell [ref=f1e232]:
+                - button "Edit Amortization for 2024-01-01 – 2024-12-31" [ref=f1e233] [cursor=pointer]: $10,000.00
+              - cell [ref=f1e234]:
+                - button "Edit Amortization for 2025-01-01 – 2025-12-31" [ref=f1e235] [cursor=pointer]: $10,000.00
+            - row [ref=f1e236]:
+              - rowheader "Interest expense" [ref=f1e237]
+              - cell [ref=f1e238]:
+                - button "Edit Interest expense for 2024-01-01 – 2024-12-31" [ref=f1e239] [cursor=pointer]: $58,000.00
+              - cell [ref=f1e240]:
+                - button "Edit Interest expense for 2025-01-01 – 2025-12-31" [ref=f1e241] [cursor=pointer]: $62,000.00
+            - row [ref=f1e242]:
+              - rowheader "Section 179" [ref=f1e243]
+              - cell [ref=f1e244]:
+                - button "Edit Section 179 for 2024-01-01 – 2024-12-31" [ref=f1e245] [cursor=pointer]: $0.00
+              - cell [ref=f1e246]:
+                - button "Edit Section 179 for 2025-01-01 – 2025-12-31" [ref=f1e247] [cursor=pointer]: $40,000.00
+            - row [ref=f1e248]:
+              - rowheader "K-1 distributions" [ref=f1e249]
+              - cell [ref=f1e250]:
+                - button "Edit K-1 distributions for 2024-01-01 – 2024-12-31" [ref=f1e251] [cursor=pointer]: $280,000.00
+              - cell [ref=f1e252]:
+                - button "Edit K-1 distributions for 2025-01-01 – 2025-12-31" [ref=f1e253] [cursor=pointer]: $300,000.00
+            - row [ref=f1e254]:
+              - rowheader "Gross profit Calculated" [ref=f1e255]:
+                - text: Gross profit
+                - generic [ref=f1e256]: Calculated
+              - cell [ref=f1e257]:
+                - button "Inspect Gross profit for 2024-01-01 – 2024-12-31" [ref=f1e258] [cursor=pointer]: 1,330,000.00 USD
+              - cell [ref=f1e259]:
+                - button "Inspect Gross profit for 2025-01-01 – 2025-12-31" [ref=f1e260] [cursor=pointer]: 1,450,000.00 USD
+            - row [ref=f1e261]:
+              - rowheader "Ordinary business income Calculated" [ref=f1e262]:
+                - text: Ordinary business income
+                - generic [ref=f1e263]: Calculated
+              - cell [ref=f1e264]:
+                - button "Inspect Ordinary business income for 2024-01-01 – 2024-12-31" [ref=f1e265] [cursor=pointer]: 390,000.00 USD
+              - cell [ref=f1e266]:
+                - button "Inspect Ordinary business income for 2025-01-01 – 2025-12-31" [ref=f1e267] [cursor=pointer]: 423,000.00 USD
+            - row [ref=f1e268]:
+              - rowheader "EBITDA Calculated" [ref=f1e269]:
+                - text: EBITDA
+                - generic [ref=f1e270]: Calculated
+              - cell [ref=f1e271]:
+                - button "Inspect EBITDA for 2024-01-01 – 2024-12-31" [ref=f1e272] [cursor=pointer]: 548,000.00 USD
+              - cell [ref=f1e273]:
+                - button "Inspect EBITDA for 2025-01-01 – 2025-12-31" [ref=f1e274] [cursor=pointer]: 630,000.00 USD
+            - row [ref=f1e275]:
+              - rowheader "K-1 distribution ratio Calculated" [ref=f1e276]:
+                - text: K-1 distribution ratio
+                - generic [ref=f1e277]: Calculated
+              - cell [ref=f1e278]:
+                - button "Inspect K-1 distribution ratio for 2024-01-01 – 2024-12-31" [ref=f1e279] [cursor=pointer]: 0.7179 ratio
+              - cell [ref=f1e280]:
+                - button "Inspect K-1 distribution ratio for 2025-01-01 – 2025-12-31" [ref=f1e281] [cursor=pointer]: 0.7092 ratio
+        - paragraph [ref=f1e282]: Report amounts reconcile to income totals in cents. Editing opens the original unrounded input.
+      - generic [ref=f1e284]:
+        - heading "Current coverage" [level=2] [ref=f1e285]
+        - generic [ref=f1e286]:
+          - button "Business DSCR" [ref=f1e288] [cursor=pointer]
+          - strong [ref=f1e289]: 3.13x
+          - generic [ref=f1e290]: "Policy: >= 1.25x · Pass · decline below 1.00x"
+        - generic [ref=f1e291]:
+          - button "Simplified FCCR" [ref=f1e293] [cursor=pointer]
+          - strong [ref=f1e294]: 2.80x
+          - generic [ref=f1e295]: "Policy: >= 1.20x · Pass · decline below 1.00x"
+        - generic [ref=f1e296]:
+          - button "Global DSCR" [ref=f1e298] [cursor=pointer]
+          - strong [ref=f1e299]: 2.90x
+          - generic [ref=f1e300]: "Policy: >= 1.25x · Pass · decline below 1.00x"
+        - generic [ref=f1e301]:
+          - button "K-1 distribution history" [ref=f1e303] [cursor=pointer]
+          - strong [ref=f1e304]: stable
+          - generic [ref=f1e305]: "Policy: == stable · Pass"
+        - generic [ref=f1e306]:
+          - button "UCA cash flow" [ref=f1e308] [cursor=pointer]
+          - strong [ref=f1e309]: $385,000
+          - generic [ref=f1e310]: Must exceed $0 · Pass
+        - group [ref=f1e311]:
+          - generic "Inspect current calculated facts" [ref=f1e312] [cursor=pointer]
+  - generic [ref=f1e59]: Spreadline · Synthetic analyst demonstration · Unsaved session workspace

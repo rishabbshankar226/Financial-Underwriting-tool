@@ -1,3 +1,4 @@
+import { isEmbeddedWorkspace } from "./transport";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { selectWorkspaceView } from "./workspaceSelectors";
 import { useEditController } from "./useEditController";
@@ -80,6 +81,13 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
     if (state.status === "evaluating") {
       edits.dismiss();
       setSaving(false);
+      // A fresh dated case opens on its explanation. A fresh legacy case has no Overview analysis, so it
+      // leaves Overview for Spread and otherwise keeps the chosen view. The tab is chosen as the evaluation
+      // starts, so a view picked while it runs is kept. Edits, saved opens and saves keep the current tab.
+      if (state.action === "evaluate" && state.draft?.resetHistory) {
+        if (state.draft.mode === "dated") setTab("overview");
+        else setTab((current) => (current === "overview" ? "spread" : current));
+      }
     }
     if (state.status === "ready" && state.resetPeriod && state.accepted)
       setSelectedPeriod(state.accepted.input.years.length - 1);
@@ -159,6 +167,14 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
             />
           )}
           <MoreMenu
+            onEditDraft={
+              domain === "commercial" && !composer && !excel && !idle && accepted
+                ? () => {
+                    setComposerMode(accepted.mode);
+                    setComposer(true);
+                  }
+                : undefined
+            }
             onExample={(mode) => {
               setExcel(false);
               setDomain("commercial");
@@ -211,30 +227,35 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
               setShowCases(false);
             }}
           >
-            Commercial Decision
+            Undated decision
           </button>
-          <button
-            type="button"
-            aria-current={domain === "consumer" ? "page" : undefined}
-            onClick={() => {
-              setExcel(false);
-              setDomain("consumer");
-              setShowCases(false);
-            }}
-          >
-            Consumer Decision
-          </button>
-          <button
-            type="button"
-            aria-current={domain === "sba" ? "page" : undefined}
-            onClick={() => {
-              setExcel(false);
-              setDomain("sba");
-              setShowCases(false);
-            }}
-          >
-            SBA Screen
-          </button>
+          {/* The Streamlit host has no Consumer or SBA routes, so it does not offer them. */}
+          {!isEmbeddedWorkspace() && (
+            <>
+            <button
+              type="button"
+              aria-current={domain === "consumer" ? "page" : undefined}
+              onClick={() => {
+                setExcel(false);
+                setDomain("consumer");
+                setShowCases(false);
+              }}
+            >
+              Consumer Decision
+            </button>
+            <button
+              type="button"
+              aria-current={domain === "sba" ? "page" : undefined}
+              onClick={() => {
+                setExcel(false);
+                setDomain("sba");
+                setShowCases(false);
+              }}
+            >
+              SBA Screen
+            </button>
+            </>
+          )}
           <button
             type="button"
             aria-expanded={showCases}
@@ -377,18 +398,18 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
           )}
         {domain === "commercial" && !composer && !excel && !idle && (
           <>
-            {accepted && (
-              <button
-                type="button"
-                className="editCompleteDraft"
-                onClick={() => {
-                  setComposerMode(accepted.mode);
-                  setComposer(true);
-                }}
-              >
-                Edit complete draft
-              </button>
-            )}
+            <WorkspaceStatus
+              state={state}
+              view={view}
+              preparing={!!workspace.preparation}
+              onImport={openFile}
+              onSubmit={(draft) => void submit(draft)}
+              onOpen={openSaved}
+            />
+            <DecisionBar view={view} />
+            {assessment && <KpiTiles assessment={assessment} />}
+            {assessment && <ContextStrip assessment={assessment} />}
+            {/* The saved revision's record follows the answer and its figures, not ahead of them. */}
             {state.saved && (
               <SavedContext
                 saved={state.saved}
@@ -396,15 +417,6 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
                 onOpen={openSaved}
               />
             )}
-            <WorkspaceStatus
-              state={state}
-              view={view}
-              onSubmit={(draft) => void submit(draft)}
-              onOpen={openSaved}
-            />
-            <DecisionBar view={view} />
-            {assessment && <KpiTiles assessment={assessment} />}
-            {assessment && <ContextStrip assessment={assessment} />}
             {assessment && <ModelScope />}
             {ready && state.saved?.view.compatibility && (
               <CompatibilityPanel view={state.saved.view} />

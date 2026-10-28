@@ -26,6 +26,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await expect(
     page.locator(".kpiTile").filter({ hasText: "Business DSCR" }),
   ).toContainText("Cushion +1.88x");
+  await openView(page, "spread");
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator(".hostingNotice").scrollIntoViewIfNeeded();
   await page.screenshot({
@@ -47,12 +48,12 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic Streamlit baseline");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
-  const savedCaseId = await page.locator(".savedContext code").first().innerText();
+  const savedCaseId = await (await page.locator(".savedContext code").first().textContent()) ?? "";
   await page.reload();
   await unlockStreamlitHost(page);
   await expect(page.locator(".startScreen")).toBeVisible({ timeout: 30_000 });
@@ -60,7 +61,7 @@ test("packaged Streamlit workspace evaluates, edits, saves, reopens and previews
   await openCaseBrowser(page);
   await page.locator(".caseRow").filter({ hasText: savedCaseId }).getByRole("button", { name: /^Open / }).click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
     { timeout: 30_000 },
   );
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
@@ -106,9 +107,9 @@ test("embedded saves work with browser storage denied and reload requires an exp
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", { timeout: 30_000 });
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic memory-only embedded save");
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
-  await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
-  const caseId = await page.locator(".savedContext code").first().innerText();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
+  const caseId = await (await page.locator(".savedContext code").first().textContent()) ?? "";
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toHaveCount(0);
   await page.reload();
   await unlockStreamlitHost(page);
@@ -159,10 +160,10 @@ test("an embedded acknowledged write with uncleared memory retries the same oper
   try {
     await page.getByRole("button", { name: "Save case", exact: true }).click();
     await page.getByLabel("Save rationale").fill("Synthetic acknowledged memory tracking recovery");
-    await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
-    await expect(page.locator(".savedContext")).toContainText("Latest when fetched");
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(page.locator(".savedContext")).toContainText("Latest when last refreshed");
     await expect(page.locator(".savedContext")).toContainText("Revision 1");
-    const caseId = await page.locator(".savedContext code").first().innerText();
+    const caseId = await (await page.locator(".savedContext code").first().textContent()) ?? "";
     const recovery = page.getByRole("region", { name: "Saved write recovery", exact: true });
     await expect(recovery.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
     await expect(recovery).toContainText("could not clear");
@@ -203,6 +204,7 @@ test("embedded dialogs keep keyboard focus and browser sessions keep separate dr
   await expect(page.locator(".decision strong")).toHaveText("APPROVE", {
     timeout: 30_000,
   });
+  await openView(page, "spread");
   const field = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
     exact: true,

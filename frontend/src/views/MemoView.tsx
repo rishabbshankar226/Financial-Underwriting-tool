@@ -35,7 +35,7 @@ export function MemoView({ decision }: { decision: Decision | null }) {
               ))}
             </ul>
           ) : (
-            <p>No additional reasons returned.</p>
+            <p>No reasons beyond the factors above.</p>
           )}
         </>
       ) : (

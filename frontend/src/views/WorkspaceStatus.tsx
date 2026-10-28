@@ -10,19 +10,28 @@ import type { WorkspaceView } from "../workspaceSelectors";
 export function WorkspaceStatus({
   state,
   view,
+  preparing = false,
   onSubmit,
   onOpen,
+  onImport,
 }: {
   state: Workspace;
   view: WorkspaceView;
+  /** The assessment preparation status is on screen. */
+  preparing?: boolean;
   onSubmit: (draft: Draft) => void;
   onOpen: (locator: Locator) => void;
+  /** Opens the case-file chooser again after an import fails before any draft exists. */
+  onImport?: () => void;
 }) {
   const { draft, saved } = state,
     previous = view.previousAccepted;
+  // On a first evaluation the preparation status already says what is happening; with a previous
+  // case the panel stays, because it labels that result inactive.
+  const repeatsPreparation = preparing && !previous && state.action === "evaluate";
   return (
     <>
-      {!view.ready && (
+      {!view.ready && !repeatsPreparation && (
         <div className="pending" role="status">
           <strong>{view.pendingTitle}</strong>
           {draft && state.action === "evaluate" && (
@@ -50,8 +59,13 @@ export function WorkspaceStatus({
       )}
       {state.status === "unavailable" && (
         <div className="actions">
+          {!draft && state.action === "evaluate" && onImport && (
+            <button className="primary" onClick={onImport}>
+              Choose another file
+            </button>
+          )}
           {draft && state.action === "evaluate" && (
-            <button onClick={() => onSubmit(draft)}>
+            <button className="primary" onClick={() => onSubmit(draft)}>
               Retry submitted draft
             </button>
           )}

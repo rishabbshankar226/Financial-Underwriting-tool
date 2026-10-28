@@ -1,0 +1,90 @@
+{
+  "screens": {
+    "S24-evaluation-failed": {
+      "controls": 22,
+      "primaryActions": 2,
+      "primaryLabels": [
+        "Save case",
+        "Retry submitted draft"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Retry submitted draft"
+        ],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S35-analysis-failed": {
+      "controls": 10,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
+    },
+    "S33-overview-analysis-failed": {
+      "controls": 14,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save case"
+        ],
+        "disabled": []
+      }
+    },
+    "S58-saved-write-recovery": {
+      "controls": 13,
+      "primaryActions": 2,
+      "primaryLabels": [
+        "Save case",
+        "Retry exact write"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Retry exact write"
+        ],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S59-discard-tracking-dialog": {
+      "controls": 15,
+      "primaryActions": 3,
+      "primaryLabels": [
+        "Save case",
+        "Retry exact write",
+        "Keep tracking"
+      ],
+      "screenPrimary": {
+        "scope": "dialog",
+        "enabled": [
+          "Keep tracking"
+        ],
+        "disabled": []
+      }
+    }
+  },
+  "coveredBy": {
+    "S25": "S24-evaluation-failed"
+  },
+  "probes": {
+    "evaluation.networkFailure": "The calculation service could not be reached. Nothing was recalculated; check the connection, then retry.",
+    "analysis.networkFailure.decisionBar": "Illustrative decision APPROVE The analysis service could not be reached. prototype-2026-10-03 · illustrative score 1",
+    "analysis.networkFailure.overview": "The analysis service could not be reached. Retry analysis | The analysis service could not be reached.",
+    "save.networkFailure": "Unconfirmed saved write Not confirmed by the server · A timeout, network drop or rejected credential does not mean the write was undone. Proposed creation: Alpine Fabrication · as of 2026-10-06 Rationale: Capture failed save Inspect pending payload Tracking is held only in page memory. Reloading or closing this page loses the exact retry key; inspect saved records before making another write. The response was lost or unavailable. Retry the exact saved write if one is pending. Retry exact write Stop tracking this unconfirmed write…"
+  },
+  "notCaptured": {}
+}

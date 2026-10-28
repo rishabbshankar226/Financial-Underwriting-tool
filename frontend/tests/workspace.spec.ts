@@ -61,7 +61,7 @@ test("overrides recalculate decision, coverage, memo and audit", async ({
   await override(page, "1");
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(
-    page.locator(".metric").filter({ hasText: /^DSCR/ }),
+    page.locator(".metric").filter({ hasText: /^Business DSCR/ }),
   ).not.toContainText("3.13x");
   await openView(page, "memo");
   await expect(page.locator(".memo")).toContainText("Decline");
@@ -75,7 +75,7 @@ test("overrides recalculate decision, coverage, memo and audit", async ({
   expect(errors).toEqual([]);
 });
 
-test("invalid overrides and blank rationales do not alter the spread", async ({
+test("invalid overrides do not alter the spread; a blank draft rationale is allowed", async ({
   page,
 }) => {
   await gotoLegacy(page);
@@ -84,9 +84,10 @@ test("invalid overrides and blank rationales do not alter the spread", async ({
   await expect(page.getByRole("alert")).toContainText("finite number");
   await expect(page.locator("tbody")).toContainText("4,200,000");
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
+  // A draft edit needs no rationale (ease N-4): a blank one is accepted and the edit recalculates.
   await override(page, "1", "   ");
-  await expect(page.getByRole("alert")).toContainText("rationale");
-  await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.locator(".decision strong")).toHaveText("DECLINE");
 });
 
 test("backend failures clear the previous decision", async ({ page }) => {

@@ -15,12 +15,12 @@ browser/host policy. See [security requirements](SECURITY_ARCHITECTURE.md).
 
 ## Layout
 
-- **Brand bar:** **Open case** lists saved cases, **Save case** saves an accepted unsaved dated case, and **More** holds the dated and legacy example cases, **Import case file (JSON)**, the **Dark theme** toggle and **Disconnect workspace**. More is a disclosure: Escape closes the panel and returns focus to its button, a click outside it closes the panel, and the theme toggle leaves it open.
+- **Brand bar:** **Open case** lists saved cases, **Save case** saves an accepted unsaved dated case, and **More** holds **Edit complete draft** (for an accepted commercial case), the dated and legacy example cases, **Import case file (JSON)**, the **Dark theme** toggle and **Disconnect workspace**. More is a disclosure: Escape closes the panel and returns focus to its button, a click outside it closes the panel, and the theme toggle leaves it open.
 - **Case header:** the borrower name (the view's only h1), the mode badge (**Dated assessment** or **Legacy · undated input**), the saved state (**Draft — not saved**, **Saved · revision N · latest**, **Saved · revision N · latest unconfirmed**, **Historical revision N (read-only)** or an inactive previous revision) and the source file or saved case.
 - **Prototype notice:** a short disclaimer that stays on screen, with the full text one click away.
 - **Decision bar:** the illustrative outcome and the server's one-line reason, taken from the matching analysis. While a draft edit recalculates, the bar reads CALCULATING and shows the replaced outcome as **Previous result: … (inactive)**.
 - **KPI tiles:** Business DSCR, Global DSCR, FCCR, UCA cash flow, EBITDA and annual debt service for the latest period. Each tile shows its policy line, the server's status and its cushion; cushions, the EBITDA breakeven and the payment capacity arrive with the analysis. Ratios keep enough places to compare honestly with both the approval minimum and the decline floor (1.0004x beside a 1.00x floor). The debt service tile reads **Within capacity** only when the server's principal headroom is zero or more; a negative headroom reads as a principal shortfall.
-- **Views** are WAI-ARIA tabs with a roving tab stop: Left and Right arrows move between tabs and select them, Home and End jump to the ends, and only the selected view is rendered.
+- **Views** are WAI-ARIA tabs with a roving tab stop: Left and Right arrows move between tabs and select them, Home and End jump to the ends, and only the selected view is rendered. A freshly evaluated dated case opens on **Overview**, its explanation, unless another view is chosen while it evaluates. A fresh legacy case, which has no Overview analysis, moves from Overview to **Spread** and otherwise keeps the current view. Edits, saved cases and saves keep the current view.
 
 ## Views
 
@@ -87,7 +87,7 @@ Unsaved history is local React state and reload clears it. Saved history belongs
 
 **Open case** (or **Open saved case** on the start screen) lists 25 creation-ordered metadata rows per page, with explicit loading, empty, unavailable, refresh and load-more states. Opening a row reads the latest stored snapshot. A small tab-local locator can reopen the selected case after reload; it contains only the backend identity, case ID and requested revision. The browser never restores a result or ETag from this hint.
 
-The selected view labels its case, revision, run, recording time and assessment as-of date. **Latest when fetched** means the latest accepted head at that read; another writer may advance it afterward. Only a supported latest selection is editable. Each numeric edit uses the selected strong ETag, a fresh UUID operation key and the server's command allowlist. Rate/ownership display percentages are converted once to decimal API units. The server derives the event and evaluates the accepted revision; the browser performs no financial arithmetic.
+The selected view labels its case, revision, run, recording time and assessment as-of date. **Latest when last refreshed** means the latest accepted head at that read; another writer may advance it afterward. Only a supported latest selection is editable. Each numeric edit uses the selected strong ETag, a fresh UUID operation key and the server's command allowlist. Rate/ownership display percentages are converted once to decimal API units. The server derives the event and evaluates the accepted revision; the browser performs no financial arithmetic.
 
 Historical revisions and acknowledged receipts whose latest status cannot be confirmed remain read-only. **Open latest** is explicit. A recovered original receipt can be older than today's head; its result is preserved and labeled historical rather than replaced with the newer run. Opening a revision, reloading it, and checking replay do not recalculate or migrate it. Unsupported retained assessment definitions show read-only original JSON and recording metadata instead of a typed decision.
 
@@ -99,7 +99,7 @@ There is at most one unresolved saved write per tab. Network/abort errors, unrea
 
 Definite command rejections (400/404/412/413/422/428) clear matching tracking only after storage confirms removal. A 412 retains the proposal separately, reads the latest original snapshot, and compares the field's server context. **Review proposed edit** opens a prefilled dialog against the latest value; only **Save revision** submits a fresh UUID and latest ETag. Canceling sends no write. A rejected saved selection offers an original stored read, never stateless re-evaluation as a saved-case recovery action.
 
-Invalid, oversized, changed-backend, or unsupported recovery envelopes block new saved writes and show an explicit recovery message. **Review discarding tracking** requires a modal action with a keep option; Escape preserves the record. Discarding or closing the tab can lose an exact retry key without undoing a server commit. Recovery data does not authenticate requests. The Bearer boundary authenticates the configured credential; actor labels do not independently verify a human identity. Switching to another selection does not imply that an in-flight write was rolled back.
+Invalid, oversized, changed-backend, or unsupported recovery envelopes block new saved writes and show an explicit recovery message. **Stop tracking this unconfirmed write…** requires a modal action with a keep option; Escape preserves the record. Discarding or closing the tab can lose an exact retry key without undoing a server commit. Recovery data does not authenticate requests. The Bearer boundary authenticates the configured credential; actor labels do not independently verify a human identity. Switching to another selection does not imply that an in-flight write was rolled back.
 
 ## Scenario review and original comparisons
 
@@ -157,7 +157,7 @@ a database.
 
 ## Read-only replay and metadata
 
-**Check replay** compares the selected stored run using its retained calculation definition and policy. Matched, mismatch and unavailable results display separately and cannot overwrite the original assessment, event, run or policy. Replay responses and paginated reads are scoped to the selected resource, so delayed completion cannot cross into a newer selection. Metadata exposes original hash identifiers, storage version, actual runtime packages, and the recorded source status. Local hashes detect consistency problems; they do not authenticate documents, people or offline database edits.
+**Replay this revision (read-only)** compares the selected stored run using its retained calculation definition and policy. Matched, mismatch and unavailable results display separately and cannot overwrite the original assessment, event, run or policy. Replay responses and paginated reads are scoped to the selected resource, so delayed completion cannot cross into a newer selection. Metadata exposes original hash identifiers, storage version, actual runtime packages, and the recorded source status. Local hashes detect consistency problems; they do not authenticate documents, people or offline database edits.
 
 ## Verification
 

@@ -83,7 +83,7 @@ test("a newer request replaces the pending result and disconnect cancels prepara
   await expect(progress).toHaveCount(0);
 });
 
-test("an edit hides the old approval until its decline finishes the same five-second sequence", async ({ page }) => {
+test("N-9: an unsaved edit shows its decline without the five-second sequence", async ({ page }) => {
   await start(page);
   await moreAction(page, "legacyExample");
   const progress = page.getByRole("status", { name: "Assessment preparation" });
@@ -94,11 +94,7 @@ test("an edit hides the old approval until its decline finishes the same five-se
   await page.getByLabel("New value").fill("1");
   await page.getByLabel("Rationale").fill("Synthetic declining preparation check");
   await page.getByRole("button", { name: "Evaluate edit", exact: true }).click();
-  await expect(progress).toContainText("Calculation received");
-  await expect(page.locator(".decision strong")).toHaveText("CALCULATING");
-  await page.clock.runFor(4999);
-  await expect(page.locator(".decision strong")).toHaveText("CALCULATING");
-  await page.clock.runFor(1);
+  // The clock stays paused: the decline must appear without any presentation time passing.
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await expect(progress).toHaveCount(0);
 });
@@ -110,7 +106,7 @@ test("a completed assessment cannot close a newer decision draft", async ({ page
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();
   const progress = page.getByRole("status", { name: "Assessment preparation" });
   await expect(progress).toContainText("Calculation received");
-  await page.getByRole("button", { name: "Commercial Decision", exact: true }).click();
+  await page.getByRole("button", { name: "Undated decision", exact: true }).click();
   await page.getByLabel("Borrower name", { exact: true }).fill("Keep this newer draft");
   await page.clock.runFor(5000);
   await expect(progress).toHaveCount(0);

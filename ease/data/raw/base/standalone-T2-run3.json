@@ -1,0 +1,36 @@
+{
+  "host": "standalone",
+  "task": "T2",
+  "run": 3,
+  "steps": 0,
+  "inputs": 0,
+  "wait": 0,
+  "segments": [],
+  "controls": 11,
+  "primaryActions": 1,
+  "figures": {
+    "T2.outcome": "APPROVE",
+    "T2.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+    "T2.Business DSCR.value": "3.13x",
+    "T2.Business DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+    "T2.Business DSCR.status": "Meets approval",
+    "T2.Business DSCR.cushion": "Cushion +1.88x",
+    "T2.Global DSCR.value": "2.90x",
+    "T2.Global DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+    "T2.Global DSCR.status": "Meets approval",
+    "T2.Global DSCR.cushion": "Cushion +1.65x",
+    "T2.FCCR.value": "2.80x",
+    "T2.FCCR.policy": "Minimum 1.20x, decline below 1.00x",
+    "T2.FCCR.status": "Meets approval",
+    "T2.FCCR.cushion": "Cushion +1.60x"
+  },
+  "notes": {
+    "reasonInFirstViewport": true,
+    "Business DSCR inFirstViewport": true,
+    "Business DSCR description": "",
+    "Global DSCR inFirstViewport": true,
+    "Global DSCR description": "",
+    "FCCR inFirstViewport": true,
+    "FCCR description": ""
+  }
+}

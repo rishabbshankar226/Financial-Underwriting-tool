@@ -9,6 +9,7 @@ test("dated workspace shows all periods, server facts and policy trace", async (
   await expect(
     page.getByText("Dated assessment", { exact: true }),
   ).toBeVisible();
+  await openView(page, "spread");
   await expect(page.locator("table")).toContainText("2024-01-01");
   await expect(page.locator("table")).toContainText("2025-12-31");
   await expect(page.locator("table")).toContainText("Section 179");
@@ -20,6 +21,10 @@ test("dated workspace shows all periods, server facts and policy trace", async (
     page.getByText("Coverage period: 2025-01-01 – 2025-12-31", { exact: true }),
   ).toBeVisible();
   await openView(page, "details");
+  await page
+    .getByRole("region", { name: "Calculation details", exact: true })
+    .getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true })
+    .click();
   await expect(
     page.getByText("prototype-2026-10-03", { exact: true }),
   ).toBeVisible();
@@ -56,6 +61,7 @@ test("failed edits remain drafts and retry records the edit once", async ({
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await page.route("**/commercial/assessment", (route) => route.abort());
   await page
     .getByRole("button", {
@@ -175,17 +181,19 @@ test("dialog validation, keyboard focus and cancellation preserve the accepted r
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   const edit = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
     exact: true,
   });
   await edit.click();
   await expect(page.getByLabel("New value")).toBeFocused();
-  await page.getByLabel("New value").fill("1");
+  // A draft edit needs no rationale (ease N-4), so validation is exercised with an invalid amount.
+  await page.getByLabel("New value").fill("12abc");
   await page
     .getByRole("button", { name: "Evaluate edit", exact: true })
     .click();
-  await expect(page.getByRole("alert")).toContainText("rationale");
+  await expect(page.getByRole("alert")).toContainText("Enter a finite number");
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
   await page
     .getByRole("button", { name: "Evaluate edit", exact: true })
@@ -268,6 +276,9 @@ test("desktop and mobile workflow fits and has no application console errors", a
       fullPage: true,
     });
     await openView(page, "details");
+    await page
+      .getByRole("region", { name: "Calculation details", exact: true })
+      .getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true }).click();
     await page
       .getByRole("region", { name: "Calculation details", exact: true })
       .locator("details")
@@ -353,11 +364,13 @@ test("unavailable ratios and absent guarantors have explicit explanations", asyn
     .locator("input[type=file]")
     .setInputFiles(uploadJson("no-debt.json", input));
   await expect(page.locator(".decision strong")).toHaveText("REVIEW");
+  await openView(page, "spread");
   await expect(
-    page.locator(".metric").filter({ hasText: /^DSCR/ }),
+    page.locator(".metric").filter({ hasText: /^Business DSCR/ }),
   ).toContainText("Not applicable");
   await openView(page, "details");
   const calculations = page.getByRole("region", { name: "Calculation details", exact: true });
+  await calculations.getByRole("button", { name: "Definitions, operands and policy snapshot", exact: true }).click();
   await calculations
     .locator("details")
     .filter({ hasText: "current.dscr" })

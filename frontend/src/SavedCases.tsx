@@ -262,23 +262,26 @@ export function SavedContext({
   const label = !active
     ? `Previous saved revision ${s.revision} (inactive)`
     : saved.selection === "latest"
-      ? `Revision ${s.revision} · Latest when fetched`
+      ? `Revision ${s.revision} · Latest when last refreshed`
       : saved.selection === "revision"
         ? `Historical revision ${s.revision}`
         : `Acknowledged revision ${s.revision} · Latest unconfirmed`;
   return (
     <section className="savedContext" aria-label="Saved revision context">
       <strong>{label}</strong>
-      <span>
-        Case <code>{s.case_id}</code> · Run <code>{s.run_id}</code>
-      </span>
-      <span>
-        Recorded {s.recorded_at} · assessment as of{" "}
-        {s.event.context.assessment_as_of}
-        {saved.headRevision !== null && saved.headRevision > s.revision
-          ? ` · Latest known revision ${saved.headRevision}`
-          : ""}
-      </span>
+      <details className="recordDetails">
+        <summary>Record details</summary>
+        <span>
+          Case <code>{s.case_id}</code> · Run <code>{s.run_id}</code>
+        </span>
+        <span>
+          Recorded {s.recorded_at} · assessment as of{" "}
+          {s.event.context.assessment_as_of}
+          {saved.headRevision !== null && saved.headRevision > s.revision
+            ? ` · Latest known revision ${saved.headRevision}`
+            : ""}
+        </span>
+      </details>
       <button onClick={() => onOpen({ caseId: s.case_id, revision: "latest" })}>
         Open latest
       </button>
@@ -443,7 +446,7 @@ export function SavedHistory({
       </article>
       <div className="actions">
         <button disabled={replay.loading} onClick={() => void checkReplay()}>
-          Check replay
+          Replay this revision (read-only)
         </button>
       </div>
       {replay.key === s.run_id && (
@@ -550,11 +553,11 @@ export function RecoveryPanel({
               <strong>
                 {w.writeError?.status === 409
                   ? "Conflicting operation key (409)"
-                  : "Unresolved browser tracking"}
+                  : "Not confirmed by the server"}
               </strong>
               {w.writeError?.status === 409
                 ? " · Inspect saved records before explicitly discarding or creating a new operation key."
-                : " · A timeout, network drop, or credential rejection does not prove the write rolled back."}
+                : " · A timeout, network drop or rejected credential does not mean the write was undone."}
             </p>
           )}
           {w.operation && <Proposal operation={w.operation} />}
@@ -594,6 +597,7 @@ export function RecoveryPanel({
           <div className="actions">
             {w.operation && (
               <button
+                className="primary"
                 disabled={
                   w.inFlight ||
                   (w.writeError?.status === 409 && !w.writeError.certain)
@@ -643,7 +647,7 @@ export function RecoveryPanel({
               disabled={w.inFlight}
               onClick={(e) => onDiscard(e.currentTarget)}
             >
-              Review discarding tracking
+              Stop tracking this unconfirmed write…
             </button>
           </div>
           {error && <p role="alert">{error}</p>}

@@ -1,4 +1,4 @@
-/** The workspace views in tab order; Spread is the default. */
+/** The workspace views in tab order. Spread is the initial view; a freshly evaluated dated case opens on Overview. */
 export const workspaceTabs = [
   { key: "spread", label: "Spread" },
   { key: "overview", label: "Overview" },

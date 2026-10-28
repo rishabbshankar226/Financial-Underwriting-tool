@@ -33,6 +33,7 @@ test("commercial sample preserves exact input strings and maps server errors to 
     "4200000.000000000000000001",
   );
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await page.getByRole("button", { name: "More", exact: true }).click();
   await page
     .getByRole("button", { name: "Edit complete draft", exact: true })
     .click();
@@ -65,7 +66,7 @@ test("commercial sample preserves exact input strings and maps server errors to 
   await expect(field).toHaveAttribute("aria-invalid", "true");
   await expect(
     page.getByRole("region", { name: "Validation summary", exact: true }),
-  ).toContainText("too_small");
+  ).toContainText("Review this reported amount.");
   await field.fill("4300000");
   await expect(field).not.toHaveAttribute("aria-invalid", "true");
 });
@@ -75,6 +76,7 @@ test("all four spread modes use server data and a keyboard trace exposes context
 }) => {
   await page.goto("/");
   await connectWorkspace(page);
+  await openView(page, "spread");
   const modes = page.getByLabel("Spread presentation", { exact: true });
   await modes.selectOption("raw");
   await expect(page.getByRole("table")).toContainText("4,200,000");

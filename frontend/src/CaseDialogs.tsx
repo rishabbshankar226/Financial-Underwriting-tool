@@ -77,13 +77,18 @@ export function SaveCaseDialog({
     [error, setError] = useState("");
   return (
     <Modal
-      title="Save dated case"
+      title="Save case"
       onCancel={onCancel}
       restoreFocus={restoreFocus}
     >
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          // Say what is missing in plain words; the contract check below stays as the backstop.
+          if (!reason.trim()) {
+            setError("Enter a rationale for this save (up to 2,000 characters).");
+            return;
+          }
           try {
             rationale(reason);
             onSave(reason);
@@ -93,8 +98,7 @@ export function SaveCaseDialog({
           }
         }}
       >
-        <div className="eyebrow">SAVE ACCEPTED INPUT</div>
-        <h2>Save dated case</h2>
+        <h2>Save case</h2>
         <p>
           {input.borrower_name} · as of {input.assessment_as_of}
         </p>
@@ -108,10 +112,9 @@ export function SaveCaseDialog({
           />
         </label>
         <p className="fine">
-          Saving assesses this accepted input under the server's current policy.
-          The returned stored result becomes the accepted result. Earlier
-          session edits are not added to saved history. Rationale: at most 2,000
-          characters.
+          Saving re-checks this case under the current policy and stores it as a
+          saved revision. Edits made before saving are not listed separately in
+          its history. Rationale: up to 2,000 characters.
         </p>
         {error && <p role="alert">{error}</p>}
         <div className="actions">
@@ -119,7 +122,7 @@ export function SaveCaseDialog({
             Cancel
           </button>
           <button className="primary" type="submit">
-            Save accepted case
+            Save
           </button>
         </div>
       </form>
@@ -150,7 +153,7 @@ export function DiscardTrackingDialog({
       </p>
       {error && <p role="alert">{error}</p>}
       <div className="actions">
-        <button autoFocus onClick={onCancel}>
+        <button className="primary" autoFocus onClick={onCancel}>
           Keep tracking
         </button>
         <button

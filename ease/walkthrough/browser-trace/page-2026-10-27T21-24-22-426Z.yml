@@ -1,0 +1,12 @@
+- main [ref=f3e4]:
+  - region [ref=f3e5]:
+    - generic [ref=f3e6]: SPREADLINE / API ACCESS
+    - heading "Connect the workspace" [level=1] [ref=f3e7]
+    - paragraph [ref=f3e8]: Enter this workspace's access token. It stays only in this page and is cleared when you reload, disconnect, or the server rejects it.
+    - paragraph [ref=f3e9]: Connecting never resends a save. A save still waiting for confirmation stays here for you to review after you reconnect. Reloading clears drafts and that tracking.
+    - generic [ref=f3e10]:
+      - generic [ref=f3e11]: API token
+      - textbox "API token" [active] [ref=f3e12]:
+        - /placeholder: Paste the access token
+      - generic [ref=f3e13]: 32 to 4,096 characters · sent only to this workspace's server · 30-second time limit
+      - button "Connect workspace" [ref=f3e14] [cursor=pointer]

@@ -1,0 +1,45 @@
+{
+  "screens": {
+    "S67-excel-intake": {
+      "controls": 11,
+      "primaryActions": 1,
+      "primaryLabels": [
+        ""
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          ""
+        ],
+        "disabled": []
+      }
+    },
+    "S69-excel-review": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Evaluate Excel inputs"
+        ],
+        "disabled": []
+      }
+    }
+  },
+  "coveredBy": {},
+  "probes": {},
+  "notCaptured": {
+    "S71": "not offered on the Streamlit host (ease N-5)",
+    "S72": "not offered on the Streamlit host (ease N-5)",
+    "S74": "not offered on the Streamlit host (ease N-5)",
+    "S01": "needs a misconfigured or failed host; not produced by the test launcher",
+    "S02": "needs a misconfigured or failed host; not produced by the test launcher",
+    "S04": "needs a misconfigured or failed host; not produced by the test launcher",
+    "S07": "bridge rejection states need a failing bridge; not produced on demand",
+    "S08": "standalone host only (the Streamlit host has no token screen)",
+    "S09": "standalone host only (the Streamlit host has no token screen)",
+    "S73": "unreachable on the Streamlit host",
+    "S75": "unreachable on the Streamlit host"
+  }
+}

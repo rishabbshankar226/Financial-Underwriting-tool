@@ -25,11 +25,11 @@ async function save(page: Page, rationale = "Synthetic creation") {
       r.status() === 201,
   );
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   const snapshot = await (await response).json();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   await expect(page.locator(".caseSource")).toContainText(
     `Saved case ${snapshot.case_id}`,
@@ -126,7 +126,7 @@ test("lost create response survives same-page reconnect and retry creates exactl
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic lost response");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Retry exact write", exact: true }),
@@ -233,7 +233,7 @@ test("saved controls retain keyboard focus, fit mobile and replay without changi
   });
   const snapshot = await save(page);
   await openView(page, "history");
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText("Matched");
   await expect(page.locator(".savedContext")).toContainText(snapshot.run_id);
   for (const width of [1440, 390]) {
@@ -306,6 +306,7 @@ test("edits and exact saved-write retry work when browser storage is unavailable
   });
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   const field = page.getByRole("button", {
     name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
     exact: true,
@@ -330,7 +331,7 @@ test("edits and exact saved-write retry work when browser storage is unavailable
   });
   await saveButton.click();
   await page.getByLabel("Save rationale").fill("Synthetic save with browser storage disabled");
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
   await page.unroute("**/cases");
   page.on("request", request => {
@@ -454,13 +455,14 @@ test("accepted receipt remains readable and read-only when latest refresh fails"
     .getByLabel("Save rationale")
     .fill("Accepted before refresh failure");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
     "Latest unconfirmed",
   );
   await expect(page.locator(".writeNotice")).toContainText("Write accepted");
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await expect(
     page.getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -473,7 +475,7 @@ test("accepted receipt remains readable and read-only when latest refresh fails"
   await page.unroute("**/cases/*");
   await page.getByRole("button", { name: "Open latest", exact: true }).click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   expect(writes).toBe(1);
 });
@@ -553,7 +555,7 @@ test("unsupported stored definition stays original JSON and replay cannot replac
     "retained-unknown",
   );
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText(
     "Replay unavailable",
   );
@@ -582,7 +584,7 @@ test("malformed successful save keeps its exact recovery key after the real comm
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Invalid receipt headers");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".decision strong")).toHaveText("UNAVAILABLE");
   await expect(
@@ -678,6 +680,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await page
     .getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -692,7 +695,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
   await expect(page.locator(".decision strong")).toHaveText("DECLINE");
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await expect(page.getByRole("dialog")).toContainText(
-    "Earlier session edits are not added",
+    "Edits made before saving are not listed separately",
   );
   await page.getByLabel("Save rationale").fill("Save changed input");
   const response = page.waitForResponse(
@@ -700,7 +703,7 @@ test("saving after session edits starts one recorded creation and legacy stays u
       r.request().method() === "POST" && new URL(r.url()).pathname === "/cases",
   );
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   const s = await (await response).json();
   expect(s.event.kind).toBe("creation");
@@ -738,20 +741,20 @@ test("save rationale validation and cancellation preserve the accepted input and
   await saveButton.click();
   await expect(page.getByLabel("Save rationale")).toBeFocused();
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
-    "nonblank",
+    "Enter a rationale for this save",
   );
   await page.getByLabel("Save rationale").fill("x".repeat(2001));
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
     "2,000",
   );
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .focus();
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("Save rationale")).toBeFocused();
@@ -766,6 +769,7 @@ test("unsaved edits preserve the existing session rationale behavior", async ({
 }) => {
   await page.goto("/"); await connectWorkspace(page);
   await expect(page.locator(".decision strong")).toHaveText("APPROVE");
+  await openView(page, "spread");
   await page
     .getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -864,7 +868,7 @@ test("invalid recovery tracking never auto-posts and needs explicit discard", as
     page.getByRole("button", { name: "Save case", exact: true }),
   ).toBeDisabled();
   const review = page.getByRole("button", {
-    name: "Review discarding tracking",
+    name: "Stop tracking this unconfirmed write…",
     exact: true,
   });
   await review.click();
@@ -915,7 +919,7 @@ test("a memory tracking failure stops the write and preserves the accepted resul
   await saveButton.click();
   await page.getByLabel("Save rationale").fill("Preflight storage failure");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
     "Nothing was sent",
@@ -1043,7 +1047,7 @@ test("mismatch replay stays separate and a delayed old replay cannot cross revis
     },
   );
   await openView(page, "history");
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await expect(page.locator(".replayResult")).toContainText("Mismatch");
   await expect(page.locator(".replayResult")).toContainText(
     "/decision/outcome",
@@ -1080,7 +1084,7 @@ test("mismatch replay stays separate and a delayed old replay cannot cross revis
     .getByRole("button", { name: "Open revision 1", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(initial.run_id);
-  await page.getByRole("button", { name: "Check replay", exact: true }).click();
+  await page.getByRole("button", { name: "Replay this revision (read-only)", exact: true }).click();
   await started;
   await page
     .getByRole("button", { name: "Open revision 2", exact: true })

@@ -70,6 +70,26 @@ function ratioTile(label: string, name: "dscr" | "fccr" | "global_dscr", metric:
   };
 }
 
+/** Plain readings of the server's definitions (backend/app/core.py, as listed in ease/data/definitions.md),
+ * shown on hover and read as each label's description. */
+const tileDefinitions: Record<string, string> = {
+  // core.py:519-520, 627-637
+  "Business DSCR":
+    "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan's annual payments.",
+  // core.py:551-574, 612-621, 627-637
+  "Global DSCR":
+    "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments.",
+  // core.py:533-534, 627-637
+  FCCR: "EBITDA divided by annual debt service plus annual operating leases.",
+  // core.py:649-650, 660-661
+  "UCA cash flow":
+    "EBITDA minus cash taxes paid minus the net increase in working capital (receivables plus inventory minus payables).",
+  // core.py:174-175
+  EBITDA: "Ordinary business income with interest, depreciation, amortization and Section 179 added back.",
+  // core.py:519-520
+  "Annual debt service": "Existing interest plus annual CPLTD plus the proposed loan's annual payments.",
+};
+
 /** Coverage and cash-flow figures for the latest period, each with its policy line, status and cushion. */
 export function KpiTiles({ assessment }: { assessment: Assessment }) {
   const { state } = useAnalysis();
@@ -131,7 +151,7 @@ export function KpiTiles({ assessment }: { assessment: Assessment }) {
     <section className="kpiTiles" aria-label="Assessment overview">
       {tiles.map((tile) => (
         <div className="kpiTile" data-state={tile.state} key={tile.label}>
-          <span className="kpiLabel">{tile.label}</span>
+          <span className="kpiLabel" title={tileDefinitions[tile.label]}>{tile.label}</span>
           <strong>{tile.value}</strong>
           {tile.status && <span className="kpiStatus">{tile.status}</span>}
           {tile.lines.map((line) => (

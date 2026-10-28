@@ -127,7 +127,7 @@ test("disconnect preserves a pending command and key until an explicit authentic
   });
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic disconnect after commit");
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await committed;
   const journal = await readWorkspaceMemory(page, RECOVERY_KEY);
   expect(journal).not.toBeNull();
@@ -178,7 +178,7 @@ test("a full reload loses a pending command and opens no saved selection without
   });
   await page.getByRole("button", { name: "Save case", exact: true }).click();
   await page.getByLabel("Save rationale").fill("Synthetic unconfirmed command before reload");
-  await page.getByRole("button", { name: "Save accepted case", exact: true }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("button", { name: "Retry exact write", exact: true })).toBeEnabled();
   expect(await readWorkspaceMemory(page, RECOVERY_KEY)).not.toBeNull();
   await page.unroute("**/cases");

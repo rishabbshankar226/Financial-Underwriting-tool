@@ -1,0 +1,141 @@
+{
+  "screens": {
+    "S55-save-dialog": {
+      "controls": 13,
+      "primaryActions": 2,
+      "primaryLabels": [
+        "Save case",
+        "Save"
+      ],
+      "screenPrimary": {
+        "scope": "dialog",
+        "enabled": [
+          "Save"
+        ],
+        "disabled": []
+      }
+    },
+    "S26-saved-context": {
+      "controls": 11,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S49-history-saved": {
+      "controls": 12,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S51-history-replay-review-package": {
+      "controls": 6,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S42-scenario-composer": {
+      "controls": 10,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Preview scenarios"
+        ],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S43-scenario-validation": {
+      "controls": 17,
+      "primaryActions": 0,
+      "primaryLabels": [],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Preview scenarios"
+        ],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S44-scenario-preview": {
+      "controls": 19,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save reviewed comparison"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [
+          "Save reviewed comparison"
+        ],
+        "disabled": [
+          "Save case"
+        ]
+      }
+    },
+    "S45-saved-comparison": {
+      "controls": 19,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Preview scenarios"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case",
+          "Preview scenarios"
+        ]
+      }
+    },
+    "S53-open-case-list": {
+      "controls": 17,
+      "primaryActions": 1,
+      "primaryLabels": [
+        "Save case"
+      ],
+      "screenPrimary": {
+        "scope": "page",
+        "enabled": [],
+        "disabled": [
+          "Save case",
+          "Preview scenarios"
+        ]
+      }
+    }
+  },
+  "coveredBy": {
+    "S56": "S26-saved-context",
+    "S50": "S49-history-saved",
+    "S46": "S45-saved-comparison"
+  },
+  "probes": {
+    "save.blankRationale": "Enter a rationale for this save (up to 2,000 characters).",
+    "scenario.validation": "Review scenario inputs Scenario 1 name: Enter text of up to 120 characters. Scenario 1 rationale: Enter text of up to 2000 characters."
+  },
+  "notCaptured": {}
+}

@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useState } from "react";
 import { formatDecimal } from "../decimal";
 import type { Assessment, Decision, Input, Metric } from "../contracts";
 import { derivedSpreadFacts, fieldLabels as labels, periodLabel } from "../fieldCatalog";
@@ -20,9 +20,31 @@ export function DetailsView({
   index: number;
 }) {
   const heading = useId();
+  const body = useId();
+  // The working behind the result is folded by default; the answer and its thresholds stay above.
+  const [open, setOpen] = useState(false);
   return (
     <section className="panel" aria-labelledby={heading}>
       <h2 id={heading}>Calculation details</h2>
+      {!assessment && (
+        <p>
+          {ready
+            ? "Legacy mode has decision factors but no dated spread or trace."
+            : "No current assessment is available."}
+        </p>
+      )}
+      {(assessment || decision) && (
+        <button
+          type="button"
+          className="detailsToggle"
+          aria-expanded={open}
+          aria-controls={body}
+          onClick={() => setOpen((value) => !value)}
+        >
+          Definitions, operands and policy snapshot
+        </button>
+      )}
+      <div id={body} hidden={!open}>
       {assessment ? (
         <>
           <p>
@@ -85,13 +107,7 @@ export function DetailsView({
             <code>{assessment.fingerprint.value}</code>
           </p>
         </>
-      ) : (
-        <p>
-          {ready
-            ? "Legacy mode has decision factors but no dated spread or trace."
-            : "No current assessment is available."}
-        </p>
-      )}
+      ) : null}
       {decision && (
         <div>
           <h3>Raw policy comparisons</h3>
@@ -108,6 +124,7 @@ export function DetailsView({
           ))}
         </div>
       )}
+      </div>
     </section>
   );
 }

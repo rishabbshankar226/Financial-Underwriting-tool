@@ -46,10 +46,10 @@ export function SessionStatus({ actor }: { actor?: string }) {
             : "API access verified"}
         </span>
         <span>
-          Active operator identity unavailable
+          Operator identity not provided
           {actor ? ` · selected record attributed to ${actor}` : ""}
         </span>
-        <span>Page memory only · reload clears drafts and retry tracking</span>
+        <span>Reload clears drafts and retry tracking</span>
         <Deadline startedAt={activity.startedAt} />
       </div>
       {stateless && (

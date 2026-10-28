@@ -204,7 +204,11 @@ export function OverviewView({ view }: { view: WorkspaceView }) {
   if (!assessment)
     return (
       <Panel title="Overview">
-        <p>No current assessment is available. Resolve or choose a case to see its explanation.</p>
+        <p>
+          {view.decisionWord === "CALCULATING"
+            ? "The explanation appears here with the decision."
+            : "No current assessment is available. Resolve or choose a case to see its explanation."}
+        </p>
       </Panel>
     );
   const analysis = state.status === "ready" ? state.analysis : null;

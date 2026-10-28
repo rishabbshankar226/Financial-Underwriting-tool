@@ -1,0 +1,420 @@
+{
+  "standalone": {
+    "T1": {
+      "steps": 2,
+      "inputs": 1,
+      "wait": 5707,
+      "waitRuns": [
+        5604,
+        6419,
+        5707
+      ],
+      "segments": {
+        "start screen": {
+          "medianMs": 286
+        },
+        "decision and reason": {
+          "medianMs": 5397,
+          "serverMedianMs": 30
+        }
+      },
+      "controls": 2,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 8,
+        "judged": true,
+        "terms": [
+          "Operator identity not provided",
+          "retry tracking",
+          "Commercial Decision vs Commercial Assessment",
+          "SBA",
+          "legacy assessment request",
+          "Dated assessment",
+          "K-1 history",
+          "prototype-2026-10-03 (policy version)"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T2": {
+      "steps": 0,
+      "inputs": 0,
+      "wait": 0,
+      "waitRuns": [
+        0,
+        0,
+        0
+      ],
+      "segments": {},
+      "controls": 10,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "reasonInFirstViewport": true,
+        "Business DSCR inFirstViewport": true,
+        "Business DSCR description": "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan's annual payments.",
+        "Global DSCR inFirstViewport": true,
+        "Global DSCR description": "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments.",
+        "FCCR inFirstViewport": true,
+        "FCCR description": "EBITDA divided by annual debt service plus annual operating leases."
+      },
+      "unexplainedTerms": {
+        "count": 8,
+        "judged": true,
+        "terms": [
+          "K-1 history",
+          "Cushion",
+          "Approval breakeven",
+          "(FCCR) suffix on capacity lines",
+          "Principal headroom",
+          "pro forma",
+          "nominal annual rate",
+          "fully amortizing"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T3": {
+      "steps": 6,
+      "inputs": 2,
+      "wait": 184,
+      "waitRuns": [
+        181,
+        239,
+        184
+      ],
+      "segments": {
+        "recalculated decision": {
+          "medianMs": 79
+        },
+        "saved": {
+          "medianMs": 77
+        },
+        "revision in History & Audit": {
+          "medianMs": 28
+        }
+      },
+      "controls": 10,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "revisionsListed": 1
+      },
+      "unexplainedTerms": {
+        "count": 6,
+        "judged": true,
+        "terms": [
+          "Annual CPLTD",
+          "AR increase",
+          "AP increase",
+          "used by the backend",
+          "Replay this revision (read-only)",
+          "Configured credential identity"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T4": {
+      "steps": 3,
+      "inputs": 1,
+      "wait": 5411,
+      "waitRuns": [
+        5546,
+        5411,
+        5389
+      ],
+      "segments": {
+        "review inputs": {
+          "medianMs": 82
+        },
+        "decision and reason": {
+          "medianMs": 5329,
+          "serverMedianMs": 29
+        }
+      },
+      "controls": 12,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 3,
+        "judged": true,
+        "terms": [
+          "values-only .xlsx",
+          "Sheet!Cell references",
+          "K-1 history"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T5": {
+      "steps": 3,
+      "inputs": 0,
+      "wait": 89,
+      "waitRuns": [
+        88,
+        198,
+        89
+      ],
+      "segments": {
+        "saved cases": {
+          "medianMs": 4
+        },
+        "saved case": {
+          "medianMs": 84
+        },
+        "credit memo": {
+          "medianMs": 2
+        }
+      },
+      "controls": 12,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 3,
+        "judged": true,
+        "terms": [
+          "Literal borrower-name search, ASCII case-insensitive",
+          "Archived definition",
+          "Recorded ISO timestamp"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T6": {
+      "steps": 4,
+      "inputs": 2,
+      "wait": 112,
+      "waitRuns": [
+        110,
+        118,
+        112
+      ],
+      "segments": {
+        "consumer screen": {
+          "medianMs": 2
+        },
+        "consumer outcome": {
+          "medianMs": 27
+        },
+        "SBA screen": {
+          "medianMs": 2
+        },
+        "SBA incomplete eligibility": {
+          "medianMs": 83
+        }
+      },
+      "controls": 12,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 11,
+        "judged": true,
+        "terms": [
+          "DTI",
+          "Ability-to-repay",
+          "analyst attestations",
+          "weighted-rule score",
+          "NAICS code",
+          "SOP version",
+          "Affiliate treatment",
+          "eligibility_status: incomplete",
+          "configured floor",
+          "Size screen",
+          "Recorded workbook SHA-256"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    }
+  },
+  "streamlit": {
+    "T1": {
+      "steps": 2,
+      "inputs": 1,
+      "wait": 6614,
+      "waitRuns": [
+        6641,
+        6614,
+        6612
+      ],
+      "segments": {
+        "start screen": {
+          "medianMs": 1290
+        },
+        "decision and reason": {
+          "medianMs": 5326,
+          "serverMedianMs": 182
+        }
+      },
+      "controls": 5,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 8,
+        "judged": true,
+        "terms": [
+          "Testing host connected",
+          "Operator identity not provided",
+          "retry tracking",
+          "Commercial Decision vs Commercial Assessment",
+          "legacy assessment request",
+          "Dated assessment",
+          "K-1 history",
+          "prototype-2026-10-03 (policy version)"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T2": {
+      "steps": 0,
+      "inputs": 0,
+      "wait": 0,
+      "waitRuns": [
+        0,
+        0,
+        0
+      ],
+      "segments": {},
+      "controls": 10,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "reasonInFirstViewport": true,
+        "Business DSCR inFirstViewport": true,
+        "Business DSCR description": "EBITDA divided by annual debt service: existing interest, annual CPLTD and the proposed loan's annual payments.",
+        "Global DSCR inFirstViewport": true,
+        "Global DSCR description": "Owner-weighted business EBITDA plus guarantors' wages and interest or dividend income, divided by business debt service plus guarantors' mortgage, auto and card payments.",
+        "FCCR inFirstViewport": true,
+        "FCCR description": "EBITDA divided by annual debt service plus annual operating leases."
+      },
+      "unexplainedTerms": {
+        "count": 8,
+        "judged": true,
+        "terms": [
+          "K-1 history",
+          "Cushion",
+          "Approval breakeven",
+          "(FCCR) suffix on capacity lines",
+          "Principal headroom",
+          "pro forma",
+          "nominal annual rate",
+          "fully amortizing"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T3": {
+      "steps": 6,
+      "inputs": 2,
+      "wait": 557,
+      "waitRuns": [
+        750,
+        557,
+        538
+      ],
+      "segments": {
+        "recalculated decision": {
+          "medianMs": 283
+        },
+        "saved": {
+          "medianMs": 179
+        },
+        "revision in History & Audit": {
+          "medianMs": 79
+        }
+      },
+      "controls": 10,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "revisionsListed": 1
+      },
+      "unexplainedTerms": {
+        "count": 6,
+        "judged": true,
+        "terms": [
+          "Annual CPLTD",
+          "AR increase",
+          "AP increase",
+          "used by the backend",
+          "Replay this revision (read-only)",
+          "Configured credential identity"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T4": {
+      "steps": 3,
+      "inputs": 1,
+      "wait": 5331,
+      "waitRuns": [
+        5331,
+        5392,
+        5331
+      ],
+      "segments": {
+        "review inputs": {
+          "medianMs": 26
+        },
+        "decision and reason": {
+          "medianMs": 5305,
+          "serverMedianMs": 78
+        }
+      },
+      "controls": 12,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 3,
+        "judged": true,
+        "terms": [
+          "values-only .xlsx",
+          "Sheet!Cell references",
+          "K-1 history"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T5": {
+      "steps": 3,
+      "inputs": 0,
+      "wait": 292,
+      "waitRuns": [
+        304,
+        182,
+        292
+      ],
+      "segments": {
+        "saved cases": {
+          "medianMs": 3
+        },
+        "saved case": {
+          "medianMs": 286
+        },
+        "credit memo": {
+          "medianMs": 3
+        }
+      },
+      "controls": 12,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 3,
+        "judged": true,
+        "terms": [
+          "Literal borrower-name search, ASCII case-insensitive",
+          "Archived definition",
+          "Recorded ISO timestamp"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    }
+  }
+}

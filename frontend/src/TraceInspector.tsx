@@ -20,7 +20,7 @@ export const methodologies: Record<string, string> = {
   "annual-debt-service-v2":
     "Business service = existing interest + annual CPLTD + proposed annual service",
   "dscr-v2": "DSCR = EBITDA / business service",
-  "fccr-v2": "Simplified FCCR = EBITDA / (business service + operating leases)",
+  "fccr-v2": "FCCR = EBITDA / (business service + operating leases)",
   "global-dscr-v2":
     "Global DSCR = (ownership-weighted EBITDA + outside income) / (business service + personal service). Empty guarantors use 100% of business EBITDA. K-1 distributions are never added a second time.",
   "uca-cash-flow-v2":

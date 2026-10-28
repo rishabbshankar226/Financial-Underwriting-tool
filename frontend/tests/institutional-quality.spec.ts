@@ -23,9 +23,10 @@ test("zero-denominator coverage is explicitly unavailable while preserving the s
     buffer: Buffer.from(JSON.stringify(input)),
   });
   await expect(page.locator(".decision strong")).toHaveText("REVIEW");
+  await openView(page, "spread");
   await page
     .locator(".metric")
-    .getByRole("button", { name: "DSCR", exact: true })
+    .getByRole("button", { name: "Business DSCR", exact: true })
     .click();
   const inspector = page.getByRole("region", {
     name: "Calculation inspector",
@@ -40,6 +41,7 @@ test("trace money uses cents for annual units and labels business service plainl
 }) => {
   await page.goto("/");
   await connectWorkspace(page);
+  await openView(page, "spread");
   await page
     .getByText("Inspect current calculated facts", { exact: true })
     .click();
@@ -114,10 +116,10 @@ test("shock chips only fill inputs and the explicit preview preserves exact shoc
     .getByLabel("Save rationale")
     .fill("Synthetic scenario quick-fill review");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   await openView(page, "stress");
   let previews = 0,
@@ -267,10 +269,10 @@ test("a field-mapped saved rejection keeps its proposal and requires fresh revie
     .getByLabel("Save rationale")
     .fill("Synthetic mapped rejection baseline");
   await page
-    .getByRole("button", { name: "Save accepted case", exact: true })
+    .getByRole("button", { name: "Save", exact: true })
     .click();
   await expect(page.locator(".savedContext")).toContainText(
-    "Latest when fetched",
+    "Latest when last refreshed",
   );
   let writes = 0;
   await page.route("**/cases/*/revisions", (route) => {
@@ -296,6 +298,7 @@ test("a field-mapped saved rejection keeps its proposal and requires fresh revie
       }),
     });
   });
+  await openView(page, "spread");
   await page
     .getByRole("button", {
       name: "Edit Gross receipts for 2025-01-01 – 2025-12-31",
@@ -338,6 +341,7 @@ for (const width of [375, 1280])
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
     await connectWorkspace(page);
+    await openView(page, "spread");
     await page
       .getByRole("button", {
         name: "Inspect Gross profit for 2025-01-01 – 2025-12-31",

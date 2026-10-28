@@ -1,0 +1,44 @@
+{
+  "host": "streamlit",
+  "task": "T3",
+  "run": 2,
+  "steps": 6,
+  "inputs": 2,
+  "wait": 557,
+  "segments": [
+    {
+      "name": "recalculated decision",
+      "ms": 295
+    },
+    {
+      "name": "saved",
+      "ms": 184
+    },
+    {
+      "name": "revision in History & Audit",
+      "ms": 78
+    }
+  ],
+  "controls": 10,
+  "primaryActions": 1,
+  "figures": {
+    "T3.recalculated.outcome": "APPROVE",
+    "T3.recalculated.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+    "T3.recalculated.Business DSCR.value": "2.90x",
+    "T3.recalculated.Business DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+    "T3.recalculated.Business DSCR.status": "Meets approval",
+    "T3.recalculated.Business DSCR.cushion": "Cushion +1.65x",
+    "T3.recalculated.Global DSCR.value": "2.72x",
+    "T3.recalculated.Global DSCR.policy": "Minimum 1.25x, decline below 1.00x",
+    "T3.recalculated.Global DSCR.status": "Meets approval",
+    "T3.recalculated.Global DSCR.cushion": "Cushion +1.47x",
+    "T3.recalculated.FCCR.value": "2.61x",
+    "T3.recalculated.FCCR.policy": "Minimum 1.20x, decline below 1.00x",
+    "T3.recalculated.FCCR.status": "Meets approval",
+    "T3.recalculated.FCCR.cushion": "Cushion +1.41x",
+    "T3.revision": "Open revision 1"
+  },
+  "notes": {
+    "revisionsListed": 1
+  }
+}

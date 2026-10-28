@@ -1,0 +1,475 @@
+{
+  "standalone": {
+    "T1": {
+      "steps": 2,
+      "inputs": 1,
+      "wait": 5518,
+      "waitRuns": [
+        5533,
+        5514,
+        5518
+      ],
+      "segments": {
+        "start screen": {
+          "medianMs": 187
+        },
+        "decision and reason": {
+          "medianMs": 5332,
+          "serverMedianMs": 33
+        }
+      },
+      "controls": 2,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 16,
+        "judged": true,
+        "terms": [
+          "operator token",
+          "401 response",
+          "ASCII bearer characters",
+          "API origin",
+          "pending write tracking",
+          "exact retry tracking",
+          "Active operator identity unavailable",
+          "Page memory only",
+          "Commercial Decision vs Commercial Assessment",
+          "SBA",
+          "legacy assessment request",
+          "Dated assessment",
+          "UCA cash flow",
+          "K-1 history",
+          "illustrative score",
+          "prototype-2026-10-03 (policy version)"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T2": {
+      "steps": 0,
+      "inputs": 0,
+      "wait": 0,
+      "waitRuns": [
+        0,
+        0,
+        0
+      ],
+      "segments": {},
+      "controls": 11,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "reasonInFirstViewport": true,
+        "Business DSCR inFirstViewport": true,
+        "Business DSCR description": "",
+        "Global DSCR inFirstViewport": true,
+        "Global DSCR description": "",
+        "FCCR inFirstViewport": true,
+        "FCCR description": ""
+      },
+      "unexplainedTerms": {
+        "count": 14,
+        "judged": true,
+        "terms": [
+          "Business DSCR",
+          "Global DSCR",
+          "FCCR",
+          "UCA cash flow",
+          "EBITDA",
+          "K-1 history",
+          "Cushion",
+          "Approval breakeven",
+          "(FCCR) suffix on capacity lines",
+          "Principal headroom",
+          "pro forma",
+          "nominal annual rate",
+          "fully amortizing",
+          "illustrative score"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T3": {
+      "steps": 6,
+      "inputs": 3,
+      "wait": 5425,
+      "waitRuns": [
+        5377,
+        5425,
+        5425
+      ],
+      "segments": {
+        "recalculated decision": {
+          "medianMs": 5319,
+          "serverMedianMs": 25
+        },
+        "saved": {
+          "medianMs": 77
+        },
+        "revision in History & Audit": {
+          "medianMs": 25
+        }
+      },
+      "controls": 11,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "revisionsListed": 1
+      },
+      "unexplainedTerms": {
+        "count": 14,
+        "judged": true,
+        "terms": [
+          "Annual CPLTD",
+          "AR increase",
+          "AP increase",
+          "used by the backend",
+          "INPUT REVIEW",
+          "USD decimal, up to 34 significant figures",
+          "nonblank rationale",
+          "SAVE ACCEPTED INPUT",
+          "accepted input / returned stored result",
+          "Latest when fetched",
+          "Run (id)",
+          "Check replay",
+          "Configured credential identity",
+          "fact ids (current.debt_service ...)"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T4": {
+      "steps": 3,
+      "inputs": 1,
+      "wait": 5392,
+      "waitRuns": [
+        5392,
+        5389,
+        5394
+      ],
+      "segments": {
+        "review inputs": {
+          "medianMs": 77
+        },
+        "decision and reason": {
+          "medianMs": 5316,
+          "serverMedianMs": 26
+        }
+      },
+      "controls": 12,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 8,
+        "judged": true,
+        "terms": [
+          "five-sheet Spreadline template",
+          "values-only .xlsx",
+          "five-second import limit",
+          "processed in page memory",
+          "Sheet!Cell references",
+          "UCA cash flow",
+          "K-1 history",
+          "illustrative score"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T5": {
+      "steps": 3,
+      "inputs": 0,
+      "wait": 91,
+      "waitRuns": [
+        84,
+        101,
+        91
+      ],
+      "segments": {
+        "saved cases": {
+          "medianMs": 5
+        },
+        "saved case": {
+          "medianMs": 83
+        },
+        "credit memo": {
+          "medianMs": 3
+        }
+      },
+      "controls": 12,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 5,
+        "judged": true,
+        "terms": [
+          "Literal borrower-name search, ASCII case-insensitive",
+          "Archived definition",
+          "Latest when fetched",
+          "Case / Run UUIDs",
+          "Recorded ISO timestamp"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T6": {
+      "steps": 4,
+      "inputs": 2,
+      "wait": 113,
+      "waitRuns": [
+        105,
+        156,
+        113
+      ],
+      "segments": {
+        "consumer screen": {
+          "medianMs": 3
+        },
+        "consumer outcome": {
+          "medianMs": 27
+        },
+        "SBA screen": {
+          "medianMs": 1
+        },
+        "SBA incomplete eligibility": {
+          "medianMs": 82
+        }
+      },
+      "controls": 12,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 11,
+        "judged": true,
+        "terms": [
+          "DTI",
+          "Ability-to-repay",
+          "analyst attestations",
+          "weighted-rule score",
+          "NAICS code",
+          "SOP version",
+          "Affiliate treatment",
+          "eligibility_status: incomplete",
+          "configured floor",
+          "Size screen",
+          "Recorded workbook SHA-256"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    }
+  },
+  "streamlit": {
+    "T1": {
+      "steps": 2,
+      "inputs": 1,
+      "wait": 6108,
+      "waitRuns": [
+        6093,
+        6665,
+        6108
+      ],
+      "segments": {
+        "start screen": {
+          "medianMs": 789
+        },
+        "decision and reason": {
+          "medianMs": 5319,
+          "serverMedianMs": 190
+        }
+      },
+      "controls": 5,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 11,
+        "judged": true,
+        "terms": [
+          "Testing host connected",
+          "Active operator identity unavailable",
+          "Page memory only, retry tracking",
+          "Commercial Decision vs Commercial Assessment",
+          "SBA",
+          "legacy assessment request",
+          "Dated assessment",
+          "UCA cash flow",
+          "K-1 history",
+          "illustrative score",
+          "prototype-2026-10-03 (policy version)"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T2": {
+      "steps": 0,
+      "inputs": 0,
+      "wait": 0,
+      "waitRuns": [
+        0,
+        0,
+        0
+      ],
+      "segments": {},
+      "controls": 13,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "reasonInFirstViewport": true,
+        "Business DSCR inFirstViewport": true,
+        "Business DSCR description": "",
+        "Global DSCR inFirstViewport": true,
+        "Global DSCR description": "",
+        "FCCR inFirstViewport": true,
+        "FCCR description": ""
+      },
+      "unexplainedTerms": {
+        "count": 14,
+        "judged": true,
+        "terms": [
+          "Business DSCR",
+          "Global DSCR",
+          "FCCR",
+          "UCA cash flow",
+          "EBITDA",
+          "K-1 history",
+          "Cushion",
+          "Approval breakeven",
+          "(FCCR) suffix on capacity lines",
+          "Principal headroom",
+          "pro forma",
+          "nominal annual rate",
+          "fully amortizing",
+          "illustrative score"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T3": {
+      "steps": 6,
+      "inputs": 3,
+      "wait": 5577,
+      "waitRuns": [
+        5577,
+        5580,
+        5576
+      ],
+      "segments": {
+        "recalculated decision": {
+          "medianMs": 5319,
+          "serverMedianMs": 79
+        },
+        "saved": {
+          "medianMs": 180
+        },
+        "revision in History & Audit": {
+          "medianMs": 79
+        }
+      },
+      "controls": 13,
+      "primaryActions": 1,
+      "runs": 3,
+      "notes": {
+        "revisionsListed": 1
+      },
+      "unexplainedTerms": {
+        "count": 14,
+        "judged": true,
+        "terms": [
+          "Annual CPLTD",
+          "AR increase",
+          "AP increase",
+          "used by the backend",
+          "INPUT REVIEW",
+          "USD decimal, up to 34 significant figures",
+          "nonblank rationale",
+          "SAVE ACCEPTED INPUT",
+          "accepted input / returned stored result",
+          "Latest when fetched",
+          "Run (id)",
+          "Check replay",
+          "Configured credential identity",
+          "fact ids (current.debt_service ...)"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T4": {
+      "steps": 3,
+      "inputs": 1,
+      "wait": 5352,
+      "waitRuns": [
+        5354,
+        5352,
+        5343
+      ],
+      "segments": {
+        "review inputs": {
+          "medianMs": 26
+        },
+        "decision and reason": {
+          "medianMs": 5324,
+          "serverMedianMs": 80
+        }
+      },
+      "controls": 14,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 8,
+        "judged": true,
+        "terms": [
+          "five-sheet Spreadline template",
+          "values-only .xlsx",
+          "five-second import limit",
+          "processed in page memory",
+          "Sheet!Cell references",
+          "UCA cash flow",
+          "K-1 history",
+          "illustrative score"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    },
+    "T5": {
+      "steps": 3,
+      "inputs": 0,
+      "wait": 191,
+      "waitRuns": [
+        193,
+        182,
+        191
+      ],
+      "segments": {
+        "saved cases": {
+          "medianMs": 2
+        },
+        "saved case": {
+          "medianMs": 178
+        },
+        "credit memo": {
+          "medianMs": 3
+        }
+      },
+      "controls": 14,
+      "primaryActions": 0,
+      "runs": 3,
+      "notes": {},
+      "unexplainedTerms": {
+        "count": 5,
+        "judged": true,
+        "terms": [
+          "Literal borrower-name search, ASCII case-insensitive",
+          "Archived definition",
+          "Latest when fetched",
+          "Case / Run UUIDs",
+          "Recorded ISO timestamp"
+        ],
+        "rule": "distinct acronyms and system words on the task's path screens with no definition within one hover or focus"
+      }
+    }
+  }
+}

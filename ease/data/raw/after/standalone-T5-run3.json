@@ -1,0 +1,30 @@
+{
+  "host": "standalone",
+  "task": "T5",
+  "run": 3,
+  "steps": 3,
+  "inputs": 0,
+  "wait": 89,
+  "segments": [
+    {
+      "name": "saved cases",
+      "ms": 3
+    },
+    {
+      "name": "saved case",
+      "ms": 84
+    },
+    {
+      "name": "credit memo",
+      "ms": 2
+    }
+  ],
+  "controls": 12,
+  "primaryActions": 1,
+  "figures": {
+    "T5.outcome": "APPROVE",
+    "T5.reason": "Approve: every coverage ratio, UCA cash flow and K-1 history meet the illustrative policy.",
+    "T5.memo.recommendation": "Approve for prototype demonstration based on the accepted inputs."
+  },
+  "notes": {}
+}

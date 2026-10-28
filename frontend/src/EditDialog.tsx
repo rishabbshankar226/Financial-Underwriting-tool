@@ -20,9 +20,8 @@ export default function EditDialog({
   proposal?: EditEvent;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [value, setValue] = useState(
-    editorText(proposal?.next ?? field.value, field.unit),
-  );
+  const initialValue = editorText(proposal?.next ?? field.value, field.unit);
+  const [value, setValue] = useState(initialValue);
   const [rationale, setRationale] = useState(proposal?.rationale ?? "");
   const [error, setError] = useState("");
   function validateValue(next: string) {
@@ -77,7 +76,8 @@ export default function EditDialog({
         onSubmit={(event) => {
           event.preventDefault();
           try {
-            const next = validateEdit(field, value, rationale);
+            // Only a saved revision needs a rationale; an unsaved draft edit does not.
+            const next = validateEdit(field, value, rationale, { requireRationale: saved });
             if (saved) savedRationale(rationale);
             onSubmit({
               path: field.path,
@@ -91,7 +91,6 @@ export default function EditDialog({
           }
         }}
       >
-        <div className="eyebrow">INPUT REVIEW</div>
         <h2 id="edit-title">Edit {field.label}</h2>
         <p>
           {field.period} · {field.unit}
@@ -107,7 +106,8 @@ export default function EditDialog({
               field.unit === "%" ? "10.5%" : field.integer ? "120" : "500000.00"
             }
             aria-describedby="edit-value-help"
-            onBlur={() => setError(validateValue(value))}
+            // An untouched value is not an error yet; submitting it still says to change it or cancel.
+            onBlur={() => setError(value === initialValue ? "" : validateValue(value))}
             onChange={(e) => {
               setValue(e.target.value);
               if (!validateValue(e.target.value)) setError("");
@@ -117,10 +117,10 @@ export default function EditDialog({
         </label>
         <small id="edit-value-help">
           {field.unit === "%"
-            ? "Percentage · converted once to a decimal fraction"
+            ? "Percentage, such as 10.5"
             : field.integer
-              ? "Integer months"
-              : "USD decimal · up to 34 significant digits"}
+              ? "Whole months, such as 120"
+              : "Dollar amount, such as 600,000"}
           {field.min !== undefined
             ? ` · minimum ${editorText(field.min, field.unit)}`
             : ""}
@@ -129,7 +129,7 @@ export default function EditDialog({
             : ""}
         </small>
         <label>
-          Rationale{" "}
+          {saved ? "Rationale" : "Rationale (optional)"}{" "}
           <textarea
             value={rationale}
             placeholder="Explain the source or reason for this edit"
