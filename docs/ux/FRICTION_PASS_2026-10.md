@@ -129,7 +129,7 @@ failing on the pre-fix file.
   - No page-level horizontal overflow at 375 or 1280 on any changed screen. The copy is verb-first and
     blameless. No modal or motion was added.
   - The screenshot showed each "Recorded message" as an empty bordered box, which failed gate 10. It was
-    restyled in `27a677c`.
+    restyled in `27a677c` and re-checked at `bac34ea`, where it shows as a small inline disclosure.
   - No `.ux-profile.md` exists, so catalog defaults applied.
 
 **Number safety:**

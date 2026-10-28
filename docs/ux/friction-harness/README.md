@@ -4,7 +4,8 @@ The Playwright harness that counted T1 to T7 for [FRICTION_PASS_2026-10.md](../F
 
 - `meter.ts` holds the counting rules: clicks, keystrokes, screens, scrolls and wait.
 - `tasks.spec.ts` scripts one minimal path per task.
-- `data/` holds the recorded runs, three per host for `base` and for `after`.
+- `data/` holds the recorded runs, three per host for each label: `base` (`3451de3`), `after` (`d45d65e`) and
+  `final` (`bac34ea`).
 
 ## Reproduce the table from the recorded runs
 
