@@ -1,0 +1,46 @@
+{
+  "task": "T3",
+  "host": "standalone",
+  "run": 3,
+  "status": "completed",
+  "screens": [
+    "Overview",
+    "Credit Memo"
+  ],
+  "clicks": 2,
+  "keystrokes": 0,
+  "scrolls": 2,
+  "waitMs": 0,
+  "waits": [],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Credit Memo tab (where reason codes are listed)",
+      "inViewport": false
+    },
+    {
+      "n": 2,
+      "kind": "read",
+      "target": "first recorded reason",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "click",
+      "target": "Overview tab (factor detail)",
+      "inViewport": true
+    },
+    {
+      "n": 4,
+      "kind": "read",
+      "target": "Business DSCR policy factor",
+      "inViewport": false
+    }
+  ],
+  "notes": {
+    "decision": "Illustrative decision DECLINE Decline: Business DSCR, Fixed-charge coverage (FCCR) and Global DSCR are below the decline floor. prototype-2026-10-03 \u00b7 illustrative score 0.15",
+    "firstReason": "dscr: 0.677703567207043654223122240505350602921521971864012730127045974570081744994380365123122909604241 is below the configured prototype decline floor 1",
+    "factor": "Business DSCR Below decline floor Business DSCR of 0.6777x is below the decline floor of 1x. Approval cushion -0.57x, decline cushion -0.32x"
+  }
+}

@@ -4,6 +4,33 @@ Target: `rishabbshankar226/Financial-Underwriting-tool` only.
 Baseline: `1b59a90f715853a41c5791edf6dce03c1a77839e`.
 Approved Decimal, authentication and SBA contract changes are implemented.
 
+## Friction pass (2026-10-28)
+
+**Scope.** Branch `ux/friction-pass`, based on `main` `3451de3`. These are presentation changes to both hosts,
+approved at Gate 2. C-1 and F-5 also correct two displays that rounded onto a policy line. No file under
+`backend/` or `gate/` changed. The record is in
+[`ux/FRICTION_PASS_2026-10.md`](ux/FRICTION_PASS_2026-10.md), with the harness and recorded runs in
+`ux/friction-harness/`.
+
+**Commands.**
+- Every commit ran the selftest, the precision probe, backend pytest, `test:decimal`, the build, `build:streamlit`
+  with its asset check and a component reinstall, and the e2e specs it touched.
+- Final runs: `scripts/run_all_checks.sh`, then `scripts/run_streamlit_checks.sh`, with `backend/.venv/bin` on
+  `PATH`.
+- Measurement: `docs/ux/friction-harness/run-measure.sh <label>`, then `compare.py`.
+
+**Counts at `bac34ea`.**
+- Both scripts exit 0.
+- Gate selftest: 55 fixture values, 4 flags, 19 mutations killed (unchanged).
+- Backend pytest: 1501 passed (unchanged). Host pytest: 45 passed.
+- Standalone e2e: 433 passed, 9 skipped (gated capture specs). Streamlit e2e: 14 passed, 2 skipped.
+- `npm audit`: 0 vulnerabilities, with an unchanged lockfile.
+- The Streamlit build directory is byte-identical after rebuild.
+- Task harness, measured on both hosts against `main`: guesses 12 → 5 (standalone), and T6 went from blocked to
+  completed.
+
+Passing software tests does not establish credit-policy approval, model validation or regulatory compliance.
+
 ## Ease-of-use pass (2026-10-27)
 
 **Scope.** Branch `worktree-ease-of-use`, based on `main` `2fbfdef`. Presentation-only changes to both hosts: wording,

@@ -47,14 +47,19 @@ export function useGuidedForm(initial: FormValue) {
   const [errors, setErrors] = useState<FieldError[]>([]);
   const [focus, setFocus] = useState(0);
   const root = useRef<HTMLFormElement>(null);
+  // Fields typed in since the last reset. Leaving a field nobody typed in (focus moved there for the user, or a
+  // pass of Tab) shows no error; evaluation still checks every field.
+  const typed = useRef(new Set<string>());
   useEffect(() => {
     if (focus && errors.length) focusPointer(errors[0].pointer, root.current);
   }, [focus]);
   function replace(next: FormValue) {
     setValues(cloneForm(next));
     setErrors([]);
+    typed.current.clear();
   }
   function change(spec: FieldSpec, next: unknown) {
+    typed.current.add(spec.pointer);
     setValues((previous) => setFormValue(previous, spec.pointer, next));
     try {
       parseField(spec, next);
@@ -65,20 +70,22 @@ export function useGuidedForm(initial: FormValue) {
       /* Show new errors on blur or evaluation. */
     }
   }
+  /** Shows `message` as the field's error. A listed error is replaced in place: moving it would reorder the
+   * summary under a click on one of its links. */
+  function flag(spec: FieldSpec, message: string) {
+    const error: FieldError = { pointer: spec.pointer, code: "invalid_input", message, limit: null };
+    setErrors((previous) =>
+      previous.some((item) => item.pointer === spec.pointer)
+        ? previous.map((item) => (item.pointer === spec.pointer ? error : item))
+        : [...previous, error],
+    );
+  }
   function blur(spec: FieldSpec) {
+    if (!typed.current.has(spec.pointer)) return;
     try {
       parseField(spec, formValue(values, spec.pointer));
     } catch (reason) {
-      setErrors((previous) => [
-        ...previous.filter((error) => error.pointer !== spec.pointer),
-        {
-          pointer: spec.pointer,
-          code: "invalid_input",
-          message:
-            reason instanceof Error ? reason.message : "Review this field.",
-          limit: null,
-        },
-      ]);
+      flag(spec, reason instanceof Error ? reason.message : "Review this field.");
     }
   }
   function reject(items: FieldError[]) {
@@ -120,6 +127,7 @@ export function useGuidedForm(initial: FormValue) {
     replace,
     change,
     blur,
+    flag,
     reject,
     prepare,
   };
@@ -172,18 +180,21 @@ const examples: Record<FieldKind, string> = {
   date: "2025-12-31",
 };
 const helpers: Record<FieldKind, string> = {
-  money: "USD decimal · up to 34 significant digits",
-  rate: "Rate [0, 1] · decimal fraction",
-  integer: "Integer",
+  money: "Dollar amount, such as 500,000",
+  rate: "Decimal rate, such as 0.105 for 10.5%",
+  integer: "Whole number",
   text: "Text",
-  date: "ISO calendar date · YYYY-MM-DD",
+  date: "Date as YYYY-MM-DD",
 };
 export function FormField({
   form,
   spec,
+  pasteHint,
 }: {
   form: GuidedFormModel;
   spec: FieldSpec;
+  /** Said after a several-line paste is refused, e.g. where a column of figures can go instead. */
+  pasteHint?: string;
 }) {
   const id = useId(),
     error = form.errors.find((item) => item.pointer === spec.pointer);
@@ -207,6 +218,21 @@ export function FormField({
         aria-describedby={`${id}-help${error ? ` ${id}-error` : ""}`}
         onBlur={() => form.blur(spec)}
         onChange={(event) => form.change(spec, event.target.value)}
+        onPaste={(event) => {
+          // A copied column would land in a figure field as one value with its lines joined; refuse it and say
+          // what to do. Text and date fields (names, rationales) paste as the browser does.
+          if (!["money", "rate", "integer"].includes(spec.kind)) return;
+          const lines = event.clipboardData
+            .getData("text")
+            .split(/\r\n|\r|\n/)
+            .filter((line) => line.trim());
+          if (lines.length < 2) return;
+          event.preventDefault();
+          form.flag(
+            spec,
+            `This field takes one value, and the paste had ${lines.length} lines. Paste one figure at a time${pasteHint ? `, or ${pasteHint}` : "."}`,
+          );
+        }}
       />
       <small id={`${id}-help`}>
         {spec.helper ??

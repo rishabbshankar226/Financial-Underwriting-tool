@@ -1,4 +1,6 @@
 import type { Input } from "../contracts";
+import { describeFieldPath, unitOfPath } from "../fieldCatalog";
+import { exactValueText } from "../format";
 import type { Locator } from "../caseRecovery";
 import { SavedHistory } from "../SavedCases";
 import type { EditEvent, StoredSelection } from "../workspace";
@@ -31,9 +33,10 @@ export function HistoryView({
       ) : (
         history.map((e, i) => (
           <div className="audit" key={i}>
-            <strong>{e.path}</strong>
+            <strong title={e.path}>{describeFieldPath(e.path)}</strong>
             <span>
-              {e.prior} → {e.next}
+              {exactValueText(e.prior, unitOfPath(e.path))} →{" "}
+              {exactValueText(e.next, unitOfPath(e.path))}
             </span>
             <small>
               {e.rationale || "No rationale given"} · {e.at}

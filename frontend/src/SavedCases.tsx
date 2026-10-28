@@ -9,11 +9,20 @@ import {
   type StoredCase,
 } from "./caseContracts";
 import type { Locator, PendingOperation, PendingWrite } from "./caseRecovery";
-import type { StoredSelection } from "./workspace";
+import type { EditableField, StoredSelection } from "./workspace";
 import type { useAnalystWorkspace } from "./useAnalystWorkspace";
 import type { StoredComparison } from "./scenarioContracts";
 import { PagedJson } from "./components/PagedJson";
 import { formatDecimal } from "./decimal";
+import { describeFieldPath } from "./fieldCatalog";
+import { exactValueText } from "./format";
+
+/** The editor unit for a recorded edit's context unit. */
+const savedUnit: Record<string, EditableField["unit"]> = {
+  "USD dollars": "USD",
+  "decimal fraction": "%",
+  months: "months",
+};
 
 export function usePages<T>(
   key: string,
@@ -422,12 +431,15 @@ export function SavedHistory({
       )}
       <article className="savedEvent" aria-label="Selected recorded event">
         <h3>Selected recorded event · revision {s.revision}</h3>
-        <strong>
-          {event.kind === "creation" ? "Case creation" : event.field_path}
+        <strong title={event.field_path ?? undefined}>
+          {event.kind === "creation"
+            ? "Case creation"
+            : describeFieldPath(event.field_path ?? "")}
         </strong>
         {event.kind === "edit" && (
           <p>
-            {event.before} → {event.after} · {event.context.unit}
+            {exactValueText(event.before ?? "", savedUnit[event.context.unit ?? ""] ?? "USD")} →{" "}
+            {exactValueText(event.after ?? "", savedUnit[event.context.unit ?? ""] ?? "USD")}
           </p>
         )}
         <p>{event.rationale}</p>

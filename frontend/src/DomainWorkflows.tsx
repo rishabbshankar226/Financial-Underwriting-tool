@@ -17,7 +17,9 @@ import {
   type FormValue,
   type GuidedFormModel,
 } from "./components/GuidedForm";
-import { formatRatioPercent } from "./decimal";
+import type { Factor } from "./contracts";
+import { isDecimal } from "./decimal";
+import { percentBeside } from "./format";
 import { TraceInspector, type InspectorData } from "./TraceInspector";
 import { isEmbeddedWorkspace } from "./transport";
 
@@ -79,6 +81,33 @@ const consumerFactorLabels: Record<string, string> = {
   synthetic_credit_score: "Synthetic credit score",
 };
 
+const operatorWords: Record<NonNullable<Factor["comparison_operator"]>, string> = {
+  "<": "below",
+  ">": "above",
+  ">=": "at least",
+  "==": "equal to",
+};
+
+/** The policy line the server judged a consumer factor against, as returned: " · policy below 50.0%". */
+function policyLineText(factor: Factor): string {
+  if (!factor.comparison_operator || !isDecimal(factor.threshold)) return "";
+  const line = factor.name.includes("dti") ? percentBeside(factor.threshold, []) : factor.threshold;
+  return ` · policy ${operatorWords[factor.comparison_operator]} ${line}`;
+}
+
+/** A rejection in plain words. When the server names no field, its own reason is the message: "Review the
+ * highlighted fields" would point at nothing. */
+function rejectionMessage(status: number, detail: unknown, fieldErrors: number): string {
+  if (status !== 422)
+    return `The evaluation could not be completed (${status}). Your draft is preserved.`;
+  if (fieldErrors || typeof detail !== "string" || !detail.trim())
+    return "The server rejected these inputs. Review the highlighted fields; your draft is preserved.";
+  const reason = detail.trim().replace(/\.$/, "");
+  if (/^NAICS \d{6} is unsupported:/.test(reason))
+    return `This case couldn't be screened: ${reason}. That is a known limit of the prototype's pinned SBA size table, so correct the code if it is wrong or review the case manually; your draft is preserved.`;
+  return `This case couldn't be evaluated: ${reason}. Your draft is preserved.`;
+}
+
 function useDomainRequest<T>(
   form: GuidedFormModel,
   guard: (body: unknown) => T,
@@ -130,12 +159,9 @@ function useDomainRequest<T>(
           body && typeof body === "object" && "detail" in body
             ? body.detail
             : null;
-        form.reject(fieldErrorsFrom(body, detail));
-        throw new Error(
-          response.status === 422
-            ? "The server rejected these inputs. Review the highlighted fields; your draft is preserved."
-            : `The evaluation could not be completed (${response.status}). Your draft is preserved.`,
-        );
+        const fieldErrors = fieldErrorsFrom(body, detail);
+        form.reject(fieldErrors);
+        throw new Error(rejectionMessage(response.status, detail, fieldErrors.length));
       }
       const accepted = guard(body);
       if (!controller.signal.aborted && currentContext.current === context)
@@ -262,6 +288,16 @@ export function ConsumerWorkflow() {
   const total = request.result?.factors.find(
     (factor) => factor.name === "back_end_dti",
   );
+  // Each DTI is rounded once from its raw value, with enough places to compare with both DTI policy lines.
+  const dtiLines =
+    request.result?.factors
+      .filter((factor) => factor.name.includes("dti"))
+      .map((factor) => factor.threshold) ?? [];
+  const dtiText = (factor: Factor) =>
+    percentBeside(
+      typeof factor.raw_value === "string" ? factor.raw_value : String(factor.value),
+      dtiLines,
+    );
   function inspect(housing: boolean, opener: HTMLButtonElement) {
     inspectorOpener.current = opener;
     setInspector({
@@ -278,7 +314,7 @@ export function ConsumerWorkflow() {
         })),
       note: housing
         ? "The existing consumer decision endpoint does not return housing DTI or a housing factor. No housing ratio or sum is calculated in the browser."
-        : `Server total DTI: ${total && typeof total.value === "string" ? formatRatioPercent(total.value, 4) : "Unavailable"}. The endpoint returns the policy factor, but no additive trace or housing ratio. Inputs shown above are supplied facts; the browser does not reconstruct financial results.`,
+        : `Server total DTI: ${total && typeof total.value === "string" ? dtiText(total) : "Unavailable"}. The endpoint returns the policy factor, but no additive trace or housing ratio. Inputs shown above are supplied facts; the browser does not reconstruct financial results.`,
     });
   }
   return (
@@ -369,7 +405,7 @@ export function ConsumerWorkflow() {
               <h3>Total DTI</h3>
               <strong>
                 {total && typeof total.value === "string"
-                  ? formatRatioPercent(total.value, 4)
+                  ? dtiText(total)
                   : "Unavailable"}
               </strong>
               <button
@@ -381,7 +417,11 @@ export function ConsumerWorkflow() {
             </article>
             <article>
               <h3>Housing DTI</h3>
-              <p>Unavailable from this endpoint</p>
+              <p>
+                Not returned by this prototype's consumer decision. Only total
+                (back-end) DTI is compared with the DTI policy lines; Inspect
+                shows how housing DTI is worked out.
+              </p>
               <button
                 type="button"
                 onClick={(event) => inspect(true, event.currentTarget)}
@@ -406,10 +446,13 @@ export function ConsumerWorkflow() {
                         : "Fail"}{" "}
                     ·{" "}
                     {typeof factor.value === "boolean"
-                      ? String(factor.value)
+                      ? factor.value
+                        ? "complete"
+                        : "incomplete"
                       : factor.name.includes("dti")
-                        ? formatRatioPercent(factor.value, 4)
+                        ? dtiText(factor)
                         : factor.value}
+                    {policyLineText(factor)}
                   </span>
                 </div>
               </li>

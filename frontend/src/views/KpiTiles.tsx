@@ -2,7 +2,7 @@ import type { CommercialAnalysis, DebtCapacity, FactorStatus } from "../analysis
 import type { Assessment, Factor, Metric } from "../contracts";
 import { formatMultiple } from "../decimal";
 import { compareDecimal, isDecimal } from "../decimal";
-import { metricValueText, moneyMagnitudeText, moneyText, multipleText, ratioPercentText, signedMetricText } from "../format";
+import { metricValueText, moneyMagnitudeText, moneyText, multipleText, ratioPercentText, signedMetricText, WHOLE_DOLLARS } from "../format";
 import { useAnalysis } from "../useAnalysis";
 
 export const factorStatusText: Record<FactorStatus, string> = {
@@ -109,7 +109,7 @@ export function KpiTiles({ assessment }: { assessment: Assessment }) {
     ratioTile("FCCR", "fccr", facts.fccr, policy.commercial_min_fccr, policy.commercial_decline_fccr, assessment, analysis, pending),
     {
       label: "UCA cash flow",
-      value: metricValueText(facts.uca_cash_flow, "money"),
+      value: metricValueText(facts.uca_cash_flow, "money", WHOLE_DOLLARS, policy.commercial_min_uca_cash_flow),
       state: tileState[uca],
       status: factorStatusText[uca],
       lines: [`Must exceed ${moneyText(policy.commercial_min_uca_cash_flow)}`],

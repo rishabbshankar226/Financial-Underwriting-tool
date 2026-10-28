@@ -3,7 +3,20 @@ import { DisclosureMenu } from "../components/DisclosureMenu";
 import { useTheme } from "../ThemeRoot";
 import type { WorkspaceView } from "../workspaceSelectors";
 
-export function BrandBar({ children }: { children?: ReactNode }) {
+const workflowNames = {
+  commercial: "Commercial underwriting",
+  consumer: "Consumer underwriting",
+  sba: "SBA screening",
+} as const;
+
+/** The wordmark and the current workflow's name, which follows the workflow selected in the navigation. */
+export function BrandBar({
+  domain = "commercial",
+  children,
+}: {
+  domain?: keyof typeof workflowNames;
+  children?: ReactNode;
+}) {
   return (
     <div className="workspaceBrand">
       <div className="wordmark">
@@ -13,7 +26,7 @@ export function BrandBar({ children }: { children?: ReactNode }) {
         <span>Spreadline</span>
       </div>
       <span className="workspaceType">
-        Commercial underwriting <span>USD</span>
+        {workflowNames[domain]} <span>USD</span>
       </span>
       <div className="brandActions">{children}</div>
     </div>

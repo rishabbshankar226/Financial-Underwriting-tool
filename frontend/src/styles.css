@@ -923,6 +923,24 @@ dialog textarea,
 .memo {
   min-height: 300px;
 }
+.memo .recordedMessage {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  color: var(--subtle);
+  font-size: var(--fs-12);
+  overflow-wrap: anywhere;
+}
+.memo .recordedMessage summary {
+  color: var(--subtle);
+  font-weight: 400;
+}
+@media print {
+  .memo .actions,
+  .memo .recordedMessage {
+    display: none;
+  }
+}
 
 /* 7. Tables and the spread --------------------------------------------------------------------- */
 

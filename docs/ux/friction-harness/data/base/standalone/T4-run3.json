@@ -1,0 +1,85 @@
+{
+  "task": "T4",
+  "host": "standalone",
+  "run": 3,
+  "status": "completed",
+  "screens": [
+    "Workspace",
+    "Save dialog",
+    "Debt & Loan",
+    "Edit dialog",
+    "History & Audit"
+  ],
+  "clicks": 7,
+  "keystrokes": 63,
+  "scrolls": 3,
+  "waitMs": 97,
+  "waits": [
+    {
+      "name": "saved",
+      "ms": 23
+    },
+    {
+      "name": "revision 2",
+      "ms": 74
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Save case",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "click",
+      "target": "Save rationale",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "click",
+      "target": "Save",
+      "inViewport": true
+    },
+    {
+      "n": 4,
+      "kind": "click",
+      "target": "Debt & Loan tab",
+      "inViewport": false
+    },
+    {
+      "n": 5,
+      "kind": "click",
+      "target": "Proposed principal",
+      "inViewport": false
+    },
+    {
+      "n": 6,
+      "kind": "click",
+      "target": "Save revision",
+      "inViewport": true
+    },
+    {
+      "n": 7,
+      "kind": "click",
+      "target": "History & Audit tab",
+      "inViewport": false
+    },
+    {
+      "n": 8,
+      "kind": "read",
+      "target": "edit entry with rationale",
+      "inViewport": true
+    }
+  ],
+  "notes": {
+    "focusInDialog": "New value",
+    "tabsToRationale": 1,
+    "confirmation": [
+      "Saved revision 2."
+    ],
+    "entry": "Selected recorded event \u00b7 revision 2\n/proposed_loan/amount\n\n500000 \u2192 600000 \u00b7 USD dollars\n\nLower principal after review\n\ncurrent_assumptions \u00b7 as of 2026-10-06\n\nRecorded 2026-10-28T13:54:50.115925+00:00 \u00b7 friction-baseline"
+  }
+}

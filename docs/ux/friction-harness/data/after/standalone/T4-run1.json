@@ -1,0 +1,85 @@
+{
+  "task": "T4",
+  "host": "standalone",
+  "run": 1,
+  "status": "completed",
+  "screens": [
+    "Workspace",
+    "Save dialog",
+    "Debt & Loan",
+    "Edit dialog",
+    "History & Audit"
+  ],
+  "clicks": 7,
+  "keystrokes": 63,
+  "scrolls": 3,
+  "waitMs": 101,
+  "waits": [
+    {
+      "name": "saved",
+      "ms": 25
+    },
+    {
+      "name": "revision 2",
+      "ms": 76
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "click",
+      "target": "Save case",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "click",
+      "target": "Save rationale",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "click",
+      "target": "Save",
+      "inViewport": true
+    },
+    {
+      "n": 4,
+      "kind": "click",
+      "target": "Debt & Loan tab",
+      "inViewport": false
+    },
+    {
+      "n": 5,
+      "kind": "click",
+      "target": "Proposed principal",
+      "inViewport": false
+    },
+    {
+      "n": 6,
+      "kind": "click",
+      "target": "Save revision",
+      "inViewport": true
+    },
+    {
+      "n": 7,
+      "kind": "click",
+      "target": "History & Audit tab",
+      "inViewport": false
+    },
+    {
+      "n": 8,
+      "kind": "read",
+      "target": "edit entry with rationale",
+      "inViewport": true
+    }
+  ],
+  "notes": {
+    "focusInDialog": "New value",
+    "tabsToRationale": 1,
+    "confirmation": [
+      "Saved revision 2."
+    ],
+    "entry": "Revision 2\n\nLower principal after review\n2026-10-28T16:06:12.409186+00:00 \u00b7 Run bfcd20cd-bac3-4fa9-aeba-f8b4e8f7e072\n\nRevision 2"
+  }
+}

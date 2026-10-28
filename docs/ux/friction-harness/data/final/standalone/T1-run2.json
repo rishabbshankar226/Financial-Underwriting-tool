@@ -1,0 +1,48 @@
+{
+  "task": "T1",
+  "host": "standalone",
+  "run": 2,
+  "status": "completed",
+  "screens": [
+    "Connect",
+    "Start",
+    "Workspace"
+  ],
+  "clicks": 2,
+  "keystrokes": 1,
+  "scrolls": 0,
+  "waitMs": 5331,
+  "waits": [
+    {
+      "name": "start screen",
+      "ms": 25
+    },
+    {
+      "name": "first DSCR",
+      "ms": 5306
+    }
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "kind": "paste",
+      "target": "API token",
+      "inViewport": true
+    },
+    {
+      "n": 2,
+      "kind": "click",
+      "target": "Connect workspace",
+      "inViewport": true
+    },
+    {
+      "n": 3,
+      "kind": "click",
+      "target": "Try the example case",
+      "inViewport": true
+    }
+  ],
+  "notes": {
+    "dscr": "Business DSCR 3.13x Meets approval Minimum 1.25x, decline below 1.00x Cushion +1.88x"
+  }
+}
