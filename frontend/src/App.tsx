@@ -154,7 +154,7 @@ export default function App({ onDisconnect }: { onDisconnect?: () => void }) {
       paused={workspace.inFlight}
     >
       <main className="analystWorkspace">
-        <BrandBar>
+        <BrandBar domain={domain}>
           {!idle && domain === "commercial" && !composer && !excel && (
             <PrimaryActions
               showCases={showCases}

@@ -82,6 +82,18 @@ test("F-3: memo reasons name the factor and show its formatted value and line", 
   expect(await memo.innerText()).not.toMatch(/\d{20}/);
 });
 
+test("F-14: the brand bar names the workflow on screen", async ({ page }) => {
+  await connect(page);
+  const brand = page.locator(".workspaceType");
+  await expect(brand).toContainText("Commercial underwriting");
+  await page.getByRole("button", { name: "Consumer Decision", exact: true }).click();
+  await expect(brand).toContainText("Consumer underwriting");
+  await page.getByRole("button", { name: "SBA Screen", exact: true }).click();
+  await expect(brand).toContainText("SBA screening");
+  await page.getByRole("button", { name: "Commercial Assessment", exact: true }).click();
+  await expect(brand).toContainText("Commercial underwriting");
+});
+
 test.describe("F-11", () => {
   test.use({ permissions: ["clipboard-read", "clipboard-write"] });
 
