@@ -417,7 +417,11 @@ export function ConsumerWorkflow() {
             </article>
             <article>
               <h3>Housing DTI</h3>
-              <p>Unavailable from this endpoint</p>
+              <p>
+                Not returned by this prototype's consumer decision. Only total
+                (back-end) DTI is compared with the DTI policy lines; Inspect
+                shows how housing DTI is worked out.
+              </p>
               <button
                 type="button"
                 onClick={(event) => inspect(true, event.currentTarget)}

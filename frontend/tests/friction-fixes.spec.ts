@@ -82,6 +82,15 @@ test("F-3: memo reasons name the factor and show its formatted value and line", 
   expect(await memo.innerText()).not.toMatch(/\d{20}/);
 });
 
+test("F-6: housing DTI says why it is missing and what is judged instead", async ({ page }) => {
+  const result = await consumerResult(page);
+  const housing = result.getByRole("article").filter({ has: page.getByRole("heading", { name: "Housing DTI" }) });
+  await expect(housing).toContainText(
+    "Not returned by this prototype's consumer decision. Only total (back-end) DTI is compared with the DTI policy lines; Inspect shows how housing DTI is worked out.",
+  );
+  await expect(housing.getByRole("button", { name: "Inspect Housing DTI", exact: true })).toBeVisible();
+});
+
 test("F-14: the brand bar names the workflow on screen", async ({ page }) => {
   await connect(page);
   const brand = page.locator(".workspaceType");

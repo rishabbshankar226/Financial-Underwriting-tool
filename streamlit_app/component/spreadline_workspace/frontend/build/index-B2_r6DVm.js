@@ -13948,7 +13948,7 @@ function Go() {
 							})
 						] }), /* @__PURE__ */ (0, W.jsxs)("article", { children: [
 							/* @__PURE__ */ (0, W.jsx)("h3", { children: "Housing DTI" }),
-							/* @__PURE__ */ (0, W.jsx)("p", { children: "Unavailable from this endpoint" }),
+							/* @__PURE__ */ (0, W.jsx)("p", { children: "Not returned by this prototype's consumer decision. Only total (back-end) DTI is compared with the DTI policy lines; Inspect shows how housing DTI is worked out." }),
 							/* @__PURE__ */ (0, W.jsx)("button", {
 								type: "button",
 								onClick: (e) => d(!0, e.currentTarget),
