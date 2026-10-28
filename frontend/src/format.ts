@@ -116,6 +116,14 @@ export function factorValueText(factor: Factor): string {
   return multipleText(value, [factor.threshold, factor.decline_threshold]);
 }
 
+/** A ratio as a percentage beside its policy lines, rounded once from the raw value: one place, or more when
+ * fewer would compare with a line differently, so 0.42996 beside a 43% line reads "42.996%", never "43.0%". */
+export function percentBeside(ratio: string, lines: readonly unknown[]): string {
+  // Percent places are ratio places less two.
+  const places = placesBeside(ratio, lines, 3);
+  return places === null ? `${shiftDecimal(ratio, 2)}%` : formatRatioPercent(ratio, places - 2);
+}
+
 /** A ratio metric shown as a percentage of its base, rounded once from the raw value. */
 export function ratioPercentText(metric: Metric, places = 1): string {
   if (metric.status !== "available" || !isDecimal(metric.raw_value)) return "Not applicable";

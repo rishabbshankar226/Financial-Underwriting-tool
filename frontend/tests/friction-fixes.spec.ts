@@ -112,6 +112,42 @@ test.describe("F-4", () => {
   });
 });
 
+async function consumerResult(page: Page) {
+  await connect(page);
+  await page.getByRole("button", { name: "Consumer Decision", exact: true }).click();
+  await page.getByLabel("Load sample case", { exact: true }).selectOption("consumer");
+  await page.getByRole("button", { name: "Evaluate consumer", exact: true }).click();
+  const result = page.getByRole("region", { name: "Consumer result", exact: true });
+  await expect(result).toBeVisible();
+  return result;
+}
+
+const rule = (result: ReturnType<Page["getByRole"]>, label: string) =>
+  result.getByRole("listitem").filter({ hasText: label });
+
+test("F-5: consumer rules show the policy line the server judged them against", async ({ page }) => {
+  const result = await consumerResult(page);
+  await expect(rule(result, "Total DTI · approval rule")).toContainText("Pass · 33.8% · policy below 50.0%");
+  await expect(rule(result, "Total DTI · review rule")).toContainText("Pass · 33.8% · policy below 43.0%");
+  await expect(rule(result, "Synthetic credit score")).toContainText("Pass · 720 · policy at least 620");
+  await expect(rule(result, "Ability-to-repay documentation")).toContainText("Pass · complete");
+  await expect(result.getByRole("article").filter({ hasText: "Total DTI" }).getByRole("strong")).toHaveText("33.8%");
+});
+
+test("F-5: a DTI just under a policy line never reads as the line", async ({ page }) => {
+  // The server's four-place value is 0.4300; the raw value 0.42996 passes the 0.43 review rule.
+  await page.route("**/consumer/decision", async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    for (const factor of body.factors)
+      if (String(factor.name).includes("dti")) Object.assign(factor, { value: "0.4300", raw_value: "0.42996" });
+    await route.fulfill({ response, json: body });
+  });
+  const result = await consumerResult(page);
+  await expect(rule(result, "Total DTI · review rule")).toContainText("Pass · 42.996% · policy below 43.0%");
+  await expect(result.getByRole("article").filter({ hasText: "Total DTI" }).getByRole("strong")).toHaveText("42.996%");
+});
+
 test("F-7: each error-summary link reaches its field on the first click", async ({ page }) => {
   await openComposer(page);
   await page.getByRole("button", { name: "Evaluate assessment", exact: true }).click();
