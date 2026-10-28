@@ -33,30 +33,34 @@ if not os.environ.get("SPREADLINE_API_TOKEN") or not os.environ.get("SPREADLINE_
     st.error("The operator must configure the testing API credential and operator identity.")
     st.stop()
 
+# A public host opts out of the password explicitly; any other value keeps the gate below.
+public_access = os.environ.get("SPREADLINE_PUBLIC_ACCESS") == "true"
+
 # Hosts without a viewer sign-in rely on this shared password; it gates storage and the bridge.
 MIN_ACCESS_PASSWORD_LENGTH = 16
-access_password = os.environ.get("SPREADLINE_ACCESS_PASSWORD", "")
-if len(access_password) < MIN_ACCESS_PASSWORD_LENGTH or hmac.compare_digest(
-    access_password.encode("utf-8"), os.environ["SPREADLINE_API_TOKEN"].encode("utf-8")
-):
-    st.error(
-        "The operator must set SPREADLINE_ACCESS_PASSWORD to a viewer password of at least "
-        f"{MIN_ACCESS_PASSWORD_LENGTH} characters that differs from the API credential."
-    )
-    st.stop()
+if not public_access:
+    access_password = os.environ.get("SPREADLINE_ACCESS_PASSWORD", "")
+    if len(access_password) < MIN_ACCESS_PASSWORD_LENGTH or hmac.compare_digest(
+        access_password.encode("utf-8"), os.environ["SPREADLINE_API_TOKEN"].encode("utf-8")
+    ):
+        st.error(
+            "The operator must set SPREADLINE_ACCESS_PASSWORD to a viewer password of at least "
+            f"{MIN_ACCESS_PASSWORD_LENGTH} characters that differs from the API credential."
+        )
+        st.stop()
 
-if st.session_state.get("_spreadline_access") is not True:
-    st.title("Spreadline")
-    st.subheader("Testing workspace access")
-    with st.form("spreadline_access", clear_on_submit=True):
-        supplied = st.text_input("Access password", type="password")
-        submitted = st.form_submit_button("Open workspace", type="primary")
-    if submitted and hmac.compare_digest(supplied.encode("utf-8"), access_password.encode("utf-8")):
-        st.session_state["_spreadline_access"] = True
-        st.rerun()
-    if submitted:
-        st.error("The access password is not correct.")
-    st.stop()
+    if st.session_state.get("_spreadline_access") is not True:
+        st.title("Spreadline")
+        st.subheader("Testing workspace access")
+        with st.form("spreadline_access", clear_on_submit=True):
+            supplied = st.text_input("Access password", type="password")
+            submitted = st.form_submit_button("Open workspace", type="primary")
+        if submitted and hmac.compare_digest(supplied.encode("utf-8"), access_password.encode("utf-8")):
+            st.session_state["_spreadline_access"] = True
+            st.rerun()
+        if submitted:
+            st.error("The access password is not correct.")
+        st.stop()
 
 
 @st.cache_resource
@@ -94,6 +98,12 @@ except ValueError:
     st.stop()
 
 from spreadline_workspace import workspace  # noqa: E402
+
+if public_access:
+    st.caption(
+        "Public demo: anyone with this link can see and change saved cases. "
+        "Do not enter real borrower information."
+    )
 
 workspace(
     key="spreadline_workspace",

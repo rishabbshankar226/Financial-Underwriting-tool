@@ -7,9 +7,11 @@ screen, explains each decision, and reviews dated spreads, debt capacity,
 analyst edits and scenario comparisons. SQLite retains original inputs,
 decisions, traces, policies, and retry receipts.
 
-**Open the hosted workspace:** <https://spreadline-testing.streamlit.app/>.
-It is a private Streamlit Community Cloud app for synthetic data only:
-Streamlit asks you to sign in, and only invited viewers can open it. The
+**Open the interactive workspace:** <https://spreadline-testing.onrender.com/>.
+It is a public demo on Render for synthetic data only, with no sign-in. Anyone
+with the link can see and change saved cases, and a restart deletes them, so do
+not enter real borrower information. The free instance sleeps when idle; the
+first visit can take about a minute to wake it. The
 [Streamlit testing host](docs/STREAMLIT_TESTING.md) guide covers the
 deployment, its access boundary and running the same workspace locally.
 
@@ -123,12 +125,13 @@ Capacity is policy arithmetic, not an approval. See
 
 ## Setup
 
-For a temporary private Streamlit deployment, see the
+For a temporary Streamlit deployment, see the
 [Streamlit testing host](docs/STREAMLIT_TESTING.md). It packages the same React
 workspace and invokes the existing backend in-process. It is disabled by
-default, asks viewers for a shared access password once enabled, uses synthetic
-data, and labels local testing records as temporary. `render.yaml` deploys it to
-Render.
+default, asks viewers for a shared access password once enabled unless
+`SPREADLINE_PUBLIC_ACCESS` is `true`, uses synthetic data, and labels local
+testing records as temporary. `render.yaml` deploys it to Render with public
+access on.
 
 Prerequisites: Python 3.12, Node.js 22.12 or later in the supported Node 22 line,
 SQLite from Python 3.12, and free ports 8000/5173 for browser tests. CI uses

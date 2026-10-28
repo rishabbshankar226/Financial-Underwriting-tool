@@ -9,7 +9,8 @@ owned by the existing backend. The standalone Vite application remains supported
 
 This is a synthetic-data, single-operator testing environment. Browser drafts and
 responses are session-local. Saved synthetic cases are intentionally shared by
-trusted testers using the configured operator credential. The recorded actor
+everyone using the configured operator credential: trusted testers behind the
+access password, or any visitor when public access is on. The recorded actor
 identifies that credential, not an independently verified human or tenant.
 
 ![Streamlit workspace using the synthetic Alpine case](images/streamlit-workspace-desktop.png)
@@ -48,7 +49,7 @@ reinstall that package after rebuilding if it is not editable.
 ## Access password
 
 Render has no viewer sign-in, so the app has its own gate. When the workspace is
-enabled, `streamlit_app/app.py` requires `SPREADLINE_ACCESS_PASSWORD`: at least
+enabled without public access (below), `streamlit_app/app.py` requires `SPREADLINE_ACCESS_PASSWORD`: at least
 16 characters, different from `SPREADLINE_API_TOKEN`. A missing or invalid value
 fails closed with an error that names the variable without showing it. Until a
 viewer enters the password, the app opens no case store and the bridge
@@ -59,6 +60,16 @@ held in server-side session state, so a reload or new tab asks again. The gate
 limits who can use the operator credential; it does not identify individual
 viewers. Rotate the password by changing the variable, which restarts the service
 and ends every session.
+
+### Public access
+
+`SPREADLINE_PUBLIC_ACCESS=true` skips the access password, and then
+`SPREADLINE_ACCESS_PASSWORD` is not required. Any other value, including an
+unset variable, keeps the gate. With public access on, anyone with the URL works
+as the configured operator: they can list, open, change and save every case in
+the shared store. A caption above the workspace says so and asks visitors not
+to enter real borrower information. The operator token still stays on the server, and the
+bridge limits below still apply. Use public access only with synthetic data.
 
 ## Render deployment
 
@@ -78,9 +89,13 @@ Environment variables:
 - `SPREADLINE_TESTING_ENABLED` is prompted at creation (`sync: false`), and later
   syncs leave it unchanged.
 - `SPREADLINE_OPERATOR_ID` is `render-testing`.
+- `SPREADLINE_PUBLIC_ACCESS` is `true`, so the Render service is public. Each
+  Blueprint sync reapplies this value; to restore the password, change it to
+  `false` in `render.yaml` and merge.
 - Render generates `SPREADLINE_API_TOKEN` and `SPREADLINE_ACCESS_PASSWORD` (random
   256-bit base64 values). The token is used only on the server; nobody needs to
-  read it. Testers get the access password from the service's **Environment** tab.
+  read it. The password is unused while public access is on; when the gate is
+  restored, testers get it from the service's **Environment** tab.
 
 Rollout:
 1. In the Render dashboard, choose **New → Blueprint**, connect this repository
@@ -88,9 +103,20 @@ Rollout:
 2. Confirm the build used Python 3.12, `/_stcore/health` returns 200, and the URL
    shows only the disabled setup screen.
 3. Set `SPREADLINE_TESTING_ENABLED` to `true`. After the redeploy, confirm the
-   access screen appears and rejects a wrong password.
-4. Unlock with the generated password and run the hosted smoke test below. Record
-   the deployed commit and URL here.
+   access screen appears and rejects a wrong password. The committed Blueprint
+   has public access on, so a new service shows the start screen here instead;
+   set `SPREADLINE_PUBLIC_ACCESS` to `false` first to verify the gate.
+4. Unlock with the generated password (not needed with public access) and run
+   the hosted smoke test below. Record the deployed commit and URL here.
+5. To open the service to the public, merge `SPREADLINE_PUBLIC_ACCESS: "true"` in
+   `render.yaml`. Confirm the URL opens on the start screen with the public demo
+   caption and no access screen.
+
+The service is at <https://spreadline-testing.onrender.com/>. On October 27, 2026
+it deployed `a3a120af83f02adceab7e227fc0d666e8cb5216d` after CI passed;
+`/_stcore/health` returned 200, the served component bundle matched the
+committed `index-DR-GjOK7.js` digest, and the access screen loaded. The full
+smoke test below was not repeated for that deploy.
 
 The free instance sleeps after 15 minutes without traffic and takes about a minute
 to wake. Its filesystem is temporary: a restart, sleep or redeploy deletes the case
@@ -275,8 +301,9 @@ are local verification output, not published customer data.
 
 ## Hosted smoke test and rollback
 
-- Confirm uninvited access is blocked before using configured operations: on
-  Render, the access screen appears first and rejects a wrong password.
+- Confirm the access boundary before using configured operations. With the gate,
+  the access screen appears first and rejects a wrong password. With public
+  access, the start screen appears directly with the public demo caption.
 - A fresh session opens on the start screen with nothing evaluated. Choose
   **Try the example case**; inspect the decision bar, KPI tiles and Overview,
   then select an earlier spread column. The current coverage period must remain
