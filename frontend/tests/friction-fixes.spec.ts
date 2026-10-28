@@ -129,11 +129,14 @@ test.describe("F-4", () => {
 
   test("F-4: the memo copies as text with its disclaimer and prints with the known gaps open", async ({ page }) => {
     await page.addInitScript(() => {
+      // A browser's print fires beforeprint, captures the page, then fires afterprint.
       window.print = () => {
+        window.dispatchEvent(new Event("beforeprint"));
         const scope = document.querySelector<HTMLDetailsElement>(
           '[aria-label="Model scope and policy limitations"] details',
         );
         (window as unknown as { printedScopeOpen: boolean | null }).printedScopeOpen = scope?.open ?? null;
+        window.dispatchEvent(new Event("afterprint"));
       };
     });
     await connect(page);
@@ -148,6 +151,10 @@ test.describe("F-4", () => {
     expect(copied).toContain("Business DSCR: 3.1349x");
     expect(copied).toContain("Prototype demonstration only.");
     expect(copied).not.toContain("Copy memo as text");
+    // The copy carries the model's scope and known gaps, and no bare "Recorded message" lines.
+    expect(copied).toContain("The weighted-rule score is not a probability of default.");
+    expect(copied).toContain("LTV, debt yield, IRR, and NPV are not implemented.");
+    expect(copied).not.toContain("Recorded message");
     await memo.getByRole("button", { name: "Print memo", exact: true }).click();
     expect(await page.evaluate(() => (window as unknown as { printedScopeOpen: boolean | null }).printedScopeOpen)).toBe(true);
     await expect(page.getByRole("group").filter({ hasText: "Methodology scope" }).first()).not.toHaveAttribute("open");

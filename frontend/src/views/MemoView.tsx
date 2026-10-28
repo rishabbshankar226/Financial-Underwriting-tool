@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Decision, Factor } from "../contracts";
 import { isDecimal } from "../decimal";
 import { fieldLabels as labels } from "../fieldCatalog";
@@ -25,22 +25,52 @@ function reasonText(factor: Factor): string {
   return `${label} is ${value}; the policy requires ${line}.`;
 }
 
-/** Prints the workspace with the print stylesheet; the model's known gaps are opened so they print too. */
-function printMemo(): void {
-  const scope = queryWorkspace<HTMLDetailsElement>('[aria-label="Model scope and policy limitations"] details');
-  const wasOpen = scope?.open ?? true;
-  if (scope) scope.open = true;
-  window.print();
-  if (scope) scope.open = wasOpen;
+const scopeSelector = '[aria-label="Model scope and policy limitations"]';
+
+/** The model's scope and known gaps as plain paragraphs, for text that leaves the app. */
+function scopeText(): string {
+  const scope = queryWorkspace<HTMLElement>(scopeSelector);
+  return scope
+    ? Array.from(scope.querySelectorAll("p"), (p) => (p.textContent ?? "").replace(/\s+/g, " ").trim())
+        .filter(Boolean)
+        .join("\n\n")
+    : "";
 }
 
 export function MemoView({ decision }: { decision: Decision | null }) {
   const body = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState("");
+  // While the memo is shown, any print (the button or the browser's own command) opens the known gaps first and
+  // restores them after, so they print even where print() returns before the page is captured.
+  useEffect(() => {
+    let restore: (() => void) | null = null;
+    const open = () => {
+      const details = queryWorkspace<HTMLDetailsElement>(`${scopeSelector} details`);
+      if (!details || details.open) return;
+      details.open = true;
+      restore = () => (details.open = false);
+    };
+    const close = () => {
+      restore?.();
+      restore = null;
+    };
+    window.addEventListener("beforeprint", open);
+    window.addEventListener("afterprint", close);
+    return () => {
+      window.removeEventListener("beforeprint", open);
+      window.removeEventListener("afterprint", close);
+    };
+  }, []);
   async function copyMemo() {
     try {
-      // The rendered text, disclaimer included; closed "Recorded message" details are not rendered, so not copied.
-      await navigator.clipboard.writeText(body.current?.innerText ?? "");
+      // The rendered memo and its disclaimer, then the model's scope and known gaps. A closed "Recorded message"
+      // renders only its summary line, which is dropped.
+      const memo = (body.current?.innerText ?? "")
+        .split("\n")
+        .filter((line) => line.trim() !== "Recorded message")
+        .join("\n");
+      const limits = scopeText();
+      await navigator.clipboard.writeText(limits ? `${memo}\n\n${limits}` : memo);
       setCopied("Copied the memo as text.");
     } catch {
       setCopied("The memo couldn't be copied here. Select its text and copy it instead.");
@@ -54,7 +84,7 @@ export function MemoView({ decision }: { decision: Decision | null }) {
           <button type="button" onClick={() => void copyMemo()}>
             Copy memo as text
           </button>
-          <button type="button" onClick={printMemo}>
+          <button type="button" onClick={() => window.print()}>
             Print memo
           </button>
           <span role="status">{copied}</span>
