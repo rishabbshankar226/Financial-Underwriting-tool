@@ -9,11 +9,15 @@ TOKEN = "synthetic-streamlit-host-" + "x" * 40
 PASSWORD = "synthetic-viewer-password"
 
 
-def enable_host(monkeypatch, path, password):
+def enable_host(monkeypatch, path, password, public=None):
     monkeypatch.setenv("SPREADLINE_TESTING_ENABLED", "true")
     monkeypatch.setenv("SPREADLINE_CASE_DB", str(path))
     monkeypatch.setenv("SPREADLINE_API_TOKEN", TOKEN)
     monkeypatch.setenv("SPREADLINE_OPERATOR_ID", "streamlit-host-regression")
+    if public is None:
+        monkeypatch.delenv("SPREADLINE_PUBLIC_ACCESS", raising=False)
+    else:
+        monkeypatch.setenv("SPREADLINE_PUBLIC_ACCESS", public)
     if password is None:
         monkeypatch.delenv("SPREADLINE_ACCESS_PASSWORD", raising=False)
     else:
@@ -81,5 +85,30 @@ def test_access_gate_opens_the_workspace_for_the_configured_password(tmp_path, m
     assert not app.error
     assert app.session_state["_spreadline_access"] is True
     assert not app.text_input
+    assert path.exists()
+    st.cache_resource.clear()
+
+
+@pytest.mark.parametrize("public", ["false", "1", "TRUE", ""])
+def test_only_an_exact_public_flag_skips_the_access_gate(tmp_path, monkeypatch, public):
+    path = tmp_path / "cases.sqlite3"
+    enable_host(monkeypatch, path, None, public)
+    app = AppTest.from_file(str(APP)).run()
+    assert not app.exception
+    assert "SPREADLINE_ACCESS_PASSWORD" in app.error[0].value
+    assert not path.exists()
+
+
+def test_public_host_opens_the_workspace_without_a_password(tmp_path, monkeypatch):
+    st.cache_resource.clear()
+    path = tmp_path / "cases.sqlite3"
+    enable_host(monkeypatch, path, None, "true")
+    # The first run imports the backend and opens the store.
+    app = AppTest.from_file(str(APP)).run(timeout=60)
+    assert not app.exception
+    assert not app.error
+    assert not app.text_input
+    assert "_spreadline_access" not in app.session_state
+    assert "Public demo" in app.caption[0].value
     assert path.exists()
     st.cache_resource.clear()

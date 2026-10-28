@@ -23,7 +23,12 @@ services:
         sync: false
       - key: SPREADLINE_OPERATOR_ID
         value: render-testing
+      # Opens the workspace to anyone with the URL, skipping the access password.
+      # Set "false" here to restore the gate; each Blueprint sync reapplies this value.
+      - key: SPREADLINE_PUBLIC_ACCESS
+        value: "true"
       # Render generates both secrets; the token never leaves the server.
+      # The password is unused while public access is on and kept so the gate can return.
       - key: SPREADLINE_API_TOKEN
         generateValue: true
       - key: SPREADLINE_ACCESS_PASSWORD
