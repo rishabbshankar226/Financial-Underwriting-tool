@@ -69,16 +69,19 @@ export function useGuidedForm(initial: FormValue) {
     try {
       parseField(spec, formValue(values, spec.pointer));
     } catch (reason) {
-      setErrors((previous) => [
-        ...previous.filter((error) => error.pointer !== spec.pointer),
-        {
-          pointer: spec.pointer,
-          code: "invalid_input",
-          message:
-            reason instanceof Error ? reason.message : "Review this field.",
-          limit: null,
-        },
-      ]);
+      const error: FieldError = {
+        pointer: spec.pointer,
+        code: "invalid_input",
+        message:
+          reason instanceof Error ? reason.message : "Review this field.",
+        limit: null,
+      };
+      // Replace a listed error in place: moving it would reorder the summary under a click on one of its links.
+      setErrors((previous) =>
+        previous.some((item) => item.pointer === spec.pointer)
+          ? previous.map((item) => (item.pointer === spec.pointer ? error : item))
+          : [...previous, error],
+      );
     }
   }
   function reject(items: FieldError[]) {

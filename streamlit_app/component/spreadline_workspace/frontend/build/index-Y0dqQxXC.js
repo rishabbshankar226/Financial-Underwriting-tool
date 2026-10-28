@@ -9311,12 +9311,13 @@ function Jr(e) {
 		try {
 			Wr(e, Hr(t, e.pointer));
 		} catch (t) {
-			i((n) => [...n.filter((t) => t.pointer !== e.pointer), {
+			let n = {
 				pointer: e.pointer,
 				code: "invalid_input",
 				message: t instanceof Error ? t.message : "Review this field.",
 				limit: null
-			}]);
+			};
+			i((t) => t.some((t) => t.pointer === e.pointer) ? t.map((t) => t.pointer === e.pointer ? n : t) : [...t, n]);
 		}
 	}
 	function d(e) {
