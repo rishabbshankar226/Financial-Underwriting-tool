@@ -219,10 +219,12 @@ export function FormField({
         onBlur={() => form.blur(spec)}
         onChange={(event) => form.change(spec, event.target.value)}
         onPaste={(event) => {
-          // A copied column would land as one value with its lines joined; refuse it and say what to do.
+          // A copied column would land in a figure field as one value with its lines joined; refuse it and say
+          // what to do. Text and date fields (names, rationales) paste as the browser does.
+          if (!["money", "rate", "integer"].includes(spec.kind)) return;
           const lines = event.clipboardData
             .getData("text")
-            .split(/\r?\n/)
+            .split(/\r\n|\r|\n/)
             .filter((line) => line.trim());
           if (lines.length < 2) return;
           event.preventDefault();

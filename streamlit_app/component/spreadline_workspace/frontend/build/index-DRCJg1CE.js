@@ -9433,7 +9433,12 @@ function ni({ form: e, spec: t, pasteHint: n }) {
 				onBlur: () => e.blur(t),
 				onChange: (n) => e.change(t, n.target.value),
 				onPaste: (r) => {
-					let i = r.clipboardData.getData("text").split(/\r?\n/).filter((e) => e.trim());
+					if (![
+						"money",
+						"rate",
+						"integer"
+					].includes(t.kind)) return;
+					let i = r.clipboardData.getData("text").split(/\r\n|\r|\n/).filter((e) => e.trim());
 					i.length < 2 || (r.preventDefault(), e.flag(t, `This field takes one value, and the paste had ${i.length} lines. Paste one figure at a time${n ? `, or ${n}` : "."}`));
 				}
 			}),

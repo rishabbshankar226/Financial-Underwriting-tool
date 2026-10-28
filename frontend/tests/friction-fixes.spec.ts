@@ -121,6 +121,13 @@ test.describe("F-11", () => {
     await page.keyboard.press("ControlOrMeta+V");
     await expect(gross).toHaveValue("$3,900,000");
     await expect(gross).not.toHaveAttribute("aria-invalid");
+    // Text fields are not figure fields: a two-line paste into a name pastes as the browser does.
+    const borrower = page.getByLabel("Borrower name", { exact: true });
+    await page.evaluate(() => navigator.clipboard.writeText("Alpine\rFabrication"));
+    await borrower.click();
+    await page.keyboard.press("ControlOrMeta+V");
+    await expect(borrower).not.toHaveValue("");
+    await expect(borrower).not.toHaveAttribute("aria-invalid");
   });
 });
 
